@@ -11,6 +11,9 @@ env:
 jobs:
   test:
     name: Test
+    # Upstream-only pipeline (pushes to Telegram / Homebrew / F-Droid). On forks
+    # use release.yaml instead; this is skipped so it never fails on a fork.
+    if: ${{ !github.event.repository.fork }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,6 +39,7 @@ jobs:
 
   build:
     needs: [ test ]
+    if: ${{ !github.event.repository.fork }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -135,7 +139,7 @@ jobs:
           overwrite: true
 
   changelog:
-    if: ${{ !contains(github.ref, '-') }}
+    if: ${{ !github.event.repository.fork && !contains(github.ref, '-') }}
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -189,6 +193,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   upload:
+    if: ${{ !github.event.repository.fork }}
     permissions:
       contents: write
     needs: [ build ]
