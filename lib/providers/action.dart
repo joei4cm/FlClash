@@ -294,6 +294,7 @@ class SetupAction extends _$SetupAction {
     final overrideDns = ref.read(overrideDnsProvider);
     final appendSystemDns = networkVM2.a;
     final routeMode = networkVM2.b;
+    final tailscaleProxies = ref.read(tailscaleSettingProvider);
     final configMap = await coreController.getConfig(profileId);
     String? scriptContent;
     final List<Rule> addedRules = [];
@@ -327,6 +328,7 @@ class SetupAction extends _$SetupAction {
         appendSystemDns: appendSystemDns,
         addedRules: addedRules,
         defaultUA: defaultUA,
+        tailscaleProxies: tailscaleProxies,
       ),
     );
     return res;

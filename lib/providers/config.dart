@@ -105,6 +105,33 @@ class ExcludeSSIDs extends _$ExcludeSSIDs with AutoDisposeNotifierMixin {
   }
 }
 
+@riverpod
+class TailscaleSetting extends _$TailscaleSetting with AutoDisposeNotifierMixin {
+  @override
+  List<TailscaleProxy> build() {
+    return [];
+  }
+
+  void addOrUpdate(TailscaleProxy proxy) {
+    update((state) {
+      final next = List<TailscaleProxy>.from(state);
+      final index = next.indexWhere((item) => item.name == proxy.name);
+      if (index == -1) {
+        next.add(proxy);
+      } else {
+        next[index] = proxy;
+      }
+      return next;
+    });
+  }
+
+  void remove(String name) {
+    update((state) {
+      return state.where((item) => item.name != name).toList();
+    });
+  }
+}
+
 @Riverpod(name: 'configProvider')
 Config _config(Ref ref) {
   final appSettingProps = ref.watch(appSettingProvider);
@@ -119,6 +146,7 @@ Config _config(Ref ref) {
   final proxiesStyleProps = ref.watch(proxiesStyleSettingProvider);
   final patchClashConfig = ref.watch(patchClashConfigProvider);
   final excludeSSIDs = ref.watch(excludeSSIDsProvider);
+  final tailscaleProxies = ref.watch(tailscaleSettingProvider);
   return Config(
     appSettingProps: appSettingProps,
     windowProps: windowProps,
@@ -132,6 +160,7 @@ Config _config(Ref ref) {
     proxiesStyleProps: proxiesStyleProps,
     patchClashConfig: patchClashConfig,
     excludeSSIDs: excludeSSIDs,
+    tailscaleProxies: tailscaleProxies,
   );
 }
 
@@ -155,5 +184,8 @@ List<Override> buildConfigOverrides(Config config) {
       (_, _) => config.patchClashConfig,
     ),
     excludeSSIDsProvider.overrideWithBuild((_, _) => config.excludeSSIDs),
+    tailscaleSettingProvider.overrideWithBuild(
+      (_, _) => config.tailscaleProxies,
+    ),
   ];
 }

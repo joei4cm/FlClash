@@ -267,7 +267,10 @@ Future<VM2<String, String>> _makeRealProfileTask(
     rawConfig['proxy-groups'] = data.proxyGroups;
   }
   rawConfig['rules'] = rules;
-  final yaml = await _encodeYaml(Map<String, dynamic>.from(rawConfig));
+  final mergedConfig = data.tailscaleProxies.mergeInto(
+    Map<String, dynamic>.from(rawConfig),
+  );
+  final yaml = await _encodeYaml(Map<String, dynamic>.from(mergedConfig));
   return VM2(yaml, yaml.toMd5());
 }
 

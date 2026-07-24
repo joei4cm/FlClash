@@ -9,6 +9,7 @@ import 'common.dart';
 import 'config.dart';
 import 'core.dart';
 import 'profile.dart';
+import 'tailscale.dart';
 
 part 'generated/state.freezed.dart';
 part 'generated/state.g.dart';
@@ -345,6 +346,7 @@ abstract class MakeRealProfileState with _$MakeRealProfileState {
     required List<Rule> rules,
     required List<Rule> addedRules,
     required String defaultUA,
+    @Default([]) List<TailscaleProxy> tailscaleProxies,
   }) = _MakeRealProfileState;
 }
 
