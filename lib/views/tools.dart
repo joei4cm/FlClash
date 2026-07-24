@@ -11,6 +11,7 @@ import 'package:fl_clash/views/application_setting.dart';
 import 'package:fl_clash/views/backup_and_restore.dart';
 import 'package:fl_clash/views/config/config.dart';
 import 'package:fl_clash/views/hotkey.dart';
+import 'package:fl_clash/views/tailscale.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -80,6 +81,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
         if (system.isAndroid) const _AccessItem(),
         const _ConfigItem(),
         const _AdvancedConfigItem(),
+        const _TailscaleItem(),
         const _SettingItem(),
       ],
     );
@@ -255,6 +257,20 @@ class _AdvancedConfigItem extends StatelessWidget {
       title: Text(context.appLocalizations.advancedConfig),
       subtitle: Text(context.appLocalizations.advancedConfigDesc),
       delegate: const OpenDelegate(widget: AdvancedConfigView()),
+    );
+  }
+}
+
+class _TailscaleItem extends StatelessWidget {
+  const _TailscaleItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListItem.open(
+      leading: const Icon(Icons.device_hub),
+      title: Text(context.appLocalizations.tailscale),
+      subtitle: Text(context.appLocalizations.tailscaleDesc),
+      delegate: const OpenDelegate(widget: TailscaleView()),
     );
   }
 }

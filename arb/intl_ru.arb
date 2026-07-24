@@ -550,5 +550,21 @@
   "geoSkipped": "{name} пропущено",
   "geoUpdated": "{name} обновлено",
   "secondsCount": "{count} секунд",
-  "entriesCount": "{count} записей"
+  "entriesCount": "{count} записей",
+  "tailscale": "Tailscale",
+  "tailscaleDesc": "Управление исходящими узлами Tailscale",
+  "tailscaleTip": "Узлы Tailscale добавляются в рабочую конфигурацию как исходящие прокси. Выберите узел на странице прокси или укажите его целью в правиле, чтобы направлять трафик через вашу сеть tailnet.",
+  "tailscaleEmptyTip": "Узлов Tailscale пока нет, нажмите «Добавить», чтобы создать",
+  "addTailscaleNode": "Добавить узел Tailscale",
+  "editTailscaleNode": "Изменить узел Tailscale",
+  "tailscaleAuthKey": "Ключ аутентификации",
+  "tailscaleHostname": "Имя хоста",
+  "tailscaleControlUrl": "URL сервера управления",
+  "tailscaleStateDir": "Каталог состояния",
+  "tailscaleEphemeral": "Временный узел",
+  "tailscaleUdp": "Ретрансляция UDP",
+  "tailscaleAcceptRoutes": "Принимать маршруты",
+  "tailscaleExitNode": "Выходной узел",
+  "tailscaleExitNodeAllowLanAccess": "Разрешить доступ к локальной сети через выходной узел",
+  "tailscaleNameExistsTip": "Узел с таким именем уже существует"
 }

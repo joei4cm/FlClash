@@ -4493,6 +4493,156 @@ class AppLocalizations {
       args: [count],
     );
   }
+
+  /// `Tailscale`
+  String get tailscale {
+    return Intl.message('Tailscale', name: 'tailscale', desc: '', args: []);
+  }
+
+  /// `Manage Tailscale outbound nodes`
+  String get tailscaleDesc {
+    return Intl.message(
+      'Manage Tailscale outbound nodes',
+      name: 'tailscaleDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tailscale nodes are merged into the running configuration as outbound proxies. Select a node in the proxies page or target it from a rule to route traffic through your tailnet.`
+  String get tailscaleTip {
+    return Intl.message(
+      'Tailscale nodes are merged into the running configuration as outbound proxies. Select a node in the proxies page or target it from a rule to route traffic through your tailnet.',
+      name: 'tailscaleTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Tailscale nodes yet, tap add to create one`
+  String get tailscaleEmptyTip {
+    return Intl.message(
+      'No Tailscale nodes yet, tap add to create one',
+      name: 'tailscaleEmptyTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Tailscale node`
+  String get addTailscaleNode {
+    return Intl.message(
+      'Add Tailscale node',
+      name: 'addTailscaleNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Tailscale node`
+  String get editTailscaleNode {
+    return Intl.message(
+      'Edit Tailscale node',
+      name: 'editTailscaleNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auth key`
+  String get tailscaleAuthKey {
+    return Intl.message(
+      'Auth key',
+      name: 'tailscaleAuthKey',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hostname`
+  String get tailscaleHostname {
+    return Intl.message(
+      'Hostname',
+      name: 'tailscaleHostname',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Control URL`
+  String get tailscaleControlUrl {
+    return Intl.message(
+      'Control URL',
+      name: 'tailscaleControlUrl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `State directory`
+  String get tailscaleStateDir {
+    return Intl.message(
+      'State directory',
+      name: 'tailscaleStateDir',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ephemeral`
+  String get tailscaleEphemeral {
+    return Intl.message(
+      'Ephemeral',
+      name: 'tailscaleEphemeral',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `UDP relay`
+  String get tailscaleUdp {
+    return Intl.message('UDP relay', name: 'tailscaleUdp', desc: '', args: []);
+  }
+
+  /// `Accept routes`
+  String get tailscaleAcceptRoutes {
+    return Intl.message(
+      'Accept routes',
+      name: 'tailscaleAcceptRoutes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit node`
+  String get tailscaleExitNode {
+    return Intl.message(
+      'Exit node',
+      name: 'tailscaleExitNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow LAN access via exit node`
+  String get tailscaleExitNodeAllowLanAccess {
+    return Intl.message(
+      'Allow LAN access via exit node',
+      name: 'tailscaleExitNodeAllowLanAccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A node with this name already exists`
+  String get tailscaleNameExistsTip {
+    return Intl.message(
+      'A node with this name already exists',
+      name: 'tailscaleNameExistsTip',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

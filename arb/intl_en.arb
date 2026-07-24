@@ -550,5 +550,21 @@
   "geoSkipped": "{name} skipped",
   "geoUpdated": "{name} updated",
   "secondsCount": "{count} seconds",
-  "entriesCount": "{count} entries"
+  "entriesCount": "{count} entries",
+  "tailscale": "Tailscale",
+  "tailscaleDesc": "Manage Tailscale outbound nodes",
+  "tailscaleTip": "Tailscale nodes are merged into the running configuration as outbound proxies. Select a node in the proxies page or target it from a rule to route traffic through your tailnet.",
+  "tailscaleEmptyTip": "No Tailscale nodes yet, tap add to create one",
+  "addTailscaleNode": "Add Tailscale node",
+  "editTailscaleNode": "Edit Tailscale node",
+  "tailscaleAuthKey": "Auth key",
+  "tailscaleHostname": "Hostname",
+  "tailscaleControlUrl": "Control URL",
+  "tailscaleStateDir": "State directory",
+  "tailscaleEphemeral": "Ephemeral",
+  "tailscaleUdp": "UDP relay",
+  "tailscaleAcceptRoutes": "Accept routes",
+  "tailscaleExitNode": "Exit node",
+  "tailscaleExitNodeAllowLanAccess": "Allow LAN access via exit node",
+  "tailscaleNameExistsTip": "A node with this name already exists"
 }

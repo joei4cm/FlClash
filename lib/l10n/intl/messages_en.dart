@@ -113,6 +113,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "addRule": MessageLookupByLibrary.simpleMessage("Add rule"),
     "addSsid": MessageLookupByLibrary.simpleMessage("Add SSID"),
+    "addTailscaleNode": MessageLookupByLibrary.simpleMessage(
+      "Add Tailscale node",
+    ),
     "addedRules": MessageLookupByLibrary.simpleMessage("Added rules"),
     "additionalParameters": MessageLookupByLibrary.simpleMessage(
       "Additional parameters",
@@ -352,6 +355,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "editProxyGroup": MessageLookupByLibrary.simpleMessage("Edit proxy group"),
     "editRule": MessageLookupByLibrary.simpleMessage("Edit rule"),
     "editSsid": MessageLookupByLibrary.simpleMessage("Edit SSID"),
+    "editTailscaleNode": MessageLookupByLibrary.simpleMessage(
+      "Edit Tailscale node",
+    ),
     "emptyTip": m4,
     "en": MessageLookupByLibrary.simpleMessage("English"),
     "entries": MessageLookupByLibrary.simpleMessage(" entries"),
@@ -985,6 +991,34 @@ class MessageLookup extends MessageLookupByLibrary {
     "tabAnimationDesc": MessageLookupByLibrary.simpleMessage(
       "Effective only in mobile view",
     ),
+    "tailscale": MessageLookupByLibrary.simpleMessage("Tailscale"),
+    "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage(
+      "Accept routes",
+    ),
+    "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("Auth key"),
+    "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("Control URL"),
+    "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
+      "Manage Tailscale outbound nodes",
+    ),
+    "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
+      "No Tailscale nodes yet, tap add to create one",
+    ),
+    "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage("Ephemeral"),
+    "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("Exit node"),
+    "tailscaleExitNodeAllowLanAccess": MessageLookupByLibrary.simpleMessage(
+      "Allow LAN access via exit node",
+    ),
+    "tailscaleHostname": MessageLookupByLibrary.simpleMessage("Hostname"),
+    "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
+      "A node with this name already exists",
+    ),
+    "tailscaleStateDir": MessageLookupByLibrary.simpleMessage(
+      "State directory",
+    ),
+    "tailscaleTip": MessageLookupByLibrary.simpleMessage(
+      "Tailscale nodes are merged into the running configuration as outbound proxies. Select a node in the proxies page or target it from a rule to route traffic through your tailnet.",
+    ),
+    "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP relay"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("Tap to authorize"),
     "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP concurrent"),
     "tcpConcurrentDesc": MessageLookupByLibrary.simpleMessage(

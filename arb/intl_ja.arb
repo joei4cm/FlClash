@@ -550,5 +550,21 @@
   "geoSkipped": "{name} スキップ済み",
   "geoUpdated": "{name} 更新済み",
   "secondsCount": "{count} 秒",
-  "entriesCount": "{count} エントリ"
+  "entriesCount": "{count} エントリ",
+  "tailscale": "Tailscale",
+  "tailscaleDesc": "Tailscale アウトバウンドノードを管理",
+  "tailscaleTip": "Tailscale ノードはアウトバウンドプロキシとして実行中の設定に統合されます。プロキシページでノードを選択するか、ルールのターゲットに指定すると、トラフィックが tailnet 経由で転送されます。",
+  "tailscaleEmptyTip": "Tailscale ノードがありません。追加をタップして作成してください",
+  "addTailscaleNode": "Tailscale ノードを追加",
+  "editTailscaleNode": "Tailscale ノードを編集",
+  "tailscaleAuthKey": "認証キー",
+  "tailscaleHostname": "ホスト名",
+  "tailscaleControlUrl": "コントロール URL",
+  "tailscaleStateDir": "状態ディレクトリ",
+  "tailscaleEphemeral": "エフェメラル",
+  "tailscaleUdp": "UDP リレー",
+  "tailscaleAcceptRoutes": "ルートを受け入れる",
+  "tailscaleExitNode": "出口ノード",
+  "tailscaleExitNodeAllowLanAccess": "出口ノード経由の LAN アクセスを許可",
+  "tailscaleNameExistsTip": "同じ名前のノードが既に存在します"
 }

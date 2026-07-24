@@ -101,6 +101,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "addProxyProviders": MessageLookupByLibrary.simpleMessage("プロキシプロバイダーを追加"),
     "addRule": MessageLookupByLibrary.simpleMessage("ルールを追加"),
     "addSsid": MessageLookupByLibrary.simpleMessage("SSIDを追加"),
+    "addTailscaleNode": MessageLookupByLibrary.simpleMessage(
+      "Tailscale ノードを追加",
+    ),
     "addedRules": MessageLookupByLibrary.simpleMessage("追加ルール"),
     "additionalParameters": MessageLookupByLibrary.simpleMessage("追加パラメータ"),
     "address": MessageLookupByLibrary.simpleMessage("アドレス"),
@@ -274,6 +277,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "editProxyGroup": MessageLookupByLibrary.simpleMessage("プロキシグループを編集"),
     "editRule": MessageLookupByLibrary.simpleMessage("ルールを編集"),
     "editSsid": MessageLookupByLibrary.simpleMessage("SSIDを編集"),
+    "editTailscaleNode": MessageLookupByLibrary.simpleMessage(
+      "Tailscale ノードを編集",
+    ),
     "emptyTip": m4,
     "en": MessageLookupByLibrary.simpleMessage("英語"),
     "entries": MessageLookupByLibrary.simpleMessage(" エントリ"),
@@ -799,6 +805,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "tab": MessageLookupByLibrary.simpleMessage("タブ"),
     "tabAnimation": MessageLookupByLibrary.simpleMessage("タブアニメーション"),
     "tabAnimationDesc": MessageLookupByLibrary.simpleMessage("モバイル表示でのみ有効"),
+    "tailscale": MessageLookupByLibrary.simpleMessage("Tailscale"),
+    "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("ルートを受け入れる"),
+    "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("認証キー"),
+    "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("コントロール URL"),
+    "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
+      "Tailscale アウトバウンドノードを管理",
+    ),
+    "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
+      "Tailscale ノードがありません。追加をタップして作成してください",
+    ),
+    "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage("エフェメラル"),
+    "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("出口ノード"),
+    "tailscaleExitNodeAllowLanAccess": MessageLookupByLibrary.simpleMessage(
+      "出口ノード経由の LAN アクセスを許可",
+    ),
+    "tailscaleHostname": MessageLookupByLibrary.simpleMessage("ホスト名"),
+    "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
+      "同じ名前のノードが既に存在します",
+    ),
+    "tailscaleStateDir": MessageLookupByLibrary.simpleMessage("状態ディレクトリ"),
+    "tailscaleTip": MessageLookupByLibrary.simpleMessage(
+      "Tailscale ノードはアウトバウンドプロキシとして実行中の設定に統合されます。プロキシページでノードを選択するか、ルールのターゲットに指定すると、トラフィックが tailnet 経由で転送されます。",
+    ),
+    "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP リレー"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("タップして許可"),
     "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP並列処理"),
     "tcpConcurrentDesc": MessageLookupByLibrary.simpleMessage("TCP並列処理を許可"),
