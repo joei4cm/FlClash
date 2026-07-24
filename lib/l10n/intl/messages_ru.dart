@@ -114,6 +114,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "addRule": MessageLookupByLibrary.simpleMessage("Добавить правило"),
     "addSsid": MessageLookupByLibrary.simpleMessage("Добавить SSID"),
+    "addTailscaleNode": MessageLookupByLibrary.simpleMessage(
+      "Добавить узел Tailscale",
+    ),
     "addedRules": MessageLookupByLibrary.simpleMessage("Добавленные правила"),
     "additionalParameters": MessageLookupByLibrary.simpleMessage(
       "Дополнительные параметры",
@@ -361,6 +364,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "editRule": MessageLookupByLibrary.simpleMessage("Редактировать правило"),
     "editSsid": MessageLookupByLibrary.simpleMessage("Изменить SSID"),
+    "editTailscaleNode": MessageLookupByLibrary.simpleMessage(
+      "Изменить узел Tailscale",
+    ),
     "emptyTip": m4,
     "en": MessageLookupByLibrary.simpleMessage("Английский"),
     "entries": MessageLookupByLibrary.simpleMessage(" записей"),
@@ -1036,6 +1042,40 @@ class MessageLookup extends MessageLookupByLibrary {
     "tabAnimationDesc": MessageLookupByLibrary.simpleMessage(
       "Действительно только в мобильном виде",
     ),
+    "tailscale": MessageLookupByLibrary.simpleMessage("Tailscale"),
+    "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage(
+      "Принимать маршруты",
+    ),
+    "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage(
+      "Ключ аутентификации",
+    ),
+    "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
+      "URL сервера управления",
+    ),
+    "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
+      "Управление исходящими узлами Tailscale",
+    ),
+    "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
+      "Узлов Tailscale пока нет, нажмите «Добавить», чтобы создать",
+    ),
+    "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage(
+      "Временный узел",
+    ),
+    "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("Выходной узел"),
+    "tailscaleExitNodeAllowLanAccess": MessageLookupByLibrary.simpleMessage(
+      "Разрешить доступ к локальной сети через выходной узел",
+    ),
+    "tailscaleHostname": MessageLookupByLibrary.simpleMessage("Имя хоста"),
+    "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
+      "Узел с таким именем уже существует",
+    ),
+    "tailscaleStateDir": MessageLookupByLibrary.simpleMessage(
+      "Каталог состояния",
+    ),
+    "tailscaleTip": MessageLookupByLibrary.simpleMessage(
+      "Узлы Tailscale добавляются в рабочую конфигурацию как исходящие прокси. Выберите узел на странице прокси или укажите его целью в правиле, чтобы направлять трафик через вашу сеть tailnet.",
+    ),
+    "tailscaleUdp": MessageLookupByLibrary.simpleMessage("Ретрансляция UDP"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage(
       "Нажмите, чтобы разрешить",
     ),

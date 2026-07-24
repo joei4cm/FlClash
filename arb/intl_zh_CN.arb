@@ -550,5 +550,21 @@
   "geoSkipped": "{name} 已跳过",
   "geoUpdated": "{name} 已更新",
   "secondsCount": "{count} 秒",
-  "entriesCount": "{count} 个条目"
+  "entriesCount": "{count} 个条目",
+  "tailscale": "Tailscale",
+  "tailscaleDesc": "管理 Tailscale 出站节点",
+  "tailscaleTip": "Tailscale 节点会作为出站代理合并到运行配置中。在代理页面选择该节点，或在规则中将其设为出站目标，即可让流量经由你的 tailnet 转发。",
+  "tailscaleEmptyTip": "暂无 Tailscale 节点，点击添加以创建",
+  "addTailscaleNode": "添加 Tailscale 节点",
+  "editTailscaleNode": "编辑 Tailscale 节点",
+  "tailscaleAuthKey": "认证密钥",
+  "tailscaleHostname": "主机名",
+  "tailscaleControlUrl": "控制服务器地址",
+  "tailscaleStateDir": "状态目录",
+  "tailscaleEphemeral": "临时节点",
+  "tailscaleUdp": "UDP 转发",
+  "tailscaleAcceptRoutes": "接受路由",
+  "tailscaleExitNode": "出口节点",
+  "tailscaleExitNodeAllowLanAccess": "允许通过出口节点访问局域网",
+  "tailscaleNameExistsTip": "已存在同名节点"
 }
