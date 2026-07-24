@@ -701,6 +701,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
       "暂无 Tailscale 节点，点击添加以创建",
     ),
+    "tailscaleEnable": MessageLookupByLibrary.simpleMessage("启用 Tailscale"),
+    "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
+      "将 Tailscale 节点作为出站注入。关闭后 Tailscale 将不再处理流量，普通流量不受影响。",
+    ),
     "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage("临时节点"),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("出口节点"),
     "tailscaleExitNodeAllowLanAccess": MessageLookupByLibrary.simpleMessage(

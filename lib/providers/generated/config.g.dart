@@ -636,7 +636,7 @@ abstract class _$ExcludeSSIDs extends $Notifier<List<String>> {
 final tailscaleSettingProvider = TailscaleSettingProvider._();
 
 final class TailscaleSettingProvider
-    extends $NotifierProvider<TailscaleSetting, List<TailscaleProxy>> {
+    extends $NotifierProvider<TailscaleSetting, TailscaleProps> {
   TailscaleSettingProvider._()
     : super(
         from: null,
@@ -656,27 +656,27 @@ final class TailscaleSettingProvider
   TailscaleSetting create() => TailscaleSetting();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<TailscaleProxy> value) {
+  Override overrideWithValue(TailscaleProps value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<List<TailscaleProxy>>(value),
+      providerOverride: $SyncValueProvider<TailscaleProps>(value),
     );
   }
 }
 
-String _$tailscaleSettingHash() => r'ece6f712d49acda898a0c8d6fcd5a9190ad9fe98';
+String _$tailscaleSettingHash() => r'a36ffdf8ac336b8fba667af5acaa16ca276cd700';
 
-abstract class _$TailscaleSetting extends $Notifier<List<TailscaleProxy>> {
-  List<TailscaleProxy> build();
+abstract class _$TailscaleSetting extends $Notifier<TailscaleProps> {
+  TailscaleProps build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<List<TailscaleProxy>, List<TailscaleProxy>>;
+    final ref = this.ref as $Ref<TailscaleProps, TailscaleProps>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<List<TailscaleProxy>, List<TailscaleProxy>>,
-              List<TailscaleProxy>,
+              AnyNotifier<TailscaleProps, TailscaleProps>,
+              TailscaleProps,
               Object?,
               Object?
             >;
@@ -722,4 +722,4 @@ final class _ConfigProvider extends $FunctionalProvider<Config, Config, Config>
   }
 }
 
-String _$_configHash() => r'22d2afa8a51584bafdb29c22255abb714ed66264';
+String _$_configHash() => r'2151b4807c98ef67c0c0d122e0dcd0e9394e65c7';

@@ -89,6 +89,49 @@ void main() {
     });
   });
 
+  group('TailscaleProps', () {
+    test('is disabled with no nodes by default', () {
+      const props = TailscaleProps();
+      expect(props.enable, isFalse);
+      expect(props.proxies, isEmpty);
+    });
+
+    test('activeProxies is empty when disabled', () {
+      const props = TailscaleProps(
+        enable: false,
+        proxies: [TailscaleProxy(name: 'ts-node')],
+      );
+      expect(props.activeProxies, isEmpty);
+    });
+
+    test('activeProxies returns nodes when enabled', () {
+      const props = TailscaleProps(
+        enable: true,
+        proxies: [TailscaleProxy(name: 'ts-node')],
+      );
+      expect(props.activeProxies.length, 1);
+    });
+
+    test('safeFromJson falls back to default on invalid input', () {
+      expect(TailscaleProps.safeFromJson(null), defaultTailscaleProps);
+      expect(
+        TailscaleProps.safeFromJson({'proxies': 'not-a-list'}),
+        defaultTailscaleProps,
+      );
+    });
+
+    test('round-trips through json', () {
+      const props = TailscaleProps(
+        enable: true,
+        proxies: [TailscaleProxy(name: 'ts-node', authKey: 'k')],
+      );
+      final restored = TailscaleProps.fromJson(
+        jsonDecode(jsonEncode(props.toJson())) as Map<String, Object?>,
+      );
+      expect(restored, props);
+    });
+  });
+
   group('TailscaleProxyListExt.mergeInto', () {
     test('adds tailscale proxies to a config without a proxies list', () {
       final config = <String, dynamic>{'mode': 'rule'};

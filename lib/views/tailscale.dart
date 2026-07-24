@@ -28,6 +28,7 @@ class TailscaleView extends ConsumerWidget {
   ]) async {
     final existingNames = ref
         .read(tailscaleSettingProvider)
+        .proxies
         .map((item) => item.name)
         .toList();
     final res = await globalState.showCommonDialog<TailscaleProxy>(
@@ -60,7 +61,11 @@ class TailscaleView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
-    final proxies = ref.watch(tailscaleSettingProvider);
+    final props = ref.watch(tailscaleSettingProvider);
+    final enable = props.enable;
+    final proxies = props.proxies;
+    // The header (switch + description) is always index 0; nodes follow.
+    final itemCount = proxies.isEmpty ? 1 : proxies.length + 1;
     return CommonScaffold(
       title: appLocalizations.tailscale,
       actions: [
@@ -72,48 +77,72 @@ class TailscaleView extends ConsumerWidget {
         ),
         const SizedBox(width: 8),
       ],
-      body: proxies.isEmpty
-          ? NullStatus(label: appLocalizations.tailscaleEmptyTip)
-          : ListView.builder(
-              padding: const EdgeInsets.only(bottom: 20),
-              itemCount: proxies.length + 1,
-              itemBuilder: (_, index) {
-                if (index == 0) {
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                    child: Text(
-                      appLocalizations.tailscaleTip,
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: context.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  );
-                }
-                final proxy = proxies[index - 1];
-                return ListItem(
-                  leading: const Icon(Icons.device_hub),
-                  title: Text(
-                    proxy.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Text(
-                    _buildSubtitle(context, proxy),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: IconButton(
-                    onPressed: () {
-                      _handleDelete(context, ref, proxy);
+      body: ListView.builder(
+        padding: const EdgeInsets.only(bottom: 20),
+        itemCount: itemCount,
+        itemBuilder: (_, index) {
+          if (index == 0) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListItem.switchItem(
+                  leading: const Icon(Icons.vpn_key_outlined),
+                  title: Text(appLocalizations.tailscaleEnable),
+                  subtitle: Text(appLocalizations.tailscaleEnableDesc),
+                  delegate: SwitchDelegate(
+                    value: enable,
+                    onChanged: (value) {
+                      ref
+                          .read(tailscaleSettingProvider.notifier)
+                          .setEnable(value);
                     },
-                    icon: const Icon(Icons.delete_outline),
                   ),
-                  onTap: () {
-                    _handleAddOrEdit(context, ref, proxy);
-                  },
-                );
-              },
+                ),
+                const Divider(height: 0),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: Text(
+                    appLocalizations.tailscaleTip,
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: context.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                if (proxies.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 48),
+                    child: NullStatus(
+                      label: appLocalizations.tailscaleEmptyTip,
+                    ),
+                  ),
+              ],
+            );
+          }
+          final proxy = proxies[index - 1];
+          return ListItem(
+            leading: const Icon(Icons.device_hub),
+            title: Text(
+              proxy.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
+            subtitle: Text(
+              _buildSubtitle(context, proxy),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: IconButton(
+              onPressed: () {
+                _handleDelete(context, ref, proxy);
+              },
+              icon: const Icon(Icons.delete_outline),
+            ),
+            onTap: () {
+              _handleAddOrEdit(context, ref, proxy);
+            },
+          );
+        },
+      ),
     );
   }
 }

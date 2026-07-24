@@ -4509,6 +4509,26 @@ class AppLocalizations {
     );
   }
 
+  /// `Enable Tailscale`
+  String get tailscaleEnable {
+    return Intl.message(
+      'Enable Tailscale',
+      name: 'tailscaleEnable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Inject Tailscale nodes as outbounds. Turning this off stops Tailscale from handling traffic; normal traffic is unaffected.`
+  String get tailscaleEnableDesc {
+    return Intl.message(
+      'Inject Tailscale nodes as outbounds. Turning this off stops Tailscale from handling traffic; normal traffic is unaffected.',
+      name: 'tailscaleEnableDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Tailscale nodes are merged into the running configuration as outbound proxies. Select a node in the proxies page or target it from a rule to route traffic through your tailnet.`
   String get tailscaleTip {
     return Intl.message(

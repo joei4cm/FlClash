@@ -6,6 +6,19 @@ part of '../tailscale.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+_TailscaleProps _$TailscalePropsFromJson(Map<String, dynamic> json) =>
+    _TailscaleProps(
+      enable: json['enable'] as bool? ?? false,
+      proxies:
+          (json['proxies'] as List<dynamic>?)
+              ?.map((e) => TailscaleProxy.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+    );
+
+Map<String, dynamic> _$TailscalePropsToJson(_TailscaleProps instance) =>
+    <String, dynamic>{'enable': instance.enable, 'proxies': instance.proxies};
+
 _TailscaleProxy _$TailscaleProxyFromJson(Map<String, dynamic> json) =>
     _TailscaleProxy(
       name: json['name'] as String,
