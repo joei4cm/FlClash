@@ -74,6 +74,13 @@ android {
             } else {
                 signingConfig = signingConfigs.getByName("debug")
                 applicationIdSuffix = ".dev"
+                // Unsigned/dev builds run against the placeholder
+                // google-services.json (a dummy Firebase project), so skip the
+                // Crashlytics mapping upload that would otherwise try to reach a
+                // real project and fail the release build.
+                configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+                    mappingFileUploadEnabled = false
+                }
             }
 
             proguardFiles(

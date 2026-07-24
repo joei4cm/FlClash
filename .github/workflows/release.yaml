@@ -2,19 +2,20 @@ name: release
 
 # Fork-friendly release workflow.
 #
-# Builds FlClash for desktop (and optionally Android) and publishes a GitHub
-# Release on THIS repository using the built-in GITHUB_TOKEN. Unlike build.yaml
-# it does not push to Telegram / Homebrew / F-Droid or the upstream repo, so it
-# works out of the box on a fork.
+# Builds FlClash for desktop and Android and publishes a GitHub Release on THIS
+# repository using the built-in GITHUB_TOKEN. Unlike build.yaml it does not push
+# to Telegram / Homebrew / F-Droid or the upstream repo, so it works out of the
+# box on a fork.
 #
 # Triggers:
 #   * push a tag like `v1.2.3`  -> builds that tag and creates the release
 #   * manual "Run workflow"     -> provide a `version` (e.g. v1.2.3-test)
 #
-# Android is opt-in: it only builds when the repository variable
-# ENABLE_ANDROID is set to `true` AND the signing secrets below are configured,
-# because release APKs are otherwise unsigned/`.dev` suffixed and fail the
-# bundled google-services config.
+# Android builds by default with NO extra setup: without signing secrets it
+# produces a debug-signed APK with the `.dev` application id (installable, and
+# covered by the bundled placeholder google-services.json). To ship a properly
+# signed release instead, add the optional secrets below and they are picked up
+# automatically:
 #   Secrets: KEYSTORE, SERVICE_JSON, KEY_ALIAS, STORE_PASSWORD, KEY_PASSWORD
 #            (KEYSTORE and SERVICE_JSON are base64 encoded)
 
@@ -152,7 +153,6 @@ jobs:
 
   build-android:
     needs: [ test ]
-    if: ${{ vars.ENABLE_ANDROID == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -160,15 +160,28 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Android signing
+      - name: Setup Android signing (optional)
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+          SERVICE_JSON: ${{ secrets.SERVICE_JSON }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/keystore.jks
-          echo "${{ secrets.SERVICE_JSON }}" | base64 --decode > android/app/google-services.json
-          {
-            echo "keyAlias=${{ secrets.KEY_ALIAS }}"
-            echo "storePassword=${{ secrets.STORE_PASSWORD }}"
-            echo "keyPassword=${{ secrets.KEY_PASSWORD }}"
-          } >> android/local.properties
+          if [ -n "$KEYSTORE" ]; then
+            echo "Signing secrets found: building a signed release APK."
+            echo "$KEYSTORE" | base64 --decode > android/app/keystore.jks
+            if [ -n "$SERVICE_JSON" ]; then
+              echo "$SERVICE_JSON" | base64 --decode > android/app/google-services.json
+            fi
+            {
+              echo "keyAlias=$KEY_ALIAS"
+              echo "storePassword=$STORE_PASSWORD"
+              echo "keyPassword=$KEY_PASSWORD"
+            } >> android/local.properties
+          else
+            echo "No signing secrets: building a debug-signed '.dev' APK using the bundled placeholder google-services.json."
+          fi
 
       - name: Setup Go
         uses: actions/setup-go@v5
