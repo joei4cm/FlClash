@@ -40,6 +40,87 @@ class TailscaleView extends ConsumerWidget {
     ref.read(tailscaleSettingProvider.notifier).addOrUpdate(res);
   }
 
+  Widget _buildGuideStep(BuildContext context, int number, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 22,
+            height: 22,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: context.colorScheme.primary,
+              shape: BoxShape.circle,
+            ),
+            child: Text(
+              '$number',
+              style: context.textTheme.labelSmall?.copyWith(
+                color: context.colorScheme.onPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(text, style: context.textTheme.bodyMedium),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGuide(BuildContext context) {
+    final appLocalizations = context.appLocalizations;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: context.colorScheme.surfaceContainerHighest.opacity38,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.help_outline,
+                  size: 20,
+                  color: context.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  appLocalizations.tailscaleGuideTitle,
+                  style: context.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            _buildGuideStep(context, 1, appLocalizations.tailscaleGuideStep1),
+            _buildGuideStep(context, 2, appLocalizations.tailscaleGuideStep2),
+            _buildGuideStep(context, 3, appLocalizations.tailscaleGuideStep3),
+            _buildGuideStep(context, 4, appLocalizations.tailscaleGuideStep4),
+            const SizedBox(height: 4),
+            Text(
+              appLocalizations.tailscaleTip,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: context.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _handleDelete(
     BuildContext context,
     WidgetRef ref,
@@ -99,20 +180,22 @@ class TailscaleView extends ConsumerWidget {
                   ),
                 ),
                 const Divider(height: 0),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Text(
-                    appLocalizations.tailscaleTip,
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: context.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ),
+                _buildGuide(context),
                 if (proxies.isEmpty)
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 48),
-                    child: NullStatus(
-                      label: appLocalizations.tailscaleEmptyTip,
+                    padding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
+                    child: Column(
+                      children: [
+                        NullStatus(label: appLocalizations.tailscaleEmptyTip),
+                        const SizedBox(height: 24),
+                        FilledButton.icon(
+                          onPressed: () {
+                            _handleAddOrEdit(context, ref);
+                          },
+                          icon: const Icon(Icons.add),
+                          label: Text(appLocalizations.addTailscaleNode),
+                        ),
+                      ],
                     ),
                   ),
               ],
@@ -223,6 +306,7 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
+    String? helperText,
     String? Function(String?)? validator,
   }) {
     return Padding(
@@ -233,6 +317,8 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           labelText: label,
+          helperText: helperText,
+          helperMaxLines: 3,
         ),
       ),
     );
@@ -300,22 +386,27 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
                 _buildTextField(
                   controller: _authKeyController,
                   label: appLocalizations.tailscaleAuthKey,
+                  helperText: appLocalizations.tailscaleAuthKeyHint,
                 ),
                 _buildTextField(
                   controller: _hostnameController,
                   label: appLocalizations.tailscaleHostname,
+                  helperText: appLocalizations.tailscaleHostnameHint,
                 ),
                 _buildTextField(
                   controller: _controlUrlController,
                   label: appLocalizations.tailscaleControlUrl,
+                  helperText: appLocalizations.tailscaleControlUrlHint,
                 ),
                 _buildTextField(
                   controller: _stateDirController,
                   label: appLocalizations.tailscaleStateDir,
+                  helperText: appLocalizations.tailscaleStateDirHint,
                 ),
                 _buildTextField(
                   controller: _exitNodeController,
                   label: appLocalizations.tailscaleExitNode,
+                  helperText: appLocalizations.tailscaleExitNodeHint,
                 ),
                 _buildSwitch(
                   label: appLocalizations.tailscaleEphemeral,

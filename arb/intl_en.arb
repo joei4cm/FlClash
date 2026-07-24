@@ -556,7 +556,7 @@
   "tailscaleEnable": "Enable Tailscale",
   "tailscaleEnableDesc": "Inject Tailscale nodes as outbounds. Turning this off stops Tailscale from handling traffic; normal traffic is unaffected.",
   "tailscaleTip": "Tailscale nodes are merged into the running configuration as outbound proxies. Select a node in the proxies page or target it from a rule to route traffic through your tailnet.",
-  "tailscaleEmptyTip": "No Tailscale nodes yet, tap add to create one",
+  "tailscaleEmptyTip": "No Tailscale nodes yet. Add one to route traffic through your tailnet.",
   "addTailscaleNode": "Add Tailscale node",
   "editTailscaleNode": "Edit Tailscale node",
   "tailscaleAuthKey": "Auth key",
@@ -568,5 +568,15 @@
   "tailscaleAcceptRoutes": "Accept routes",
   "tailscaleExitNode": "Exit node",
   "tailscaleExitNodeAllowLanAccess": "Allow LAN access via exit node",
-  "tailscaleNameExistsTip": "A node with this name already exists"
+  "tailscaleNameExistsTip": "A node with this name already exists",
+  "tailscaleGuideTitle": "How Tailscale works",
+  "tailscaleGuideStep1": "Get an auth key from the Tailscale admin console (Settings → Keys).",
+  "tailscaleGuideStep2": "Tap the + button (top right) to add a node and paste the auth key.",
+  "tailscaleGuideStep3": "Turn on \"Enable Tailscale\" above to inject the node as an outbound proxy.",
+  "tailscaleGuideStep4": "On the Proxies page, or from a rule, pick the node to route traffic through your tailnet.",
+  "tailscaleAuthKeyHint": "From the Tailscale admin console → Settings → Keys. Required to authenticate the node.",
+  "tailscaleHostnameHint": "Optional. Device name shown in your tailnet.",
+  "tailscaleControlUrlHint": "Optional. Only for self-hosted control servers such as Headscale.",
+  "tailscaleStateDirHint": "Optional. Directory used to persist Tailscale state.",
+  "tailscaleExitNodeHint": "Optional. IP or name of a tailnet exit node to route all traffic through."
 }

@@ -696,10 +696,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscale": MessageLookupByLibrary.simpleMessage("Tailscale"),
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("接受路由"),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("认证密钥"),
+    "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
+      "来自 Tailscale 管理后台 → 设置 → Keys，用于对节点进行认证。",
+    ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("控制服务器地址"),
+    "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(
+      "可选。仅用于自建控制服务器（如 Headscale）。",
+    ),
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage("管理 Tailscale 出站节点"),
     "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
-      "暂无 Tailscale 节点，点击添加以创建",
+      "暂无 Tailscale 节点。添加一个即可让流量经由你的 tailnet 转发。",
     ),
     "tailscaleEnable": MessageLookupByLibrary.simpleMessage("启用 Tailscale"),
     "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
@@ -710,9 +716,33 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleExitNodeAllowLanAccess": MessageLookupByLibrary.simpleMessage(
       "允许通过出口节点访问局域网",
     ),
+    "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
+      "可选。tailnet 出口节点的 IP 或名称，用于转发全部流量。",
+    ),
+    "tailscaleGuideStep1": MessageLookupByLibrary.simpleMessage(
+      "在 Tailscale 管理后台（设置 → Keys）获取认证密钥。",
+    ),
+    "tailscaleGuideStep2": MessageLookupByLibrary.simpleMessage(
+      "点击右上角的 + 按钮添加节点，并粘贴认证密钥。",
+    ),
+    "tailscaleGuideStep3": MessageLookupByLibrary.simpleMessage(
+      "打开上方的“启用 Tailscale”，将节点作为出站代理注入。",
+    ),
+    "tailscaleGuideStep4": MessageLookupByLibrary.simpleMessage(
+      "在代理页面或规则中选择该节点，即可让流量经由你的 tailnet 转发。",
+    ),
+    "tailscaleGuideTitle": MessageLookupByLibrary.simpleMessage(
+      "Tailscale 使用说明",
+    ),
     "tailscaleHostname": MessageLookupByLibrary.simpleMessage("主机名"),
+    "tailscaleHostnameHint": MessageLookupByLibrary.simpleMessage(
+      "可选。在 tailnet 中显示的设备名称。",
+    ),
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage("已存在同名节点"),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage("状态目录"),
+    "tailscaleStateDirHint": MessageLookupByLibrary.simpleMessage(
+      "可选。用于持久化 Tailscale 状态的目录。",
+    ),
     "tailscaleTip": MessageLookupByLibrary.simpleMessage(
       "Tailscale 节点会作为出站代理合并到运行配置中。在代理页面选择该节点，或在规则中将其设为出站目标，即可让流量经由你的 tailnet 转发。",
     ),

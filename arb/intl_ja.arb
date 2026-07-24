@@ -556,7 +556,7 @@
   "tailscaleEnable": "Tailscale を有効化",
   "tailscaleEnableDesc": "Tailscale ノードをアウトバウンドとして注入します。オフにすると Tailscale はトラフィックを処理しなくなりますが、通常のトラフィックには影響しません。",
   "tailscaleTip": "Tailscale ノードはアウトバウンドプロキシとして実行中の設定に統合されます。プロキシページでノードを選択するか、ルールのターゲットに指定すると、トラフィックが tailnet 経由で転送されます。",
-  "tailscaleEmptyTip": "Tailscale ノードがありません。追加をタップして作成してください",
+  "tailscaleEmptyTip": "Tailscale ノードがありません。追加すると、トラフィックを tailnet 経由で転送できます。",
   "addTailscaleNode": "Tailscale ノードを追加",
   "editTailscaleNode": "Tailscale ノードを編集",
   "tailscaleAuthKey": "認証キー",
@@ -568,5 +568,15 @@
   "tailscaleAcceptRoutes": "ルートを受け入れる",
   "tailscaleExitNode": "出口ノード",
   "tailscaleExitNodeAllowLanAccess": "出口ノード経由の LAN アクセスを許可",
-  "tailscaleNameExistsTip": "同じ名前のノードが既に存在します"
+  "tailscaleNameExistsTip": "同じ名前のノードが既に存在します",
+  "tailscaleGuideTitle": "Tailscale の仕組み",
+  "tailscaleGuideStep1": "Tailscale 管理コンソール（設定 → Keys）で認証キーを取得します。",
+  "tailscaleGuideStep2": "右上の + ボタンをタップしてノードを追加し、認証キーを貼り付けます。",
+  "tailscaleGuideStep3": "上部の「Tailscale を有効化」をオンにして、ノードをアウトバウンドプロキシとして注入します。",
+  "tailscaleGuideStep4": "プロキシページまたはルールでノードを選択すると、トラフィックが tailnet 経由で転送されます。",
+  "tailscaleAuthKeyHint": "Tailscale 管理コンソール → 設定 → Keys から取得します。ノードの認証に必要です。",
+  "tailscaleHostnameHint": "任意。tailnet に表示されるデバイス名です。",
+  "tailscaleControlUrlHint": "任意。Headscale などの自己ホスト型コントロールサーバー用です。",
+  "tailscaleStateDirHint": "任意。Tailscale の状態を保存するディレクトリです。",
+  "tailscaleExitNodeHint": "任意。すべてのトラフィックを転送する tailnet 出口ノードの IP または名前です。"
 }
