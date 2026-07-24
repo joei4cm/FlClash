@@ -218,6 +218,24 @@ Future<VM2<String, String>> _makeRealProfileTask(
       rawConfig['dns']['nameserver'] = [...nameserver, systemDns];
     }
   }
+  // Keep Tailscale control/DERP/MagicDNS out of Clash fake-IP so the real
+  // Tailscale daemon (or curl diagnostics) gets a public IP, not 198.18.x.x.
+  if (data.tailscaleFakeIpFilters.isNotEmpty) {
+    if (rawConfig['dns'] == null) {
+      rawConfig['dns'] = <String, dynamic>{};
+    }
+    final existingFilters = <String>[
+      ...?((rawConfig['dns'] as Map)['fake-ip-filter'] as List?)?.map(
+        (item) => item.toString(),
+      ),
+    ];
+    for (final filter in data.tailscaleFakeIpFilters) {
+      if (!existingFilters.contains(filter)) {
+        existingFilters.add(filter);
+      }
+    }
+    rawConfig['dns']['fake-ip-filter'] = existingFilters;
+  }
   List<String> rules = [];
   if (data.rules.isEmpty) {
     if (rawConfig['rules'] != null) {

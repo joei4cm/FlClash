@@ -703,7 +703,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "保持 Tailscale 流量直连",
     ),
     "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
-      "自动将 tailnet 地址、控制/DERP 服务器以及 Tailscale 服务设为直连，使 FlClash 的 VPN 不会劫持它们。当本设备同时运行 Tailscale 应用/服务时请开启（适用于任意导入的配置）。",
+      "阻止 FlClash 劫持 Tailscale：自动注入 tailnet 地址段、Tailscale 进程以及控制/DERP 域名的直连规则，并把这些域名排除出 fake-IP DNS（解析为真实公网 IP，而不是 198.18.x.x）。当本设备同时运行 Tailscale 应用/服务时请开启——适用于任意导入的配置。",
     ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("控制服务器地址"),
     "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(
@@ -726,7 +726,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "可选。tailnet 出口节点的 IP 或名称，用于转发全部流量。",
     ),
     "tailscaleGuideBypassNote": MessageLookupByLibrary.simpleMessage(
-      "如果本设备同时运行 Tailscale 应用/服务，请开启“保持 Tailscale 流量直连”，以免 FlClash 的 VPN 影响 Tailscale 的入站连接。",
+      "如果本设备同时运行 Tailscale 应用/服务，请开启“保持 Tailscale 流量直连”。这样可避免 FlClash 的 fake-IP DNS 把 controlplane.tailscale.com 解析成 198.18.x.x，导致 `tailscale up` 卡住。",
     ),
     "tailscaleGuideRoutesNote": MessageLookupByLibrary.simpleMessage(
       "要访问某台设备（例如家里的电脑），把它的 Tailscale IP 或 MagicDNS 名称填入某个节点的“路由目标”——FlClash 只会把这部分流量经由 tailnet 转发，因此本设备无需安装 Tailscale 应用。",

@@ -1003,7 +1003,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Keep Tailscale traffic direct",
     ),
     "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
-      "Automatically route tailnet addresses, the control/DERP servers and the Tailscale service directly, so FlClash\'s VPN never captures them. Turn this on when this device also runs the Tailscale app/service (works with any imported profile).",
+      "Stops FlClash from hijacking Tailscale: injects DIRECT rules for the tailnet ranges, the Tailscale process and control/DERP domains, and excludes those domains from fake-IP DNS (so they resolve to real public IPs, not 198.18.x.x). Turn this on when this device also runs the Tailscale app/service — works with any imported profile.",
     ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("Control URL"),
     "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(
@@ -1028,7 +1028,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Optional. IP or name of a tailnet exit node to route all traffic through.",
     ),
     "tailscaleGuideBypassNote": MessageLookupByLibrary.simpleMessage(
-      "If this device also runs the Tailscale app/service, turn on \"Keep Tailscale traffic direct\" so FlClash\'s VPN doesn\'t break inbound Tailscale connections.",
+      "If this device also runs the Tailscale app/service, turn on \"Keep Tailscale traffic direct\". That stops FlClash fake-IP DNS from answering controlplane.tailscale.com as 198.18.x.x and breaking `tailscale up`.",
     ),
     "tailscaleGuideRoutesNote": MessageLookupByLibrary.simpleMessage(
       "To reach a specific device (e.g. your home PC), add its Tailscale IP or MagicDNS name to a node\'s \"Route destinations\" — FlClash sends just that traffic through the tailnet, so you don\'t need the Tailscale app on this device.",

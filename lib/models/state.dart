@@ -348,6 +348,7 @@ abstract class MakeRealProfileState with _$MakeRealProfileState {
     required String defaultUA,
     @Default([]) List<TailscaleProxy> tailscaleProxies,
     @Default([]) List<String> tailscaleRules,
+    @Default([]) List<String> tailscaleFakeIpFilters,
   }) = _MakeRealProfileState;
 }
 

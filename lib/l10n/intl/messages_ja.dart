@@ -815,7 +815,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Tailscale のトラフィックを直結に保つ",
     ),
     "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
-      "tailnet アドレス、コントロール/DERP サーバー、Tailscale サービスを自動的に直結にし、FlClash の VPN が横取りしないようにします。この端末で Tailscale アプリ/サービスも動かす場合はオンにしてください（インポートした任意のプロファイルで有効）。",
+      "FlClash による Tailscale の横取りを防ぎます。tailnet レンジ、Tailscale プロセス、コントロール/DERP ドメインの DIRECT ルールを自動注入し、これらのドメインを fake-IP DNS から除外します（198.18.x.x ではなく本物の公開 IP に解決）。この端末で Tailscale アプリ/サービスも動かす場合はオンにしてください（インポートした任意のプロファイルで有効）。",
     ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("コントロール URL"),
     "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(
@@ -840,7 +840,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "任意。すべてのトラフィックを転送する tailnet 出口ノードの IP または名前です。",
     ),
     "tailscaleGuideBypassNote": MessageLookupByLibrary.simpleMessage(
-      "この端末で Tailscale アプリ/サービスも動かす場合は「Tailscale のトラフィックを直結に保つ」をオンにして、FlClash の VPN が Tailscale の受信接続を妨げないようにします。",
+      "この端末で Tailscale アプリ/サービスも動かす場合は「Tailscale のトラフィックを直結に保つ」をオンにしてください。FlClash の fake-IP DNS が controlplane.tailscale.com を 198.18.x.x として返し、`tailscale up` が止まるのを防ぎます。",
     ),
     "tailscaleGuideRoutesNote": MessageLookupByLibrary.simpleMessage(
       "特定の端末（例: 自宅の PC）に接続するには、その Tailscale IP または MagicDNS 名をノードの「ルーティング先」に追加します。FlClash はその通信だけを tailnet 経由で送るため、この端末に Tailscale アプリは不要です。",
