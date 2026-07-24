@@ -13,6 +13,278 @@ part of '../tailscale.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
+mixin _$TailscaleProps {
+
+ bool get enable; List<TailscaleProxy> get proxies;
+/// Create a copy of TailscaleProps
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$TailscalePropsCopyWith<TailscaleProps> get copyWith => _$TailscalePropsCopyWithImpl<TailscaleProps>(this as TailscaleProps, _$identity);
+
+  /// Serializes this TailscaleProps to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TailscaleProps&&(identical(other.enable, enable) || other.enable == enable)&&const DeepCollectionEquality().equals(other.proxies, proxies));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,enable,const DeepCollectionEquality().hash(proxies));
+
+@override
+String toString() {
+  return 'TailscaleProps(enable: $enable, proxies: $proxies)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $TailscalePropsCopyWith<$Res>  {
+  factory $TailscalePropsCopyWith(TailscaleProps value, $Res Function(TailscaleProps) _then) = _$TailscalePropsCopyWithImpl;
+@useResult
+$Res call({
+ bool enable, List<TailscaleProxy> proxies
+});
+
+
+
+
+}
+/// @nodoc
+class _$TailscalePropsCopyWithImpl<$Res>
+    implements $TailscalePropsCopyWith<$Res> {
+  _$TailscalePropsCopyWithImpl(this._self, this._then);
+
+  final TailscaleProps _self;
+  final $Res Function(TailscaleProps) _then;
+
+/// Create a copy of TailscaleProps
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? enable = null,Object? proxies = null,}) {
+  return _then(_self.copyWith(
+enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
+as bool,proxies: null == proxies ? _self.proxies : proxies // ignore: cast_nullable_to_non_nullable
+as List<TailscaleProxy>,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [TailscaleProps].
+extension TailscalePropsPatterns on TailscaleProps {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _TailscaleProps value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _TailscaleProps() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _TailscaleProps value)  $default,){
+final _that = this;
+switch (_that) {
+case _TailscaleProps():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _TailscaleProps value)?  $default,){
+final _that = this;
+switch (_that) {
+case _TailscaleProps() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  List<TailscaleProxy> proxies)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _TailscaleProps() when $default != null:
+return $default(_that.enable,_that.proxies);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  List<TailscaleProxy> proxies)  $default,) {final _that = this;
+switch (_that) {
+case _TailscaleProps():
+return $default(_that.enable,_that.proxies);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  List<TailscaleProxy> proxies)?  $default,) {final _that = this;
+switch (_that) {
+case _TailscaleProps() when $default != null:
+return $default(_that.enable,_that.proxies);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _TailscaleProps implements TailscaleProps {
+  const _TailscaleProps({this.enable = false, final  List<TailscaleProxy> proxies = const []}): _proxies = proxies;
+  factory _TailscaleProps.fromJson(Map<String, dynamic> json) => _$TailscalePropsFromJson(json);
+
+@override@JsonKey() final  bool enable;
+ final  List<TailscaleProxy> _proxies;
+@override@JsonKey() List<TailscaleProxy> get proxies {
+  if (_proxies is EqualUnmodifiableListView) return _proxies;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_proxies);
+}
+
+
+/// Create a copy of TailscaleProps
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$TailscalePropsCopyWith<_TailscaleProps> get copyWith => __$TailscalePropsCopyWithImpl<_TailscaleProps>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$TailscalePropsToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TailscaleProps&&(identical(other.enable, enable) || other.enable == enable)&&const DeepCollectionEquality().equals(other._proxies, _proxies));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,enable,const DeepCollectionEquality().hash(_proxies));
+
+@override
+String toString() {
+  return 'TailscaleProps(enable: $enable, proxies: $proxies)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$TailscalePropsCopyWith<$Res> implements $TailscalePropsCopyWith<$Res> {
+  factory _$TailscalePropsCopyWith(_TailscaleProps value, $Res Function(_TailscaleProps) _then) = __$TailscalePropsCopyWithImpl;
+@override @useResult
+$Res call({
+ bool enable, List<TailscaleProxy> proxies
+});
+
+
+
+
+}
+/// @nodoc
+class __$TailscalePropsCopyWithImpl<$Res>
+    implements _$TailscalePropsCopyWith<$Res> {
+  __$TailscalePropsCopyWithImpl(this._self, this._then);
+
+  final _TailscaleProps _self;
+  final $Res Function(_TailscaleProps) _then;
+
+/// Create a copy of TailscaleProps
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? enable = null,Object? proxies = null,}) {
+  return _then(_TailscaleProps(
+enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
+as bool,proxies: null == proxies ? _self._proxies : proxies // ignore: cast_nullable_to_non_nullable
+as List<TailscaleProxy>,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$TailscaleProxy {
 
  String get name; String get authKey; String get hostname; String get controlUrl; String get stateDir; bool get ephemeral; bool get udp; bool get acceptRoutes; String get exitNode; bool get exitNodeAllowLanAccess;

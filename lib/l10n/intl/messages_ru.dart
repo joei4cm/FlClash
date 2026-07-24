@@ -1058,6 +1058,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
       "Узлов Tailscale пока нет, нажмите «Добавить», чтобы создать",
     ),
+    "tailscaleEnable": MessageLookupByLibrary.simpleMessage(
+      "Включить Tailscale",
+    ),
+    "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
+      "Добавлять узлы Tailscale как исходящие. При отключении Tailscale перестаёт обрабатывать трафик; обычный трафик не затрагивается.",
+    ),
     "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage(
       "Временный узел",
     ),

@@ -553,6 +553,8 @@
   "entriesCount": "{count} エントリ",
   "tailscale": "Tailscale",
   "tailscaleDesc": "Tailscale アウトバウンドノードを管理",
+  "tailscaleEnable": "Tailscale を有効化",
+  "tailscaleEnableDesc": "Tailscale ノードをアウトバウンドとして注入します。オフにすると Tailscale はトラフィックを処理しなくなりますが、通常のトラフィックには影響しません。",
   "tailscaleTip": "Tailscale ノードはアウトバウンドプロキシとして実行中の設定に統合されます。プロキシページでノードを選択するか、ルールのターゲットに指定すると、トラフィックが tailnet 経由で転送されます。",
   "tailscaleEmptyTip": "Tailscale ノードがありません。追加をタップして作成してください",
   "addTailscaleNode": "Tailscale ノードを追加",

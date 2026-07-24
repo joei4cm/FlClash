@@ -7,6 +7,43 @@ part 'generated/tailscale.g.dart';
 /// The outbound `type` value understood by the mihomo core for Tailscale nodes.
 const tailscaleProxyType = 'tailscale';
 
+const defaultTailscaleProps = TailscaleProps();
+
+/// User configurable Tailscale support.
+///
+/// Tailscale is opt-in: [enable] gates whether the authored [proxies] are
+/// injected into the running configuration. When disabled the generated config
+/// is identical to the plain profile config, so normal traffic keeps flowing
+/// globally just like before.
+@freezed
+abstract class TailscaleProps with _$TailscaleProps {
+  const factory TailscaleProps({
+    @Default(false) bool enable,
+    @Default([]) List<TailscaleProxy> proxies,
+  }) = _TailscaleProps;
+
+  factory TailscaleProps.fromJson(Map<String, Object?> json) =>
+      _$TailscalePropsFromJson(json);
+
+  factory TailscaleProps.safeFromJson(Map<String, Object?>? json) {
+    if (json == null) {
+      return defaultTailscaleProps;
+    }
+    try {
+      return TailscaleProps.fromJson(json);
+    } catch (_) {
+      return defaultTailscaleProps;
+    }
+  }
+}
+
+extension TailscalePropsExt on TailscaleProps {
+  /// The nodes that should actually be merged into the config. Empty when the
+  /// feature is switched off so Tailscale stops handling any traffic.
+  List<TailscaleProxy> get activeProxies =>
+      enable ? proxies : const <TailscaleProxy>[];
+}
+
 /// A user authored Tailscale outbound node.
 ///
 /// The mihomo core (built with the `with_gvisor` tag and without

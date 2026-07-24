@@ -553,6 +553,8 @@
   "entriesCount": "{count} 个条目",
   "tailscale": "Tailscale",
   "tailscaleDesc": "管理 Tailscale 出站节点",
+  "tailscaleEnable": "启用 Tailscale",
+  "tailscaleEnableDesc": "将 Tailscale 节点作为出站注入。关闭后 Tailscale 将不再处理流量，普通流量不受影响。",
   "tailscaleTip": "Tailscale 节点会作为出站代理合并到运行配置中。在代理页面选择该节点，或在规则中将其设为出站目标，即可让流量经由你的 tailnet 转发。",
   "tailscaleEmptyTip": "暂无 Tailscale 节点，点击添加以创建",
   "addTailscaleNode": "添加 Tailscale 节点",

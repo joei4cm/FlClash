@@ -246,7 +246,9 @@ abstract class Config with _$Config {
     @Default(defaultWindowProps) WindowProps windowProps,
     @Default(defaultClashConfig) PatchClashConfig patchClashConfig,
     @Default([]) List<String> excludeSSIDs,
-    @Default([]) List<TailscaleProxy> tailscaleProxies,
+    @JsonKey(fromJson: TailscaleProps.safeFromJson)
+    @Default(defaultTailscaleProps)
+    TailscaleProps tailscaleProps,
   }) = _Config;
 
   factory Config.fromJson(Map<String, Object?> json) => _$ConfigFromJson(json);

@@ -194,8 +194,19 @@ void main() {
   });
 
   group('TailscaleSetting provider', () {
-    test('default is empty list', () {
-      expect(container.read(tailscaleSettingProvider), isEmpty);
+    test('default is disabled with no nodes', () {
+      final value = container.read(tailscaleSettingProvider);
+      expect(value.enable, false);
+      expect(value.proxies, isEmpty);
+    });
+
+    test('setEnable toggles the feature without touching nodes', () {
+      final notifier = container.read(tailscaleSettingProvider.notifier);
+      notifier.addOrUpdate(const TailscaleProxy(name: 'ts-node'));
+      notifier.setEnable(true);
+      final value = container.read(tailscaleSettingProvider);
+      expect(value.enable, true);
+      expect(value.proxies.length, 1);
     });
 
     test('addOrUpdate appends a new node', () {
@@ -203,8 +214,8 @@ void main() {
           .read(tailscaleSettingProvider.notifier)
           .addOrUpdate(const TailscaleProxy(name: 'ts-node'));
       final value = container.read(tailscaleSettingProvider);
-      expect(value.length, 1);
-      expect(value.first.name, 'ts-node');
+      expect(value.proxies.length, 1);
+      expect(value.proxies.first.name, 'ts-node');
     });
 
     test('addOrUpdate replaces a node with the same name', () {
@@ -214,15 +225,15 @@ void main() {
         const TailscaleProxy(name: 'ts-node', authKey: 'new-key'),
       );
       final value = container.read(tailscaleSettingProvider);
-      expect(value.length, 1);
-      expect(value.first.authKey, 'new-key');
+      expect(value.proxies.length, 1);
+      expect(value.proxies.first.authKey, 'new-key');
     });
 
     test('remove deletes a node by name', () {
       final notifier = container.read(tailscaleSettingProvider.notifier);
       notifier.addOrUpdate(const TailscaleProxy(name: 'ts-node'));
       notifier.remove('ts-node');
-      expect(container.read(tailscaleSettingProvider), isEmpty);
+      expect(container.read(tailscaleSettingProvider).proxies, isEmpty);
     });
   });
 
@@ -238,7 +249,8 @@ void main() {
       expect(config.hotKeyActions, isEmpty);
       expect(config.patchClashConfig, const PatchClashConfig());
       expect(config.excludeSSIDs, isEmpty);
-      expect(config.tailscaleProxies, isEmpty);
+      expect(config.tailscaleProps.enable, false);
+      expect(config.tailscaleProps.proxies, isEmpty);
     });
 
     test('reflects updated sub-provider values', () {

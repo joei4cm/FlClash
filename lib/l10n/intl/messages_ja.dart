@@ -815,6 +815,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
       "Tailscale ノードがありません。追加をタップして作成してください",
     ),
+    "tailscaleEnable": MessageLookupByLibrary.simpleMessage("Tailscale を有効化"),
+    "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
+      "Tailscale ノードをアウトバウンドとして注入します。オフにすると Tailscale はトラフィックを処理しなくなりますが、通常のトラフィックには影響しません。",
+    ),
     "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage("エフェメラル"),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("出口ノード"),
     "tailscaleExitNodeAllowLanAccess": MessageLookupByLibrary.simpleMessage(

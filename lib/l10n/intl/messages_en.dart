@@ -1003,6 +1003,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
       "No Tailscale nodes yet, tap add to create one",
     ),
+    "tailscaleEnable": MessageLookupByLibrary.simpleMessage("Enable Tailscale"),
+    "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
+      "Inject Tailscale nodes as outbounds. Turning this off stops Tailscale from handling traffic; normal traffic is unaffected.",
+    ),
     "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage("Ephemeral"),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("Exit node"),
     "tailscaleExitNodeAllowLanAccess": MessageLookupByLibrary.simpleMessage(
