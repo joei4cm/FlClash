@@ -193,6 +193,39 @@ void main() {
     });
   });
 
+  group('TailscaleSetting provider', () {
+    test('default is empty list', () {
+      expect(container.read(tailscaleSettingProvider), isEmpty);
+    });
+
+    test('addOrUpdate appends a new node', () {
+      container
+          .read(tailscaleSettingProvider.notifier)
+          .addOrUpdate(const TailscaleProxy(name: 'ts-node'));
+      final value = container.read(tailscaleSettingProvider);
+      expect(value.length, 1);
+      expect(value.first.name, 'ts-node');
+    });
+
+    test('addOrUpdate replaces a node with the same name', () {
+      final notifier = container.read(tailscaleSettingProvider.notifier);
+      notifier.addOrUpdate(const TailscaleProxy(name: 'ts-node'));
+      notifier.addOrUpdate(
+        const TailscaleProxy(name: 'ts-node', authKey: 'new-key'),
+      );
+      final value = container.read(tailscaleSettingProvider);
+      expect(value.length, 1);
+      expect(value.first.authKey, 'new-key');
+    });
+
+    test('remove deletes a node by name', () {
+      final notifier = container.read(tailscaleSettingProvider.notifier);
+      notifier.addOrUpdate(const TailscaleProxy(name: 'ts-node'));
+      notifier.remove('ts-node');
+      expect(container.read(tailscaleSettingProvider), isEmpty);
+    });
+  });
+
   group('configProvider (composite)', () {
     test('composes all sub-providers with defaults', () {
       final config = container.read(configProvider);
@@ -205,6 +238,7 @@ void main() {
       expect(config.hotKeyActions, isEmpty);
       expect(config.patchClashConfig, const PatchClashConfig());
       expect(config.excludeSSIDs, isEmpty);
+      expect(config.tailscaleProxies, isEmpty);
     });
 
     test('reflects updated sub-provider values', () {
@@ -233,7 +267,7 @@ void main() {
         overrideDns: true,
       );
       final overrides = buildConfigOverrides(config);
-      expect(overrides.length, 12);
+      expect(overrides.length, 13);
 
       final overrideContainer = ProviderContainer(overrides: overrides);
       addTearDown(overrideContainer.dispose);
