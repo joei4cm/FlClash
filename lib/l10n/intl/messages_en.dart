@@ -999,6 +999,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
       "From the Tailscale admin console → Settings → Keys. Required to authenticate the node.",
     ),
+    "tailscaleBypass": MessageLookupByLibrary.simpleMessage(
+      "Keep Tailscale traffic direct",
+    ),
+    "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
+      "Automatically route tailnet addresses, the control/DERP servers and the Tailscale service directly, so FlClash\'s VPN never captures them. Turn this on when this device also runs the Tailscale app/service (works with any imported profile).",
+    ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("Control URL"),
     "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(
       "Optional. Only for self-hosted control servers such as Headscale.",
@@ -1021,6 +1027,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
       "Optional. IP or name of a tailnet exit node to route all traffic through.",
     ),
+    "tailscaleGuideBypassNote": MessageLookupByLibrary.simpleMessage(
+      "If this device also runs the Tailscale app/service, turn on \"Keep Tailscale traffic direct\" so FlClash\'s VPN doesn\'t break inbound Tailscale connections.",
+    ),
+    "tailscaleGuideRoutesNote": MessageLookupByLibrary.simpleMessage(
+      "To reach a specific device (e.g. your home PC), add its Tailscale IP or MagicDNS name to a node\'s \"Route destinations\" — FlClash sends just that traffic through the tailnet, so you don\'t need the Tailscale app on this device.",
+    ),
     "tailscaleGuideStep1": MessageLookupByLibrary.simpleMessage(
       "Get an auth key from the Tailscale admin console (Settings → Keys).",
     ),
@@ -1042,6 +1054,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
       "A node with this name already exists",
+    ),
+    "tailscaleRoutes": MessageLookupByLibrary.simpleMessage(
+      "Route destinations",
+    ),
+    "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
+      "Domains or IPs sent through this node, one per line (e.g. your home PC\'s Tailscale IP or MagicDNS name).",
     ),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage(
       "State directory",

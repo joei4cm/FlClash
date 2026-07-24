@@ -9,6 +9,7 @@ part of '../tailscale.dart';
 _TailscaleProps _$TailscalePropsFromJson(Map<String, dynamic> json) =>
     _TailscaleProps(
       enable: json['enable'] as bool? ?? false,
+      bypassTraffic: json['bypassTraffic'] as bool? ?? false,
       proxies:
           (json['proxies'] as List<dynamic>?)
               ?.map((e) => TailscaleProxy.fromJson(e as Map<String, dynamic>))
@@ -17,7 +18,11 @@ _TailscaleProps _$TailscalePropsFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$TailscalePropsToJson(_TailscaleProps instance) =>
-    <String, dynamic>{'enable': instance.enable, 'proxies': instance.proxies};
+    <String, dynamic>{
+      'enable': instance.enable,
+      'bypassTraffic': instance.bypassTraffic,
+      'proxies': instance.proxies,
+    };
 
 _TailscaleProxy _$TailscaleProxyFromJson(Map<String, dynamic> json) =>
     _TailscaleProxy(
@@ -31,6 +36,11 @@ _TailscaleProxy _$TailscaleProxyFromJson(Map<String, dynamic> json) =>
       acceptRoutes: json['acceptRoutes'] as bool? ?? false,
       exitNode: json['exitNode'] as String? ?? '',
       exitNodeAllowLanAccess: json['exitNodeAllowLanAccess'] as bool? ?? false,
+      routes:
+          (json['routes'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$TailscaleProxyToJson(_TailscaleProxy instance) =>
@@ -45,4 +55,5 @@ Map<String, dynamic> _$TailscaleProxyToJson(_TailscaleProxy instance) =>
       'acceptRoutes': instance.acceptRoutes,
       'exitNode': instance.exitNode,
       'exitNodeAllowLanAccess': instance.exitNodeAllowLanAccess,
+      'routes': instance.routes,
     };

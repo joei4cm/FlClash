@@ -699,6 +699,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
       "来自 Tailscale 管理后台 → 设置 → Keys，用于对节点进行认证。",
     ),
+    "tailscaleBypass": MessageLookupByLibrary.simpleMessage(
+      "保持 Tailscale 流量直连",
+    ),
+    "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
+      "自动将 tailnet 地址、控制/DERP 服务器以及 Tailscale 服务设为直连，使 FlClash 的 VPN 不会劫持它们。当本设备同时运行 Tailscale 应用/服务时请开启（适用于任意导入的配置）。",
+    ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("控制服务器地址"),
     "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(
       "可选。仅用于自建控制服务器（如 Headscale）。",
@@ -718,6 +724,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
       "可选。tailnet 出口节点的 IP 或名称，用于转发全部流量。",
+    ),
+    "tailscaleGuideBypassNote": MessageLookupByLibrary.simpleMessage(
+      "如果本设备同时运行 Tailscale 应用/服务，请开启“保持 Tailscale 流量直连”，以免 FlClash 的 VPN 影响 Tailscale 的入站连接。",
+    ),
+    "tailscaleGuideRoutesNote": MessageLookupByLibrary.simpleMessage(
+      "要访问某台设备（例如家里的电脑），把它的 Tailscale IP 或 MagicDNS 名称填入某个节点的“路由目标”——FlClash 只会把这部分流量经由 tailnet 转发，因此本设备无需安装 Tailscale 应用。",
     ),
     "tailscaleGuideStep1": MessageLookupByLibrary.simpleMessage(
       "在 Tailscale 管理后台（设置 → Keys）获取认证密钥。",
@@ -739,6 +751,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "可选。在 tailnet 中显示的设备名称。",
     ),
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage("已存在同名节点"),
+    "tailscaleRoutes": MessageLookupByLibrary.simpleMessage("路由目标"),
+    "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
+      "经由该节点转发的域名或 IP，每行一个（例如你家用电脑的 Tailscale IP 或 MagicDNS 名称）。",
+    ),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage("状态目录"),
     "tailscaleStateDirHint": MessageLookupByLibrary.simpleMessage(
       "可选。用于持久化 Tailscale 状态的目录。",

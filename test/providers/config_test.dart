@@ -209,6 +209,14 @@ void main() {
       expect(value.proxies.length, 1);
     });
 
+    test('setBypassTraffic toggles bypass independently of enable', () {
+      final notifier = container.read(tailscaleSettingProvider.notifier);
+      notifier.setBypassTraffic(true);
+      final value = container.read(tailscaleSettingProvider);
+      expect(value.bypassTraffic, true);
+      expect(value.enable, false);
+    });
+
     test('addOrUpdate appends a new node', () {
       container
           .read(tailscaleSettingProvider.notifier)

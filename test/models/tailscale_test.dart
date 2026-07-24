@@ -123,12 +123,106 @@ void main() {
     test('round-trips through json', () {
       const props = TailscaleProps(
         enable: true,
-        proxies: [TailscaleProxy(name: 'ts-node', authKey: 'k')],
+        bypassTraffic: true,
+        proxies: [
+          TailscaleProxy(name: 'ts-node', authKey: 'k', routes: ['home-pc']),
+        ],
       );
       final restored = TailscaleProps.fromJson(
         jsonDecode(jsonEncode(props.toJson())) as Map<String, Object?>,
       );
       expect(restored, props);
+    });
+  });
+
+  group('buildTailscaleRouteRule', () {
+    test('uses DOMAIN-SUFFIX for hostnames', () {
+      expect(
+        buildTailscaleRouteRule('home-pc.tailnet.ts.net', 'ts-node'),
+        'DOMAIN-SUFFIX,home-pc.tailnet.ts.net,ts-node',
+      );
+    });
+
+    test('uses IP-CIDR with /32 for bare IPv4', () {
+      expect(
+        buildTailscaleRouteRule('100.64.0.5', 'ts-node'),
+        'IP-CIDR,100.64.0.5/32,ts-node,no-resolve',
+      );
+    });
+
+    test('keeps an explicit IPv4 CIDR', () {
+      expect(
+        buildTailscaleRouteRule('192.168.1.0/24', 'ts-node'),
+        'IP-CIDR,192.168.1.0/24,ts-node,no-resolve',
+      );
+    });
+
+    test('uses IP-CIDR6 with /128 for bare IPv6', () {
+      expect(
+        buildTailscaleRouteRule('fd7a:115c:a1e0::1', 'ts-node'),
+        'IP-CIDR6,fd7a:115c:a1e0::1/128,ts-node,no-resolve',
+      );
+    });
+  });
+
+  group('TailscaleProps.buildInjectedRules', () {
+    test('is empty by default', () {
+      expect(const TailscaleProps().buildInjectedRules(), isEmpty);
+    });
+
+    test('emits bypass rules when bypassTraffic is on', () {
+      const props = TailscaleProps(bypassTraffic: true);
+      expect(props.buildInjectedRules(), tailscaleBypassRules);
+    });
+
+    test('does not emit route rules when disabled', () {
+      const props = TailscaleProps(
+        enable: false,
+        proxies: [
+          TailscaleProxy(name: 'ts-node', routes: ['100.64.0.5']),
+        ],
+      );
+      expect(props.buildInjectedRules(), isEmpty);
+    });
+
+    test('emits route rules for active nodes when enabled', () {
+      const props = TailscaleProps(
+        enable: true,
+        proxies: [
+          TailscaleProxy(
+            name: 'ts-node',
+            routes: ['100.64.0.5', 'home-pc.ts.net'],
+          ),
+        ],
+      );
+      expect(props.buildInjectedRules(), [
+        'IP-CIDR,100.64.0.5/32,ts-node,no-resolve',
+        'DOMAIN-SUFFIX,home-pc.ts.net,ts-node',
+      ]);
+    });
+
+    test('route rules come before bypass rules', () {
+      const props = TailscaleProps(
+        enable: true,
+        bypassTraffic: true,
+        proxies: [
+          TailscaleProxy(name: 'ts-node', routes: ['home-pc.ts.net']),
+        ],
+      );
+      final rules = props.buildInjectedRules();
+      expect(rules.first, 'DOMAIN-SUFFIX,home-pc.ts.net,ts-node');
+      expect(rules.sublist(1), tailscaleBypassRules);
+    });
+
+    test('skips invalid nodes and empty routes', () {
+      const props = TailscaleProps(
+        enable: true,
+        proxies: [
+          TailscaleProxy(name: '', routes: ['ignored']),
+          TailscaleProxy(name: 'ts-node', routes: ['', '  ']),
+        ],
+      );
+      expect(props.buildInjectedRules(), isEmpty);
     });
   });
 

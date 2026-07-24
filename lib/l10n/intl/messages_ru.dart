@@ -1052,6 +1052,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
       "Из консоли администратора Tailscale → Settings → Keys. Требуется для аутентификации узла.",
     ),
+    "tailscaleBypass": MessageLookupByLibrary.simpleMessage(
+      "Оставлять трафик Tailscale напрямую",
+    ),
+    "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
+      "Автоматически направляет адреса tailnet, серверы управления/DERP и службу Tailscale напрямую, чтобы VPN FlClash их не перехватывал. Включите, если на этом устройстве также работает приложение/служба Tailscale (работает с любым импортированным профилем).",
+    ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
       "URL сервера управления",
     ),
@@ -1080,6 +1086,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
       "Необязательно. IP-адрес или имя выходного узла tailnet для маршрутизации всего трафика.",
     ),
+    "tailscaleGuideBypassNote": MessageLookupByLibrary.simpleMessage(
+      "Если на этом устройстве также работает приложение/служба Tailscale, включите «Оставлять трафик Tailscale напрямую», чтобы VPN FlClash не нарушал входящие подключения Tailscale.",
+    ),
+    "tailscaleGuideRoutesNote": MessageLookupByLibrary.simpleMessage(
+      "Чтобы подключиться к конкретному устройству (например, домашнему ПК), добавьте его Tailscale IP или имя MagicDNS в «Пункты назначения маршрута» узла — FlClash направит через tailnet только этот трафик, поэтому приложение Tailscale на этом устройстве не нужно.",
+    ),
     "tailscaleGuideStep1": MessageLookupByLibrary.simpleMessage(
       "Получите ключ аутентификации в консоли администратора Tailscale (Settings → Keys).",
     ),
@@ -1101,6 +1113,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
       "Узел с таким именем уже существует",
+    ),
+    "tailscaleRoutes": MessageLookupByLibrary.simpleMessage(
+      "Пункты назначения маршрута",
+    ),
+    "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
+      "Домены или IP, направляемые через этот узел, по одному в строке (например, Tailscale IP или имя MagicDNS вашего домашнего ПК).",
     ),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage(
       "Каталог состояния",

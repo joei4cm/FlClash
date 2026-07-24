@@ -811,6 +811,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
       "Tailscale 管理コンソール → 設定 → Keys から取得します。ノードの認証に必要です。",
     ),
+    "tailscaleBypass": MessageLookupByLibrary.simpleMessage(
+      "Tailscale のトラフィックを直結に保つ",
+    ),
+    "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
+      "tailnet アドレス、コントロール/DERP サーバー、Tailscale サービスを自動的に直結にし、FlClash の VPN が横取りしないようにします。この端末で Tailscale アプリ/サービスも動かす場合はオンにしてください（インポートした任意のプロファイルで有効）。",
+    ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("コントロール URL"),
     "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(
       "任意。Headscale などの自己ホスト型コントロールサーバー用です。",
@@ -833,6 +839,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
       "任意。すべてのトラフィックを転送する tailnet 出口ノードの IP または名前です。",
     ),
+    "tailscaleGuideBypassNote": MessageLookupByLibrary.simpleMessage(
+      "この端末で Tailscale アプリ/サービスも動かす場合は「Tailscale のトラフィックを直結に保つ」をオンにして、FlClash の VPN が Tailscale の受信接続を妨げないようにします。",
+    ),
+    "tailscaleGuideRoutesNote": MessageLookupByLibrary.simpleMessage(
+      "特定の端末（例: 自宅の PC）に接続するには、その Tailscale IP または MagicDNS 名をノードの「ルーティング先」に追加します。FlClash はその通信だけを tailnet 経由で送るため、この端末に Tailscale アプリは不要です。",
+    ),
     "tailscaleGuideStep1": MessageLookupByLibrary.simpleMessage(
       "Tailscale 管理コンソール（設定 → Keys）で認証キーを取得します。",
     ),
@@ -854,6 +866,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
       "同じ名前のノードが既に存在します",
+    ),
+    "tailscaleRoutes": MessageLookupByLibrary.simpleMessage("ルーティング先"),
+    "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
+      "このノード経由で送るドメインまたは IP（1 行に 1 つ、例: 自宅 PC の Tailscale IP や MagicDNS 名）。",
     ),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage("状態ディレクトリ"),
     "tailscaleStateDirHint": MessageLookupByLibrary.simpleMessage(

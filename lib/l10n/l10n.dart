@@ -4763,6 +4763,66 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Keep Tailscale traffic direct`
+  String get tailscaleBypass {
+    return Intl.message(
+      'Keep Tailscale traffic direct',
+      name: 'tailscaleBypass',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Automatically route tailnet addresses, the control/DERP servers and the Tailscale service directly, so FlClash's VPN never captures them. Turn this on when this device also runs the Tailscale app/service (works with any imported profile).`
+  String get tailscaleBypassDesc {
+    return Intl.message(
+      'Automatically route tailnet addresses, the control/DERP servers and the Tailscale service directly, so FlClash\'s VPN never captures them. Turn this on when this device also runs the Tailscale app/service (works with any imported profile).',
+      name: 'tailscaleBypassDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Route destinations`
+  String get tailscaleRoutes {
+    return Intl.message(
+      'Route destinations',
+      name: 'tailscaleRoutes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Domains or IPs sent through this node, one per line (e.g. your home PC's Tailscale IP or MagicDNS name).`
+  String get tailscaleRoutesHint {
+    return Intl.message(
+      'Domains or IPs sent through this node, one per line (e.g. your home PC\'s Tailscale IP or MagicDNS name).',
+      name: 'tailscaleRoutesHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `To reach a specific device (e.g. your home PC), add its Tailscale IP or MagicDNS name to a node's "Route destinations" — FlClash sends just that traffic through the tailnet, so you don't need the Tailscale app on this device.`
+  String get tailscaleGuideRoutesNote {
+    return Intl.message(
+      'To reach a specific device (e.g. your home PC), add its Tailscale IP or MagicDNS name to a node\'s "Route destinations" — FlClash sends just that traffic through the tailnet, so you don\'t need the Tailscale app on this device.',
+      name: 'tailscaleGuideRoutesNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If this device also runs the Tailscale app/service, turn on "Keep Tailscale traffic direct" so FlClash's VPN doesn't break inbound Tailscale connections.`
+  String get tailscaleGuideBypassNote {
+    return Intl.message(
+      'If this device also runs the Tailscale app/service, turn on "Keep Tailscale traffic direct" so FlClash\'s VPN doesn\'t break inbound Tailscale connections.',
+      name: 'tailscaleGuideBypassNote',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

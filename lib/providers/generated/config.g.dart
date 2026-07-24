@@ -664,7 +664,7 @@ final class TailscaleSettingProvider
   }
 }
 
-String _$tailscaleSettingHash() => r'a36ffdf8ac336b8fba667af5acaa16ca276cd700';
+String _$tailscaleSettingHash() => r'836bbc16c0d58007db66b2a19ce25a278e85a338';
 
 abstract class _$TailscaleSetting extends $Notifier<TailscaleProps> {
   TailscaleProps build();

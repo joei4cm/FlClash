@@ -266,6 +266,11 @@ Future<VM2<String, String>> _makeRealProfileTask(
   if (data.proxyGroups.isNotEmpty) {
     rawConfig['proxy-groups'] = data.proxyGroups;
   }
+  // Tailscale rules are injected at the very top so they take priority over the
+  // imported provider profile, without the user editing rules per profile.
+  if (data.tailscaleRules.isNotEmpty) {
+    rules = [...data.tailscaleRules, ...rules];
+  }
   rawConfig['rules'] = rules;
   final mergedConfig = data.tailscaleProxies.mergeInto(
     Map<String, dynamic>.from(rawConfig),
