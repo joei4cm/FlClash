@@ -19,6 +19,7 @@ const defaultTailscaleProps = TailscaleProps();
 abstract class TailscaleProps with _$TailscaleProps {
   const factory TailscaleProps({
     @Default(false) bool enable,
+    @Default(false) bool bypassTraffic,
     @Default([]) List<TailscaleProxy> proxies,
   }) = _TailscaleProps;
 
@@ -37,11 +38,84 @@ abstract class TailscaleProps with _$TailscaleProps {
   }
 }
 
+/// Rules that keep the host's own Tailscale traffic outside FlClash's tunnel.
+///
+/// This is for the case where the same device *also* runs the real Tailscale
+/// app/daemon (e.g. a home PC that must stay reachable from outside). Sending
+/// the tailnet CGNAT ranges, the control/DERP domains and the `tailscaled`
+/// process straight to `DIRECT` stops FlClash from hijacking that traffic, so
+/// inbound Tailscale connections keep working regardless of which VPN provider
+/// profile is loaded.
+const tailscaleBypassRules = <String>[
+  'IP-CIDR,100.64.0.0/10,DIRECT,no-resolve',
+  'IP-CIDR6,fd7a:115c:a1e0::/48,DIRECT,no-resolve',
+  'PROCESS-NAME,tailscaled,DIRECT',
+  'PROCESS-NAME,tailscaled.exe,DIRECT',
+  'PROCESS-NAME,tailscale,DIRECT',
+  'PROCESS-NAME,tailscale.exe,DIRECT',
+  'DOMAIN-SUFFIX,tailscale.com,DIRECT',
+];
+
+/// Builds a single clash rule that routes [dest] through [target].
+///
+/// The rule type is inferred from [dest]: a CIDR or bare IP becomes an
+/// `IP-CIDR`/`IP-CIDR6` rule (bare IPs get a /32 or /128 mask and `no-resolve`),
+/// anything else is treated as a domain via `DOMAIN-SUFFIX`.
+String buildTailscaleRouteRule(String dest, String target) {
+  final value = dest.trim();
+  final isV6 = value.contains(':');
+  if (value.contains('/')) {
+    final type = isV6 ? 'IP-CIDR6' : 'IP-CIDR';
+    return '$type,$value,$target,no-resolve';
+  }
+  final isV4 = RegExp(r'^\d{1,3}(\.\d{1,3}){3}$').hasMatch(value);
+  if (isV4) {
+    return 'IP-CIDR,$value/32,$target,no-resolve';
+  }
+  if (isV6) {
+    return 'IP-CIDR6,$value/128,$target,no-resolve';
+  }
+  return 'DOMAIN-SUFFIX,$value,$target';
+}
+
 extension TailscalePropsExt on TailscaleProps {
   /// The nodes that should actually be merged into the config. Empty when the
   /// feature is switched off so Tailscale stops handling any traffic.
   List<TailscaleProxy> get activeProxies =>
       enable ? proxies : const <TailscaleProxy>[];
+
+  /// Clash rules that FlClash injects at the top of the running configuration.
+  ///
+  /// These are prepended (highest priority) so they win over whatever the
+  /// imported VPN provider profile does, which means the user does not have to
+  /// hand-edit rules for every profile. Two independent things are produced:
+  ///
+  /// * Per-node [TailscaleProxy.routes] -> a rule sending that destination
+  ///   through the node (only when [enable] is on, since the outbound only
+  ///   exists then). This is how a phone reaches the home host through
+  ///   FlClash's built-in tailnet node without running the Tailscale app.
+  /// * [bypassTraffic] -> the [tailscaleBypassRules] so a device that also runs
+  ///   the Tailscale service keeps that traffic direct.
+  ///
+  /// Route rules come first so a specific destination still wins over the broad
+  /// bypass range even if both options are enabled at once.
+  List<String> buildInjectedRules() {
+    final rules = <String>[];
+    if (enable) {
+      for (final proxy in proxies.where((item) => item.isValid)) {
+        for (final dest in proxy.routes) {
+          if (dest.trim().isEmpty) {
+            continue;
+          }
+          rules.add(buildTailscaleRouteRule(dest, proxy.name.trim()));
+        }
+      }
+    }
+    if (bypassTraffic) {
+      rules.addAll(tailscaleBypassRules);
+    }
+    return rules;
+  }
 }
 
 /// A user authored Tailscale outbound node.
@@ -65,6 +139,7 @@ abstract class TailscaleProxy with _$TailscaleProxy {
     @Default(false) bool acceptRoutes,
     @Default('') String exitNode,
     @Default(false) bool exitNodeAllowLanAccess,
+    @Default([]) List<String> routes,
   }) = _TailscaleProxy;
 
   factory TailscaleProxy.fromJson(Map<String, Object?> json) =>

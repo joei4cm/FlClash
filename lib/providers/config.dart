@@ -116,6 +116,10 @@ class TailscaleSetting extends _$TailscaleSetting with AutoDisposeNotifierMixin 
     update((state) => state.copyWith(enable: enable));
   }
 
+  void setBypassTraffic(bool bypassTraffic) {
+    update((state) => state.copyWith(bypassTraffic: bypassTraffic));
+  }
+
   void addOrUpdate(TailscaleProxy proxy) {
     update((state) {
       final next = List<TailscaleProxy>.from(state.proxies);

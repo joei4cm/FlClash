@@ -108,16 +108,39 @@ class TailscaleView extends ConsumerWidget {
             _buildGuideStep(context, 2, appLocalizations.tailscaleGuideStep2),
             _buildGuideStep(context, 3, appLocalizations.tailscaleGuideStep3),
             _buildGuideStep(context, 4, appLocalizations.tailscaleGuideStep4),
-            const SizedBox(height: 4),
-            Text(
-              appLocalizations.tailscaleTip,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: context.colorScheme.onSurfaceVariant,
-              ),
+            const SizedBox(height: 8),
+            _buildGuideNote(
+              context,
+              Icons.alt_route_outlined,
+              appLocalizations.tailscaleGuideRoutesNote,
+            ),
+            const SizedBox(height: 8),
+            _buildGuideNote(
+              context,
+              Icons.shield_outlined,
+              appLocalizations.tailscaleGuideBypassNote,
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildGuideNote(BuildContext context, IconData icon, String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16, color: context.colorScheme.onSurfaceVariant),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: context.textTheme.bodySmall?.copyWith(
+              color: context.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -176,6 +199,19 @@ class TailscaleView extends ConsumerWidget {
                       ref
                           .read(tailscaleSettingProvider.notifier)
                           .setEnable(value);
+                    },
+                  ),
+                ),
+                ListItem.switchItem(
+                  leading: const Icon(Icons.alt_route_outlined),
+                  title: Text(appLocalizations.tailscaleBypass),
+                  subtitle: Text(appLocalizations.tailscaleBypassDesc),
+                  delegate: SwitchDelegate(
+                    value: props.bypassTraffic,
+                    onChanged: (value) {
+                      ref
+                          .read(tailscaleSettingProvider.notifier)
+                          .setBypassTraffic(value);
                     },
                   ),
                 ),
@@ -252,6 +288,7 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
   late final TextEditingController _controlUrlController;
   late final TextEditingController _stateDirController;
   late final TextEditingController _exitNodeController;
+  late final TextEditingController _routesController;
   late bool _ephemeral;
   late bool _udp;
   late bool _acceptRoutes;
@@ -267,6 +304,7 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
     _controlUrlController = TextEditingController(text: proxy.controlUrl);
     _stateDirController = TextEditingController(text: proxy.stateDir);
     _exitNodeController = TextEditingController(text: proxy.exitNode);
+    _routesController = TextEditingController(text: proxy.routes.join('\n'));
     _ephemeral = proxy.ephemeral;
     _udp = proxy.udp;
     _acceptRoutes = proxy.acceptRoutes;
@@ -281,6 +319,7 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
     _controlUrlController.dispose();
     _stateDirController.dispose();
     _exitNodeController.dispose();
+    _routesController.dispose();
     super.dispose();
   }
 
@@ -288,6 +327,11 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
     if (_formKey.currentState?.validate() != true) {
       return;
     }
+    final routes = _routesController.text
+        .split(RegExp(r'[\n,]'))
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList();
     final proxy = TailscaleProxy(
       name: _nameController.text.trim(),
       authKey: _authKeyController.text.trim(),
@@ -299,6 +343,7 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
       udp: _udp,
       acceptRoutes: _acceptRoutes,
       exitNodeAllowLanAccess: _exitNodeAllowLanAccess,
+      routes: routes,
     );
     Navigator.of(context).pop(proxy);
   }
@@ -307,6 +352,7 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
     required TextEditingController controller,
     required String label,
     String? helperText,
+    int maxLines = 1,
     String? Function(String?)? validator,
   }) {
     return Padding(
@@ -314,11 +360,13 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
       child: TextFormField(
         controller: controller,
         validator: validator,
+        maxLines: maxLines,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           labelText: label,
           helperText: helperText,
           helperMaxLines: 3,
+          alignLabelWithHint: maxLines > 1,
         ),
       ),
     );
@@ -407,6 +455,12 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
                   controller: _exitNodeController,
                   label: appLocalizations.tailscaleExitNode,
                   helperText: appLocalizations.tailscaleExitNodeHint,
+                ),
+                _buildTextField(
+                  controller: _routesController,
+                  label: appLocalizations.tailscaleRoutes,
+                  helperText: appLocalizations.tailscaleRoutesHint,
+                  maxLines: 3,
                 ),
                 _buildSwitch(
                   label: appLocalizations.tailscaleEphemeral,

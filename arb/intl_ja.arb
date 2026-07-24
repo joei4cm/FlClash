@@ -578,5 +578,11 @@
   "tailscaleHostnameHint": "任意。tailnet に表示されるデバイス名です。",
   "tailscaleControlUrlHint": "任意。Headscale などの自己ホスト型コントロールサーバー用です。",
   "tailscaleStateDirHint": "任意。Tailscale の状態を保存するディレクトリです。",
-  "tailscaleExitNodeHint": "任意。すべてのトラフィックを転送する tailnet 出口ノードの IP または名前です。"
+  "tailscaleExitNodeHint": "任意。すべてのトラフィックを転送する tailnet 出口ノードの IP または名前です。",
+  "tailscaleBypass": "Tailscale のトラフィックを直結に保つ",
+  "tailscaleBypassDesc": "tailnet アドレス、コントロール/DERP サーバー、Tailscale サービスを自動的に直結にし、FlClash の VPN が横取りしないようにします。この端末で Tailscale アプリ/サービスも動かす場合はオンにしてください（インポートした任意のプロファイルで有効）。",
+  "tailscaleRoutes": "ルーティング先",
+  "tailscaleRoutesHint": "このノード経由で送るドメインまたは IP（1 行に 1 つ、例: 自宅 PC の Tailscale IP や MagicDNS 名）。",
+  "tailscaleGuideRoutesNote": "特定の端末（例: 自宅の PC）に接続するには、その Tailscale IP または MagicDNS 名をノードの「ルーティング先」に追加します。FlClash はその通信だけを tailnet 経由で送るため、この端末に Tailscale アプリは不要です。",
+  "tailscaleGuideBypassNote": "この端末で Tailscale アプリ/サービスも動かす場合は「Tailscale のトラフィックを直結に保つ」をオンにして、FlClash の VPN が Tailscale の受信接続を妨げないようにします。"
 }

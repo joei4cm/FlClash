@@ -578,5 +578,11 @@
   "tailscaleHostnameHint": "可选。在 tailnet 中显示的设备名称。",
   "tailscaleControlUrlHint": "可选。仅用于自建控制服务器（如 Headscale）。",
   "tailscaleStateDirHint": "可选。用于持久化 Tailscale 状态的目录。",
-  "tailscaleExitNodeHint": "可选。tailnet 出口节点的 IP 或名称，用于转发全部流量。"
+  "tailscaleExitNodeHint": "可选。tailnet 出口节点的 IP 或名称，用于转发全部流量。",
+  "tailscaleBypass": "保持 Tailscale 流量直连",
+  "tailscaleBypassDesc": "自动将 tailnet 地址、控制/DERP 服务器以及 Tailscale 服务设为直连，使 FlClash 的 VPN 不会劫持它们。当本设备同时运行 Tailscale 应用/服务时请开启（适用于任意导入的配置）。",
+  "tailscaleRoutes": "路由目标",
+  "tailscaleRoutesHint": "经由该节点转发的域名或 IP，每行一个（例如你家用电脑的 Tailscale IP 或 MagicDNS 名称）。",
+  "tailscaleGuideRoutesNote": "要访问某台设备（例如家里的电脑），把它的 Tailscale IP 或 MagicDNS 名称填入某个节点的“路由目标”——FlClash 只会把这部分流量经由 tailnet 转发，因此本设备无需安装 Tailscale 应用。",
+  "tailscaleGuideBypassNote": "如果本设备同时运行 Tailscale 应用/服务，请开启“保持 Tailscale 流量直连”，以免 FlClash 的 VPN 影响 Tailscale 的入站连接。"
 }
