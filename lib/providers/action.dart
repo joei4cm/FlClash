@@ -297,6 +297,7 @@ class SetupAction extends _$SetupAction {
     final tailscaleProps = ref.read(tailscaleSettingProvider);
     final tailscaleProxies = tailscaleProps.activeProxies;
     final tailscaleRules = tailscaleProps.buildInjectedRules();
+    final tailscaleFakeIpFilters = tailscaleProps.buildFakeIpFilters();
     final configMap = await coreController.getConfig(profileId);
     String? scriptContent;
     final List<Rule> addedRules = [];
@@ -332,6 +333,7 @@ class SetupAction extends _$SetupAction {
         defaultUA: defaultUA,
         tailscaleProxies: tailscaleProxies,
         tailscaleRules: tailscaleRules,
+        tailscaleFakeIpFilters: tailscaleFakeIpFilters,
       ),
     );
     return res;

@@ -38,6 +38,27 @@ abstract class TailscaleProps with _$TailscaleProps {
   }
 }
 
+/// Domains that must leave FlClash's tunnel alone when the host also runs the
+/// real Tailscale app/daemon (control plane, DERP, MagicDNS).
+const tailscaleBypassDomains = <String>[
+  'tailscale.com',
+  'tailscale.io',
+  'ts.net',
+];
+
+/// Clash `fake-ip-filter` entries so Tailscale domains resolve to real public
+/// IPs instead of Clash's `198.18.0.0/16` fake-IP range.
+///
+/// Without these, `controlplane.tailscale.com` is answered as something like
+/// `198.18.0.12`, the TLS handshake to the control plane hangs mid-certificate,
+/// and `tailscale up` never completes — even if DOMAIN-SUFFIX DIRECT rules are
+/// present. Prefix `+.` matches the domain and all subdomains in mihomo.
+const tailscaleFakeIpFilters = <String>[
+  '+.tailscale.com',
+  '+.tailscale.io',
+  '+.ts.net',
+];
+
 /// Rules that keep the host's own Tailscale traffic outside FlClash's tunnel.
 ///
 /// This is for the case where the same device *also* runs the real Tailscale
@@ -45,7 +66,8 @@ abstract class TailscaleProps with _$TailscaleProps {
 /// the tailnet CGNAT ranges, the control/DERP domains and the `tailscaled`
 /// process straight to `DIRECT` stops FlClash from hijacking that traffic, so
 /// inbound Tailscale connections keep working regardless of which VPN provider
-/// profile is loaded.
+/// profile is loaded. Pair with [tailscaleFakeIpFilters] so DNS is not
+/// poisoned by fake-IP either.
 const tailscaleBypassRules = <String>[
   'IP-CIDR,100.64.0.0/10,DIRECT,no-resolve',
   'IP-CIDR6,fd7a:115c:a1e0::/48,DIRECT,no-resolve',
@@ -54,6 +76,8 @@ const tailscaleBypassRules = <String>[
   'PROCESS-NAME,tailscale,DIRECT',
   'PROCESS-NAME,tailscale.exe,DIRECT',
   'DOMAIN-SUFFIX,tailscale.com,DIRECT',
+  'DOMAIN-SUFFIX,tailscale.io,DIRECT',
+  'DOMAIN-SUFFIX,ts.net,DIRECT',
 ];
 
 /// Builds a single clash rule that routes [dest] through [target].
@@ -116,6 +140,13 @@ extension TailscalePropsExt on TailscaleProps {
     }
     return rules;
   }
+
+  /// Fake-IP filter entries injected when [bypassTraffic] is on.
+  ///
+  /// Empty when the toggle is off so DNS behaviour is unchanged. See
+  /// [tailscaleFakeIpFilters].
+  List<String> buildFakeIpFilters() =>
+      bypassTraffic ? tailscaleFakeIpFilters : const <String>[];
 }
 
 /// A user authored Tailscale outbound node.

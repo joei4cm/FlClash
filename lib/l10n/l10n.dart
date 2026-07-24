@@ -4774,10 +4774,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Automatically route tailnet addresses, the control/DERP servers and the Tailscale service directly, so FlClash's VPN never captures them. Turn this on when this device also runs the Tailscale app/service (works with any imported profile).`
+  /// `Stops FlClash from hijacking Tailscale: injects DIRECT rules for the tailnet ranges, the Tailscale process and control/DERP domains, and excludes those domains from fake-IP DNS (so they resolve to real public IPs, not 198.18.x.x). Turn this on when this device also runs the Tailscale app/service — works with any imported profile.`
   String get tailscaleBypassDesc {
     return Intl.message(
-      'Automatically route tailnet addresses, the control/DERP servers and the Tailscale service directly, so FlClash\'s VPN never captures them. Turn this on when this device also runs the Tailscale app/service (works with any imported profile).',
+      'Stops FlClash from hijacking Tailscale: injects DIRECT rules for the tailnet ranges, the Tailscale process and control/DERP domains, and excludes those domains from fake-IP DNS (so they resolve to real public IPs, not 198.18.x.x). Turn this on when this device also runs the Tailscale app/service — works with any imported profile.',
       name: 'tailscaleBypassDesc',
       desc: '',
       args: [],
@@ -4814,10 +4814,10 @@ class AppLocalizations {
     );
   }
 
-  /// `If this device also runs the Tailscale app/service, turn on "Keep Tailscale traffic direct" so FlClash's VPN doesn't break inbound Tailscale connections.`
+  /// `If this device also runs the Tailscale app/service, turn on "Keep Tailscale traffic direct". That stops FlClash fake-IP DNS from answering controlplane.tailscale.com as 198.18.x.x and breaking 'tailscale up'.`
   String get tailscaleGuideBypassNote {
     return Intl.message(
-      'If this device also runs the Tailscale app/service, turn on "Keep Tailscale traffic direct" so FlClash\'s VPN doesn\'t break inbound Tailscale connections.',
+      'If this device also runs the Tailscale app/service, turn on "Keep Tailscale traffic direct". That stops FlClash fake-IP DNS from answering controlplane.tailscale.com as 198.18.x.x and breaking `tailscale up`.',
       name: 'tailscaleGuideBypassNote',
       desc: '',
       args: [],

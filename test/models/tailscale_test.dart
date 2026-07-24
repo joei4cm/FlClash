@@ -173,6 +173,26 @@ void main() {
     test('emits bypass rules when bypassTraffic is on', () {
       const props = TailscaleProps(bypassTraffic: true);
       expect(props.buildInjectedRules(), tailscaleBypassRules);
+      expect(
+        props.buildInjectedRules(),
+        containsAll([
+          'DOMAIN-SUFFIX,tailscale.com,DIRECT',
+          'DOMAIN-SUFFIX,tailscale.io,DIRECT',
+          'DOMAIN-SUFFIX,ts.net,DIRECT',
+        ]),
+      );
+    });
+
+    test('emits fake-ip filters only when bypassTraffic is on', () {
+      expect(const TailscaleProps().buildFakeIpFilters(), isEmpty);
+      expect(
+        const TailscaleProps(bypassTraffic: true).buildFakeIpFilters(),
+        tailscaleFakeIpFilters,
+      );
+      expect(
+        const TailscaleProps(bypassTraffic: true).buildFakeIpFilters(),
+        containsAll(['+.tailscale.com', '+.tailscale.io', '+.ts.net']),
+      );
     });
 
     test('does not emit route rules when disabled', () {
