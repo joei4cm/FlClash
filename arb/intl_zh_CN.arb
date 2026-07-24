@@ -580,7 +580,7 @@
   "tailscaleStateDirHint": "可选。用于持久化 Tailscale 状态的目录。",
   "tailscaleExitNodeHint": "可选。tailnet 出口节点的 IP 或名称，用于转发全部流量。",
   "tailscaleBypass": "保持 Tailscale 流量直连",
-  "tailscaleBypassDesc": "阻止 FlClash 劫持 Tailscale：自动注入 tailnet 地址段、Tailscale 进程以及控制/DERP 域名的直连规则，并把这些域名排除出 fake-IP DNS（解析为真实公网 IP，而不是 198.18.x.x）。当本设备同时运行 Tailscale 应用/服务时请开启——适用于任意导入的配置。",
+  "tailscaleBypassDesc": "阻止 FlClash 劫持 Tailscale：自动注入 tailnet 地址段、Tailscale 进程以及控制/DERP 域名的直连规则，并自动在 Fake IP Filter 中添加/移除这些域名（解析为真实公网 IP，而不是 198.18.x.x）。当本设备同时运行 Tailscale 应用/服务时请开启——适用于任意导入的配置。",
   "tailscaleRoutes": "路由目标",
   "tailscaleRoutesHint": "经由该节点转发的域名或 IP，每行一个（例如你家用电脑的 Tailscale IP 或 MagicDNS 名称）。",
   "tailscaleGuideRoutesNote": "要访问某台设备（例如家里的电脑），把它的 Tailscale IP 或 MagicDNS 名称填入某个节点的“路由目标”——FlClash 只会把这部分流量经由 tailnet 转发，因此本设备无需安装 Tailscale 应用。",

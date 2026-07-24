@@ -4774,10 +4774,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Stops FlClash from hijacking Tailscale: injects DIRECT rules for the tailnet ranges, the Tailscale process and control/DERP domains, and excludes those domains from fake-IP DNS (so they resolve to real public IPs, not 198.18.x.x). Turn this on when this device also runs the Tailscale app/service — works with any imported profile.`
+  /// `Stops FlClash from hijacking Tailscale: injects DIRECT rules for the tailnet ranges, the Tailscale process and control/DERP domains, and automatically adds/removes those domains from Fake IP Filter (so they resolve to real public IPs, not 198.18.x.x). Turn this on when this device also runs the Tailscale app/service — works with any imported profile.`
   String get tailscaleBypassDesc {
     return Intl.message(
-      'Stops FlClash from hijacking Tailscale: injects DIRECT rules for the tailnet ranges, the Tailscale process and control/DERP domains, and excludes those domains from fake-IP DNS (so they resolve to real public IPs, not 198.18.x.x). Turn this on when this device also runs the Tailscale app/service — works with any imported profile.',
+      'Stops FlClash from hijacking Tailscale: injects DIRECT rules for the tailnet ranges, the Tailscale process and control/DERP domains, and automatically adds/removes those domains from Fake IP Filter (so they resolve to real public IPs, not 198.18.x.x). Turn this on when this device also runs the Tailscale app/service — works with any imported profile.',
       name: 'tailscaleBypassDesc',
       desc: '',
       args: [],

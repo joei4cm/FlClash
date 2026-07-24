@@ -21,6 +21,14 @@ class TailscaleView extends ConsumerWidget {
     return parts.join(' · ');
   }
 
+  void _applyTailscaleConfig(WidgetRef ref) {
+    // Tailscale settings are merged into the running profile; re-apply so the
+    // toggle / routes take effect without requiring a manual VPN restart.
+    ref
+        .read(setupActionProvider.notifier)
+        .applyProfileDebounce(silence: true);
+  }
+
   Future<void> _handleAddOrEdit(
     BuildContext context,
     WidgetRef ref, [
@@ -38,6 +46,7 @@ class TailscaleView extends ConsumerWidget {
       return;
     }
     ref.read(tailscaleSettingProvider.notifier).addOrUpdate(res);
+    _applyTailscaleConfig(ref);
   }
 
   Widget _buildGuideStep(BuildContext context, int number, String text) {
@@ -160,6 +169,7 @@ class TailscaleView extends ConsumerWidget {
       return;
     }
     ref.read(tailscaleSettingProvider.notifier).remove(proxy.name);
+    _applyTailscaleConfig(ref);
   }
 
   @override
@@ -199,6 +209,7 @@ class TailscaleView extends ConsumerWidget {
                       ref
                           .read(tailscaleSettingProvider.notifier)
                           .setEnable(value);
+                      _applyTailscaleConfig(ref);
                     },
                   ),
                 ),
@@ -212,6 +223,7 @@ class TailscaleView extends ConsumerWidget {
                       ref
                           .read(tailscaleSettingProvider.notifier)
                           .setBypassTraffic(value);
+                      _applyTailscaleConfig(ref);
                     },
                   ),
                 ),
