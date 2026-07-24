@@ -996,12 +996,18 @@ class MessageLookup extends MessageLookupByLibrary {
       "Accept routes",
     ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("Auth key"),
+    "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
+      "From the Tailscale admin console → Settings → Keys. Required to authenticate the node.",
+    ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("Control URL"),
+    "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(
+      "Optional. Only for self-hosted control servers such as Headscale.",
+    ),
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
       "Manage Tailscale outbound nodes",
     ),
     "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
-      "No Tailscale nodes yet, tap add to create one",
+      "No Tailscale nodes yet. Add one to route traffic through your tailnet.",
     ),
     "tailscaleEnable": MessageLookupByLibrary.simpleMessage("Enable Tailscale"),
     "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
@@ -1012,12 +1018,36 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleExitNodeAllowLanAccess": MessageLookupByLibrary.simpleMessage(
       "Allow LAN access via exit node",
     ),
+    "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
+      "Optional. IP or name of a tailnet exit node to route all traffic through.",
+    ),
+    "tailscaleGuideStep1": MessageLookupByLibrary.simpleMessage(
+      "Get an auth key from the Tailscale admin console (Settings → Keys).",
+    ),
+    "tailscaleGuideStep2": MessageLookupByLibrary.simpleMessage(
+      "Tap the + button (top right) to add a node and paste the auth key.",
+    ),
+    "tailscaleGuideStep3": MessageLookupByLibrary.simpleMessage(
+      "Turn on \"Enable Tailscale\" above to inject the node as an outbound proxy.",
+    ),
+    "tailscaleGuideStep4": MessageLookupByLibrary.simpleMessage(
+      "On the Proxies page, or from a rule, pick the node to route traffic through your tailnet.",
+    ),
+    "tailscaleGuideTitle": MessageLookupByLibrary.simpleMessage(
+      "How Tailscale works",
+    ),
     "tailscaleHostname": MessageLookupByLibrary.simpleMessage("Hostname"),
+    "tailscaleHostnameHint": MessageLookupByLibrary.simpleMessage(
+      "Optional. Device name shown in your tailnet.",
+    ),
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
       "A node with this name already exists",
     ),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage(
       "State directory",
+    ),
+    "tailscaleStateDirHint": MessageLookupByLibrary.simpleMessage(
+      "Optional. Directory used to persist Tailscale state.",
     ),
     "tailscaleTip": MessageLookupByLibrary.simpleMessage(
       "Tailscale nodes are merged into the running configuration as outbound proxies. Select a node in the proxies page or target it from a rule to route traffic through your tailnet.",

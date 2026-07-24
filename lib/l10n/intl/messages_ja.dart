@@ -808,12 +808,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscale": MessageLookupByLibrary.simpleMessage("Tailscale"),
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("ルートを受け入れる"),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("認証キー"),
+    "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
+      "Tailscale 管理コンソール → 設定 → Keys から取得します。ノードの認証に必要です。",
+    ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("コントロール URL"),
+    "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(
+      "任意。Headscale などの自己ホスト型コントロールサーバー用です。",
+    ),
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
       "Tailscale アウトバウンドノードを管理",
     ),
     "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
-      "Tailscale ノードがありません。追加をタップして作成してください",
+      "Tailscale ノードがありません。追加すると、トラフィックを tailnet 経由で転送できます。",
     ),
     "tailscaleEnable": MessageLookupByLibrary.simpleMessage("Tailscale を有効化"),
     "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
@@ -824,11 +830,35 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleExitNodeAllowLanAccess": MessageLookupByLibrary.simpleMessage(
       "出口ノード経由の LAN アクセスを許可",
     ),
+    "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
+      "任意。すべてのトラフィックを転送する tailnet 出口ノードの IP または名前です。",
+    ),
+    "tailscaleGuideStep1": MessageLookupByLibrary.simpleMessage(
+      "Tailscale 管理コンソール（設定 → Keys）で認証キーを取得します。",
+    ),
+    "tailscaleGuideStep2": MessageLookupByLibrary.simpleMessage(
+      "右上の + ボタンをタップしてノードを追加し、認証キーを貼り付けます。",
+    ),
+    "tailscaleGuideStep3": MessageLookupByLibrary.simpleMessage(
+      "上部の「Tailscale を有効化」をオンにして、ノードをアウトバウンドプロキシとして注入します。",
+    ),
+    "tailscaleGuideStep4": MessageLookupByLibrary.simpleMessage(
+      "プロキシページまたはルールでノードを選択すると、トラフィックが tailnet 経由で転送されます。",
+    ),
+    "tailscaleGuideTitle": MessageLookupByLibrary.simpleMessage(
+      "Tailscale の仕組み",
+    ),
     "tailscaleHostname": MessageLookupByLibrary.simpleMessage("ホスト名"),
+    "tailscaleHostnameHint": MessageLookupByLibrary.simpleMessage(
+      "任意。tailnet に表示されるデバイス名です。",
+    ),
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
       "同じ名前のノードが既に存在します",
     ),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage("状態ディレクトリ"),
+    "tailscaleStateDirHint": MessageLookupByLibrary.simpleMessage(
+      "任意。Tailscale の状態を保存するディレクトリです。",
+    ),
     "tailscaleTip": MessageLookupByLibrary.simpleMessage(
       "Tailscale ノードはアウトバウンドプロキシとして実行中の設定に統合されます。プロキシページでノードを選択するか、ルールのターゲットに指定すると、トラフィックが tailnet 経由で転送されます。",
     ),

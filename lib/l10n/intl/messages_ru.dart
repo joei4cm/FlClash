@@ -1049,14 +1049,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage(
       "Ключ аутентификации",
     ),
+    "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
+      "Из консоли администратора Tailscale → Settings → Keys. Требуется для аутентификации узла.",
+    ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
       "URL сервера управления",
+    ),
+    "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(
+      "Необязательно. Только для собственных серверов управления, например Headscale.",
     ),
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
       "Управление исходящими узлами Tailscale",
     ),
     "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
-      "Узлов Tailscale пока нет, нажмите «Добавить», чтобы создать",
+      "Узлов Tailscale пока нет. Добавьте узел, чтобы направлять трафик через вашу сеть tailnet.",
     ),
     "tailscaleEnable": MessageLookupByLibrary.simpleMessage(
       "Включить Tailscale",
@@ -1071,12 +1077,36 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleExitNodeAllowLanAccess": MessageLookupByLibrary.simpleMessage(
       "Разрешить доступ к локальной сети через выходной узел",
     ),
+    "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
+      "Необязательно. IP-адрес или имя выходного узла tailnet для маршрутизации всего трафика.",
+    ),
+    "tailscaleGuideStep1": MessageLookupByLibrary.simpleMessage(
+      "Получите ключ аутентификации в консоли администратора Tailscale (Settings → Keys).",
+    ),
+    "tailscaleGuideStep2": MessageLookupByLibrary.simpleMessage(
+      "Нажмите кнопку + (вверху справа), чтобы добавить узел, и вставьте ключ аутентификации.",
+    ),
+    "tailscaleGuideStep3": MessageLookupByLibrary.simpleMessage(
+      "Включите «Включить Tailscale» выше, чтобы добавить узел как исходящий прокси.",
+    ),
+    "tailscaleGuideStep4": MessageLookupByLibrary.simpleMessage(
+      "На странице прокси или в правиле выберите узел, чтобы направлять трафик через вашу сеть tailnet.",
+    ),
+    "tailscaleGuideTitle": MessageLookupByLibrary.simpleMessage(
+      "Как работает Tailscale",
+    ),
     "tailscaleHostname": MessageLookupByLibrary.simpleMessage("Имя хоста"),
+    "tailscaleHostnameHint": MessageLookupByLibrary.simpleMessage(
+      "Необязательно. Имя устройства, отображаемое в вашей сети tailnet.",
+    ),
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
       "Узел с таким именем уже существует",
     ),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage(
       "Каталог состояния",
+    ),
+    "tailscaleStateDirHint": MessageLookupByLibrary.simpleMessage(
+      "Необязательно. Каталог для хранения состояния Tailscale.",
     ),
     "tailscaleTip": MessageLookupByLibrary.simpleMessage(
       "Узлы Tailscale добавляются в рабочую конфигурацию как исходящие прокси. Выберите узел на странице прокси или укажите его целью в правиле, чтобы направлять трафик через вашу сеть tailnet.",

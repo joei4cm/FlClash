@@ -556,7 +556,7 @@
   "tailscaleEnable": "Включить Tailscale",
   "tailscaleEnableDesc": "Добавлять узлы Tailscale как исходящие. При отключении Tailscale перестаёт обрабатывать трафик; обычный трафик не затрагивается.",
   "tailscaleTip": "Узлы Tailscale добавляются в рабочую конфигурацию как исходящие прокси. Выберите узел на странице прокси или укажите его целью в правиле, чтобы направлять трафик через вашу сеть tailnet.",
-  "tailscaleEmptyTip": "Узлов Tailscale пока нет, нажмите «Добавить», чтобы создать",
+  "tailscaleEmptyTip": "Узлов Tailscale пока нет. Добавьте узел, чтобы направлять трафик через вашу сеть tailnet.",
   "addTailscaleNode": "Добавить узел Tailscale",
   "editTailscaleNode": "Изменить узел Tailscale",
   "tailscaleAuthKey": "Ключ аутентификации",
@@ -568,5 +568,15 @@
   "tailscaleAcceptRoutes": "Принимать маршруты",
   "tailscaleExitNode": "Выходной узел",
   "tailscaleExitNodeAllowLanAccess": "Разрешить доступ к локальной сети через выходной узел",
-  "tailscaleNameExistsTip": "Узел с таким именем уже существует"
+  "tailscaleNameExistsTip": "Узел с таким именем уже существует",
+  "tailscaleGuideTitle": "Как работает Tailscale",
+  "tailscaleGuideStep1": "Получите ключ аутентификации в консоли администратора Tailscale (Settings → Keys).",
+  "tailscaleGuideStep2": "Нажмите кнопку + (вверху справа), чтобы добавить узел, и вставьте ключ аутентификации.",
+  "tailscaleGuideStep3": "Включите «Включить Tailscale» выше, чтобы добавить узел как исходящий прокси.",
+  "tailscaleGuideStep4": "На странице прокси или в правиле выберите узел, чтобы направлять трафик через вашу сеть tailnet.",
+  "tailscaleAuthKeyHint": "Из консоли администратора Tailscale → Settings → Keys. Требуется для аутентификации узла.",
+  "tailscaleHostnameHint": "Необязательно. Имя устройства, отображаемое в вашей сети tailnet.",
+  "tailscaleControlUrlHint": "Необязательно. Только для собственных серверов управления, например Headscale.",
+  "tailscaleStateDirHint": "Необязательно. Каталог для хранения состояния Tailscale.",
+  "tailscaleExitNodeHint": "Необязательно. IP-адрес или имя выходного узла tailnet для маршрутизации всего трафика."
 }

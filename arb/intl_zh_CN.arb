@@ -556,7 +556,7 @@
   "tailscaleEnable": "启用 Tailscale",
   "tailscaleEnableDesc": "将 Tailscale 节点作为出站注入。关闭后 Tailscale 将不再处理流量，普通流量不受影响。",
   "tailscaleTip": "Tailscale 节点会作为出站代理合并到运行配置中。在代理页面选择该节点，或在规则中将其设为出站目标，即可让流量经由你的 tailnet 转发。",
-  "tailscaleEmptyTip": "暂无 Tailscale 节点，点击添加以创建",
+  "tailscaleEmptyTip": "暂无 Tailscale 节点。添加一个即可让流量经由你的 tailnet 转发。",
   "addTailscaleNode": "添加 Tailscale 节点",
   "editTailscaleNode": "编辑 Tailscale 节点",
   "tailscaleAuthKey": "认证密钥",
@@ -568,5 +568,15 @@
   "tailscaleAcceptRoutes": "接受路由",
   "tailscaleExitNode": "出口节点",
   "tailscaleExitNodeAllowLanAccess": "允许通过出口节点访问局域网",
-  "tailscaleNameExistsTip": "已存在同名节点"
+  "tailscaleNameExistsTip": "已存在同名节点",
+  "tailscaleGuideTitle": "Tailscale 使用说明",
+  "tailscaleGuideStep1": "在 Tailscale 管理后台（设置 → Keys）获取认证密钥。",
+  "tailscaleGuideStep2": "点击右上角的 + 按钮添加节点，并粘贴认证密钥。",
+  "tailscaleGuideStep3": "打开上方的“启用 Tailscale”，将节点作为出站代理注入。",
+  "tailscaleGuideStep4": "在代理页面或规则中选择该节点，即可让流量经由你的 tailnet 转发。",
+  "tailscaleAuthKeyHint": "来自 Tailscale 管理后台 → 设置 → Keys，用于对节点进行认证。",
+  "tailscaleHostnameHint": "可选。在 tailnet 中显示的设备名称。",
+  "tailscaleControlUrlHint": "可选。仅用于自建控制服务器（如 Headscale）。",
+  "tailscaleStateDirHint": "可选。用于持久化 Tailscale 状态的目录。",
+  "tailscaleExitNodeHint": "可选。tailnet 出口节点的 IP 或名称，用于转发全部流量。"
 }

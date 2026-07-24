@@ -4539,10 +4539,10 @@ class AppLocalizations {
     );
   }
 
-  /// `No Tailscale nodes yet, tap add to create one`
+  /// `No Tailscale nodes yet. Add one to route traffic through your tailnet.`
   String get tailscaleEmptyTip {
     return Intl.message(
-      'No Tailscale nodes yet, tap add to create one',
+      'No Tailscale nodes yet. Add one to route traffic through your tailnet.',
       name: 'tailscaleEmptyTip',
       desc: '',
       args: [],
@@ -4659,6 +4659,106 @@ class AppLocalizations {
     return Intl.message(
       'A node with this name already exists',
       name: 'tailscaleNameExistsTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How Tailscale works`
+  String get tailscaleGuideTitle {
+    return Intl.message(
+      'How Tailscale works',
+      name: 'tailscaleGuideTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get an auth key from the Tailscale admin console (Settings → Keys).`
+  String get tailscaleGuideStep1 {
+    return Intl.message(
+      'Get an auth key from the Tailscale admin console (Settings → Keys).',
+      name: 'tailscaleGuideStep1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap the + button (top right) to add a node and paste the auth key.`
+  String get tailscaleGuideStep2 {
+    return Intl.message(
+      'Tap the + button (top right) to add a node and paste the auth key.',
+      name: 'tailscaleGuideStep2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Turn on "Enable Tailscale" above to inject the node as an outbound proxy.`
+  String get tailscaleGuideStep3 {
+    return Intl.message(
+      'Turn on "Enable Tailscale" above to inject the node as an outbound proxy.',
+      name: 'tailscaleGuideStep3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `On the Proxies page, or from a rule, pick the node to route traffic through your tailnet.`
+  String get tailscaleGuideStep4 {
+    return Intl.message(
+      'On the Proxies page, or from a rule, pick the node to route traffic through your tailnet.',
+      name: 'tailscaleGuideStep4',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `From the Tailscale admin console → Settings → Keys. Required to authenticate the node.`
+  String get tailscaleAuthKeyHint {
+    return Intl.message(
+      'From the Tailscale admin console → Settings → Keys. Required to authenticate the node.',
+      name: 'tailscaleAuthKeyHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Optional. Device name shown in your tailnet.`
+  String get tailscaleHostnameHint {
+    return Intl.message(
+      'Optional. Device name shown in your tailnet.',
+      name: 'tailscaleHostnameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Optional. Only for self-hosted control servers such as Headscale.`
+  String get tailscaleControlUrlHint {
+    return Intl.message(
+      'Optional. Only for self-hosted control servers such as Headscale.',
+      name: 'tailscaleControlUrlHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Optional. Directory used to persist Tailscale state.`
+  String get tailscaleStateDirHint {
+    return Intl.message(
+      'Optional. Directory used to persist Tailscale state.',
+      name: 'tailscaleStateDirHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Optional. IP or name of a tailnet exit node to route all traffic through.`
+  String get tailscaleExitNodeHint {
+    return Intl.message(
+      'Optional. IP or name of a tailnet exit node to route all traffic through.',
+      name: 'tailscaleExitNodeHint',
       desc: '',
       args: [],
     );
