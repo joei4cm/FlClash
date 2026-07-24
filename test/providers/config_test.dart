@@ -217,6 +217,38 @@ void main() {
       expect(value.enable, false);
     });
 
+    test('setBypassTraffic adds and removes DNS fake-ip filters', () {
+      final notifier = container.read(tailscaleSettingProvider.notifier);
+      notifier.setBypassTraffic(true);
+      expect(
+        container.read(patchClashConfigProvider).dns.fakeIpFilter,
+        containsAll(tailscaleFakeIpFilters),
+      );
+
+      notifier.setBypassTraffic(false);
+      final filters = container.read(patchClashConfigProvider).dns.fakeIpFilter;
+      for (final filter in tailscaleFakeIpFilters) {
+        expect(filters, isNot(contains(filter)));
+      }
+    });
+
+    test('setBypassTraffic preserves unrelated fake-ip filters', () {
+      container
+          .read(patchClashConfigProvider.notifier)
+          .update(
+            (state) => state.copyWith.dns(
+              fakeIpFilter: ['*.lan', 'custom.example'],
+            ),
+          );
+      final notifier = container.read(tailscaleSettingProvider.notifier);
+      notifier.setBypassTraffic(true);
+      notifier.setBypassTraffic(false);
+      expect(
+        container.read(patchClashConfigProvider).dns.fakeIpFilter,
+        ['*.lan', 'custom.example'],
+      );
+    });
+
     test('addOrUpdate appends a new node', () {
       container
           .read(tailscaleSettingProvider.notifier)

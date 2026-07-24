@@ -815,7 +815,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Tailscale のトラフィックを直結に保つ",
     ),
     "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
-      "FlClash による Tailscale の横取りを防ぎます。tailnet レンジ、Tailscale プロセス、コントロール/DERP ドメインの DIRECT ルールを自動注入し、これらのドメインを fake-IP DNS から除外します（198.18.x.x ではなく本物の公開 IP に解決）。この端末で Tailscale アプリ/サービスも動かす場合はオンにしてください（インポートした任意のプロファイルで有効）。",
+      "FlClash による Tailscale の横取りを防ぎます。tailnet レンジ、Tailscale プロセス、コントロール/DERP ドメインの DIRECT ルールを自動注入し、これらのドメインを Fake IP Filter に自動で追加/削除します（198.18.x.x ではなく本物の公開 IP に解決）。この端末で Tailscale アプリ/サービスも動かす場合はオンにしてください（インポートした任意のプロファイルで有効）。",
     ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("コントロール URL"),
     "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(

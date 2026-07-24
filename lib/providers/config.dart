@@ -118,6 +118,22 @@ class TailscaleSetting extends _$TailscaleSetting with AutoDisposeNotifierMixin 
 
   void setBypassTraffic(bool bypassTraffic) {
     update((state) => state.copyWith(bypassTraffic: bypassTraffic));
+    // Keep Config → DNS → Fake IP Filter in sync with the toggle so the user
+    // can see the entries appear/disappear, and so override-DNS mode also
+    // picks them up without a separate hand edit.
+    ref.read(patchClashConfigProvider.notifier).update((state) {
+      final filters = List<String>.from(state.dns.fakeIpFilter);
+      if (bypassTraffic) {
+        for (final filter in tailscaleFakeIpFilters) {
+          if (!filters.contains(filter)) {
+            filters.add(filter);
+          }
+        }
+      } else {
+        filters.removeWhere(tailscaleFakeIpFilters.contains);
+      }
+      return state.copyWith.dns(fakeIpFilter: filters);
+    });
   }
 
   void addOrUpdate(TailscaleProxy proxy) {

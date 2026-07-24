@@ -1003,7 +1003,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Keep Tailscale traffic direct",
     ),
     "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
-      "Stops FlClash from hijacking Tailscale: injects DIRECT rules for the tailnet ranges, the Tailscale process and control/DERP domains, and excludes those domains from fake-IP DNS (so they resolve to real public IPs, not 198.18.x.x). Turn this on when this device also runs the Tailscale app/service — works with any imported profile.",
+      "Stops FlClash from hijacking Tailscale: injects DIRECT rules for the tailnet ranges, the Tailscale process and control/DERP domains, and automatically adds/removes those domains from Fake IP Filter (so they resolve to real public IPs, not 198.18.x.x). Turn this on when this device also runs the Tailscale app/service — works with any imported profile.",
     ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("Control URL"),
     "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(

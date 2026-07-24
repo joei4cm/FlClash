@@ -703,7 +703,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "保持 Tailscale 流量直连",
     ),
     "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
-      "阻止 FlClash 劫持 Tailscale：自动注入 tailnet 地址段、Tailscale 进程以及控制/DERP 域名的直连规则，并把这些域名排除出 fake-IP DNS（解析为真实公网 IP，而不是 198.18.x.x）。当本设备同时运行 Tailscale 应用/服务时请开启——适用于任意导入的配置。",
+      "阻止 FlClash 劫持 Tailscale：自动注入 tailnet 地址段、Tailscale 进程以及控制/DERP 域名的直连规则，并自动在 Fake IP Filter 中添加/移除这些域名（解析为真实公网 IP，而不是 198.18.x.x）。当本设备同时运行 Tailscale 应用/服务时请开启——适用于任意导入的配置。",
     ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("控制服务器地址"),
     "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(

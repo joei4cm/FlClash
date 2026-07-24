@@ -1056,7 +1056,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Оставлять трафик Tailscale напрямую",
     ),
     "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
-      "Не даёт FlClash перехватывать Tailscale: автоматически добавляет правила DIRECT для диапазонов tailnet, процесса Tailscale и доменов управления/DERP, а также исключает эти домены из fake-IP DNS (они резолвятся в настоящие публичные IP, а не 198.18.x.x). Включите, если на этом устройстве также работает приложение/служба Tailscale — работает с любым импортированным профилем.",
+      "Не даёт FlClash перехватывать Tailscale: автоматически добавляет правила DIRECT для диапазонов tailnet, процесса Tailscale и доменов управления/DERP, а также автоматически добавляет/удаляет эти домены в Fake IP Filter (они резолвятся в настоящие публичные IP, а не 198.18.x.x). Включите, если на этом устройстве также работает приложение/служба Tailscale — работает с любым импортированным профилем.",
     ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
       "URL сервера управления",
