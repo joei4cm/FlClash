@@ -291,6 +291,8 @@ void main() {
       expect(config.excludeSSIDs, isEmpty);
       expect(config.tailscaleProps.enable, false);
       expect(config.tailscaleProps.proxies, isEmpty);
+      expect(config.geoIdentityProps.enable, false);
+      expect(config.geoIdentityProps.useUsAcceptLanguage, true);
     });
 
     test('reflects updated sub-provider values', () {
@@ -311,15 +313,35 @@ void main() {
     });
   });
 
+  group('GeoIdentitySetting provider', () {
+    test('default is disabled with US Accept-Language on', () {
+      final value = container.read(geoIdentitySettingProvider);
+      expect(value.enable, false);
+      expect(value.useUsAcceptLanguage, true);
+      expect(value.previousOsTimezone, isNull);
+      expect(value.appliedOsTimezone, isNull);
+    });
+
+    test('setEnable and setUseUsAcceptLanguage update independently', () {
+      final notifier = container.read(geoIdentitySettingProvider.notifier);
+      notifier.setEnable(true);
+      notifier.setUseUsAcceptLanguage(false);
+      final value = container.read(geoIdentitySettingProvider);
+      expect(value.enable, true);
+      expect(value.useUsAcceptLanguage, false);
+    });
+  });
+
   group('buildConfigOverrides', () {
     test('produces correct overrides', () {
       const config = Config(
         themeProps: ThemeProps(),
         currentProfileId: 7,
         overrideDns: true,
+        geoIdentityProps: GeoIdentityProps(enable: true),
       );
       final overrides = buildConfigOverrides(config);
-      expect(overrides.length, 13);
+      expect(overrides.length, 14);
 
       final overrideContainer = ProviderContainer(overrides: overrides);
       addTearDown(overrideContainer.dispose);
@@ -334,6 +356,11 @@ void main() {
       expect(
         overrideContainer.read(appSettingProvider).onlyStatisticsProxy,
         false,
+      );
+      expect(overrideContainer.read(geoIdentitySettingProvider).enable, true);
+      expect(
+        overrideContainer.read(geoIdentitySettingProvider).useUsAcceptLanguage,
+        true,
       );
     });
   });
