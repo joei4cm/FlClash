@@ -69,9 +69,13 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m23(count) => "${count} 項目が選択されています";
 
-  static String m24(label) => "${label}はURLである必要があります";
+  static String m24(count) => "ルーティング先 ${count} 件";
 
-  static String m25(count) => "${count}年前";
+  static String m25(count) => "${count} 個のノードが有効です。ノード横のピンで接続をテストできます。";
+
+  static String m26(label) => "${label}はURLである必要があります";
+
+  static String m27(count) => "${count}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -807,6 +811,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "tabAnimationDesc": MessageLookupByLibrary.simpleMessage("モバイル表示でのみ有効"),
     "tailscale": MessageLookupByLibrary.simpleMessage("Tailscale"),
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("ルートを受け入れる"),
+    "tailscaleAndroidStep1": MessageLookupByLibrary.simpleMessage(
+      "Tailscale 管理コンソール（設定 → Keys）で認証キーを取得します。",
+    ),
+    "tailscaleAndroidStep2": MessageLookupByLibrary.simpleMessage(
+      "ノードを追加し、認証キーを貼り付け、ルーティング先に自宅デバイスの IP または MagicDNS 名を入れます。",
+    ),
+    "tailscaleAndroidStep3": MessageLookupByLibrary.simpleMessage(
+      "「Tailscale を有効化」をオンにします。Tailscale アプリも入れている場合以外は「直結に保つ」はオフのままで構いません。",
+    ),
+    "tailscaleAndroidStep4": MessageLookupByLibrary.simpleMessage(
+      "FlClash VPN を開始し、ノード横のピンボタンで接続を確認します。",
+    ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("認証キー"),
     "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
       "Tailscale 管理コンソール → 設定 → Keys から取得します。ノードの認証に必要です。",
@@ -814,8 +830,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleBypass": MessageLookupByLibrary.simpleMessage(
       "Tailscale のトラフィックを直結に保つ",
     ),
+    "tailscaleBypassAndroidHint": MessageLookupByLibrary.simpleMessage(
+      "Android では通常オフのまま。この端末にも Tailscale アプリがある場合だけオンにしてください。",
+    ),
     "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
       "FlClash による Tailscale の横取りを防ぎます。tailnet レンジ、Tailscale プロセス、コントロール/DERP ドメインの DIRECT ルールを自動注入し、これらのドメインを Fake IP Filter に自動で追加/削除します（198.18.x.x ではなく本物の公開 IP に解決）。この端末で Tailscale アプリ/サービスも動かす場合はオンにしてください（インポートした任意のプロファイルで有効）。",
+    ),
+    "tailscaleBypassRecommended": MessageLookupByLibrary.simpleMessage(
+      "Tailscale アプリ/サービスが入っているデスクトップでは推奨。DIRECT ルールと Fake IP Filter を自動管理します。",
     ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("コントロール URL"),
     "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(
@@ -823,6 +845,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
       "Tailscale アウトバウンドノードを管理",
+    ),
+    "tailscaleDesktopStep1": MessageLookupByLibrary.simpleMessage(
+      "この PC で Tailscale アプリ/サービスも動かす場合は「Tailscale のトラフィックを直結に保つ」をオンにします。",
+    ),
+    "tailscaleDesktopStep2": MessageLookupByLibrary.simpleMessage(
+      "任意: 認証キー付きの内蔵 Tailscale ノードを追加し、選択した通信を FlClash から tailnet 経由にします。",
+    ),
+    "tailscaleDesktopStep3": MessageLookupByLibrary.simpleMessage(
+      "ルーティング先に宛先（自宅 IP / MagicDNS）を入れ、「Tailscale を有効化」をオンにします。",
+    ),
+    "tailscaleDesktopStep4": MessageLookupByLibrary.simpleMessage(
+      "FlClash を開始し、ノード横のピンボタンで接続が安定しているか確認します。",
     ),
     "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
       "Tailscale ノードがありません。追加すると、トラフィックを tailnet 経由で転送できます。",
@@ -867,13 +901,49 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
       "同じ名前のノードが既に存在します",
     ),
+    "tailscaleNoRoutes": MessageLookupByLibrary.simpleMessage("ルーティング先なし"),
+    "tailscaleNodesTitle": MessageLookupByLibrary.simpleMessage("ノード"),
+    "tailscaleNotTested": MessageLookupByLibrary.simpleMessage("未テスト"),
     "tailscaleRoutes": MessageLookupByLibrary.simpleMessage("ルーティング先"),
+    "tailscaleRoutesCount": m24,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "このノード経由で送るドメインまたは IP（1 行に 1 つ、例: 自宅 PC の Tailscale IP や MagicDNS 名）。",
+    ),
+    "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
+      "VPN は FlClash だけにしてください。Tailscale アプリの VPN と同時には使えません（Android は VPN を 1 つだけ許可）。下で内蔵 Tailscale ノードを追加し、自宅デバイスをルーティング先に入れてください。",
+    ),
+    "tailscaleScenarioAndroidTitle": MessageLookupByLibrary.simpleMessage(
+      "Android クライアント設定",
+    ),
+    "tailscaleScenarioDesktopBody": MessageLookupByLibrary.simpleMessage(
+      "FlClash と正式な Tailscale アプリを同時に使えます。「Tailscale のトラフィックを直結に保つ」をオンにして、FlClash が制御プレーンや fake-IP DNS を横取りしないようにします。",
+    ),
+    "tailscaleScenarioDesktopTitle": MessageLookupByLibrary.simpleMessage(
+      "デスクトップ / ホスト設定",
     ),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage("状態ディレクトリ"),
     "tailscaleStateDirHint": MessageLookupByLibrary.simpleMessage(
       "任意。Tailscale の状態を保存するディレクトリです。",
+    ),
+    "tailscaleStatusDisabled": MessageLookupByLibrary.simpleMessage(
+      "Tailscale はオフです — ノードは実行中の設定に注入されません。",
+    ),
+    "tailscaleStatusNeedStart": MessageLookupByLibrary.simpleMessage(
+      "ノードの準備ができました。FlClash VPN を開始してからピンでテストしてください。",
+    ),
+    "tailscaleStatusNoNodes": MessageLookupByLibrary.simpleMessage(
+      "有効ですが、ノードがありません。まずノードを追加してください。",
+    ),
+    "tailscaleStatusReady": m25,
+    "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
+      "テストする前に「Tailscale を有効化」をオンにしてください。",
+    ),
+    "tailscaleTestNeedStart": MessageLookupByLibrary.simpleMessage(
+      "接続をテストする前に FlClash VPN を開始してください。",
+    ),
+    "tailscaleTestNode": MessageLookupByLibrary.simpleMessage("接続をテスト"),
+    "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
+      "ノード横のピンボタンで、Tailscale アウトバウンドが発信できるか確認できます。遅延が表示されれば接続は正常です。Timeout の場合は認証キー、「有効化」、FlClash VPN の起動を確認してください。",
     ),
     "tailscaleTip": MessageLookupByLibrary.simpleMessage(
       "Tailscale ノードはアウトバウンドプロキシとして実行中の設定に統合されます。プロキシページでノードを選択するか、ルールのターゲットに指定すると、トラフィックが tailnet 経由で転送されます。",
@@ -915,7 +985,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage("URL経由でプロファイルを取得"),
-    "urlTip": m24,
+    "urlTip": m26,
     "useHosts": MessageLookupByLibrary.simpleMessage("ホストを使用"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("システムホストを使用"),
     "userAgent": MessageLookupByLibrary.simpleMessage("ユーザーエージェント"),
@@ -931,7 +1001,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnTip": MessageLookupByLibrary.simpleMessage("変更はVPN再起動後に有効"),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV設定"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("ホワイトリストモード"),
-    "yearsAgo": m25,
+    "yearsAgo": m27,
     "zh_CN": MessageLookupByLibrary.simpleMessage("簡体字中国語"),
   };
 }
