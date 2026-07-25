@@ -158,6 +158,23 @@ class TailscaleSetting extends _$TailscaleSetting with AutoDisposeNotifierMixin 
   }
 }
 
+@riverpod
+class GeoIdentitySetting extends _$GeoIdentitySetting
+    with AutoDisposeNotifierMixin {
+  @override
+  GeoIdentityProps build() {
+    return const GeoIdentityProps();
+  }
+
+  void setEnable(bool enable) {
+    update((state) => state.copyWith(enable: enable));
+  }
+
+  void setUseUsAcceptLanguage(bool useUsAcceptLanguage) {
+    update((state) => state.copyWith(useUsAcceptLanguage: useUsAcceptLanguage));
+  }
+}
+
 @Riverpod(name: 'configProvider')
 Config _config(Ref ref) {
   final appSettingProps = ref.watch(appSettingProvider);
@@ -173,6 +190,7 @@ Config _config(Ref ref) {
   final patchClashConfig = ref.watch(patchClashConfigProvider);
   final excludeSSIDs = ref.watch(excludeSSIDsProvider);
   final tailscaleProps = ref.watch(tailscaleSettingProvider);
+  final geoIdentityProps = ref.watch(geoIdentitySettingProvider);
   return Config(
     appSettingProps: appSettingProps,
     windowProps: windowProps,
@@ -187,6 +205,7 @@ Config _config(Ref ref) {
     patchClashConfig: patchClashConfig,
     excludeSSIDs: excludeSSIDs,
     tailscaleProps: tailscaleProps,
+    geoIdentityProps: geoIdentityProps,
   );
 }
 
@@ -212,6 +231,9 @@ List<Override> buildConfigOverrides(Config config) {
     excludeSSIDsProvider.overrideWithBuild((_, _) => config.excludeSSIDs),
     tailscaleSettingProvider.overrideWithBuild(
       (_, _) => config.tailscaleProps,
+    ),
+    geoIdentitySettingProvider.overrideWithBuild(
+      (_, _) => config.geoIdentityProps,
     ),
   ];
 }

@@ -1,18 +1,60 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class GeoIdentityView extends StatelessWidget {
+class GeoIdentityView extends ConsumerStatefulWidget {
   const GeoIdentityView({super.key});
+
+  @override
+  ConsumerState<GeoIdentityView> createState() => _GeoIdentityViewState();
+}
+
+class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
+  bool _checking = false;
+  String? _checkError;
+  GeoIdentityNetworkReport? _report;
+  CancelToken? _cancelToken;
+
+  @override
+  void dispose() {
+    _cancelToken?.cancel();
+    super.dispose();
+  }
 
   GeoIdentitySnapshot _snapshot() {
     return GeoIdentitySnapshot.fromClock(
       now: DateTime.now(),
       systemLocale: Platform.localeName,
     );
+  }
+
+  GeoIdentityCaptureMode _captureMode({
+    required bool isStart,
+    required bool systemProxy,
+    required bool tunEnable,
+    required bool vpnEnable,
+  }) {
+    if (!isStart) {
+      return GeoIdentityCaptureMode.inactive;
+    }
+    final virtualNic = system.isAndroid ? vpnEnable : tunEnable;
+    if (virtualNic && systemProxy) {
+      return GeoIdentityCaptureMode.both;
+    }
+    if (virtualNic) {
+      return GeoIdentityCaptureMode.virtualNic;
+    }
+    if (systemProxy) {
+      return GeoIdentityCaptureMode.systemProxy;
+    }
+    return GeoIdentityCaptureMode.mixedPortOnly;
   }
 
   Color _riskColor(BuildContext context, GeoIdentityRiskLevel level) {
@@ -50,11 +92,94 @@ class GeoIdentityView extends StatelessWidget {
     };
   }
 
+  String _captureTitle(BuildContext context, GeoIdentityCaptureMode mode) {
+    final l10n = context.appLocalizations;
+    return switch (mode) {
+      GeoIdentityCaptureMode.inactive => l10n.geoIdentityCaptureInactive,
+      GeoIdentityCaptureMode.mixedPortOnly =>
+        l10n.geoIdentityCaptureMixedPortOnly,
+      GeoIdentityCaptureMode.systemProxy => l10n.geoIdentityCaptureSystemProxy,
+      GeoIdentityCaptureMode.virtualNic => l10n.geoIdentityCaptureVirtualNic,
+      GeoIdentityCaptureMode.both => l10n.geoIdentityCaptureBoth,
+    };
+  }
+
+  String _captureBody(BuildContext context, GeoIdentityCaptureMode mode) {
+    final l10n = context.appLocalizations;
+    return switch (mode) {
+      GeoIdentityCaptureMode.inactive => l10n.geoIdentityCaptureInactiveDesc,
+      GeoIdentityCaptureMode.mixedPortOnly =>
+        l10n.geoIdentityCaptureMixedPortOnlyDesc,
+      GeoIdentityCaptureMode.systemProxy =>
+        l10n.geoIdentityCaptureSystemProxyDesc,
+      GeoIdentityCaptureMode.virtualNic =>
+        l10n.geoIdentityCaptureVirtualNicDesc,
+      GeoIdentityCaptureMode.both => l10n.geoIdentityCaptureBothDesc,
+    };
+  }
+
+  Future<void> _handleVerify() async {
+    final l10n = context.appLocalizations;
+    if (!ref.read(isStartProvider)) {
+      context.showNotifier(l10n.geoIdentityNeedStart);
+      return;
+    }
+    final props = ref.read(geoIdentitySettingProvider);
+    _cancelToken?.cancel();
+    _cancelToken = CancelToken();
+    setState(() {
+      _checking = true;
+      _checkError = null;
+    });
+    final result = await request.checkGeoIdentity(
+      acceptLanguage: props.useUsAcceptLanguage
+          ? geoIdentityUsAcceptLanguage
+          : null,
+      cancelToken: _cancelToken,
+    );
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _checking = false;
+      if (result.isError) {
+        _checkError = result.message.isNotEmpty
+            ? result.message
+            : l10n.geoIdentityCheckFailed;
+        _report = null;
+      } else {
+        _report = result.data;
+        if (_report == null) {
+          _checkError = l10n.geoIdentityCheckFailed;
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.appLocalizations;
     final snapshot = _snapshot();
     final riskColor = _riskColor(context, snapshot.riskLevel);
+    final props = ref.watch(geoIdentitySettingProvider);
+    final isStart = ref.watch(isStartProvider);
+    final systemProxy = ref.watch(
+      networkSettingProvider.select((state) => state.systemProxy),
+    );
+    final tunEnable = ref.watch(
+      patchClashConfigProvider.select((state) => state.tun.enable),
+    );
+    final vpnEnable = ref.watch(
+      vpnSettingProvider.select((state) => state.enable),
+    );
+    final captureMode = _captureMode(
+      isStart: isStart,
+      systemProxy: system.isAndroid
+          ? ref.watch(vpnSettingProvider.select((state) => state.systemProxy))
+          : systemProxy,
+      tunEnable: tunEnable,
+      vpnEnable: vpnEnable,
+    );
 
     return CommonScaffold(
       title: l10n.geoIdentity,
@@ -94,6 +219,116 @@ class GeoIdentityView extends StatelessWidget {
                 ],
               ),
             ),
+          ),
+          ...generateSection(
+            title: l10n.geoIdentityProtectTitle,
+            items: [
+              ListItem.switchItem(
+                leading: const Icon(Icons.shield_outlined),
+                title: Text(l10n.geoIdentityProtectEnable),
+                subtitle: Text(l10n.geoIdentityProtectEnableDesc),
+                delegate: SwitchDelegate(
+                  value: props.enable,
+                  onChanged: (value) {
+                    ref
+                        .read(geoIdentitySettingProvider.notifier)
+                        .setEnable(value);
+                  },
+                ),
+              ),
+              if (props.enable)
+                ListItem.switchItem(
+                  leading: const Icon(Icons.translate_outlined),
+                  title: Text(l10n.geoIdentityUsAcceptLanguage),
+                  subtitle: Text(l10n.geoIdentityUsAcceptLanguageDesc),
+                  delegate: SwitchDelegate(
+                    value: props.useUsAcceptLanguage,
+                    onChanged: (value) {
+                      ref
+                          .read(geoIdentitySettingProvider.notifier)
+                          .setUseUsAcceptLanguage(value);
+                    },
+                  ),
+                ),
+              ListItem(
+                leading: Icon(
+                  captureMode == GeoIdentityCaptureMode.inactive
+                      ? Icons.link_off
+                      : Icons.route_outlined,
+                ),
+                title: Text(_captureTitle(context, captureMode)),
+                subtitle: Text(_captureBody(context, captureMode)),
+              ),
+            ],
+          ),
+          ...generateSection(
+            title: l10n.geoIdentityNetworkCheckTitle,
+            items: [
+              ListItem(
+                leading: _checking
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Icon(
+                        _report?.isProtected == true
+                            ? Icons.verified_user_outlined
+                            : Icons.travel_explore_outlined,
+                      ),
+                title: Text(l10n.geoIdentityVerifyNetwork),
+                subtitle: Text(l10n.geoIdentityVerifyNetworkDesc),
+                onTap: _checking ? null : _handleVerify,
+              ),
+              if (_checkError != null)
+                ListItem(
+                  leading: Icon(
+                    Icons.error_outline,
+                    color: context.colorScheme.error,
+                  ),
+                  title: Text(l10n.geoIdentityCheckFailed),
+                  subtitle: Text(_checkError!),
+                ),
+              if (_report != null) ...[
+                ListItem(
+                  leading: Icon(
+                    _report!.isProtected
+                        ? Icons.check_circle_outline
+                        : Icons.warning_amber_outlined,
+                    color: _report!.isProtected
+                        ? context.colorScheme.primary
+                        : context.colorScheme.error,
+                  ),
+                  title: Text(
+                    _report!.isProtected
+                        ? l10n.geoIdentityNetworkProtected
+                        : l10n.geoIdentityNetworkExposed,
+                  ),
+                  subtitle: Text(
+                    '${_report!.verdict} · ${_report!.band} · score ${_report!.score}',
+                  ),
+                ),
+                ListItem(
+                  leading: const Icon(Icons.public_outlined),
+                  title: Text(l10n.geoIdentityExitCountry),
+                  subtitle: Text(
+                    [
+                      if (_report!.country != null) _report!.country,
+                      if (_report!.timezone != null) _report!.timezone,
+                    ].whereType<String>().join(' · '),
+                  ),
+                ),
+                ListItem(
+                  leading: const Icon(Icons.language_outlined),
+                  title: Text(l10n.geoIdentityProbeLanguage),
+                  subtitle: Text(
+                    _report!.language?.isNotEmpty == true
+                        ? _report!.language!
+                        : l10n.geoIdentityProbeLanguageUnknown,
+                  ),
+                ),
+              ],
+            ],
           ),
           ...generateSection(
             title: l10n.geoIdentityOverviewTitle,
@@ -156,7 +391,7 @@ class GeoIdentityView extends StatelessWidget {
             title: l10n.geoIdentityActionsTitle,
             items: [
               ListItem(
-                leading: const Icon(Icons.travel_explore_outlined),
+                leading: const Icon(Icons.open_in_browser_outlined),
                 title: Text(l10n.geoIdentityOpenSelfCheck),
                 subtitle: Text(l10n.geoIdentityOpenSelfCheckDesc),
                 onTap: () => globalState.openUrl(GeoIdentityLinks.fuckClaude),

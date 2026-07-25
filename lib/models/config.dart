@@ -249,6 +249,9 @@ abstract class Config with _$Config {
     @JsonKey(fromJson: TailscaleProps.safeFromJson)
     @Default(defaultTailscaleProps)
     TailscaleProps tailscaleProps,
+    @JsonKey(fromJson: GeoIdentityProps.safeFromJson)
+    @Default(defaultGeoIdentityProps)
+    GeoIdentityProps geoIdentityProps,
   }) = _Config;
 
   factory Config.fromJson(Map<String, Object?> json) => _$ConfigFromJson(json);

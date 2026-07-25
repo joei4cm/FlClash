@@ -5094,10 +5094,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Align exit IP with OS and browser signals for US AI services`
+  /// `Protect US AI exit identity in system proxy and TUN modes`
   String get geoIdentityDesc {
     return Intl.message(
-      'Align exit IP with OS and browser signals for US AI services',
+      'Protect US AI exit identity in system proxy and TUN modes',
       name: 'geoIdentityDesc',
       desc: '',
       args: [],
@@ -5114,11 +5114,261 @@ class AppLocalizations {
     );
   }
 
-  /// `US AI services often compare your exit IP with local signals such as timezone, language, fonts, and geolocation. A Los Angeles IP with Asia/Shanghai timezone or zh-CN language is a high-risk mismatch. FlClash can provide a US exit IP; OS timezone and browser profile must match that exit separately.`
+  /// `US AI services often compare your exit IP with local signals such as timezone, language, fonts, and geolocation. A Los Angeles IP with Asia/Shanghai timezone or zh-CN language is a high-risk mismatch. FlClash can undercover the network exit in system-proxy and TUN/VPN modes and verify it via FuckClaude’s API; OS timezone and browser profile must still match that exit separately.`
   String get geoIdentityOverviewBody {
     return Intl.message(
-      'US AI services often compare your exit IP with local signals such as timezone, language, fonts, and geolocation. A Los Angeles IP with Asia/Shanghai timezone or zh-CN language is a high-risk mismatch. FlClash can provide a US exit IP; OS timezone and browser profile must match that exit separately.',
+      'US AI services often compare your exit IP with local signals such as timezone, language, fonts, and geolocation. A Los Angeles IP with Asia/Shanghai timezone or zh-CN language is a high-risk mismatch. FlClash can undercover the network exit in system-proxy and TUN/VPN modes and verify it via FuckClaude’s API; OS timezone and browser profile must still match that exit separately.',
       name: 'geoIdentityOverviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network undercover`
+  String get geoIdentityProtectTitle {
+    return Intl.message(
+      'Network undercover',
+      name: 'geoIdentityProtectTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable geo identity protect`
+  String get geoIdentityProtectEnable {
+    return Intl.message(
+      'Enable geo identity protect',
+      name: 'geoIdentityProtectEnable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Treat US exit consistency as active: prefer a US Accept-Language on network probes and show capture-mode guidance for system proxy and TUN/VPN.`
+  String get geoIdentityProtectEnableDesc {
+    return Intl.message(
+      'Treat US exit consistency as active: prefer a US Accept-Language on network probes and show capture-mode guidance for system proxy and TUN/VPN.',
+      name: 'geoIdentityProtectEnableDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Probe with US Accept-Language`
+  String get geoIdentityUsAcceptLanguage {
+    return Intl.message(
+      'Probe with US Accept-Language',
+      name: 'geoIdentityUsAcceptLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send Accept-Language: en-US,en;q=0.9 on FuckClaude network checks so the estimate is not skewed by zh headers.`
+  String get geoIdentityUsAcceptLanguageDesc {
+    return Intl.message(
+      'Send Accept-Language: en-US,en;q=0.9 on FuckClaude network checks so the estimate is not skewed by zh headers.',
+      name: 'geoIdentityUsAcceptLanguageDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Capture off`
+  String get geoIdentityCaptureInactive {
+    return Intl.message(
+      'Capture off',
+      name: 'geoIdentityCaptureInactive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start FlClash first. Then turn on System proxy and/or TUN (desktop) or VPN (Android) so app traffic exits through the selected node.`
+  String get geoIdentityCaptureInactiveDesc {
+    return Intl.message(
+      'Start FlClash first. Then turn on System proxy and/or TUN (desktop) or VPN (Android) so app traffic exits through the selected node.',
+      name: 'geoIdentityCaptureInactiveDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mixed port only`
+  String get geoIdentityCaptureMixedPortOnly {
+    return Intl.message(
+      'Mixed port only',
+      name: 'geoIdentityCaptureMixedPortOnly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Core is running, but System proxy and TUN/VPN are off. FlClash’s own check still exits via mixed-port; most apps will not. Enable System proxy or TUN/VPN for undercover coverage.`
+  String get geoIdentityCaptureMixedPortOnlyDesc {
+    return Intl.message(
+      'Core is running, but System proxy and TUN/VPN are off. FlClash’s own check still exits via mixed-port; most apps will not. Enable System proxy or TUN/VPN for undercover coverage.',
+      name: 'geoIdentityCaptureMixedPortOnlyDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System proxy capture`
+  String get geoIdentityCaptureSystemProxy {
+    return Intl.message(
+      'System proxy capture',
+      name: 'geoIdentityCaptureSystemProxy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apps that honor the system proxy exit through FlClash. Some apps bypass system proxy — prefer TUN/VPN for broader undercover coverage.`
+  String get geoIdentityCaptureSystemProxyDesc {
+    return Intl.message(
+      'Apps that honor the system proxy exit through FlClash. Some apps bypass system proxy — prefer TUN/VPN for broader undercover coverage.',
+      name: 'geoIdentityCaptureSystemProxyDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TUN / VPN capture`
+  String get geoIdentityCaptureVirtualNic {
+    return Intl.message(
+      'TUN / VPN capture',
+      name: 'geoIdentityCaptureVirtualNic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Virtual NIC / VPN is capturing traffic. Combined with a US exit node, this is the strongest FlClash network undercover mode.`
+  String get geoIdentityCaptureVirtualNicDesc {
+    return Intl.message(
+      'Virtual NIC / VPN is capturing traffic. Combined with a US exit node, this is the strongest FlClash network undercover mode.',
+      name: 'geoIdentityCaptureVirtualNicDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System proxy + TUN/VPN`
+  String get geoIdentityCaptureBoth {
+    return Intl.message(
+      'System proxy + TUN/VPN',
+      name: 'geoIdentityCaptureBoth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Both capture paths are on. Traffic should exit through FlClash; keep a US node selected for geo identity.`
+  String get geoIdentityCaptureBothDesc {
+    return Intl.message(
+      'Both capture paths are on. Traffic should exit through FlClash; keep a US node selected for geo identity.',
+      name: 'geoIdentityCaptureBothDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network environment check`
+  String get geoIdentityNetworkCheckTitle {
+    return Intl.message(
+      'Network environment check',
+      name: 'geoIdentityNetworkCheckTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verify network environment`
+  String get geoIdentityVerifyNetwork {
+    return Intl.message(
+      'Verify network environment',
+      name: 'geoIdentityVerifyNetwork',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Call FuckClaude /api/check through FlClash’s mixed-port stack (works with system proxy and TUN/VPN).`
+  String get geoIdentityVerifyNetworkDesc {
+    return Intl.message(
+      'Call FuckClaude /api/check through FlClash’s mixed-port stack (works with system proxy and TUN/VPN).',
+      name: 'geoIdentityVerifyNetworkDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start FlClash before verifying the network environment.`
+  String get geoIdentityNeedStart {
+    return Intl.message(
+      'Start FlClash before verifying the network environment.',
+      name: 'geoIdentityNeedStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network check failed`
+  String get geoIdentityCheckFailed {
+    return Intl.message(
+      'Network check failed',
+      name: 'geoIdentityCheckFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network looks protected`
+  String get geoIdentityNetworkProtected {
+    return Intl.message(
+      'Network looks protected',
+      name: 'geoIdentityNetworkProtected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network still looks exposed`
+  String get geoIdentityNetworkExposed {
+    return Intl.message(
+      'Network still looks exposed',
+      name: 'geoIdentityNetworkExposed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit geo from check`
+  String get geoIdentityExitCountry {
+    return Intl.message(
+      'Exit geo from check',
+      name: 'geoIdentityExitCountry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Accept-Language seen by check`
+  String get geoIdentityProbeLanguage {
+    return Intl.message(
+      'Accept-Language seen by check',
+      name: 'geoIdentityProbeLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `unknown`
+  String get geoIdentityProbeLanguageUnknown {
+    return Intl.message(
+      'unknown',
+      name: 'geoIdentityProbeLanguageUnknown',
       desc: '',
       args: [],
     );
@@ -5204,40 +5454,40 @@ class AppLocalizations {
     );
   }
 
-  /// `2. Match the OS timezone`
+  /// `2. Capture traffic (system proxy or TUN)`
   String get geoIdentityStep2Title {
     return Intl.message(
-      '2. Match the OS timezone',
+      '2. Capture traffic (system proxy or TUN)',
       name: 'geoIdentityStep2Title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Set the operating-system timezone to the same US region as the exit (for example America/Los_Angeles). Claude Code reads the OS timezone, not only the browser.`
+  /// `Start FlClash, then enable System proxy and/or TUN on desktop, or VPN on Android, so apps actually exit through the US node. Tap Verify network environment.`
   String get geoIdentityStep2Body {
     return Intl.message(
-      'Set the operating-system timezone to the same US region as the exit (for example America/Los_Angeles). Claude Code reads the OS timezone, not only the browser.',
+      'Start FlClash, then enable System proxy and/or TUN on desktop, or VPN on Android, so apps actually exit through the US node. Tap Verify network environment.',
       name: 'geoIdentityStep2Body',
       desc: '',
       args: [],
     );
   }
 
-  /// `3. Align the browser profile`
+  /// `3. Match the OS timezone + browser profile`
   String get geoIdentityStep3Title {
     return Intl.message(
-      '3. Align the browser profile',
+      '3. Match the OS timezone + browser profile',
       name: 'geoIdentityStep3Title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Install GeoMirror (or a similar extension) so geolocation, timezone, language, Accept-Language, and regional font probes follow the exit IP.`
+  /// `Set the OS timezone to the same US region as the exit. Install GeoMirror so geolocation, timezone, language, Accept-Language, and regional font probes follow the exit IP.`
   String get geoIdentityStep3Body {
     return Intl.message(
-      'Install GeoMirror (or a similar extension) so geolocation, timezone, language, Accept-Language, and regional font probes follow the exit IP.',
+      'Set the OS timezone to the same US region as the exit. Install GeoMirror so geolocation, timezone, language, Accept-Language, and regional font probes follow the exit IP.',
       name: 'geoIdentityStep3Body',
       desc: '',
       args: [],
@@ -5254,10 +5504,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Open the FuckClaude scanner while traffic goes through FlClash. Aim for Low risk, then re-check after OS or browser changes. Rules change; treat this as ongoing hygiene, not a one-time fix.`
+  /// `Open the FuckClaude browser scanner while traffic goes through FlClash. Aim for Low risk, then re-check after OS or browser changes. Rules change; treat this as ongoing hygiene.`
   String get geoIdentityStep4Body {
     return Intl.message(
-      'Open the FuckClaude scanner while traffic goes through FlClash. Aim for Low risk, then re-check after OS or browser changes. Rules change; treat this as ongoing hygiene, not a one-time fix.',
+      'Open the FuckClaude browser scanner while traffic goes through FlClash. Aim for Low risk, then re-check after OS or browser changes. Rules change; treat this as ongoing hygiene.',
       name: 'geoIdentityStep4Body',
       desc: '',
       args: [],
@@ -5344,10 +5594,10 @@ class AppLocalizations {
     );
   }
 
-  /// `This page is guidance for geo-identity consistency. It does not spoof fingerprints inside FlClash, does not guarantee access to any AI service, and does not replace each service’s terms of use.`
+  /// `FlClash undercovers the network exit and can verify IP geo + Accept-Language via FuckClaude’s API. It does not rewrite HTTPS headers for other apps, does not spoof fonts/geolocation, does not guarantee access to any AI service, and does not replace each service’s terms of use.`
   String get geoIdentityLimitsBody {
     return Intl.message(
-      'This page is guidance for geo-identity consistency. It does not spoof fingerprints inside FlClash, does not guarantee access to any AI service, and does not replace each service’s terms of use.',
+      'FlClash undercovers the network exit and can verify IP geo + Accept-Language via FuckClaude’s API. It does not rewrite HTTPS headers for other apps, does not spoof fonts/geolocation, does not guarantee access to any AI service, and does not replace each service’s terms of use.',
       name: 'geoIdentityLimitsBody',
       desc: '',
       args: [],
@@ -5364,10 +5614,10 @@ class AppLocalizations {
     );
   }
 
-  /// `This device’s timezone offset and system locale do not look China-local. Still verify the browser profile and that traffic exits via a US node.`
+  /// `This device’s timezone offset and system locale do not look China-local. Still verify the network check and the browser profile.`
   String get geoIdentityRiskLowDesc {
     return Intl.message(
-      'This device’s timezone offset and system locale do not look China-local. Still verify the browser profile and that traffic exits via a US node.',
+      'This device’s timezone offset and system locale do not look China-local. Still verify the network check and the browser profile.',
       name: 'geoIdentityRiskLowDesc',
       desc: '',
       args: [],
