@@ -5094,11 +5094,81 @@ class AppLocalizations {
     );
   }
 
-  /// `One-click US exit undercover for apps and Claude Code`
+  /// `One switch for US exit undercover`
   String get geoIdentityDesc {
     return Intl.message(
-      'One-click US exit undercover for apps and Claude Code',
+      'One switch for US exit undercover',
       name: 'geoIdentityDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `US AI services compare your exit IP with local signals. Turn this on and FlClash will capture traffic (system proxy / TUN or VPN), align the desktop OS timezone when possible, then verify the exit with FuckClaude. Browsers may still need GeoMirror for page fingerprints.`
+  String get geoIdentityPurposeBody {
+    return Intl.message(
+      'US AI services compare your exit IP with local signals. Turn this on and FlClash will capture traffic (system proxy / TUN or VPN), align the desktop OS timezone when possible, then verify the exit with FuckClaude. Browsers may still need GeoMirror for page fingerprints.',
+      name: 'geoIdentityPurposeBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Run the full setup checklist, then validate the network`
+  String get geoIdentityProtectToggleDesc {
+    return Intl.message(
+      'Run the full setup checklist, then validate the network',
+      name: 'geoIdentityProtectToggleDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network looks good to go`
+  String get geoIdentityNetworkGood {
+    return Intl.message(
+      'Network looks good to go',
+      name: 'geoIdentityNetworkGood',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network is not ready — select a US node and turn this on again`
+  String get geoIdentityNetworkBad {
+    return Intl.message(
+      'Network is not ready — select a US node and turn this on again',
+      name: 'geoIdentityNetworkBad',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Geo identity protect is off`
+  String get geoIdentityOffStatus {
+    return Intl.message(
+      'Geo identity protect is off',
+      name: 'geoIdentityOffStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Turning off…`
+  String get geoIdentityTurningOff {
+    return Intl.message(
+      'Turning off…',
+      name: 'geoIdentityTurningOff',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recheck`
+  String get geoIdentityRecheck {
+    return Intl.message(
+      'Recheck',
+      name: 'geoIdentityRecheck',
       desc: '',
       args: [],
     );

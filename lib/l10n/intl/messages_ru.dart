@@ -585,7 +585,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Скопировать HTTP(S)_PROXY для терминала",
     ),
     "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
-      "US exit в один клик для приложений и Claude Code",
+      "Один переключатель для US exit",
     ),
     "geoIdentityDesktopStep1": MessageLookupByLibrary.simpleMessage(
       "На странице Proxies выберите чистый US-узел.",
@@ -627,14 +627,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityNeedStart": MessageLookupByLibrary.simpleMessage(
       "Запустите FlClash перед проверкой сетевой среды.",
     ),
+    "geoIdentityNetworkBad": MessageLookupByLibrary.simpleMessage(
+      "Сеть не готова — выберите US-узел и включите снова",
+    ),
     "geoIdentityNetworkCheckTitle": MessageLookupByLibrary.simpleMessage(
       "Проверка сетевой среды",
     ),
     "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
       "Сеть всё ещё выглядит раскрытой",
     ),
+    "geoIdentityNetworkGood": MessageLookupByLibrary.simpleMessage(
+      "Сеть готова к работе",
+    ),
     "geoIdentityNetworkProtected": MessageLookupByLibrary.simpleMessage(
       "Сеть выглядит защищённой",
+    ),
+    "geoIdentityOffStatus": MessageLookupByLibrary.simpleMessage(
+      "Защита геоидентичности выключена",
     ),
     "geoIdentityOneClickSetup": MessageLookupByLibrary.simpleMessage(
       "Настроить в один клик",
@@ -685,8 +694,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityProtectTitle": MessageLookupByLibrary.simpleMessage(
       "Сетевая маскировка",
     ),
+    "geoIdentityProtectToggleDesc": MessageLookupByLibrary.simpleMessage(
+      "Пройти чеклист настройки и проверить сеть",
+    ),
+    "geoIdentityPurposeBody": MessageLookupByLibrary.simpleMessage(
+      "US AI-сервисы сравнивают exit IP с локальными сигналами. Включите — FlClash захватит трафик (системный прокси / TUN или VPN), по возможности выровняет часовой пояс ОС на desktop и проверит exit через FuckClaude. Для отпечатков страниц в браузере по-прежнему может понадобиться GeoMirror.",
+    ),
     "geoIdentityQuickActionsTitle": MessageLookupByLibrary.simpleMessage(
       "Быстрые действия",
+    ),
+    "geoIdentityRecheck": MessageLookupByLibrary.simpleMessage(
+      "Проверить снова",
     ),
     "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
       "Восстановить прежний часовой пояс ОС",
@@ -801,6 +819,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityTimezoneRestored": m12,
     "geoIdentityTimezoneUnsupported": m13,
+    "geoIdentityTurningOff": MessageLookupByLibrary.simpleMessage(
+      "Выключение…",
+    ),
     "geoIdentityUsAcceptLanguage": MessageLookupByLibrary.simpleMessage(
       "Проверять с US Accept-Language",
     ),
