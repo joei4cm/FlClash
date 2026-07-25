@@ -5863,6 +5863,346 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Desktop newbie setup`
+  String get geoIdentityScenarioDesktopTitle {
+    return Intl.message(
+      'Desktop newbie setup',
+      name: 'geoIdentityScenarioDesktopTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One click turns on geo protect, system proxy, and TUN, starts FlClash, verifies the exit, and tries to align the OS timezone for Claude Code.`
+  String get geoIdentityScenarioDesktopBody {
+    return Intl.message(
+      'One click turns on geo protect, system proxy, and TUN, starts FlClash, verifies the exit, and tries to align the OS timezone for Claude Code.',
+      name: 'geoIdentityScenarioDesktopBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Android newbie setup`
+  String get geoIdentityScenarioAndroidTitle {
+    return Intl.message(
+      'Android newbie setup',
+      name: 'geoIdentityScenarioAndroidTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One click turns on geo protect and VPN capture, starts FlClash, and verifies the exit. Set a US timezone in system Date & time settings for Claude Code / terminal use.`
+  String get geoIdentityScenarioAndroidBody {
+    return Intl.message(
+      'One click turns on geo protect and VPN capture, starts FlClash, and verifies the exit. Set a US timezone in system Date & time settings for Claude Code / terminal use.',
+      name: 'geoIdentityScenarioAndroidBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Checklist {done}/{total}`
+  String geoIdentityLiveChecklistTitle(Object done, Object total) {
+    return Intl.message(
+      'Checklist $done/$total',
+      name: 'geoIdentityLiveChecklistTitle',
+      desc: '',
+      args: [done, total],
+    );
+  }
+
+  /// `Geo protect on`
+  String get geoIdentityCheckProtectTitle {
+    return Intl.message(
+      'Geo protect on',
+      name: 'geoIdentityCheckProtectTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `US Accept-Language probes and undercover guidance are active.`
+  String get geoIdentityCheckProtectBody {
+    return Intl.message(
+      'US Accept-Language probes and undercover guidance are active.',
+      name: 'geoIdentityCheckProtectBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `FlClash started`
+  String get geoIdentityCheckStartedTitle {
+    return Intl.message(
+      'FlClash started',
+      name: 'geoIdentityCheckStartedTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Core is running so traffic can exit through your selected node.`
+  String get geoIdentityCheckStartedBody {
+    return Intl.message(
+      'Core is running so traffic can exit through your selected node.',
+      name: 'geoIdentityCheckStartedBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Traffic capture ready`
+  String get geoIdentityCheckCaptureTitle {
+    return Intl.message(
+      'Traffic capture ready',
+      name: 'geoIdentityCheckCaptureTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System proxy and/or TUN is capturing apps and terminals.`
+  String get geoIdentityCheckCaptureDesktopBody {
+    return Intl.message(
+      'System proxy and/or TUN is capturing apps and terminals.',
+      name: 'geoIdentityCheckCaptureDesktopBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `VPN capture is on so apps exit through FlClash.`
+  String get geoIdentityCheckCaptureAndroidBody {
+    return Intl.message(
+      'VPN capture is on so apps exit through FlClash.',
+      name: 'geoIdentityCheckCaptureAndroidBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network looks US-protected`
+  String get geoIdentityCheckNetworkTitle {
+    return Intl.message(
+      'Network looks US-protected',
+      name: 'geoIdentityCheckNetworkTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Run verify (or One-click setup) after selecting a US node.`
+  String get geoIdentityCheckNetworkBody {
+    return Intl.message(
+      'Run verify (or One-click setup) after selecting a US node.',
+      name: 'geoIdentityCheckNetworkBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `OS timezone ready for Claude Code`
+  String get geoIdentityCheckTimezoneTitle {
+    return Intl.message(
+      'OS timezone ready for Claude Code',
+      name: 'geoIdentityCheckTimezoneTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not China-local, or already aligned to the exit timezone.`
+  String get geoIdentityCheckTimezoneBody {
+    return Intl.message(
+      'Not China-local, or already aligned to the exit timezone.',
+      name: 'geoIdentityCheckTimezoneBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One-click setup`
+  String get geoIdentityOneClickSetup {
+    return Intl.message(
+      'One-click setup',
+      name: 'geoIdentityOneClickSetup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pick a US proxy node first. Browser fingerprints still need GeoMirror; this button covers FlClash + Claude Code host steps.`
+  String get geoIdentityOneClickTip {
+    return Intl.message(
+      'Pick a US proxy node first. Browser fingerprints still need GeoMirror; this button covers FlClash + Claude Code host steps.',
+      name: 'geoIdentityOneClickTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manual steps`
+  String get geoIdentityGuideTitle {
+    return Intl.message(
+      'Manual steps',
+      name: 'geoIdentityGuideTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a clean US node on the Proxies page.`
+  String get geoIdentityDesktopStep1 {
+    return Intl.message(
+      'Select a clean US node on the Proxies page.',
+      name: 'geoIdentityDesktopStep1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap One-click setup (or enable System proxy + TUN and start FlClash).`
+  String get geoIdentityDesktopStep2 {
+    return Intl.message(
+      'Tap One-click setup (or enable System proxy + TUN and start FlClash).',
+      name: 'geoIdentityDesktopStep2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm the checklist shows network protected; align OS timezone if prompted.`
+  String get geoIdentityDesktopStep3 {
+    return Intl.message(
+      'Confirm the checklist shows network protected; align OS timezone if prompted.',
+      name: 'geoIdentityDesktopStep3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `For browsers, install GeoMirror. For Claude Code, prefer TUN so the terminal needs no proxy exports.`
+  String get geoIdentityDesktopStep4 {
+    return Intl.message(
+      'For browsers, install GeoMirror. For Claude Code, prefer TUN so the terminal needs no proxy exports.',
+      name: 'geoIdentityDesktopStep4',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a clean US node on the Proxies page.`
+  String get geoIdentityAndroidStep1 {
+    return Intl.message(
+      'Select a clean US node on the Proxies page.',
+      name: 'geoIdentityAndroidStep1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap One-click setup (enables VPN capture and starts FlClash).`
+  String get geoIdentityAndroidStep2 {
+    return Intl.message(
+      'Tap One-click setup (enables VPN capture and starts FlClash).',
+      name: 'geoIdentityAndroidStep2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm the network check is protected.`
+  String get geoIdentityAndroidStep3 {
+    return Intl.message(
+      'Confirm the network check is protected.',
+      name: 'geoIdentityAndroidStep3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set a US timezone in system Date & time. Use GeoMirror in Chrome if you browse on this device.`
+  String get geoIdentityAndroidStep4 {
+    return Intl.message(
+      'Set a US timezone in system Date & time. Use GeoMirror in Chrome if you browse on this device.',
+      name: 'geoIdentityAndroidStep4',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Applying newbie setup…`
+  String get geoIdentitySetupRunning {
+    return Intl.message(
+      'Applying newbie setup…',
+      name: 'geoIdentitySetupRunning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Starting FlClash…`
+  String get geoIdentitySetupStarting {
+    return Intl.message(
+      'Starting FlClash…',
+      name: 'geoIdentitySetupStarting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verifying network environment…`
+  String get geoIdentitySetupVerifying {
+    return Intl.message(
+      'Verifying network environment…',
+      name: 'geoIdentitySetupVerifying',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Aligning OS timezone…`
+  String get geoIdentitySetupTimezone {
+    return Intl.message(
+      'Aligning OS timezone…',
+      name: 'geoIdentitySetupTimezone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Setup complete — network looks US-protected.`
+  String get geoIdentitySetupDoneProtected {
+    return Intl.message(
+      'Setup complete — network looks US-protected.',
+      name: 'geoIdentitySetupDoneProtected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network looks protected. Align or restore OS timezone if Claude Code still sees a China zone.`
+  String get geoIdentitySetupDoneNeedTimezone {
+    return Intl.message(
+      'Network looks protected. Align or restore OS timezone if Claude Code still sees a China zone.',
+      name: 'geoIdentitySetupDoneNeedTimezone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Setup applied, but the exit is not US-protected yet. Select a US node and tap One-click setup again.`
+  String get geoIdentitySetupDoneNeedUsNode {
+    return Intl.message(
+      'Setup applied, but the exit is not US-protected yet. Select a US node and tap One-click setup again.',
+      name: 'geoIdentitySetupDoneNeedUsNode',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

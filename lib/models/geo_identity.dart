@@ -202,6 +202,40 @@ enum GeoIdentityCaptureMode {
   both,
 }
 
+/// Live checklist progress for newbie one-click setup.
+class GeoIdentityChecklistState {
+  const GeoIdentityChecklistState({
+    required this.protectEnabled,
+    required this.coreStarted,
+    required this.captureReady,
+    required this.networkProtected,
+    required this.networkChecked,
+    required this.timezoneReady,
+  });
+
+  final bool protectEnabled;
+  final bool coreStarted;
+  final bool captureReady;
+  final bool networkProtected;
+  final bool networkChecked;
+
+  /// Desktop: OS timezone aligned or not China-local. Android: always true
+  /// (manual tip only) once the user has been guided — callers decide.
+  final bool timezoneReady;
+
+  int get completedCount => [
+    protectEnabled,
+    coreStarted,
+    captureReady,
+    networkProtected,
+    timezoneReady,
+  ].where((item) => item).length;
+
+  int get totalCount => 5;
+
+  bool get isComplete => completedCount == totalCount;
+}
+
 /// External tools recommended by the geo-identity guide.
 abstract final class GeoIdentityLinks {
   static const fuckClaude = 'https://fuck-claude.vercel.app/';

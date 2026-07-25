@@ -38,65 +38,67 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m7(timezone) => "Сейчас применено: ${timezone}";
 
-  static String m8(timezone) => "Восстановить ${timezone}";
+  static String m8(done, total) => "Чеклист ${done}/${total}";
 
-  static String m9(timezone) => "Часовой пояс ОС установлен в ${timezone}";
+  static String m9(timezone) => "Восстановить ${timezone}";
 
-  static String m10(command) =>
+  static String m10(timezone) => "Часовой пояс ОС установлен в ${timezone}";
+
+  static String m11(command) =>
       "Не удалось сменить часовой пояс автоматически. Выполните: ${command}";
 
-  static String m11(timezone) => "Часовой пояс ОС восстановлен в ${timezone}";
+  static String m12(timezone) => "Часовой пояс ОС восстановлен в ${timezone}";
 
-  static String m12(timezone) =>
+  static String m13(timezone) =>
       "Нет Windows-соответствия для ${timezone}. Задайте вручную в параметрах даты и времени.";
 
-  static String m13(name) => "${name} пропущено";
+  static String m14(name) => "${name} пропущено";
 
-  static String m14(name) => "${name} обновлено";
+  static String m15(name) => "${name} обновлено";
 
-  static String m15(name) => "Обновление ${name}...";
+  static String m16(name) => "Обновление ${name}...";
 
-  static String m16(count) =>
+  static String m17(count) =>
       "${Intl.plural(count, one: '${count} час назад', few: '${count} часа назад', many: '${count} часов назад', other: '${count} часа назад')}";
 
-  static String m17(count) => "${count} часов";
+  static String m18(count) => "${count} часов";
 
-  static String m18(target) => "${target} является недопустимой политикой";
+  static String m19(target) => "${target} является недопустимой политикой";
 
-  static String m19(proxyName) => "${proxyName} является недопустимым прокси";
+  static String m20(proxyName) => "${proxyName} является недопустимым прокси";
 
-  static String m20(providerName) =>
+  static String m21(providerName) =>
       "${providerName} является недопустимым провайдером прокси";
 
-  static String m21(subRule) => "${subRule} является недопустимым подправилом";
+  static String m22(subRule) => "${subRule} является недопустимым подправилом";
 
-  static String m22(appName) =>
+  static String m23(appName) =>
       "1. Open System Settings > Privacy & Security\n2. Choose Location Services\n3. Find and check ${appName} in the right list\n\nAfter completing the setup, return to the app and use it normally. Thank you for your cooperation.";
 
-  static String m23(count) =>
+  static String m24(count) =>
       "${Intl.plural(count, one: '${count} минута назад', few: '${count} минуты назад', many: '${count} минут назад', other: '${count} минуты назад')}";
 
-  static String m24(count) =>
+  static String m25(count) =>
       "${Intl.plural(count, one: '${count} месяц назад', few: '${count} месяца назад', many: '${count} месяцев назад', other: '${count} месяца назад')}";
 
-  static String m25(label) => "${label} пока отсутствуют";
+  static String m26(label) => "${label} пока отсутствуют";
 
-  static String m26(label) => "${label} должно быть числом";
+  static String m27(label) => "${label} должно быть числом";
 
-  static String m27(label) => "${label} должен быть числом от 1024 до 49151";
+  static String m28(label) => "${label} должен быть числом от 1024 до 49151";
 
-  static String m28(count) => "${count} секунд";
+  static String m29(count) => "${count} секунд";
 
-  static String m29(count) => "Выбрано ${count} элементов";
+  static String m30(count) => "Выбрано ${count} элементов";
 
-  static String m30(count) => "Маршрутов: ${count}";
+  static String m31(count) => "Маршрутов: ${count}";
 
-  static String m31(count) =>
+  static String m32(count) =>
       "Активных узлов: ${count}. Нажмите ping у узла, чтобы проверить связь.";
 
-  static String m32(label) => "${label} должен быть URL";
+  static String m33(label) => "${label} должен быть URL";
 
-  static String m33(count) =>
+  static String m34(count) =>
       "${Intl.plural(count, one: '${count} год назад', few: '${count} года назад', many: '${count} лет назад', other: '${count} года назад')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -465,6 +467,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityAlignOsTimezoneDesc": MessageLookupByLibrary.simpleMessage(
       "Проверьте сеть, затем установите часовой пояс desktop ОС по geo exit. На части систем нужны права admin / polkit.",
     ),
+    "geoIdentityAndroidStep1": MessageLookupByLibrary.simpleMessage(
+      "На странице Proxies выберите чистый US-узел.",
+    ),
+    "geoIdentityAndroidStep2": MessageLookupByLibrary.simpleMessage(
+      "Нажмите One-click setup (включает VPN-захват и запускает FlClash).",
+    ),
+    "geoIdentityAndroidStep3": MessageLookupByLibrary.simpleMessage(
+      "Убедитесь, что сетевая проверка protected.",
+    ),
+    "geoIdentityAndroidStep4": MessageLookupByLibrary.simpleMessage(
+      "В системных дате и времени выберите US-зону. Если Browse на этом устройстве — используйте GeoMirror в Chrome.",
+    ),
     "geoIdentityCaptureBoth": MessageLookupByLibrary.simpleMessage(
       "Системный прокси + TUN/VPN",
     ),
@@ -495,8 +509,41 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityCaptureVirtualNicDesc": MessageLookupByLibrary.simpleMessage(
       "Виртуальный NIC / VPN захватывает трафик. Вместе с US exit-узлом это самый сильный режим сетевой маскировки FlClash.",
     ),
+    "geoIdentityCheckCaptureAndroidBody": MessageLookupByLibrary.simpleMessage(
+      "VPN-захват включён — приложения выходят через FlClash.",
+    ),
+    "geoIdentityCheckCaptureDesktopBody": MessageLookupByLibrary.simpleMessage(
+      "Системный прокси и/или TUN захватывают приложения и терминалы.",
+    ),
+    "geoIdentityCheckCaptureTitle": MessageLookupByLibrary.simpleMessage(
+      "Захват трафика готов",
+    ),
     "geoIdentityCheckFailed": MessageLookupByLibrary.simpleMessage(
       "Сетевая проверка не удалась",
+    ),
+    "geoIdentityCheckNetworkBody": MessageLookupByLibrary.simpleMessage(
+      "После выбора US-узла запустите проверку (или One-click setup).",
+    ),
+    "geoIdentityCheckNetworkTitle": MessageLookupByLibrary.simpleMessage(
+      "Сеть выглядит US-защищённой",
+    ),
+    "geoIdentityCheckProtectBody": MessageLookupByLibrary.simpleMessage(
+      "US Accept-Language пробы и маскировка активны.",
+    ),
+    "geoIdentityCheckProtectTitle": MessageLookupByLibrary.simpleMessage(
+      "Geo-защита включена",
+    ),
+    "geoIdentityCheckStartedBody": MessageLookupByLibrary.simpleMessage(
+      "Ядро работает — трафик может выходить через выбранный узел.",
+    ),
+    "geoIdentityCheckStartedTitle": MessageLookupByLibrary.simpleMessage(
+      "FlClash запущен",
+    ),
+    "geoIdentityCheckTimezoneBody": MessageLookupByLibrary.simpleMessage(
+      "Не китайский локальный, либо уже выровнен под exit.",
+    ),
+    "geoIdentityCheckTimezoneTitle": MessageLookupByLibrary.simpleMessage(
+      "Часовой пояс ОС готов для Claude Code",
     ),
     "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage(
       "Чеклист US-идентичности",
@@ -527,8 +574,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
       "Защита US AI exit-идентичности в режиме системного прокси и TUN",
     ),
+    "geoIdentityDesktopStep1": MessageLookupByLibrary.simpleMessage(
+      "На странице Proxies выберите чистый US-узел.",
+    ),
+    "geoIdentityDesktopStep2": MessageLookupByLibrary.simpleMessage(
+      "Нажмите One-click setup (или включите System proxy + TUN и запустите FlClash).",
+    ),
+    "geoIdentityDesktopStep3": MessageLookupByLibrary.simpleMessage(
+      "Убедитесь, что чеклист показывает protected; при необходимости выровняйте часовой пояс ОС.",
+    ),
+    "geoIdentityDesktopStep4": MessageLookupByLibrary.simpleMessage(
+      "Для браузера установите GeoMirror. Для Claude Code предпочтителен TUN — тогда терминалу не нужны proxy export\'ы.",
+    ),
     "geoIdentityExitCountry": MessageLookupByLibrary.simpleMessage(
       "Гео выхода по проверке",
+    ),
+    "geoIdentityGuideTitle": MessageLookupByLibrary.simpleMessage(
+      "Ручные шаги",
     ),
     "geoIdentityLimitsBody": MessageLookupByLibrary.simpleMessage(
       "FlClash маскирует сетевой выход и может проверить IP-гео и Accept-Language через FuckClaude API. Он не переписывает HTTPS-заголовки других приложений, не подделывает шрифты/геолокацию, не гарантирует доступ к AI-сервисам и не заменяет условия использования сервисов.",
@@ -536,6 +598,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityLimitsTitle": MessageLookupByLibrary.simpleMessage(
       "Ограничения и отказ от гарантий",
     ),
+    "geoIdentityLiveChecklistTitle": m8,
     "geoIdentityLocalSignalsTitle": MessageLookupByLibrary.simpleMessage(
       "Сигналы на этом устройстве",
     ),
@@ -556,6 +619,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityNetworkProtected": MessageLookupByLibrary.simpleMessage(
       "Сеть выглядит защищённой",
+    ),
+    "geoIdentityOneClickSetup": MessageLookupByLibrary.simpleMessage(
+      "Настроить в один клик",
+    ),
+    "geoIdentityOneClickTip": MessageLookupByLibrary.simpleMessage(
+      "Сначала выберите US-прокси. Отпечатки браузера всё ещё нуждаются в GeoMirror; эта кнопка закрывает шаги FlClash и Claude Code на хосте.",
     ),
     "geoIdentityOpenGeoMirror": MessageLookupByLibrary.simpleMessage(
       "GeoMirror на GitHub",
@@ -600,7 +669,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
       "Восстановить прежний часовой пояс ОС",
     ),
-    "geoIdentityRestoreOsTimezoneDesc": m8,
+    "geoIdentityRestoreOsTimezoneDesc": m9,
     "geoIdentityRiskHigh": MessageLookupByLibrary.simpleMessage(
       "Высокий риск несоответствия",
     ),
@@ -618,6 +687,39 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityRiskMediumDesc": MessageLookupByLibrary.simpleMessage(
       "Часовой пояс или системная локаль выглядят китайскими (или UTC+8). Если exit IP в США, сначала выровняйте пояс ОС и язык браузера.",
+    ),
+    "geoIdentityScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
+      "Один клик включает geo-защиту и VPN-захват, запускает FlClash и проверяет exit. Для Claude Code в терминале вручную выберите US-зону в настройках даты и времени.",
+    ),
+    "geoIdentityScenarioAndroidTitle": MessageLookupByLibrary.simpleMessage(
+      "Быстрая настройка для Android",
+    ),
+    "geoIdentityScenarioDesktopBody": MessageLookupByLibrary.simpleMessage(
+      "Один клик включает geo-защиту, системный прокси и TUN, запускает FlClash, проверяет exit и пытается выровнять часовой пояс ОС для Claude Code.",
+    ),
+    "geoIdentityScenarioDesktopTitle": MessageLookupByLibrary.simpleMessage(
+      "Быстрая настройка для desktop",
+    ),
+    "geoIdentitySetupDoneNeedTimezone": MessageLookupByLibrary.simpleMessage(
+      "Сеть выглядит защищённой. Если Claude Code всё ещё видит китайскую зону — выровняйте или восстановите часовой пояс ОС.",
+    ),
+    "geoIdentitySetupDoneNeedUsNode": MessageLookupByLibrary.simpleMessage(
+      "Настройка применена, но exit ещё не US-protected. Выберите US-узел и снова нажмите One-click setup.",
+    ),
+    "geoIdentitySetupDoneProtected": MessageLookupByLibrary.simpleMessage(
+      "Готово — сеть выглядит US-защищённой.",
+    ),
+    "geoIdentitySetupRunning": MessageLookupByLibrary.simpleMessage(
+      "Применяется быстрая настройка…",
+    ),
+    "geoIdentitySetupStarting": MessageLookupByLibrary.simpleMessage(
+      "Запуск FlClash…",
+    ),
+    "geoIdentitySetupTimezone": MessageLookupByLibrary.simpleMessage(
+      "Выравнивание часового пояса ОС…",
+    ),
+    "geoIdentitySetupVerifying": MessageLookupByLibrary.simpleMessage(
+      "Проверка сетевой среды…",
     ),
     "geoIdentityStep1Body": MessageLookupByLibrary.simpleMessage(
       "На странице Proxies выберите чистый US-узел (например Los Angeles или New York). Если Claude Code указывает на свой Base URL, избегайте хостнеймов с AI-lab или relay-ключевыми словами.",
@@ -652,16 +754,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityTimezoneAndroidTip": MessageLookupByLibrary.simpleMessage(
       "Android без root не даёт приложению менять системный часовой пояс. Откройте Настройки → Система → Дата и время и выберите US-зону под ваш exit.",
     ),
-    "geoIdentityTimezoneApplied": m9,
-    "geoIdentityTimezoneManual": m10,
+    "geoIdentityTimezoneApplied": m10,
+    "geoIdentityTimezoneManual": m11,
     "geoIdentityTimezoneMissing": MessageLookupByLibrary.simpleMessage(
       "Ещё нет timezone выхода. Сначала проверьте сетевую среду.",
     ),
     "geoIdentityTimezoneNothingToRestore": MessageLookupByLibrary.simpleMessage(
       "Нет сохранённого предыдущего часового пояса ОС.",
     ),
-    "geoIdentityTimezoneRestored": m11,
-    "geoIdentityTimezoneUnsupported": m12,
+    "geoIdentityTimezoneRestored": m12,
+    "geoIdentityTimezoneUnsupported": m13,
     "geoIdentityUsAcceptLanguage": MessageLookupByLibrary.simpleMessage(
       "Проверять с US Accept-Language",
     ),
@@ -676,9 +778,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Настройки Geo"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Ресурсы Geo"),
-    "geoSkipped": m13,
-    "geoUpdated": m14,
-    "geoUpdating": m15,
+    "geoSkipped": m14,
+    "geoUpdated": m15,
+    "geoUpdating": m16,
     "geodataLoader": MessageLookupByLibrary.simpleMessage(
       "Режим низкого потребления памяти для геоданных",
     ),
@@ -708,8 +810,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Использование клавиатуры для управления приложением",
     ),
     "hours": MessageLookupByLibrary.simpleMessage("часов"),
-    "hoursAgo": m16,
-    "hoursCount": m17,
+    "hoursAgo": m17,
+    "hoursCount": m18,
     "icon": MessageLookupByLibrary.simpleMessage("Иконка"),
     "iconRecords": MessageLookupByLibrary.simpleMessage("История иконок"),
     "iconStyle": MessageLookupByLibrary.simpleMessage("Стиль иконки"),
@@ -755,10 +857,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "invalidBackupFile": MessageLookupByLibrary.simpleMessage(
       "Неверный файл резервной копии",
     ),
-    "invalidPolicy": m18,
-    "invalidProxy": m19,
-    "invalidProxyProvider": m20,
-    "invalidSubRule": m21,
+    "invalidPolicy": m19,
+    "invalidProxy": m20,
+    "invalidProxyProvider": m21,
+    "invalidSubRule": m22,
     "ipcidr": MessageLookupByLibrary.simpleMessage("IPCIDR"),
     "ipv6Desc": MessageLookupByLibrary.simpleMessage(
       "При включении будет возможно получать IPv6 трафик",
@@ -792,7 +894,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "locationPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "According to system requirements, obtaining the Wi-Fi name requires you to grant location permission.",
     ),
-    "locationPermissionGuide": m22,
+    "locationPermissionGuide": m23,
     "locationPermissionRequired": MessageLookupByLibrary.simpleMessage(
       "Location Permission Required",
     ),
@@ -830,11 +932,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "minimizeOnExitDesc": MessageLookupByLibrary.simpleMessage(
       "Изменить стандартное событие выхода из системы",
     ),
-    "minutesAgo": m23,
+    "minutesAgo": m24,
     "mixedPort": MessageLookupByLibrary.simpleMessage("Смешанный порт"),
     "mode": MessageLookupByLibrary.simpleMessage("Режим"),
     "monochromeScheme": MessageLookupByLibrary.simpleMessage("Монохром"),
-    "monthsAgo": m24,
+    "monthsAgo": m25,
     "more": MessageLookupByLibrary.simpleMessage("Еще"),
     "name": MessageLookupByLibrary.simpleMessage("Имя"),
     "nameserver": MessageLookupByLibrary.simpleMessage("Сервер имен"),
@@ -880,8 +982,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "nullProfileDesc": MessageLookupByLibrary.simpleMessage(
       "Нет профиля, пожалуйста, добавьте профиль",
     ),
-    "nullTip": m25,
-    "numberTip": m26,
+    "nullTip": m26,
+    "numberTip": m27,
     "onDemand": MessageLookupByLibrary.simpleMessage("On Demand"),
     "onDemandDesc": MessageLookupByLibrary.simpleMessage(
       "Configure the program running state for specific scenarios",
@@ -938,7 +1040,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "portConflictTip": MessageLookupByLibrary.simpleMessage(
       "Введите другой порт",
     ),
-    "portTip": m27,
+    "portTip": m28,
     "preferH3Desc": MessageLookupByLibrary.simpleMessage(
       "Приоритетное использование HTTP/3 для DOH",
     ),
@@ -1207,7 +1309,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "search": MessageLookupByLibrary.simpleMessage("Поиск"),
     "seconds": MessageLookupByLibrary.simpleMessage("Секунд"),
-    "secondsCount": m28,
+    "secondsCount": m29,
     "selectAll": MessageLookupByLibrary.simpleMessage("Выбрать все"),
     "selectProxies": MessageLookupByLibrary.simpleMessage("Выбрать прокси"),
     "selectProxyProviders": MessageLookupByLibrary.simpleMessage(
@@ -1223,7 +1325,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Пожалуйста, выберите подправило",
     ),
     "selected": MessageLookupByLibrary.simpleMessage("Выбрано"),
-    "selectedCountTitle": m29,
+    "selectedCountTitle": m30,
     "settings": MessageLookupByLibrary.simpleMessage("Настройки"),
     "show": MessageLookupByLibrary.simpleMessage("Показать"),
     "shrink": MessageLookupByLibrary.simpleMessage("Сжать"),
@@ -1391,7 +1493,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleRoutes": MessageLookupByLibrary.simpleMessage(
       "Пункты назначения маршрута",
     ),
-    "tailscaleRoutesCount": m30,
+    "tailscaleRoutesCount": m31,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "Домены или IP, направляемые через этот узел, по одному в строке (например, Tailscale IP или имя MagicDNS вашего домашнего ПК).",
     ),
@@ -1422,7 +1524,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleStatusNoNodes": MessageLookupByLibrary.simpleMessage(
       "Включено, но узлов ещё нет. Добавьте узел, чтобы начать.",
     ),
-    "tailscaleStatusReady": m31,
+    "tailscaleStatusReady": m32,
     "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
       "Перед проверкой включите Tailscale.",
     ),
@@ -1495,7 +1597,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "urlDesc": MessageLookupByLibrary.simpleMessage(
       "Получить профиль через URL",
     ),
-    "urlTip": m32,
+    "urlTip": m33,
     "useHosts": MessageLookupByLibrary.simpleMessage("Использовать hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Использовать системные hosts",
@@ -1519,7 +1621,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "whitelistMode": MessageLookupByLibrary.simpleMessage(
       "Режим белого списка",
     ),
-    "yearsAgo": m33,
+    "yearsAgo": m34,
     "zh_CN": MessageLookupByLibrary.simpleMessage("Упрощенный китайский"),
   };
 }
