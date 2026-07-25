@@ -425,6 +425,104 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoAutoUpdateIntervalTip": MessageLookupByLibrary.simpleMessage(
       "Auto update interval must be greater than 0",
     ),
+    "geoIdentity": MessageLookupByLibrary.simpleMessage("Geo identity"),
+    "geoIdentityActionsTitle": MessageLookupByLibrary.simpleMessage(
+      "External tools",
+    ),
+    "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage(
+      "US identity checklist",
+    ),
+    "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
+      "Align exit IP with OS and browser signals for US AI services",
+    ),
+    "geoIdentityLimitsBody": MessageLookupByLibrary.simpleMessage(
+      "This page is guidance for geo-identity consistency. It does not spoof fingerprints inside FlClash, does not guarantee access to any AI service, and does not replace each service’s terms of use.",
+    ),
+    "geoIdentityLimitsTitle": MessageLookupByLibrary.simpleMessage(
+      "Limits and disclaimer",
+    ),
+    "geoIdentityLocalSignalsTitle": MessageLookupByLibrary.simpleMessage(
+      "Signals on this device",
+    ),
+    "geoIdentityLocalTipBody": MessageLookupByLibrary.simpleMessage(
+      "Timezone, browser language, fonts, and HTML5 geolocation are outside the proxy. Change the OS timezone for Claude Code / CLI, and use a browser extension such as GeoMirror for web sessions.",
+    ),
+    "geoIdentityLocalTipTitle": MessageLookupByLibrary.simpleMessage(
+      "What FlClash cannot change",
+    ),
+    "geoIdentityOpenGeoMirror": MessageLookupByLibrary.simpleMessage(
+      "GeoMirror on GitHub",
+    ),
+    "geoIdentityOpenGeoMirrorDesc": MessageLookupByLibrary.simpleMessage(
+      "Chrome extension that mirrors geo signals to the exit IP",
+    ),
+    "geoIdentityOpenGeoMirrorReleases": MessageLookupByLibrary.simpleMessage(
+      "GeoMirror releases",
+    ),
+    "geoIdentityOpenGeoMirrorReleasesDesc":
+        MessageLookupByLibrary.simpleMessage(
+          "Download packaged extension builds",
+        ),
+    "geoIdentityOpenSelfCheck": MessageLookupByLibrary.simpleMessage(
+      "Open fingerprint self-check",
+    ),
+    "geoIdentityOpenSelfCheckDesc": MessageLookupByLibrary.simpleMessage(
+      "FuckClaude — weighted browser / timezone risk scan",
+    ),
+    "geoIdentityOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "US AI services often compare your exit IP with local signals such as timezone, language, fonts, and geolocation. A Los Angeles IP with Asia/Shanghai timezone or zh-CN language is a high-risk mismatch. FlClash can provide a US exit IP; OS timezone and browser profile must match that exit separately.",
+    ),
+    "geoIdentityOverviewTitle": MessageLookupByLibrary.simpleMessage(
+      "Why this matters",
+    ),
+    "geoIdentityRiskHigh": MessageLookupByLibrary.simpleMessage(
+      "High mismatch risk",
+    ),
+    "geoIdentityRiskHighDesc": MessageLookupByLibrary.simpleMessage(
+      "Both timezone and system locale look China-local. A US exit IP alone is not enough — change OS timezone and align the browser profile.",
+    ),
+    "geoIdentityRiskLow": MessageLookupByLibrary.simpleMessage(
+      "Local signals look consistent",
+    ),
+    "geoIdentityRiskLowDesc": MessageLookupByLibrary.simpleMessage(
+      "This device’s timezone offset and system locale do not look China-local. Still verify the browser profile and that traffic exits via a US node.",
+    ),
+    "geoIdentityRiskMedium": MessageLookupByLibrary.simpleMessage(
+      "Possible geo mismatch",
+    ),
+    "geoIdentityRiskMediumDesc": MessageLookupByLibrary.simpleMessage(
+      "Timezone or system locale looks China-local (or UTC+8). If your exit IP is in the US, align OS timezone and browser language before relying on US AI services.",
+    ),
+    "geoIdentityStep1Body": MessageLookupByLibrary.simpleMessage(
+      "In Proxies, select a clean US node (for example Los Angeles or New York). Avoid proxy hostnames that contain AI-lab or relay keywords when pointing Claude Code at a custom base URL.",
+    ),
+    "geoIdentityStep1Title": MessageLookupByLibrary.simpleMessage(
+      "1. Use a US exit node",
+    ),
+    "geoIdentityStep2Body": MessageLookupByLibrary.simpleMessage(
+      "Set the operating-system timezone to the same US region as the exit (for example America/Los_Angeles). Claude Code reads the OS timezone, not only the browser.",
+    ),
+    "geoIdentityStep2Title": MessageLookupByLibrary.simpleMessage(
+      "2. Match the OS timezone",
+    ),
+    "geoIdentityStep3Body": MessageLookupByLibrary.simpleMessage(
+      "Install GeoMirror (or a similar extension) so geolocation, timezone, language, Accept-Language, and regional font probes follow the exit IP.",
+    ),
+    "geoIdentityStep3Title": MessageLookupByLibrary.simpleMessage(
+      "3. Align the browser profile",
+    ),
+    "geoIdentityStep4Body": MessageLookupByLibrary.simpleMessage(
+      "Open the FuckClaude scanner while traffic goes through FlClash. Aim for Low risk, then re-check after OS or browser changes. Rules change; treat this as ongoing hygiene, not a one-time fix.",
+    ),
+    "geoIdentityStep4Title": MessageLookupByLibrary.simpleMessage(
+      "4. Self-check, then revisit",
+    ),
+    "geoIdentitySystemLocale": MessageLookupByLibrary.simpleMessage(
+      "System locale",
+    ),
+    "geoIdentityTimezone": MessageLookupByLibrary.simpleMessage(
+      "System timezone",
+    ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geo Options"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo Resources"),
     "geoSkipped": m7,

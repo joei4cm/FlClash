@@ -5083,6 +5083,336 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Geo identity`
+  String get geoIdentity {
+    return Intl.message(
+      'Geo identity',
+      name: 'geoIdentity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Align exit IP with OS and browser signals for US AI services`
+  String get geoIdentityDesc {
+    return Intl.message(
+      'Align exit IP with OS and browser signals for US AI services',
+      name: 'geoIdentityDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Why this matters`
+  String get geoIdentityOverviewTitle {
+    return Intl.message(
+      'Why this matters',
+      name: 'geoIdentityOverviewTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `US AI services often compare your exit IP with local signals such as timezone, language, fonts, and geolocation. A Los Angeles IP with Asia/Shanghai timezone or zh-CN language is a high-risk mismatch. FlClash can provide a US exit IP; OS timezone and browser profile must match that exit separately.`
+  String get geoIdentityOverviewBody {
+    return Intl.message(
+      'US AI services often compare your exit IP with local signals such as timezone, language, fonts, and geolocation. A Los Angeles IP with Asia/Shanghai timezone or zh-CN language is a high-risk mismatch. FlClash can provide a US exit IP; OS timezone and browser profile must match that exit separately.',
+      name: 'geoIdentityOverviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Signals on this device`
+  String get geoIdentityLocalSignalsTitle {
+    return Intl.message(
+      'Signals on this device',
+      name: 'geoIdentityLocalSignalsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System timezone`
+  String get geoIdentityTimezone {
+    return Intl.message(
+      'System timezone',
+      name: 'geoIdentityTimezone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System locale`
+  String get geoIdentitySystemLocale {
+    return Intl.message(
+      'System locale',
+      name: 'geoIdentitySystemLocale',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `What FlClash cannot change`
+  String get geoIdentityLocalTipTitle {
+    return Intl.message(
+      'What FlClash cannot change',
+      name: 'geoIdentityLocalTipTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Timezone, browser language, fonts, and HTML5 geolocation are outside the proxy. Change the OS timezone for Claude Code / CLI, and use a browser extension such as GeoMirror for web sessions.`
+  String get geoIdentityLocalTipBody {
+    return Intl.message(
+      'Timezone, browser language, fonts, and HTML5 geolocation are outside the proxy. Change the OS timezone for Claude Code / CLI, and use a browser extension such as GeoMirror for web sessions.',
+      name: 'geoIdentityLocalTipBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `US identity checklist`
+  String get geoIdentityChecklistTitle {
+    return Intl.message(
+      'US identity checklist',
+      name: 'geoIdentityChecklistTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `1. Use a US exit node`
+  String get geoIdentityStep1Title {
+    return Intl.message(
+      '1. Use a US exit node',
+      name: 'geoIdentityStep1Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `In Proxies, select a clean US node (for example Los Angeles or New York). Avoid proxy hostnames that contain AI-lab or relay keywords when pointing Claude Code at a custom base URL.`
+  String get geoIdentityStep1Body {
+    return Intl.message(
+      'In Proxies, select a clean US node (for example Los Angeles or New York). Avoid proxy hostnames that contain AI-lab or relay keywords when pointing Claude Code at a custom base URL.',
+      name: 'geoIdentityStep1Body',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `2. Match the OS timezone`
+  String get geoIdentityStep2Title {
+    return Intl.message(
+      '2. Match the OS timezone',
+      name: 'geoIdentityStep2Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set the operating-system timezone to the same US region as the exit (for example America/Los_Angeles). Claude Code reads the OS timezone, not only the browser.`
+  String get geoIdentityStep2Body {
+    return Intl.message(
+      'Set the operating-system timezone to the same US region as the exit (for example America/Los_Angeles). Claude Code reads the OS timezone, not only the browser.',
+      name: 'geoIdentityStep2Body',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `3. Align the browser profile`
+  String get geoIdentityStep3Title {
+    return Intl.message(
+      '3. Align the browser profile',
+      name: 'geoIdentityStep3Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Install GeoMirror (or a similar extension) so geolocation, timezone, language, Accept-Language, and regional font probes follow the exit IP.`
+  String get geoIdentityStep3Body {
+    return Intl.message(
+      'Install GeoMirror (or a similar extension) so geolocation, timezone, language, Accept-Language, and regional font probes follow the exit IP.',
+      name: 'geoIdentityStep3Body',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `4. Self-check, then revisit`
+  String get geoIdentityStep4Title {
+    return Intl.message(
+      '4. Self-check, then revisit',
+      name: 'geoIdentityStep4Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open the FuckClaude scanner while traffic goes through FlClash. Aim for Low risk, then re-check after OS or browser changes. Rules change; treat this as ongoing hygiene, not a one-time fix.`
+  String get geoIdentityStep4Body {
+    return Intl.message(
+      'Open the FuckClaude scanner while traffic goes through FlClash. Aim for Low risk, then re-check after OS or browser changes. Rules change; treat this as ongoing hygiene, not a one-time fix.',
+      name: 'geoIdentityStep4Body',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `External tools`
+  String get geoIdentityActionsTitle {
+    return Intl.message(
+      'External tools',
+      name: 'geoIdentityActionsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open fingerprint self-check`
+  String get geoIdentityOpenSelfCheck {
+    return Intl.message(
+      'Open fingerprint self-check',
+      name: 'geoIdentityOpenSelfCheck',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `FuckClaude — weighted browser / timezone risk scan`
+  String get geoIdentityOpenSelfCheckDesc {
+    return Intl.message(
+      'FuckClaude — weighted browser / timezone risk scan',
+      name: 'geoIdentityOpenSelfCheckDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `GeoMirror on GitHub`
+  String get geoIdentityOpenGeoMirror {
+    return Intl.message(
+      'GeoMirror on GitHub',
+      name: 'geoIdentityOpenGeoMirror',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chrome extension that mirrors geo signals to the exit IP`
+  String get geoIdentityOpenGeoMirrorDesc {
+    return Intl.message(
+      'Chrome extension that mirrors geo signals to the exit IP',
+      name: 'geoIdentityOpenGeoMirrorDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `GeoMirror releases`
+  String get geoIdentityOpenGeoMirrorReleases {
+    return Intl.message(
+      'GeoMirror releases',
+      name: 'geoIdentityOpenGeoMirrorReleases',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download packaged extension builds`
+  String get geoIdentityOpenGeoMirrorReleasesDesc {
+    return Intl.message(
+      'Download packaged extension builds',
+      name: 'geoIdentityOpenGeoMirrorReleasesDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Limits and disclaimer`
+  String get geoIdentityLimitsTitle {
+    return Intl.message(
+      'Limits and disclaimer',
+      name: 'geoIdentityLimitsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This page is guidance for geo-identity consistency. It does not spoof fingerprints inside FlClash, does not guarantee access to any AI service, and does not replace each service’s terms of use.`
+  String get geoIdentityLimitsBody {
+    return Intl.message(
+      'This page is guidance for geo-identity consistency. It does not spoof fingerprints inside FlClash, does not guarantee access to any AI service, and does not replace each service’s terms of use.',
+      name: 'geoIdentityLimitsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Local signals look consistent`
+  String get geoIdentityRiskLow {
+    return Intl.message(
+      'Local signals look consistent',
+      name: 'geoIdentityRiskLow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This device’s timezone offset and system locale do not look China-local. Still verify the browser profile and that traffic exits via a US node.`
+  String get geoIdentityRiskLowDesc {
+    return Intl.message(
+      'This device’s timezone offset and system locale do not look China-local. Still verify the browser profile and that traffic exits via a US node.',
+      name: 'geoIdentityRiskLowDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Possible geo mismatch`
+  String get geoIdentityRiskMedium {
+    return Intl.message(
+      'Possible geo mismatch',
+      name: 'geoIdentityRiskMedium',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Timezone or system locale looks China-local (or UTC+8). If your exit IP is in the US, align OS timezone and browser language before relying on US AI services.`
+  String get geoIdentityRiskMediumDesc {
+    return Intl.message(
+      'Timezone or system locale looks China-local (or UTC+8). If your exit IP is in the US, align OS timezone and browser language before relying on US AI services.',
+      name: 'geoIdentityRiskMediumDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `High mismatch risk`
+  String get geoIdentityRiskHigh {
+    return Intl.message(
+      'High mismatch risk',
+      name: 'geoIdentityRiskHigh',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Both timezone and system locale look China-local. A US exit IP alone is not enough — change OS timezone and align the browser profile.`
+  String get geoIdentityRiskHighDesc {
+    return Intl.message(
+      'Both timezone and system locale look China-local. A US exit IP alone is not enough — change OS timezone and align the browser profile.',
+      name: 'geoIdentityRiskHighDesc',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

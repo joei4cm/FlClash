@@ -11,6 +11,7 @@ import 'package:fl_clash/views/application_setting.dart';
 import 'package:fl_clash/views/backup_and_restore.dart';
 import 'package:fl_clash/views/config/config.dart';
 import 'package:fl_clash/views/hotkey.dart';
+import 'package:fl_clash/views/geo_identity.dart';
 import 'package:fl_clash/views/tailscale.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -82,6 +83,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
         const _ConfigItem(),
         const _AdvancedConfigItem(),
         const _TailscaleItem(),
+        const _GeoIdentityItem(),
         const _SettingItem(),
       ],
     );
@@ -271,6 +273,20 @@ class _TailscaleItem extends StatelessWidget {
       title: Text(context.appLocalizations.tailscale),
       subtitle: Text(context.appLocalizations.tailscaleDesc),
       delegate: const OpenDelegate(widget: TailscaleView()),
+    );
+  }
+}
+
+class _GeoIdentityItem extends StatelessWidget {
+  const _GeoIdentityItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListItem.open(
+      leading: const Icon(Icons.fingerprint),
+      title: Text(context.appLocalizations.geoIdentity),
+      subtitle: Text(context.appLocalizations.geoIdentityDesc),
+      delegate: const OpenDelegate(widget: GeoIdentityView()),
     );
   }
 }

@@ -440,6 +440,104 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoAutoUpdateIntervalTip": MessageLookupByLibrary.simpleMessage(
       "Интервал автообновления должен быть больше 0",
     ),
+    "geoIdentity": MessageLookupByLibrary.simpleMessage("Геоидентичность"),
+    "geoIdentityActionsTitle": MessageLookupByLibrary.simpleMessage(
+      "Внешние инструменты",
+    ),
+    "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage(
+      "Чеклист US-идентичности",
+    ),
+    "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
+      "Согласовать exit IP с сигналами ОС и браузера для US AI-сервисов",
+    ),
+    "geoIdentityLimitsBody": MessageLookupByLibrary.simpleMessage(
+      "Эта страница — руководство по согласованности геоидентичности. Она не подделывает отпечатки внутри FlClash, не гарантирует доступ к AI-сервисам и не заменяет условия использования сервисов.",
+    ),
+    "geoIdentityLimitsTitle": MessageLookupByLibrary.simpleMessage(
+      "Ограничения и отказ от гарантий",
+    ),
+    "geoIdentityLocalSignalsTitle": MessageLookupByLibrary.simpleMessage(
+      "Сигналы на этом устройстве",
+    ),
+    "geoIdentityLocalTipBody": MessageLookupByLibrary.simpleMessage(
+      "Часовой пояс, язык браузера, шрифты и HTML5-геолокация вне прокси. Для Claude Code / CLI смените часовой пояс ОС; для веба используйте расширение вроде GeoMirror.",
+    ),
+    "geoIdentityLocalTipTitle": MessageLookupByLibrary.simpleMessage(
+      "Что FlClash не меняет",
+    ),
+    "geoIdentityOpenGeoMirror": MessageLookupByLibrary.simpleMessage(
+      "GeoMirror на GitHub",
+    ),
+    "geoIdentityOpenGeoMirrorDesc": MessageLookupByLibrary.simpleMessage(
+      "Расширение Chrome, зеркалирующее геосигналы под exit IP",
+    ),
+    "geoIdentityOpenGeoMirrorReleases": MessageLookupByLibrary.simpleMessage(
+      "Релизы GeoMirror",
+    ),
+    "geoIdentityOpenGeoMirrorReleasesDesc":
+        MessageLookupByLibrary.simpleMessage(
+          "Скачать собранные сборки расширения",
+        ),
+    "geoIdentityOpenSelfCheck": MessageLookupByLibrary.simpleMessage(
+      "Открыть самопроверку отпечатка",
+    ),
+    "geoIdentityOpenSelfCheckDesc": MessageLookupByLibrary.simpleMessage(
+      "FuckClaude — взвешенный скан риска браузера / часового пояса",
+    ),
+    "geoIdentityOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "US AI-сервисы часто сверяют exit IP с локальными сигналами: часовой пояс, язык, шрифты, геолокация. IP в Лос-Анджелесе при Asia/Shanghai или zh-CN — высокий риск. FlClash даёт US exit IP; часовой пояс ОС и профиль браузера нужно выровнять отдельно.",
+    ),
+    "geoIdentityOverviewTitle": MessageLookupByLibrary.simpleMessage(
+      "Зачем это нужно",
+    ),
+    "geoIdentityRiskHigh": MessageLookupByLibrary.simpleMessage(
+      "Высокий риск несоответствия",
+    ),
+    "geoIdentityRiskHighDesc": MessageLookupByLibrary.simpleMessage(
+      "И часовой пояс, и системная локаль выглядят китайскими. Одного US exit IP недостаточно — смените пояс ОС и выровняйте профиль браузера.",
+    ),
+    "geoIdentityRiskLow": MessageLookupByLibrary.simpleMessage(
+      "Локальные сигналы выглядят согласованно",
+    ),
+    "geoIdentityRiskLowDesc": MessageLookupByLibrary.simpleMessage(
+      "Смещение пояса и системная локаль не выглядят как китайская среда. Всё равно проверьте профиль браузера и выход через US-узел.",
+    ),
+    "geoIdentityRiskMedium": MessageLookupByLibrary.simpleMessage(
+      "Возможен гео-разрыв",
+    ),
+    "geoIdentityRiskMediumDesc": MessageLookupByLibrary.simpleMessage(
+      "Часовой пояс или системная локаль выглядят китайскими (или UTC+8). Если exit IP в США, сначала выровняйте пояс ОС и язык браузера.",
+    ),
+    "geoIdentityStep1Body": MessageLookupByLibrary.simpleMessage(
+      "На странице Proxies выберите чистый US-узел (например Los Angeles или New York). Если Claude Code указывает на свой Base URL, избегайте хостнеймов с AI-lab или relay-ключевыми словами.",
+    ),
+    "geoIdentityStep1Title": MessageLookupByLibrary.simpleMessage(
+      "1. Используйте US exit-узел",
+    ),
+    "geoIdentityStep2Body": MessageLookupByLibrary.simpleMessage(
+      "Установите часовой пояс ОС в тот же US-регион, что и exit (например America/Los_Angeles). Claude Code читает пояс ОС, а не только браузер.",
+    ),
+    "geoIdentityStep2Title": MessageLookupByLibrary.simpleMessage(
+      "2. Совместите часовой пояс ОС",
+    ),
+    "geoIdentityStep3Body": MessageLookupByLibrary.simpleMessage(
+      "Установите GeoMirror (или аналог), чтобы геолокация, пояс, язык, Accept-Language и региональные шрифты следовали за exit IP.",
+    ),
+    "geoIdentityStep3Title": MessageLookupByLibrary.simpleMessage(
+      "3. Выровняйте профиль браузера",
+    ),
+    "geoIdentityStep4Body": MessageLookupByLibrary.simpleMessage(
+      "Откройте сканер FuckClaude, пока трафик идёт через FlClash. Стремитесь к Low и перепроверяйте после смены ОС/браузера. Правила меняются — это постоянная гигиена, а не разовая настройка.",
+    ),
+    "geoIdentityStep4Title": MessageLookupByLibrary.simpleMessage(
+      "4. Самопроверка и повтор",
+    ),
+    "geoIdentitySystemLocale": MessageLookupByLibrary.simpleMessage(
+      "Системная локаль",
+    ),
+    "geoIdentityTimezone": MessageLookupByLibrary.simpleMessage(
+      "Системный часовой пояс",
+    ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Настройки Geo"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Ресурсы Geo"),
     "geoSkipped": m7,

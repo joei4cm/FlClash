@@ -9,6 +9,7 @@ export 'file.dart';
 export 'fixed.dart';
 export 'function.dart';
 export 'future.dart';
+export 'geo_identity.dart';
 export 'http.dart';
 export 'icons.dart';
 export 'indexing.dart';
