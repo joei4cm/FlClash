@@ -338,6 +338,88 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoAutoUpdateIntervalTip": MessageLookupByLibrary.simpleMessage(
       "自動更新間隔は0より大きくなければなりません",
     ),
+    "geoIdentity": MessageLookupByLibrary.simpleMessage("地理アイデンティティ"),
+    "geoIdentityActionsTitle": MessageLookupByLibrary.simpleMessage("外部ツール"),
+    "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage(
+      "米国アイデンティティのチェックリスト",
+    ),
+    "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
+      "出口 IP と OS / ブラウザ信号を揃え、米国向け AI サービスに合わせる",
+    ),
+    "geoIdentityLimitsBody": MessageLookupByLibrary.simpleMessage(
+      "この画面は地理アイデンティティ整合の案内です。FlClash 内で指紋を偽装せず、AI サービス利用を保証せず、各サービスの利用規約の代わりにもなりません。",
+    ),
+    "geoIdentityLimitsTitle": MessageLookupByLibrary.simpleMessage("限界と免責"),
+    "geoIdentityLocalSignalsTitle": MessageLookupByLibrary.simpleMessage(
+      "この端末の信号",
+    ),
+    "geoIdentityLocalTipBody": MessageLookupByLibrary.simpleMessage(
+      "タイムゾーン、ブラウザ言語、フォント、HTML5 位置情報はプロキシの外です。Claude Code / CLI は OS のタイムゾーンを、Web は GeoMirror などの拡張を使って揃えてください。",
+    ),
+    "geoIdentityLocalTipTitle": MessageLookupByLibrary.simpleMessage(
+      "FlClash では変えられないもの",
+    ),
+    "geoIdentityOpenGeoMirror": MessageLookupByLibrary.simpleMessage(
+      "GeoMirror（GitHub）",
+    ),
+    "geoIdentityOpenGeoMirrorDesc": MessageLookupByLibrary.simpleMessage(
+      "出口 IP に地理信号を合わせる Chrome 拡張",
+    ),
+    "geoIdentityOpenGeoMirrorReleases": MessageLookupByLibrary.simpleMessage(
+      "GeoMirror リリース",
+    ),
+    "geoIdentityOpenGeoMirrorReleasesDesc":
+        MessageLookupByLibrary.simpleMessage("パッケージ済み拡張をダウンロード"),
+    "geoIdentityOpenSelfCheck": MessageLookupByLibrary.simpleMessage(
+      "フィンガープリント自己チェックを開く",
+    ),
+    "geoIdentityOpenSelfCheckDesc": MessageLookupByLibrary.simpleMessage(
+      "FuckClaude — ブラウザ / タイムゾーンのリスク加重スキャン",
+    ),
+    "geoIdentityOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "米国の AI サービスは、出口 IP とタイムゾーン・言語・フォント・位置情報などのローカル信号を突き合わせることがあります。ロサンゼルスの IP なのに Asia/Shanghai や zh-CN だと高リスクです。FlClash は米国出口 IP を提供できますが、OS のタイムゾーンとブラウザプロファイルは別途揃える必要があります。",
+    ),
+    "geoIdentityOverviewTitle": MessageLookupByLibrary.simpleMessage("なぜ重要か"),
+    "geoIdentityRiskHigh": MessageLookupByLibrary.simpleMessage("不一致リスクが高い"),
+    "geoIdentityRiskHighDesc": MessageLookupByLibrary.simpleMessage(
+      "タイムゾーンとシステムロケールの両方が中国ローカルに見えます。米国出口 IP だけでは足りません。OS のタイムゾーンを変え、ブラウザプロファイルを揃えてください。",
+    ),
+    "geoIdentityRiskLow": MessageLookupByLibrary.simpleMessage(
+      "ローカル信号は整合していそう",
+    ),
+    "geoIdentityRiskLowDesc": MessageLookupByLibrary.simpleMessage(
+      "タイムゾーンオフセットとシステムロケールは中国ローカルには見えません。それでもブラウザプロファイルと、米国ノード経由であることを確認してください。",
+    ),
+    "geoIdentityRiskMedium": MessageLookupByLibrary.simpleMessage("地理の不一致の可能性"),
+    "geoIdentityRiskMediumDesc": MessageLookupByLibrary.simpleMessage(
+      "タイムゾーンまたはシステムロケールが中国ローカル（あるいは UTC+8）に見えます。出口 IP が米国なら、OS のタイムゾーンとブラウザ言語を先に揃えてください。",
+    ),
+    "geoIdentityStep1Body": MessageLookupByLibrary.simpleMessage(
+      "プロキシ画面でクリーンな米国ノード（ロサンゼルスやニューヨークなど）を選びます。Claude Code を独自 Base URL に向ける場合、ホスト名に AI ラボや中継を連想させる語を避けてください。",
+    ),
+    "geoIdentityStep1Title": MessageLookupByLibrary.simpleMessage(
+      "1. 米国の出口ノードを使う",
+    ),
+    "geoIdentityStep2Body": MessageLookupByLibrary.simpleMessage(
+      "OS のタイムゾーンを出口と同じ米国地域（例: America/Los_Angeles）に設定します。Claude Code はブラウザではなく OS のタイムゾーンを読みます。",
+    ),
+    "geoIdentityStep2Title": MessageLookupByLibrary.simpleMessage(
+      "2. OS のタイムゾーンを合わせる",
+    ),
+    "geoIdentityStep3Body": MessageLookupByLibrary.simpleMessage(
+      "GeoMirror（または同様の拡張）を入れ、位置情報・タイムゾーン・言語・Accept-Language・地域フォントの検出を出口 IP に合わせてください。",
+    ),
+    "geoIdentityStep3Title": MessageLookupByLibrary.simpleMessage(
+      "3. ブラウザプロファイルを揃える",
+    ),
+    "geoIdentityStep4Body": MessageLookupByLibrary.simpleMessage(
+      "通信が FlClash 経由の状態で FuckClaude を開き、Low を目指します。OS やブラウザを変えたら再測定してください。ルールは変わるので、一度きりではなく継続的な衛生管理として扱ってください。",
+    ),
+    "geoIdentityStep4Title": MessageLookupByLibrary.simpleMessage(
+      "4. 自己チェックして再確認",
+    ),
+    "geoIdentitySystemLocale": MessageLookupByLibrary.simpleMessage("システムロケール"),
+    "geoIdentityTimezone": MessageLookupByLibrary.simpleMessage("システムタイムゾーン"),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geoオプション"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geoリソース"),
     "geoSkipped": m7,

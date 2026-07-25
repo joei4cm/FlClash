@@ -300,6 +300,76 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoAutoUpdateIntervalTip": MessageLookupByLibrary.simpleMessage(
       "自动更新间隔必须大于0",
     ),
+    "geoIdentity": MessageLookupByLibrary.simpleMessage("地理身份"),
+    "geoIdentityActionsTitle": MessageLookupByLibrary.simpleMessage("外部工具"),
+    "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage("美区身份清单"),
+    "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
+      "让出口 IP 与系统/浏览器信号对齐，以适配美区 AI 服务",
+    ),
+    "geoIdentityLimitsBody": MessageLookupByLibrary.simpleMessage(
+      "本页只提供地理身份一致性指引。它不会在 FlClash 内伪造指纹，不保证能使用任何 AI 服务，也不能替代各服务的使用条款。",
+    ),
+    "geoIdentityLimitsTitle": MessageLookupByLibrary.simpleMessage("边界与声明"),
+    "geoIdentityLocalSignalsTitle": MessageLookupByLibrary.simpleMessage(
+      "本机信号",
+    ),
+    "geoIdentityLocalTipBody": MessageLookupByLibrary.simpleMessage(
+      "时区、浏览器语言、字体和 HTML5 地理定位不在代理层。Claude Code / CLI 请改系统时区；网页会话请用 GeoMirror 一类浏览器扩展。",
+    ),
+    "geoIdentityLocalTipTitle": MessageLookupByLibrary.simpleMessage(
+      "FlClash 无法直接改动的部分",
+    ),
+    "geoIdentityOpenGeoMirror": MessageLookupByLibrary.simpleMessage(
+      "GeoMirror（GitHub）",
+    ),
+    "geoIdentityOpenGeoMirrorDesc": MessageLookupByLibrary.simpleMessage(
+      "按出口 IP 镜像地理信号的 Chrome 扩展",
+    ),
+    "geoIdentityOpenGeoMirrorReleases": MessageLookupByLibrary.simpleMessage(
+      "GeoMirror 发布页",
+    ),
+    "geoIdentityOpenGeoMirrorReleasesDesc":
+        MessageLookupByLibrary.simpleMessage("下载打包好的扩展构建"),
+    "geoIdentityOpenSelfCheck": MessageLookupByLibrary.simpleMessage("打开指纹自查"),
+    "geoIdentityOpenSelfCheckDesc": MessageLookupByLibrary.simpleMessage(
+      "FuckClaude — 浏览器/时区风险加权扫描",
+    ),
+    "geoIdentityOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "美区 AI 服务常会交叉比对出口 IP 与本地信号（时区、语言、字体、地理定位）。洛杉矶 IP 配 Asia/Shanghai 时区或 zh-CN 语言属于高风险矛盾。FlClash 只能提供美区出口 IP；系统时区与浏览器画像需要另行对齐。",
+    ),
+    "geoIdentityOverviewTitle": MessageLookupByLibrary.simpleMessage("为什么重要"),
+    "geoIdentityRiskHigh": MessageLookupByLibrary.simpleMessage("高矛盾风险"),
+    "geoIdentityRiskHighDesc": MessageLookupByLibrary.simpleMessage(
+      "时区与系统语言区域都像中国本地。仅换美区出口 IP 不够——请修改系统时区并对齐浏览器画像。",
+    ),
+    "geoIdentityRiskLow": MessageLookupByLibrary.simpleMessage("本机信号看起来一致"),
+    "geoIdentityRiskLowDesc": MessageLookupByLibrary.simpleMessage(
+      "本机时区偏移与系统语言区域不像中国本地环境。仍请确认浏览器画像，并确保流量经美区节点出口。",
+    ),
+    "geoIdentityRiskMedium": MessageLookupByLibrary.simpleMessage("可能存在地理矛盾"),
+    "geoIdentityRiskMediumDesc": MessageLookupByLibrary.simpleMessage(
+      "时区或系统语言区域看起来像中国本地（或 UTC+8）。若出口 IP 在美国，请先对齐系统时区与浏览器语言，再依赖美区 AI 服务。",
+    ),
+    "geoIdentityStep1Body": MessageLookupByLibrary.simpleMessage(
+      "在代理页选择干净的美区节点（如洛杉矶、纽约）。若 Claude Code 使用自定义 Base URL，避免代理主机名含有 AI 实验室或中继相关关键词。",
+    ),
+    "geoIdentityStep1Title": MessageLookupByLibrary.simpleMessage(
+      "1. 使用美区出口节点",
+    ),
+    "geoIdentityStep2Body": MessageLookupByLibrary.simpleMessage(
+      "将操作系统时区设为与出口一致的美区（例如 America/Los_Angeles）。Claude Code 读取的是系统时区，不只是浏览器。",
+    ),
+    "geoIdentityStep2Title": MessageLookupByLibrary.simpleMessage("2. 对齐系统时区"),
+    "geoIdentityStep3Body": MessageLookupByLibrary.simpleMessage(
+      "安装 GeoMirror（或同类扩展），让地理定位、时区、语言、Accept-Language 与区域字体探测跟随出口 IP。",
+    ),
+    "geoIdentityStep3Title": MessageLookupByLibrary.simpleMessage("3. 对齐浏览器画像"),
+    "geoIdentityStep4Body": MessageLookupByLibrary.simpleMessage(
+      "在流量走 FlClash 时打开 FuckClaude 扫描，尽量压到 Low，并在改完系统/浏览器后再测一次。规则会变，请把它当成持续维护，而不是一次搞定。",
+    ),
+    "geoIdentityStep4Title": MessageLookupByLibrary.simpleMessage("4. 自查并持续复检"),
+    "geoIdentitySystemLocale": MessageLookupByLibrary.simpleMessage("系统语言区域"),
+    "geoIdentityTimezone": MessageLookupByLibrary.simpleMessage("系统时区"),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geo 选项"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo 资源"),
     "geoSkipped": m7,
