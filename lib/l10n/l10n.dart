@@ -5094,10 +5094,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Protect US AI exit identity in system proxy and TUN modes`
+  /// `One-click US exit undercover for apps and Claude Code`
   String get geoIdentityDesc {
     return Intl.message(
-      'Protect US AI exit identity in system proxy and TUN modes',
+      'One-click US exit undercover for apps and Claude Code',
       name: 'geoIdentityDesc',
       desc: '',
       args: [],
@@ -6199,6 +6199,166 @@ class AppLocalizations {
     return Intl.message(
       'Setup applied, but the exit is not US-protected yet. Select a US node and tap One-click setup again.',
       name: 'geoIdentitySetupDoneNeedUsNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ready`
+  String get geoIdentityStatusReadyTitle {
+    return Intl.message(
+      'Ready',
+      name: 'geoIdentityStatusReadyTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network undercover looks good. Keep a US node selected.`
+  String get geoIdentityStatusReadyBody {
+    return Intl.message(
+      'Network undercover looks good. Keep a US node selected.',
+      name: 'geoIdentityStatusReadyBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Needs setup`
+  String get geoIdentityStatusSetupTitle {
+    return Intl.message(
+      'Needs setup',
+      name: 'geoIdentityStatusSetupTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pick a US node, then tap One-click setup.`
+  String get geoIdentityStatusSetupBody {
+    return Intl.message(
+      'Pick a US node, then tap One-click setup.',
+      name: 'geoIdentityStatusSetupBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Protect`
+  String get geoIdentityChipProtect {
+    return Intl.message(
+      'Protect',
+      name: 'geoIdentityChipProtect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Started`
+  String get geoIdentityChipStarted {
+    return Intl.message(
+      'Started',
+      name: 'geoIdentityChipStarted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Capture`
+  String get geoIdentityChipCapture {
+    return Intl.message(
+      'Capture',
+      name: 'geoIdentityChipCapture',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `US exit`
+  String get geoIdentityChipNetwork {
+    return Intl.message(
+      'US exit',
+      name: 'geoIdentityChipNetwork',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Timezone`
+  String get geoIdentityChipTimezone {
+    return Intl.message(
+      'Timezone',
+      name: 'geoIdentityChipTimezone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quick actions`
+  String get geoIdentityQuickActionsTitle {
+    return Intl.message(
+      'Quick actions',
+      name: 'geoIdentityQuickActionsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check exit IP via FuckClaude`
+  String get geoIdentityVerifyNetworkShort {
+    return Intl.message(
+      'Check exit IP via FuckClaude',
+      name: 'geoIdentityVerifyNetworkShort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Match OS timezone to the exit`
+  String get geoIdentityAlignOsTimezoneShort {
+    return Intl.message(
+      'Match OS timezone to the exit',
+      name: 'geoIdentityAlignOsTimezoneShort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy HTTP(S)_PROXY for terminals`
+  String get geoIdentityCopyTerminalProxyShort {
+    return Intl.message(
+      'Copy HTTP(S)_PROXY for terminals',
+      name: 'geoIdentityCopyTerminalProxyShort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Browser fingerprint alignment`
+  String get geoIdentityOpenGeoMirrorShort {
+    return Intl.message(
+      'Browser fingerprint alignment',
+      name: 'geoIdentityOpenGeoMirrorShort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show advanced`
+  String get geoIdentityShowAdvanced {
+    return Intl.message(
+      'Show advanced',
+      name: 'geoIdentityShowAdvanced',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hide advanced`
+  String get geoIdentityHideAdvanced {
+    return Intl.message(
+      'Hide advanced',
+      name: 'geoIdentityHideAdvanced',
       desc: '',
       args: [],
     );

@@ -362,6 +362,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityAlignOsTimezoneDesc": MessageLookupByLibrary.simpleMessage(
       "ネットワークを検証してから、デスクトップの OS タイムゾーンを出口の地理タイムゾーンに設定します。環境によっては管理者 / polkit が必要です。",
     ),
+    "geoIdentityAlignOsTimezoneShort": MessageLookupByLibrary.simpleMessage(
+      "OS タイムゾーンを出口に合わせる",
+    ),
     "geoIdentityAndroidStep1": MessageLookupByLibrary.simpleMessage(
       "プロキシ画面でクリーンな米国ノードを選びます。",
     ),
@@ -443,6 +446,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage(
       "米国アイデンティティのチェックリスト",
     ),
+    "geoIdentityChipCapture": MessageLookupByLibrary.simpleMessage("キャプチャ"),
+    "geoIdentityChipNetwork": MessageLookupByLibrary.simpleMessage("米国出口"),
+    "geoIdentityChipProtect": MessageLookupByLibrary.simpleMessage("保護"),
+    "geoIdentityChipStarted": MessageLookupByLibrary.simpleMessage("起動"),
+    "geoIdentityChipTimezone": MessageLookupByLibrary.simpleMessage("タイムゾーン"),
     "geoIdentityClaudeCodeBaseUrlBody": MessageLookupByLibrary.simpleMessage(
       "独自 API Base URL を使う場合、中国の AI ラボ / リセラーを連想させるホスト名を避けてください。公式 Anthropic エンドポイントかクリーンなホスト名を使い、通信は米国ノード経由にしてください。",
     ),
@@ -466,8 +474,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityCopyTerminalProxyDesc": MessageLookupByLibrary.simpleMessage(
       "FlClash ミックスポート向けの HTTP(S)_PROXY / ALL_PROXY — TUN なしで Node がシステムプロキシを無視する場合に必要です。",
     ),
+    "geoIdentityCopyTerminalProxyShort": MessageLookupByLibrary.simpleMessage(
+      "ターミナル用 HTTP(S)_PROXY をコピー",
+    ),
     "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
-      "システムプロキシと TUN で米国向け AI 出口アイデンティティを保護",
+      "ワンクリックで米国出口を潜伏（アプリと Claude Code）",
     ),
     "geoIdentityDesktopStep1": MessageLookupByLibrary.simpleMessage(
       "プロキシ画面でクリーンな米国ノードを選びます。",
@@ -485,6 +496,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "チェック上の出口地理",
     ),
     "geoIdentityGuideTitle": MessageLookupByLibrary.simpleMessage("手動ステップ"),
+    "geoIdentityHideAdvanced": MessageLookupByLibrary.simpleMessage("詳細を隠す"),
     "geoIdentityLimitsBody": MessageLookupByLibrary.simpleMessage(
       "FlClash はネットワーク出口を隠し、FuckClaude API で IP 地理と Accept-Language を検証できます。他アプリの HTTPS ヘッダ改変、フォント/位置情報の偽装、AI サービス利用の保証はせず、各サービスの利用規約の代わりにもなりません。",
     ),
@@ -528,6 +540,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityOpenGeoMirrorReleasesDesc":
         MessageLookupByLibrary.simpleMessage("パッケージ済み拡張をダウンロード"),
+    "geoIdentityOpenGeoMirrorShort": MessageLookupByLibrary.simpleMessage(
+      "ブラウザ指紋の整合",
+    ),
     "geoIdentityOpenSelfCheck": MessageLookupByLibrary.simpleMessage(
       "フィンガープリント自己チェックを開く",
     ),
@@ -551,6 +566,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "米国出口の整合を有効な目標として扱い、ネットワーク探査で米国 Accept-Language を優先し、システムプロキシと TUN/VPN のキャプチャ状態を表示します。",
     ),
     "geoIdentityProtectTitle": MessageLookupByLibrary.simpleMessage("ネットワーク潜伏"),
+    "geoIdentityQuickActionsTitle": MessageLookupByLibrary.simpleMessage(
+      "クイック操作",
+    ),
     "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
       "以前の OS タイムゾーンを復元",
     ),
@@ -602,6 +620,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentitySetupVerifying": MessageLookupByLibrary.simpleMessage(
       "ネットワーク環境を検証中…",
     ),
+    "geoIdentityShowAdvanced": MessageLookupByLibrary.simpleMessage("詳細を表示"),
+    "geoIdentityStatusReadyBody": MessageLookupByLibrary.simpleMessage(
+      "ネットワーク潜伏は良好です。米国ノードを選択したままにしてください。",
+    ),
+    "geoIdentityStatusReadyTitle": MessageLookupByLibrary.simpleMessage("準備完了"),
+    "geoIdentityStatusSetupBody": MessageLookupByLibrary.simpleMessage(
+      "米国ノードを選び、ワンクリック設定をタップしてください。",
+    ),
+    "geoIdentityStatusSetupTitle": MessageLookupByLibrary.simpleMessage(
+      "セットアップが必要",
+    ),
     "geoIdentityStep1Body": MessageLookupByLibrary.simpleMessage(
       "プロキシ画面でクリーンな米国ノード（ロサンゼルスやニューヨークなど）を選びます。Claude Code を独自 Base URL に向ける場合、ホスト名に AI ラボや中継を連想させる語を避けてください。",
     ),
@@ -652,6 +681,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityVerifyNetworkDesc": MessageLookupByLibrary.simpleMessage(
       "FlClash のミックスポート経由で FuckClaude /api/check を呼び出します（システムプロキシと TUN/VPN の両方で有効）。",
+    ),
+    "geoIdentityVerifyNetworkShort": MessageLookupByLibrary.simpleMessage(
+      "FuckClaude で出口 IP を確認",
     ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geoオプション"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geoリソース"),

@@ -452,6 +452,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityAlignOsTimezoneDesc": MessageLookupByLibrary.simpleMessage(
       "Verify the network, then set the desktop OS timezone to the exit geo timezone. Requires admin / polkit on some systems.",
     ),
+    "geoIdentityAlignOsTimezoneShort": MessageLookupByLibrary.simpleMessage(
+      "Match OS timezone to the exit",
+    ),
     "geoIdentityAndroidStep1": MessageLookupByLibrary.simpleMessage(
       "Select a clean US node on the Proxies page.",
     ),
@@ -533,6 +536,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage(
       "US identity checklist",
     ),
+    "geoIdentityChipCapture": MessageLookupByLibrary.simpleMessage("Capture"),
+    "geoIdentityChipNetwork": MessageLookupByLibrary.simpleMessage("US exit"),
+    "geoIdentityChipProtect": MessageLookupByLibrary.simpleMessage("Protect"),
+    "geoIdentityChipStarted": MessageLookupByLibrary.simpleMessage("Started"),
+    "geoIdentityChipTimezone": MessageLookupByLibrary.simpleMessage("Timezone"),
     "geoIdentityClaudeCodeBaseUrlBody": MessageLookupByLibrary.simpleMessage(
       "If you use a custom API base URL, avoid hostnames with China AI-lab / reseller keywords. Prefer the official Anthropic endpoint, or a clean hostname, while traffic exits via a US node.",
     ),
@@ -556,8 +564,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityCopyTerminalProxyDesc": MessageLookupByLibrary.simpleMessage(
       "HTTP(S)_PROXY / ALL_PROXY pointed at FlClash mixed-port — needed when Claude Code runs without TUN and Node ignores the system proxy.",
     ),
+    "geoIdentityCopyTerminalProxyShort": MessageLookupByLibrary.simpleMessage(
+      "Copy HTTP(S)_PROXY for terminals",
+    ),
     "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
-      "Protect US AI exit identity in system proxy and TUN modes",
+      "One-click US exit undercover for apps and Claude Code",
     ),
     "geoIdentityDesktopStep1": MessageLookupByLibrary.simpleMessage(
       "Select a clean US node on the Proxies page.",
@@ -576,6 +587,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityGuideTitle": MessageLookupByLibrary.simpleMessage(
       "Manual steps",
+    ),
+    "geoIdentityHideAdvanced": MessageLookupByLibrary.simpleMessage(
+      "Hide advanced",
     ),
     "geoIdentityLimitsBody": MessageLookupByLibrary.simpleMessage(
       "FlClash undercovers the network exit and can verify IP geo + Accept-Language via FuckClaude’s API. It does not rewrite HTTPS headers for other apps, does not spoof fonts/geolocation, does not guarantee access to any AI service, and does not replace each service’s terms of use.",
@@ -624,6 +638,9 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "Download packaged extension builds",
         ),
+    "geoIdentityOpenGeoMirrorShort": MessageLookupByLibrary.simpleMessage(
+      "Browser fingerprint alignment",
+    ),
     "geoIdentityOpenSelfCheck": MessageLookupByLibrary.simpleMessage(
       "Open fingerprint self-check",
     ),
@@ -650,6 +667,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityProtectTitle": MessageLookupByLibrary.simpleMessage(
       "Network undercover",
+    ),
+    "geoIdentityQuickActionsTitle": MessageLookupByLibrary.simpleMessage(
+      "Quick actions",
     ),
     "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
       "Restore previous OS timezone",
@@ -706,6 +726,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentitySetupVerifying": MessageLookupByLibrary.simpleMessage(
       "Verifying network environment…",
     ),
+    "geoIdentityShowAdvanced": MessageLookupByLibrary.simpleMessage(
+      "Show advanced",
+    ),
+    "geoIdentityStatusReadyBody": MessageLookupByLibrary.simpleMessage(
+      "Network undercover looks good. Keep a US node selected.",
+    ),
+    "geoIdentityStatusReadyTitle": MessageLookupByLibrary.simpleMessage(
+      "Ready",
+    ),
+    "geoIdentityStatusSetupBody": MessageLookupByLibrary.simpleMessage(
+      "Pick a US node, then tap One-click setup.",
+    ),
+    "geoIdentityStatusSetupTitle": MessageLookupByLibrary.simpleMessage(
+      "Needs setup",
+    ),
     "geoIdentityStep1Body": MessageLookupByLibrary.simpleMessage(
       "In Proxies, select a clean US node (for example Los Angeles or New York). Avoid proxy hostnames that contain AI-lab or relay keywords when pointing Claude Code at a custom base URL.",
     ),
@@ -760,6 +795,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityVerifyNetworkDesc": MessageLookupByLibrary.simpleMessage(
       "Call FuckClaude /api/check through FlClash’s mixed-port stack (works with system proxy and TUN/VPN).",
+    ),
+    "geoIdentityVerifyNetworkShort": MessageLookupByLibrary.simpleMessage(
+      "Check exit IP via FuckClaude",
     ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geo Options"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo Resources"),

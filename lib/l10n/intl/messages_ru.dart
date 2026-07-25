@@ -467,6 +467,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityAlignOsTimezoneDesc": MessageLookupByLibrary.simpleMessage(
       "Проверьте сеть, затем установите часовой пояс desktop ОС по geo exit. На части систем нужны права admin / polkit.",
     ),
+    "geoIdentityAlignOsTimezoneShort": MessageLookupByLibrary.simpleMessage(
+      "Выровнять часовой пояс ОС под exit",
+    ),
     "geoIdentityAndroidStep1": MessageLookupByLibrary.simpleMessage(
       "На странице Proxies выберите чистый US-узел.",
     ),
@@ -548,6 +551,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage(
       "Чеклист US-идентичности",
     ),
+    "geoIdentityChipCapture": MessageLookupByLibrary.simpleMessage("Захват"),
+    "geoIdentityChipNetwork": MessageLookupByLibrary.simpleMessage("US exit"),
+    "geoIdentityChipProtect": MessageLookupByLibrary.simpleMessage("Защита"),
+    "geoIdentityChipStarted": MessageLookupByLibrary.simpleMessage("Запуск"),
+    "geoIdentityChipTimezone": MessageLookupByLibrary.simpleMessage(
+      "Часовой пояс",
+    ),
     "geoIdentityClaudeCodeBaseUrlBody": MessageLookupByLibrary.simpleMessage(
       "При своём API base URL избегайте хостнеймов с китайскими AI-lab / reseller ключевыми словами. Предпочитайте официальный endpoint Anthropic или чистый hostname, а трафик пусть выходит через US-узел.",
     ),
@@ -571,8 +581,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityCopyTerminalProxyDesc": MessageLookupByLibrary.simpleMessage(
       "HTTP(S)_PROXY / ALL_PROXY на mixed-port FlClash — нужно, если Claude Code без TUN и Node игнорирует системный прокси.",
     ),
+    "geoIdentityCopyTerminalProxyShort": MessageLookupByLibrary.simpleMessage(
+      "Скопировать HTTP(S)_PROXY для терминала",
+    ),
     "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
-      "Защита US AI exit-идентичности в режиме системного прокси и TUN",
+      "US exit в один клик для приложений и Claude Code",
     ),
     "geoIdentityDesktopStep1": MessageLookupByLibrary.simpleMessage(
       "На странице Proxies выберите чистый US-узел.",
@@ -591,6 +604,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityGuideTitle": MessageLookupByLibrary.simpleMessage(
       "Ручные шаги",
+    ),
+    "geoIdentityHideAdvanced": MessageLookupByLibrary.simpleMessage(
+      "Скрыть дополнительно",
     ),
     "geoIdentityLimitsBody": MessageLookupByLibrary.simpleMessage(
       "FlClash маскирует сетевой выход и может проверить IP-гео и Accept-Language через FuckClaude API. Он не переписывает HTTPS-заголовки других приложений, не подделывает шрифты/геолокацию, не гарантирует доступ к AI-сервисам и не заменяет условия использования сервисов.",
@@ -639,6 +655,9 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "Скачать собранные сборки расширения",
         ),
+    "geoIdentityOpenGeoMirrorShort": MessageLookupByLibrary.simpleMessage(
+      "Выравнивание отпечатка браузера",
+    ),
     "geoIdentityOpenSelfCheck": MessageLookupByLibrary.simpleMessage(
       "Открыть самопроверку отпечатка",
     ),
@@ -665,6 +684,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityProtectTitle": MessageLookupByLibrary.simpleMessage(
       "Сетевая маскировка",
+    ),
+    "geoIdentityQuickActionsTitle": MessageLookupByLibrary.simpleMessage(
+      "Быстрые действия",
     ),
     "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
       "Восстановить прежний часовой пояс ОС",
@@ -721,6 +743,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentitySetupVerifying": MessageLookupByLibrary.simpleMessage(
       "Проверка сетевой среды…",
     ),
+    "geoIdentityShowAdvanced": MessageLookupByLibrary.simpleMessage(
+      "Показать дополнительно",
+    ),
+    "geoIdentityStatusReadyBody": MessageLookupByLibrary.simpleMessage(
+      "Сетевая маскировка в порядке. Держите выбранным US-узел.",
+    ),
+    "geoIdentityStatusReadyTitle": MessageLookupByLibrary.simpleMessage(
+      "Готово",
+    ),
+    "geoIdentityStatusSetupBody": MessageLookupByLibrary.simpleMessage(
+      "Выберите US-узел, затем нажмите One-click setup.",
+    ),
+    "geoIdentityStatusSetupTitle": MessageLookupByLibrary.simpleMessage(
+      "Нужна настройка",
+    ),
     "geoIdentityStep1Body": MessageLookupByLibrary.simpleMessage(
       "На странице Proxies выберите чистый US-узел (например Los Angeles или New York). Если Claude Code указывает на свой Base URL, избегайте хостнеймов с AI-lab или relay-ключевыми словами.",
     ),
@@ -775,6 +812,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityVerifyNetworkDesc": MessageLookupByLibrary.simpleMessage(
       "Вызвать FuckClaude /api/check через mixed-port стек FlClash (работает и с системным прокси, и с TUN/VPN).",
+    ),
+    "geoIdentityVerifyNetworkShort": MessageLookupByLibrary.simpleMessage(
+      "Проверить exit IP через FuckClaude",
     ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Настройки Geo"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Ресурсы Geo"),
