@@ -173,6 +173,27 @@ class GeoIdentitySetting extends _$GeoIdentitySetting
   void setUseUsAcceptLanguage(bool useUsAcceptLanguage) {
     update((state) => state.copyWith(useUsAcceptLanguage: useUsAcceptLanguage));
   }
+
+  void setTimezoneHistory({
+    String? previousOsTimezone,
+    String? appliedOsTimezone,
+  }) {
+    update(
+      (state) => state.copyWith(
+        previousOsTimezone: previousOsTimezone,
+        appliedOsTimezone: appliedOsTimezone,
+      ),
+    );
+  }
+
+  void clearTimezoneHistory() {
+    update(
+      (state) => state.copyWith(
+        previousOsTimezone: null,
+        appliedOsTimezone: null,
+      ),
+    );
+  }
 }
 
 @Riverpod(name: 'configProvider')

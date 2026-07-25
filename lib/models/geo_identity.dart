@@ -20,6 +20,12 @@ abstract class GeoIdentityProps with _$GeoIdentityProps {
     /// Send `Accept-Language: en-US,en;q=0.9` on FuckClaude network probes so
     /// the server-side estimate is not polluted by a Chinese Accept-Language.
     @Default(true) bool useUsAcceptLanguage,
+
+    /// Previous OS timezone id saved before an align action (for Restore).
+    String? previousOsTimezone,
+
+    /// Last OS timezone FlClash successfully applied.
+    String? appliedOsTimezone,
   }) = _GeoIdentityProps;
 
   factory GeoIdentityProps.fromJson(Map<String, Object?> json) =>

@@ -5663,6 +5663,206 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Claude Code (terminal)`
+  String get geoIdentityClaudeCodeTitle {
+    return Intl.message(
+      'Claude Code (terminal)',
+      name: 'geoIdentityClaudeCodeTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `GeoMirror does not help Claude Code. The CLI reads the OS timezone, and its traffic must exit through FlClash (prefer TUN/VPN). With system proxy only, paste the proxy exports into the same terminal before running claude.`
+  String get geoIdentityClaudeCodeBody {
+    return Intl.message(
+      'GeoMirror does not help Claude Code. The CLI reads the OS timezone, and its traffic must exit through FlClash (prefer TUN/VPN). With system proxy only, paste the proxy exports into the same terminal before running claude.',
+      name: 'geoIdentityClaudeCodeBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `OS timezone is the CLI signal`
+  String get geoIdentityClaudeCodeTimezoneTipTitle {
+    return Intl.message(
+      'OS timezone is the CLI signal',
+      name: 'geoIdentityClaudeCodeTimezoneTipTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Public reverse-engineering reports say Claude Code checked Asia/Shanghai and Asia/Urumqi when ANTHROPIC_BASE_URL pointed at a custom endpoint. Align the OS timezone to your US exit (for example America/Los_Angeles).`
+  String get geoIdentityClaudeCodeTimezoneTipBody {
+    return Intl.message(
+      'Public reverse-engineering reports say Claude Code checked Asia/Shanghai and Asia/Urumqi when ANTHROPIC_BASE_URL pointed at a custom endpoint. Align the OS timezone to your US exit (for example America/Los_Angeles).',
+      name: 'geoIdentityClaudeCodeTimezoneTipBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Align OS timezone to exit`
+  String get geoIdentityAlignOsTimezone {
+    return Intl.message(
+      'Align OS timezone to exit',
+      name: 'geoIdentityAlignOsTimezone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verify the network, then set the desktop OS timezone to the exit geo timezone. Requires admin / polkit on some systems.`
+  String get geoIdentityAlignOsTimezoneDesc {
+    return Intl.message(
+      'Verify the network, then set the desktop OS timezone to the exit geo timezone. Requires admin / polkit on some systems.',
+      name: 'geoIdentityAlignOsTimezoneDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Currently applied: {timezone}`
+  String geoIdentityAlignOsTimezoneApplied(Object timezone) {
+    return Intl.message(
+      'Currently applied: $timezone',
+      name: 'geoIdentityAlignOsTimezoneApplied',
+      desc: '',
+      args: [timezone],
+    );
+  }
+
+  /// `Restore previous OS timezone`
+  String get geoIdentityRestoreOsTimezone {
+    return Intl.message(
+      'Restore previous OS timezone',
+      name: 'geoIdentityRestoreOsTimezone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restore {timezone}`
+  String geoIdentityRestoreOsTimezoneDesc(Object timezone) {
+    return Intl.message(
+      'Restore $timezone',
+      name: 'geoIdentityRestoreOsTimezoneDesc',
+      desc: '',
+      args: [timezone],
+    );
+  }
+
+  /// `OS timezone set to {timezone}`
+  String geoIdentityTimezoneApplied(Object timezone) {
+    return Intl.message(
+      'OS timezone set to $timezone',
+      name: 'geoIdentityTimezoneApplied',
+      desc: '',
+      args: [timezone],
+    );
+  }
+
+  /// `OS timezone restored to {timezone}`
+  String geoIdentityTimezoneRestored(Object timezone) {
+    return Intl.message(
+      'OS timezone restored to $timezone',
+      name: 'geoIdentityTimezoneRestored',
+      desc: '',
+      args: [timezone],
+    );
+  }
+
+  /// `No exit timezone yet. Verify the network environment first.`
+  String get geoIdentityTimezoneMissing {
+    return Intl.message(
+      'No exit timezone yet. Verify the network environment first.',
+      name: 'geoIdentityTimezoneMissing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No previous OS timezone saved.`
+  String get geoIdentityTimezoneNothingToRestore {
+    return Intl.message(
+      'No previous OS timezone saved.',
+      name: 'geoIdentityTimezoneNothingToRestore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Windows mapping for {timezone}. Set it manually in Date & time settings.`
+  String geoIdentityTimezoneUnsupported(Object timezone) {
+    return Intl.message(
+      'No Windows mapping for $timezone. Set it manually in Date & time settings.',
+      name: 'geoIdentityTimezoneUnsupported',
+      desc: '',
+      args: [timezone],
+    );
+  }
+
+  /// `Could not change timezone automatically. Run: {command}`
+  String geoIdentityTimezoneManual(Object command) {
+    return Intl.message(
+      'Could not change timezone automatically. Run: $command',
+      name: 'geoIdentityTimezoneManual',
+      desc: '',
+      args: [command],
+    );
+  }
+
+  /// `Android cannot change the system timezone without root. Open Settings → System → Date & time and pick a US zone that matches your exit.`
+  String get geoIdentityTimezoneAndroidTip {
+    return Intl.message(
+      'Android cannot change the system timezone without root. Open Settings → System → Date & time and pick a US zone that matches your exit.',
+      name: 'geoIdentityTimezoneAndroidTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy terminal proxy exports`
+  String get geoIdentityCopyTerminalProxy {
+    return Intl.message(
+      'Copy terminal proxy exports',
+      name: 'geoIdentityCopyTerminalProxy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `HTTP(S)_PROXY / ALL_PROXY pointed at FlClash mixed-port — needed when Claude Code runs without TUN and Node ignores the system proxy.`
+  String get geoIdentityCopyTerminalProxyDesc {
+    return Intl.message(
+      'HTTP(S)_PROXY / ALL_PROXY pointed at FlClash mixed-port — needed when Claude Code runs without TUN and Node ignores the system proxy.',
+      name: 'geoIdentityCopyTerminalProxyDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Watch ANTHROPIC_BASE_URL`
+  String get geoIdentityClaudeCodeBaseUrlTitle {
+    return Intl.message(
+      'Watch ANTHROPIC_BASE_URL',
+      name: 'geoIdentityClaudeCodeBaseUrlTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If you use a custom API base URL, avoid hostnames with China AI-lab / reseller keywords. Prefer the official Anthropic endpoint, or a clean hostname, while traffic exits via a US node.`
+  String get geoIdentityClaudeCodeBaseUrlBody {
+    return Intl.message(
+      'If you use a custom API base URL, avoid hostnames with China AI-lab / reseller keywords. Prefer the official Anthropic endpoint, or a clean hostname, while traffic exits via a US node.',
+      name: 'geoIdentityClaudeCodeBaseUrlBody',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

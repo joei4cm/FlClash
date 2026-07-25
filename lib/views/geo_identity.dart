@@ -7,6 +7,7 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class GeoIdentityView extends ConsumerStatefulWidget {
@@ -154,6 +155,92 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
         }
       }
     });
+  }
+
+  Future<void> _copyTerminalProxyExports() async {
+    final l10n = context.appLocalizations;
+    final mixedPort = ref.read(
+      patchClashConfigProvider.select((state) => state.mixedPort),
+    );
+    final text = system.isWindows
+        ? GeoIdentityHost.buildTerminalProxyExportsPowerShell(
+            mixedPort: mixedPort,
+          )
+        : GeoIdentityHost.buildTerminalProxyExports(mixedPort: mixedPort);
+    await Clipboard.setData(ClipboardData(text: text));
+    if (!mounted) {
+      return;
+    }
+    context.showNotifier(l10n.copySuccess);
+  }
+
+  Future<void> _alignOsTimezone() async {
+    final l10n = context.appLocalizations;
+    if (system.isAndroid) {
+      context.showNotifier(l10n.geoIdentityTimezoneAndroidTip);
+      return;
+    }
+    var target = _report?.timezone;
+    if (target == null || target.isEmpty) {
+      if (!ref.read(isStartProvider)) {
+        context.showNotifier(l10n.geoIdentityNeedStart);
+        return;
+      }
+      await _handleVerify();
+      if (!mounted) {
+        return;
+      }
+      target = _report?.timezone;
+    }
+    if (target == null || target.isEmpty) {
+      context.showNotifier(l10n.geoIdentityTimezoneMissing);
+      return;
+    }
+    final previous =
+        await GeoIdentityHost.readOsTimezoneId() ??
+        ref.read(geoIdentitySettingProvider).previousOsTimezone;
+    final error = await GeoIdentityHost.setOsTimezone(target);
+    if (!mounted) {
+      return;
+    }
+    if (error != null) {
+      if (error.startsWith('unsupported-windows-timezone:')) {
+        context.showNotifier(l10n.geoIdentityTimezoneUnsupported(target));
+      } else if (error == 'android-unsupported') {
+        context.showNotifier(l10n.geoIdentityTimezoneAndroidTip);
+      } else {
+        context.showNotifier(l10n.geoIdentityTimezoneManual(error));
+      }
+      return;
+    }
+    ref
+        .read(geoIdentitySettingProvider.notifier)
+        .setTimezoneHistory(
+          previousOsTimezone: previous,
+          appliedOsTimezone: target,
+        );
+    context.showNotifier(l10n.geoIdentityTimezoneApplied(target));
+    setState(() {});
+  }
+
+  Future<void> _restoreOsTimezone() async {
+    final l10n = context.appLocalizations;
+    final previous = ref.read(geoIdentitySettingProvider).previousOsTimezone;
+    if (previous == null || previous.isEmpty) {
+      context.showNotifier(l10n.geoIdentityTimezoneNothingToRestore);
+      return;
+    }
+    final error = await GeoIdentityHost.setOsTimezone(previous);
+    if (!mounted) {
+      return;
+    }
+    if (error != null) {
+      context.showNotifier(l10n.geoIdentityTimezoneManual(error));
+      return;
+    }
+    ref.read(geoIdentitySettingProvider.notifier).clearTimezoneHistory();
+    context.showNotifier(l10n.geoIdentityTimezoneRestored(previous));
+    setState(() {});
   }
 
   @override
@@ -328,6 +415,69 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
                   ),
                 ),
               ],
+            ],
+          ),
+          ...generateSection(
+            title: l10n.geoIdentityClaudeCodeTitle,
+            items: [
+              ListItem(
+                leading: const Icon(Icons.terminal_outlined),
+                title: Text(l10n.geoIdentityClaudeCodeTitle),
+                subtitle: Text(l10n.geoIdentityClaudeCodeBody),
+              ),
+              ListItem(
+                leading: Icon(
+                  snapshot.looksChinaTimezoneName ||
+                          GeoIdentityHost.isClaudeCodeChinaTimezone(
+                            props.appliedOsTimezone,
+                          )
+                      ? Icons.warning_amber_outlined
+                      : Icons.schedule_outlined,
+                ),
+                title: Text(l10n.geoIdentityClaudeCodeTimezoneTipTitle),
+                subtitle: Text(l10n.geoIdentityClaudeCodeTimezoneTipBody),
+              ),
+              if (system.isDesktop)
+                ListItem(
+                  leading: const Icon(Icons.punch_clock_outlined),
+                  title: Text(l10n.geoIdentityAlignOsTimezone),
+                  subtitle: Text(
+                    props.appliedOsTimezone == null
+                        ? l10n.geoIdentityAlignOsTimezoneDesc
+                        : l10n.geoIdentityAlignOsTimezoneApplied(
+                            props.appliedOsTimezone!,
+                          ),
+                  ),
+                  onTap: _alignOsTimezone,
+                ),
+              if (system.isDesktop && props.previousOsTimezone != null)
+                ListItem(
+                  leading: const Icon(Icons.history),
+                  title: Text(l10n.geoIdentityRestoreOsTimezone),
+                  subtitle: Text(
+                    l10n.geoIdentityRestoreOsTimezoneDesc(
+                      props.previousOsTimezone!,
+                    ),
+                  ),
+                  onTap: _restoreOsTimezone,
+                ),
+              if (system.isAndroid)
+                ListItem(
+                  leading: const Icon(Icons.phonelink_setup_outlined),
+                  title: Text(l10n.geoIdentityAlignOsTimezone),
+                  subtitle: Text(l10n.geoIdentityTimezoneAndroidTip),
+                ),
+              ListItem(
+                leading: const Icon(Icons.content_copy_outlined),
+                title: Text(l10n.geoIdentityCopyTerminalProxy),
+                subtitle: Text(l10n.geoIdentityCopyTerminalProxyDesc),
+                onTap: _copyTerminalProxyExports,
+              ),
+              ListItem(
+                leading: const Icon(Icons.link_outlined),
+                title: Text(l10n.geoIdentityClaudeCodeBaseUrlTitle),
+                subtitle: Text(l10n.geoIdentityClaudeCodeBaseUrlBody),
+              ),
             ],
           ),
           ...generateSection(
