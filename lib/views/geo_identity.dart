@@ -20,6 +20,7 @@ class GeoIdentityView extends ConsumerStatefulWidget {
 class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
   bool _checking = false;
   bool _settingUp = false;
+  bool _showAdvanced = false;
   String? _checkError;
   String? _setupMessage;
   GeoIdentityNetworkReport? _report;
@@ -50,31 +51,6 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     required bool vpnSystemProxy,
   }) {
     return system.isAndroid ? vpnSystemProxy : desktopSystemProxy;
-  }
-
-  GeoIdentityCaptureMode _captureMode({
-    required bool isStart,
-    required bool systemProxy,
-    required bool tunEnable,
-    required bool vpnEnable,
-  }) {
-    if (!isStart) {
-      return GeoIdentityCaptureMode.inactive;
-    }
-    final virtualNic = _virtualNicEnabled(
-      tunEnable: tunEnable,
-      vpnEnable: vpnEnable,
-    );
-    if (virtualNic && systemProxy) {
-      return GeoIdentityCaptureMode.both;
-    }
-    if (virtualNic) {
-      return GeoIdentityCaptureMode.virtualNic;
-    }
-    if (systemProxy) {
-      return GeoIdentityCaptureMode.systemProxy;
-    }
-    return GeoIdentityCaptureMode.mixedPortOnly;
   }
 
   GeoIdentityChecklistState _checklist({
@@ -237,7 +213,6 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     setState(() {});
   }
 
-  /// One-click newbie setup: protect → capture → start → verify → timezone.
   Future<void> _handleOneClickSetup() async {
     final l10n = context.appLocalizations;
     if (_settingUp) {
@@ -279,10 +254,8 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       if (!ref.read(isStartProvider)) {
         setState(() => _setupMessage = l10n.geoIdentitySetupStarting);
         await ref.read(setupActionProvider.notifier).updateStatus(true);
-        // Give the core a moment to bind mixed-port before probing.
         await Future<void>.delayed(const Duration(milliseconds: 800));
       } else {
-        // Re-apply so newly enabled TUN / system proxy take effect.
         ref
             .read(setupActionProvider.notifier)
             .applyProfileDebounce(silence: true);
@@ -335,98 +308,34 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     }
   }
 
-  Widget _buildGuideStep(BuildContext context, int number, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 22,
-            height: 22,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: context.colorScheme.primary,
-              shape: BoxShape.circle,
-            ),
-            child: Text(
-              '$number',
-              style: context.textTheme.labelSmall?.copyWith(
-                color: context.colorScheme.onPrimary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Text(text, style: context.textTheme.bodyMedium),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCheckRow(
-    BuildContext context, {
-    required bool done,
-    required String title,
-    required String subtitle,
-  }) {
-    final color = done
-        ? context.colorScheme.primary
-        : context.colorScheme.onSurfaceVariant;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            done ? Icons.check_circle : Icons.radio_button_unchecked,
-            size: 20,
-            color: color,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: context.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNewbieCard(
+  Widget _buildStatusCard(
     BuildContext context, {
     required GeoIdentityChecklistState checklist,
+    required GeoIdentitySnapshot snapshot,
   }) {
     final l10n = context.appLocalizations;
-    final isAndroid = system.isAndroid;
+    final complete = checklist.isComplete;
+    final accent = complete
+        ? context.colorScheme.primary
+        : context.colorScheme.tertiary;
+    final statusTitle = complete
+        ? l10n.geoIdentityStatusReadyTitle
+        : l10n.geoIdentityStatusSetupTitle;
+    final statusBody = complete
+        ? l10n.geoIdentityStatusReadyBody
+        : l10n.geoIdentityStatusSetupBody;
+    final exitLabel = [
+      if (_report?.country != null) _report!.country,
+      if (_report?.timezone != null) _report!.timezone,
+      if (_report != null) '${_report!.band} · ${_report!.score}',
+    ].whereType<String>().join(' · ');
+
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: context.colorScheme.primaryContainer.opacity38,
+          color: accent.opacity12,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -435,101 +344,83 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
             Row(
               children: [
                 Icon(
-                  isAndroid ? Icons.phone_android : Icons.computer,
-                  size: 20,
-                  color: context.colorScheme.primary,
+                  complete
+                      ? Icons.verified_user_outlined
+                      : Icons.shield_outlined,
+                  color: accent,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    isAndroid
-                        ? l10n.geoIdentityScenarioAndroidTitle
-                        : l10n.geoIdentityScenarioDesktopTitle,
-                    style: context.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    statusTitle,
+                    style: context.textTheme.titleMedium?.copyWith(
+                      color: accent,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
+                Text(
+                  '${checklist.completedCount}/${checklist.totalCount}',
+                  style: context.textTheme.labelLarge?.copyWith(
+                    color: accent,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 8),
-            Text(
-              isAndroid
-                  ? l10n.geoIdentityScenarioAndroidBody
-                  : l10n.geoIdentityScenarioDesktopBody,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: context.colorScheme.onSurfaceVariant,
+            Text(statusBody, style: context.textTheme.bodyMedium),
+            if (exitLabel.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                exitLabel,
+                style: context.textTheme.bodySmall?.copyWith(
+                  color: context.colorScheme.onSurfaceVariant,
+                ),
               ),
+            ],
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _StatusChip(
+                  done: checklist.protectEnabled,
+                  label: l10n.geoIdentityChipProtect,
+                ),
+                _StatusChip(
+                  done: checklist.coreStarted,
+                  label: l10n.geoIdentityChipStarted,
+                ),
+                _StatusChip(
+                  done: checklist.captureReady,
+                  label: l10n.geoIdentityChipCapture,
+                ),
+                _StatusChip(
+                  done: checklist.networkProtected,
+                  label: l10n.geoIdentityChipNetwork,
+                ),
+                _StatusChip(
+                  done: checklist.timezoneReady,
+                  label: l10n.geoIdentityChipTimezone,
+                ),
+              ],
             ),
             const SizedBox(height: 14),
-            Row(
-              children: [
-                Icon(
-                  Icons.checklist_outlined,
-                  size: 20,
-                  color: context.colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  l10n.geoIdentityLiveChecklistTitle(
-                    checklist.completedCount,
-                    checklist.totalCount,
-                  ),
-                  style: context.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            _buildCheckRow(
-              context,
-              done: checklist.protectEnabled,
-              title: l10n.geoIdentityCheckProtectTitle,
-              subtitle: l10n.geoIdentityCheckProtectBody,
-            ),
-            _buildCheckRow(
-              context,
-              done: checklist.coreStarted,
-              title: l10n.geoIdentityCheckStartedTitle,
-              subtitle: l10n.geoIdentityCheckStartedBody,
-            ),
-            _buildCheckRow(
-              context,
-              done: checklist.captureReady,
-              title: l10n.geoIdentityCheckCaptureTitle,
-              subtitle: isAndroid
-                  ? l10n.geoIdentityCheckCaptureAndroidBody
-                  : l10n.geoIdentityCheckCaptureDesktopBody,
-            ),
-            _buildCheckRow(
-              context,
-              done: checklist.networkProtected,
-              title: l10n.geoIdentityCheckNetworkTitle,
-              subtitle: checklist.networkChecked
-                  ? (_report?.isProtected == true
-                        ? l10n.geoIdentityNetworkProtected
-                        : l10n.geoIdentityNetworkExposed)
-                  : l10n.geoIdentityCheckNetworkBody,
-            ),
-            _buildCheckRow(
-              context,
-              done: checklist.timezoneReady,
-              title: l10n.geoIdentityCheckTimezoneTitle,
-              subtitle: isAndroid
-                  ? l10n.geoIdentityTimezoneAndroidTip
-                  : l10n.geoIdentityCheckTimezoneBody,
-            ),
-            const SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
-                onPressed: _settingUp || _checking ? null : _handleOneClickSetup,
+                onPressed: _settingUp || _checking
+                    ? null
+                    : _handleOneClickSetup,
                 icon: _settingUp
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: context.colorScheme.onPrimary,
+                        ),
                       )
                     : const Icon(Icons.flash_on_outlined),
                 label: Text(
@@ -543,34 +434,21 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
               const SizedBox(height: 8),
               Text(
                 _setupMessage!,
+                style: context.textTheme.bodySmall?.copyWith(color: accent),
+              ),
+            ],
+            if (_checkError != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                _checkError!,
                 style: context.textTheme.bodySmall?.copyWith(
-                  color: checklist.isComplete
-                      ? context.colorScheme.primary
-                      : context.colorScheme.tertiary,
+                  color: context.colorScheme.error,
                 ),
               ),
             ],
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Text(
-              l10n.geoIdentityGuideTitle,
-              style: context.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10),
-            if (isAndroid) ...[
-              _buildGuideStep(context, 1, l10n.geoIdentityAndroidStep1),
-              _buildGuideStep(context, 2, l10n.geoIdentityAndroidStep2),
-              _buildGuideStep(context, 3, l10n.geoIdentityAndroidStep3),
-              _buildGuideStep(context, 4, l10n.geoIdentityAndroidStep4),
-            ] else ...[
-              _buildGuideStep(context, 1, l10n.geoIdentityDesktopStep1),
-              _buildGuideStep(context, 2, l10n.geoIdentityDesktopStep2),
-              _buildGuideStep(context, 3, l10n.geoIdentityDesktopStep3),
-              _buildGuideStep(context, 4, l10n.geoIdentityDesktopStep4),
-            ],
-            Text(
-              l10n.geoIdentityOneClickTip,
+              '${l10n.geoIdentityTimezone}: ${snapshot.timeZoneName} · ${snapshot.systemLocale}',
               style: context.textTheme.bodySmall?.copyWith(
                 color: context.colorScheme.onSurfaceVariant,
               ),
@@ -603,12 +481,6 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       desktopSystemProxy: systemProxy,
       vpnSystemProxy: vpnSystemProxy,
     );
-    final captureMode = _captureMode(
-      isStart: isStart,
-      systemProxy: effectiveSystemProxy,
-      tunEnable: tunEnable,
-      vpnEnable: vpnEnable,
-    );
     final checklist = _checklist(
       props: props,
       isStart: isStart,
@@ -622,50 +494,13 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       title: l10n.geoIdentity,
       body: ListView(
         children: [
-          _buildNewbieCard(context, checklist: checklist),
-          ...generateSection(
-            title: l10n.geoIdentityProtectTitle,
-            items: [
-              ListItem.switchItem(
-                leading: const Icon(Icons.shield_outlined),
-                title: Text(l10n.geoIdentityProtectEnable),
-                subtitle: Text(l10n.geoIdentityProtectEnableDesc),
-                delegate: SwitchDelegate(
-                  value: props.enable,
-                  onChanged: (value) {
-                    ref
-                        .read(geoIdentitySettingProvider.notifier)
-                        .setEnable(value);
-                  },
-                ),
-              ),
-              if (props.enable)
-                ListItem.switchItem(
-                  leading: const Icon(Icons.translate_outlined),
-                  title: Text(l10n.geoIdentityUsAcceptLanguage),
-                  subtitle: Text(l10n.geoIdentityUsAcceptLanguageDesc),
-                  delegate: SwitchDelegate(
-                    value: props.useUsAcceptLanguage,
-                    onChanged: (value) {
-                      ref
-                          .read(geoIdentitySettingProvider.notifier)
-                          .setUseUsAcceptLanguage(value);
-                    },
-                  ),
-                ),
-              ListItem(
-                leading: Icon(
-                  captureMode == GeoIdentityCaptureMode.inactive
-                      ? Icons.link_off
-                      : Icons.route_outlined,
-                ),
-                title: Text(_captureTitle(context, captureMode)),
-                subtitle: Text(_captureBody(context, captureMode)),
-              ),
-            ],
+          _buildStatusCard(
+            context,
+            checklist: checklist,
+            snapshot: snapshot,
           ),
           ...generateSection(
-            title: l10n.geoIdentityNetworkCheckTitle,
+            title: l10n.geoIdentityQuickActionsTitle,
             items: [
               ListItem(
                 leading: _checking
@@ -674,72 +509,12 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
                         height: 24,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : Icon(
-                        _report?.isProtected == true
-                            ? Icons.verified_user_outlined
-                            : Icons.travel_explore_outlined,
-                      ),
+                    : const Icon(Icons.travel_explore_outlined),
                 title: Text(l10n.geoIdentityVerifyNetwork),
-                subtitle: Text(l10n.geoIdentityVerifyNetworkDesc),
-                onTap: _checking || _settingUp ? null : _handleVerify,
-              ),
-              if (_checkError != null)
-                ListItem(
-                  leading: Icon(
-                    Icons.error_outline,
-                    color: context.colorScheme.error,
-                  ),
-                  title: Text(l10n.geoIdentityCheckFailed),
-                  subtitle: Text(_checkError!),
-                ),
-              if (_report != null) ...[
-                ListItem(
-                  leading: Icon(
-                    _report!.isProtected
-                        ? Icons.check_circle_outline
-                        : Icons.warning_amber_outlined,
-                    color: _report!.isProtected
-                        ? context.colorScheme.primary
-                        : context.colorScheme.error,
-                  ),
-                  title: Text(
-                    _report!.isProtected
-                        ? l10n.geoIdentityNetworkProtected
-                        : l10n.geoIdentityNetworkExposed,
-                  ),
-                  subtitle: Text(
-                    '${_report!.verdict} · ${_report!.band} · score ${_report!.score}',
-                  ),
-                ),
-                ListItem(
-                  leading: const Icon(Icons.public_outlined),
-                  title: Text(l10n.geoIdentityExitCountry),
-                  subtitle: Text(
-                    [
-                      if (_report!.country != null) _report!.country,
-                      if (_report!.timezone != null) _report!.timezone,
-                    ].whereType<String>().join(' · '),
-                  ),
-                ),
-                ListItem(
-                  leading: const Icon(Icons.language_outlined),
-                  title: Text(l10n.geoIdentityProbeLanguage),
-                  subtitle: Text(
-                    _report!.language?.isNotEmpty == true
-                        ? _report!.language!
-                        : l10n.geoIdentityProbeLanguageUnknown,
-                  ),
-                ),
-              ],
-            ],
-          ),
-          ...generateSection(
-            title: l10n.geoIdentityClaudeCodeTitle,
-            items: [
-              ListItem(
-                leading: const Icon(Icons.terminal_outlined),
-                title: Text(l10n.geoIdentityClaudeCodeTitle),
-                subtitle: Text(l10n.geoIdentityClaudeCodeBody),
+                subtitle: Text(l10n.geoIdentityVerifyNetworkShort),
+                onTap: _checking || _settingUp
+                    ? null
+                    : () => _handleVerify(),
               ),
               if (system.isDesktop)
                 ListItem(
@@ -747,7 +522,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
                   title: Text(l10n.geoIdentityAlignOsTimezone),
                   subtitle: Text(
                     props.appliedOsTimezone == null
-                        ? l10n.geoIdentityAlignOsTimezoneDesc
+                        ? l10n.geoIdentityAlignOsTimezoneShort
                         : l10n.geoIdentityAlignOsTimezoneApplied(
                             props.appliedOsTimezone!,
                           ),
@@ -765,110 +540,140 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
                   ),
                   onTap: _restoreOsTimezone,
                 ),
-              if (system.isAndroid)
-                ListItem(
-                  leading: const Icon(Icons.phonelink_setup_outlined),
-                  title: Text(l10n.geoIdentityAlignOsTimezone),
-                  subtitle: Text(l10n.geoIdentityTimezoneAndroidTip),
-                ),
               ListItem(
                 leading: const Icon(Icons.content_copy_outlined),
                 title: Text(l10n.geoIdentityCopyTerminalProxy),
-                subtitle: Text(l10n.geoIdentityCopyTerminalProxyDesc),
+                subtitle: Text(l10n.geoIdentityCopyTerminalProxyShort),
                 onTap: _copyTerminalProxyExports,
-              ),
-              ListItem(
-                leading: const Icon(Icons.link_outlined),
-                title: Text(l10n.geoIdentityClaudeCodeBaseUrlTitle),
-                subtitle: Text(l10n.geoIdentityClaudeCodeBaseUrlBody),
-              ),
-            ],
-          ),
-          ...generateSection(
-            title: l10n.geoIdentityLocalSignalsTitle,
-            items: [
-              ListItem(
-                leading: const Icon(Icons.schedule_outlined),
-                title: Text(l10n.geoIdentityTimezone),
-                subtitle: Text(
-                  '${snapshot.timeZoneName} (${snapshot.offsetLabel})',
-                ),
-              ),
-              ListItem(
-                leading: const Icon(Icons.language_outlined),
-                title: Text(l10n.geoIdentitySystemLocale),
-                subtitle: Text(snapshot.systemLocale),
-              ),
-              ListItem(
-                leading: const Icon(Icons.tips_and_updates_outlined),
-                title: Text(l10n.geoIdentityLocalTipTitle),
-                subtitle: Text(l10n.geoIdentityLocalTipBody),
-              ),
-            ],
-          ),
-          ...generateSection(
-            title: l10n.geoIdentityActionsTitle,
-            items: [
-              ListItem(
-                leading: const Icon(Icons.open_in_browser_outlined),
-                title: Text(l10n.geoIdentityOpenSelfCheck),
-                subtitle: Text(l10n.geoIdentityOpenSelfCheckDesc),
-                onTap: () => globalState.openUrl(GeoIdentityLinks.fuckClaude),
               ),
               ListItem(
                 leading: const Icon(Icons.extension_outlined),
                 title: Text(l10n.geoIdentityOpenGeoMirror),
-                subtitle: Text(l10n.geoIdentityOpenGeoMirrorDesc),
+                subtitle: Text(l10n.geoIdentityOpenGeoMirrorShort),
                 onTap: () => globalState.openUrl(GeoIdentityLinks.geoMirror),
               ),
-              ListItem(
-                leading: const Icon(Icons.download_outlined),
-                title: Text(l10n.geoIdentityOpenGeoMirrorReleases),
-                subtitle: Text(l10n.geoIdentityOpenGeoMirrorReleasesDesc),
-                onTap: () =>
-                    globalState.openUrl(GeoIdentityLinks.geoMirrorReleases),
-              ),
             ],
           ),
-          ...generateSection(
-            title: l10n.geoIdentityLimitsTitle,
-            items: [
-              ListItem(
-                leading: const Icon(Icons.gavel_outlined),
-                title: Text(l10n.geoIdentityLimitsTitle),
-                subtitle: Text(l10n.geoIdentityLimitsBody),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: TextButton.icon(
+              onPressed: () {
+                setState(() => _showAdvanced = !_showAdvanced);
+              },
+              icon: Icon(
+                _showAdvanced
+                    ? Icons.expand_less
+                    : Icons.expand_more,
               ),
-            ],
+              label: Text(
+                _showAdvanced
+                    ? l10n.geoIdentityHideAdvanced
+                    : l10n.geoIdentityShowAdvanced,
+              ),
+            ),
           ),
+          if (_showAdvanced) ...[
+            ...generateSection(
+              title: l10n.geoIdentityProtectTitle,
+              items: [
+                ListItem.switchItem(
+                  leading: const Icon(Icons.shield_outlined),
+                  title: Text(l10n.geoIdentityProtectEnable),
+                  subtitle: Text(l10n.geoIdentityProtectEnableDesc),
+                  delegate: SwitchDelegate(
+                    value: props.enable,
+                    onChanged: (value) {
+                      ref
+                          .read(geoIdentitySettingProvider.notifier)
+                          .setEnable(value);
+                    },
+                  ),
+                ),
+                ListItem.switchItem(
+                  leading: const Icon(Icons.translate_outlined),
+                  title: Text(l10n.geoIdentityUsAcceptLanguage),
+                  subtitle: Text(l10n.geoIdentityUsAcceptLanguageDesc),
+                  delegate: SwitchDelegate(
+                    value: props.useUsAcceptLanguage,
+                    onChanged: (value) {
+                      ref
+                          .read(geoIdentitySettingProvider.notifier)
+                          .setUseUsAcceptLanguage(value);
+                    },
+                  ),
+                ),
+              ],
+            ),
+            ...generateSection(
+              title: l10n.geoIdentityActionsTitle,
+              items: [
+                ListItem(
+                  leading: const Icon(Icons.open_in_browser_outlined),
+                  title: Text(l10n.geoIdentityOpenSelfCheck),
+                  subtitle: Text(l10n.geoIdentityOpenSelfCheckDesc),
+                  onTap: () =>
+                      globalState.openUrl(GeoIdentityLinks.fuckClaude),
+                ),
+                ListItem(
+                  leading: const Icon(Icons.download_outlined),
+                  title: Text(l10n.geoIdentityOpenGeoMirrorReleases),
+                  subtitle: Text(l10n.geoIdentityOpenGeoMirrorReleasesDesc),
+                  onTap: () => globalState.openUrl(
+                    GeoIdentityLinks.geoMirrorReleases,
+                  ),
+                ),
+                ListItem(
+                  leading: const Icon(Icons.info_outline),
+                  title: Text(l10n.geoIdentityLimitsTitle),
+                  subtitle: Text(l10n.geoIdentityLimitsBody),
+                ),
+              ],
+            ),
+          ],
           const SizedBox(height: 20),
         ],
       ),
     );
   }
+}
 
-  String _captureTitle(BuildContext context, GeoIdentityCaptureMode mode) {
-    final l10n = context.appLocalizations;
-    return switch (mode) {
-      GeoIdentityCaptureMode.inactive => l10n.geoIdentityCaptureInactive,
-      GeoIdentityCaptureMode.mixedPortOnly =>
-        l10n.geoIdentityCaptureMixedPortOnly,
-      GeoIdentityCaptureMode.systemProxy => l10n.geoIdentityCaptureSystemProxy,
-      GeoIdentityCaptureMode.virtualNic => l10n.geoIdentityCaptureVirtualNic,
-      GeoIdentityCaptureMode.both => l10n.geoIdentityCaptureBoth,
-    };
-  }
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({required this.done, required this.label});
 
-  String _captureBody(BuildContext context, GeoIdentityCaptureMode mode) {
-    final l10n = context.appLocalizations;
-    return switch (mode) {
-      GeoIdentityCaptureMode.inactive => l10n.geoIdentityCaptureInactiveDesc,
-      GeoIdentityCaptureMode.mixedPortOnly =>
-        l10n.geoIdentityCaptureMixedPortOnlyDesc,
-      GeoIdentityCaptureMode.systemProxy =>
-        l10n.geoIdentityCaptureSystemProxyDesc,
-      GeoIdentityCaptureMode.virtualNic =>
-        l10n.geoIdentityCaptureVirtualNicDesc,
-      GeoIdentityCaptureMode.both => l10n.geoIdentityCaptureBothDesc,
-    };
+  final bool done;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = done
+        ? context.colorScheme.primary
+        : context.colorScheme.onSurfaceVariant;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: done
+            ? context.colorScheme.primary.opacity12
+            : context.colorScheme.surfaceContainerHighest.opacity38,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            done ? Icons.check_circle : Icons.circle_outlined,
+            size: 14,
+            color: color,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: context.textTheme.labelSmall?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

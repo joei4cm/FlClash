@@ -323,6 +323,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityAlignOsTimezoneDesc": MessageLookupByLibrary.simpleMessage(
       "先验证网络，再把桌面系统时区设为出口地理时区。部分系统需要管理员 / polkit 授权。",
     ),
+    "geoIdentityAlignOsTimezoneShort": MessageLookupByLibrary.simpleMessage(
+      "将系统时区对齐到出口",
+    ),
     "geoIdentityAndroidStep1": MessageLookupByLibrary.simpleMessage(
       "在代理页选择干净的美区节点。",
     ),
@@ -400,6 +403,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "系统时区已适配 Claude Code",
     ),
     "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage("美区身份清单"),
+    "geoIdentityChipCapture": MessageLookupByLibrary.simpleMessage("捕获"),
+    "geoIdentityChipNetwork": MessageLookupByLibrary.simpleMessage("美区出口"),
+    "geoIdentityChipProtect": MessageLookupByLibrary.simpleMessage("保护"),
+    "geoIdentityChipStarted": MessageLookupByLibrary.simpleMessage("已启动"),
+    "geoIdentityChipTimezone": MessageLookupByLibrary.simpleMessage("时区"),
     "geoIdentityClaudeCodeBaseUrlBody": MessageLookupByLibrary.simpleMessage(
       "若使用自定义 API Base URL，避免主机名含有中国 AI 实验室 / 转售相关关键词。优先官方 Anthropic 端点或干净主机名，同时让流量经美区节点出口。",
     ),
@@ -423,8 +431,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityCopyTerminalProxyDesc": MessageLookupByLibrary.simpleMessage(
       "指向 FlClash 混合端口的 HTTP(S)_PROXY / ALL_PROXY——在未开 TUN 且 Node 忽略系统代理时需要。",
     ),
+    "geoIdentityCopyTerminalProxyShort": MessageLookupByLibrary.simpleMessage(
+      "复制终端用的 HTTP(S)_PROXY",
+    ),
     "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
-      "在系统代理与虚拟网卡模式下保护美区 AI 出口身份",
+      "一键美区出口掩护，适配应用与 Claude Code",
     ),
     "geoIdentityDesktopStep1": MessageLookupByLibrary.simpleMessage(
       "在代理页选择干净的美区节点。",
@@ -440,6 +451,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityExitCountry": MessageLookupByLibrary.simpleMessage("检测得到的出口地理"),
     "geoIdentityGuideTitle": MessageLookupByLibrary.simpleMessage("手动步骤"),
+    "geoIdentityHideAdvanced": MessageLookupByLibrary.simpleMessage("隐藏高级选项"),
     "geoIdentityLimitsBody": MessageLookupByLibrary.simpleMessage(
       "FlClash 可掩护网络出口，并通过 FuckClaude API 校验 IP 地理与 Accept-Language。它不会改写其他应用的 HTTPS 请求头，不会伪造字体/地理定位，不保证能使用任何 AI 服务，也不能替代各服务的使用条款。",
     ),
@@ -481,6 +493,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityOpenGeoMirrorReleasesDesc":
         MessageLookupByLibrary.simpleMessage("下载打包好的扩展构建"),
+    "geoIdentityOpenGeoMirrorShort": MessageLookupByLibrary.simpleMessage(
+      "浏览器指纹对齐",
+    ),
     "geoIdentityOpenSelfCheck": MessageLookupByLibrary.simpleMessage("打开指纹自查"),
     "geoIdentityOpenSelfCheckDesc": MessageLookupByLibrary.simpleMessage(
       "FuckClaude — 浏览器/时区风险加权扫描",
@@ -502,6 +517,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "将美区出口一致性视为活动目标：网络探测优先使用美区 Accept-Language，并显示系统代理与 TUN/VPN 的流量捕获状态。",
     ),
     "geoIdentityProtectTitle": MessageLookupByLibrary.simpleMessage("网络掩护"),
+    "geoIdentityQuickActionsTitle": MessageLookupByLibrary.simpleMessage(
+      "快捷操作",
+    ),
     "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
       "恢复之前的系统时区",
     ),
@@ -551,6 +569,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentitySetupVerifying": MessageLookupByLibrary.simpleMessage(
       "正在验证网络环境…",
     ),
+    "geoIdentityShowAdvanced": MessageLookupByLibrary.simpleMessage("显示高级选项"),
+    "geoIdentityStatusReadyBody": MessageLookupByLibrary.simpleMessage(
+      "网络掩护看起来正常。请保持选择美区节点。",
+    ),
+    "geoIdentityStatusReadyTitle": MessageLookupByLibrary.simpleMessage("已就绪"),
+    "geoIdentityStatusSetupBody": MessageLookupByLibrary.simpleMessage(
+      "先选择美区节点，再点一键设置。",
+    ),
+    "geoIdentityStatusSetupTitle": MessageLookupByLibrary.simpleMessage("需要设置"),
     "geoIdentityStep1Body": MessageLookupByLibrary.simpleMessage(
       "在代理页选择干净的美区节点（如洛杉矶、纽约）。若 Claude Code 使用自定义 Base URL，避免代理主机名含有 AI 实验室或中继相关关键词。",
     ),
@@ -597,6 +624,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityVerifyNetwork": MessageLookupByLibrary.simpleMessage("验证网络环境"),
     "geoIdentityVerifyNetworkDesc": MessageLookupByLibrary.simpleMessage(
       "通过 FlClash 混合端口调用 FuckClaude /api/check（系统代理与 TUN/VPN 模式均适用）。",
+    ),
+    "geoIdentityVerifyNetworkShort": MessageLookupByLibrary.simpleMessage(
+      "用 FuckClaude 检查出口 IP",
     ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geo 选项"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo 资源"),
