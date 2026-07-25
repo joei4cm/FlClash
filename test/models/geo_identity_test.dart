@@ -137,4 +137,28 @@ void main() {
     expect(props.previousOsTimezone, isNull);
     expect(props.appliedOsTimezone, isNull);
   });
+
+  test('GeoIdentityChecklistState counts completed steps', () {
+    const incomplete = GeoIdentityChecklistState(
+      protectEnabled: true,
+      coreStarted: true,
+      captureReady: false,
+      networkProtected: false,
+      networkChecked: false,
+      timezoneReady: true,
+    );
+    expect(incomplete.completedCount, 3);
+    expect(incomplete.totalCount, 5);
+    expect(incomplete.isComplete, isFalse);
+
+    const complete = GeoIdentityChecklistState(
+      protectEnabled: true,
+      coreStarted: true,
+      captureReady: true,
+      networkProtected: true,
+      networkChecked: true,
+      timezoneReady: true,
+    );
+    expect(complete.isComplete, isTrue);
+  });
 }
