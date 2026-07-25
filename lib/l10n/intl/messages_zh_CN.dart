@@ -434,9 +434,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityCopyTerminalProxyShort": MessageLookupByLibrary.simpleMessage(
       "复制终端用的 HTTP(S)_PROXY",
     ),
-    "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
-      "一键美区出口掩护，适配应用与 Claude Code",
-    ),
+    "geoIdentityDesc": MessageLookupByLibrary.simpleMessage("一个开关完成美区出口掩护"),
     "geoIdentityDesktopStep1": MessageLookupByLibrary.simpleMessage(
       "在代理页选择干净的美区节点。",
     ),
@@ -469,15 +467,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityNeedStart": MessageLookupByLibrary.simpleMessage(
       "请先启动 FlClash，再验证网络环境。",
     ),
+    "geoIdentityNetworkBad": MessageLookupByLibrary.simpleMessage(
+      "网络未就绪 — 请选择美区节点后重新打开此开关",
+    ),
     "geoIdentityNetworkCheckTitle": MessageLookupByLibrary.simpleMessage(
       "网络环境检测",
     ),
     "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
       "网络仍可能暴露",
     ),
+    "geoIdentityNetworkGood": MessageLookupByLibrary.simpleMessage("网络看起来已就绪"),
     "geoIdentityNetworkProtected": MessageLookupByLibrary.simpleMessage(
       "网络看起来已受保护",
     ),
+    "geoIdentityOffStatus": MessageLookupByLibrary.simpleMessage("地理身份保护已关闭"),
     "geoIdentityOneClickSetup": MessageLookupByLibrary.simpleMessage("一键设置"),
     "geoIdentityOneClickTip": MessageLookupByLibrary.simpleMessage(
       "请先选择美区代理节点。浏览器指纹仍需 GeoMirror；此按钮覆盖 FlClash 与 Claude Code 主机侧步骤。",
@@ -517,9 +520,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "将美区出口一致性视为活动目标：网络探测优先使用美区 Accept-Language，并显示系统代理与 TUN/VPN 的流量捕获状态。",
     ),
     "geoIdentityProtectTitle": MessageLookupByLibrary.simpleMessage("网络掩护"),
+    "geoIdentityProtectToggleDesc": MessageLookupByLibrary.simpleMessage(
+      "执行完整设置清单，并验证网络",
+    ),
+    "geoIdentityPurposeBody": MessageLookupByLibrary.simpleMessage(
+      "美区 AI 服务会比对出口 IP 与本地信号。打开后，FlClash 会捕获流量（系统代理 / TUN 或 VPN），在桌面尽量对齐系统时区，再用 FuckClaude 验证出口。浏览器页面指纹仍可能需要 GeoMirror。",
+    ),
     "geoIdentityQuickActionsTitle": MessageLookupByLibrary.simpleMessage(
       "快捷操作",
     ),
+    "geoIdentityRecheck": MessageLookupByLibrary.simpleMessage("重新检测"),
     "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
       "恢复之前的系统时区",
     ),
@@ -615,6 +625,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityTimezoneRestored": m12,
     "geoIdentityTimezoneUnsupported": m13,
+    "geoIdentityTurningOff": MessageLookupByLibrary.simpleMessage("正在关闭…"),
     "geoIdentityUsAcceptLanguage": MessageLookupByLibrary.simpleMessage(
       "用美区 Accept-Language 探测",
     ),

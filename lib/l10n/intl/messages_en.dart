@@ -568,7 +568,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Copy HTTP(S)_PROXY for terminals",
     ),
     "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
-      "One-click US exit undercover for apps and Claude Code",
+      "One switch for US exit undercover",
     ),
     "geoIdentityDesktopStep1": MessageLookupByLibrary.simpleMessage(
       "Select a clean US node on the Proxies page.",
@@ -610,14 +610,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityNeedStart": MessageLookupByLibrary.simpleMessage(
       "Start FlClash before verifying the network environment.",
     ),
+    "geoIdentityNetworkBad": MessageLookupByLibrary.simpleMessage(
+      "Network is not ready — select a US node and turn this on again",
+    ),
     "geoIdentityNetworkCheckTitle": MessageLookupByLibrary.simpleMessage(
       "Network environment check",
     ),
     "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
       "Network still looks exposed",
     ),
+    "geoIdentityNetworkGood": MessageLookupByLibrary.simpleMessage(
+      "Network looks good to go",
+    ),
     "geoIdentityNetworkProtected": MessageLookupByLibrary.simpleMessage(
       "Network looks protected",
+    ),
+    "geoIdentityOffStatus": MessageLookupByLibrary.simpleMessage(
+      "Geo identity protect is off",
     ),
     "geoIdentityOneClickSetup": MessageLookupByLibrary.simpleMessage(
       "One-click setup",
@@ -668,9 +677,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityProtectTitle": MessageLookupByLibrary.simpleMessage(
       "Network undercover",
     ),
+    "geoIdentityProtectToggleDesc": MessageLookupByLibrary.simpleMessage(
+      "Run the full setup checklist, then validate the network",
+    ),
+    "geoIdentityPurposeBody": MessageLookupByLibrary.simpleMessage(
+      "US AI services compare your exit IP with local signals. Turn this on and FlClash will capture traffic (system proxy / TUN or VPN), align the desktop OS timezone when possible, then verify the exit with FuckClaude. Browsers may still need GeoMirror for page fingerprints.",
+    ),
     "geoIdentityQuickActionsTitle": MessageLookupByLibrary.simpleMessage(
       "Quick actions",
     ),
+    "geoIdentityRecheck": MessageLookupByLibrary.simpleMessage("Recheck"),
     "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
       "Restore previous OS timezone",
     ),
@@ -784,6 +800,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityTimezoneRestored": m12,
     "geoIdentityTimezoneUnsupported": m13,
+    "geoIdentityTurningOff": MessageLookupByLibrary.simpleMessage(
+      "Turning off…",
+    ),
     "geoIdentityUsAcceptLanguage": MessageLookupByLibrary.simpleMessage(
       "Probe with US Accept-Language",
     ),

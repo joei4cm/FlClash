@@ -477,9 +477,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityCopyTerminalProxyShort": MessageLookupByLibrary.simpleMessage(
       "ターミナル用 HTTP(S)_PROXY をコピー",
     ),
-    "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
-      "ワンクリックで米国出口を潜伏（アプリと Claude Code）",
-    ),
+    "geoIdentityDesc": MessageLookupByLibrary.simpleMessage("スイッチ一つで米国出口を潜伏"),
     "geoIdentityDesktopStep1": MessageLookupByLibrary.simpleMessage(
       "プロキシ画面でクリーンな米国ノードを選びます。",
     ),
@@ -514,14 +512,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityNeedStart": MessageLookupByLibrary.simpleMessage(
       "ネットワーク環境を検証する前に FlClash を開始してください。",
     ),
+    "geoIdentityNetworkBad": MessageLookupByLibrary.simpleMessage(
+      "ネットワーク未準備 — 米国ノードを選んでスイッチを入れ直してください",
+    ),
     "geoIdentityNetworkCheckTitle": MessageLookupByLibrary.simpleMessage(
       "ネットワーク環境チェック",
     ),
     "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
       "ネットワークはまだ露出している可能性",
     ),
+    "geoIdentityNetworkGood": MessageLookupByLibrary.simpleMessage(
+      "ネットワークは利用可能な状態です",
+    ),
     "geoIdentityNetworkProtected": MessageLookupByLibrary.simpleMessage(
       "ネットワークは保護されているように見える",
+    ),
+    "geoIdentityOffStatus": MessageLookupByLibrary.simpleMessage(
+      "地理アイデンティティ保護はオフです",
     ),
     "geoIdentityOneClickSetup": MessageLookupByLibrary.simpleMessage(
       "ワンクリック設定",
@@ -566,9 +573,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "米国出口の整合を有効な目標として扱い、ネットワーク探査で米国 Accept-Language を優先し、システムプロキシと TUN/VPN のキャプチャ状態を表示します。",
     ),
     "geoIdentityProtectTitle": MessageLookupByLibrary.simpleMessage("ネットワーク潜伏"),
+    "geoIdentityProtectToggleDesc": MessageLookupByLibrary.simpleMessage(
+      "セットアップチェックリストを実行し、ネットワークを検証",
+    ),
+    "geoIdentityPurposeBody": MessageLookupByLibrary.simpleMessage(
+      "米国の AI サービスは出口 IP とローカル信号を照合します。オンにすると FlClash が通信をキャプチャし（システムプロキシ / TUN または VPN）、可能ならデスクトップの OS タイムゾーンを合わせ、FuckClaude で出口を検証します。ブラウザのページ指紋には GeoMirror が必要な場合があります。",
+    ),
     "geoIdentityQuickActionsTitle": MessageLookupByLibrary.simpleMessage(
       "クイック操作",
     ),
+    "geoIdentityRecheck": MessageLookupByLibrary.simpleMessage("再チェック"),
     "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
       "以前の OS タイムゾーンを復元",
     ),
@@ -670,6 +684,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityTimezoneRestored": m12,
     "geoIdentityTimezoneUnsupported": m13,
+    "geoIdentityTurningOff": MessageLookupByLibrary.simpleMessage("オフにしています…"),
     "geoIdentityUsAcceptLanguage": MessageLookupByLibrary.simpleMessage(
       "米国 Accept-Language で探査",
     ),
