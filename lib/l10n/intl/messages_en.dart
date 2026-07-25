@@ -37,53 +37,67 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m6(label) => "Current ${label} already exists";
 
-  static String m7(name) => "${name} skipped";
+  static String m7(timezone) => "Currently applied: ${timezone}";
 
-  static String m8(name) => "${name} updated";
+  static String m8(timezone) => "Restore ${timezone}";
 
-  static String m9(name) => "Updating ${name}...";
+  static String m9(timezone) => "OS timezone set to ${timezone}";
 
-  static String m10(count) =>
+  static String m10(command) =>
+      "Could not change timezone automatically. Run: ${command}";
+
+  static String m11(timezone) => "OS timezone restored to ${timezone}";
+
+  static String m12(timezone) =>
+      "No Windows mapping for ${timezone}. Set it manually in Date & time settings.";
+
+  static String m13(name) => "${name} skipped";
+
+  static String m14(name) => "${name} updated";
+
+  static String m15(name) => "Updating ${name}...";
+
+  static String m16(count) =>
       "${Intl.plural(count, one: '1 hour ago', other: '${count} hours ago')}";
 
-  static String m11(count) => "${count} hours";
+  static String m17(count) => "${count} hours";
 
-  static String m12(target) => "${target} is an invalid policy";
+  static String m18(target) => "${target} is an invalid policy";
 
-  static String m13(proxyName) => "${proxyName} is an invalid proxy";
+  static String m19(proxyName) => "${proxyName} is an invalid proxy";
 
-  static String m14(providerName) =>
+  static String m20(providerName) =>
       "${providerName} is an invalid proxy provider";
 
-  static String m15(subRule) => "${subRule} is an invalid SUB_RULE";
+  static String m21(subRule) => "${subRule} is an invalid SUB_RULE";
 
-  static String m16(appName) =>
+  static String m22(appName) =>
       "1. Open System Settings > Privacy & Security\n2. Choose Location Services\n3. Find and check ${appName} in the right list\n\nAfter completing the setup, return to the app and use it normally. Thank you for your cooperation.";
 
-  static String m17(count) =>
+  static String m23(count) =>
       "${Intl.plural(count, one: '1 minute ago', other: '${count} minutes ago')}";
 
-  static String m18(count) =>
+  static String m24(count) =>
       "${Intl.plural(count, one: '1 month ago', other: '${count} months ago')}";
 
-  static String m19(label) => "No ${label} yet";
+  static String m25(label) => "No ${label} yet";
 
-  static String m20(label) => "${label} must be a number";
+  static String m26(label) => "${label} must be a number";
 
-  static String m21(label) => "${label} must be between 1024 and 49151";
+  static String m27(label) => "${label} must be between 1024 and 49151";
 
-  static String m22(count) => "${count} seconds";
+  static String m28(count) => "${count} seconds";
 
-  static String m23(count) => "${count} items have been selected";
+  static String m29(count) => "${count} items have been selected";
 
-  static String m24(count) => "${count} route(s)";
+  static String m30(count) => "${count} route(s)";
 
-  static String m25(count) =>
+  static String m31(count) =>
       "${count} node(s) active. Tap ping on a node to test connectivity.";
 
-  static String m26(label) => "${label} must be a url";
+  static String m32(label) => "${label} must be a url";
 
-  static String m27(count) =>
+  static String m33(count) =>
       "${Intl.plural(count, one: '1 year ago', other: '${count} years ago')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -429,6 +443,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityActionsTitle": MessageLookupByLibrary.simpleMessage(
       "External tools",
     ),
+    "geoIdentityAlignOsTimezone": MessageLookupByLibrary.simpleMessage(
+      "Align OS timezone to exit",
+    ),
+    "geoIdentityAlignOsTimezoneApplied": m7,
+    "geoIdentityAlignOsTimezoneDesc": MessageLookupByLibrary.simpleMessage(
+      "Verify the network, then set the desktop OS timezone to the exit geo timezone. Requires admin / polkit on some systems.",
+    ),
     "geoIdentityCaptureBoth": MessageLookupByLibrary.simpleMessage(
       "System proxy + TUN/VPN",
     ),
@@ -464,6 +485,29 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage(
       "US identity checklist",
+    ),
+    "geoIdentityClaudeCodeBaseUrlBody": MessageLookupByLibrary.simpleMessage(
+      "If you use a custom API base URL, avoid hostnames with China AI-lab / reseller keywords. Prefer the official Anthropic endpoint, or a clean hostname, while traffic exits via a US node.",
+    ),
+    "geoIdentityClaudeCodeBaseUrlTitle": MessageLookupByLibrary.simpleMessage(
+      "Watch ANTHROPIC_BASE_URL",
+    ),
+    "geoIdentityClaudeCodeBody": MessageLookupByLibrary.simpleMessage(
+      "GeoMirror does not help Claude Code. The CLI reads the OS timezone, and its traffic must exit through FlClash (prefer TUN/VPN). With system proxy only, paste the proxy exports into the same terminal before running claude.",
+    ),
+    "geoIdentityClaudeCodeTimezoneTipBody": MessageLookupByLibrary.simpleMessage(
+      "Public reverse-engineering reports say Claude Code checked Asia/Shanghai and Asia/Urumqi when ANTHROPIC_BASE_URL pointed at a custom endpoint. Align the OS timezone to your US exit (for example America/Los_Angeles).",
+    ),
+    "geoIdentityClaudeCodeTimezoneTipTitle":
+        MessageLookupByLibrary.simpleMessage("OS timezone is the CLI signal"),
+    "geoIdentityClaudeCodeTitle": MessageLookupByLibrary.simpleMessage(
+      "Claude Code (terminal)",
+    ),
+    "geoIdentityCopyTerminalProxy": MessageLookupByLibrary.simpleMessage(
+      "Copy terminal proxy exports",
+    ),
+    "geoIdentityCopyTerminalProxyDesc": MessageLookupByLibrary.simpleMessage(
+      "HTTP(S)_PROXY / ALL_PROXY pointed at FlClash mixed-port — needed when Claude Code runs without TUN and Node ignores the system proxy.",
     ),
     "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
       "Protect US AI exit identity in system proxy and TUN modes",
@@ -538,6 +582,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityProtectTitle": MessageLookupByLibrary.simpleMessage(
       "Network undercover",
     ),
+    "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
+      "Restore previous OS timezone",
+    ),
+    "geoIdentityRestoreOsTimezoneDesc": m8,
     "geoIdentityRiskHigh": MessageLookupByLibrary.simpleMessage(
       "High mismatch risk",
     ),
@@ -586,6 +634,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityTimezone": MessageLookupByLibrary.simpleMessage(
       "System timezone",
     ),
+    "geoIdentityTimezoneAndroidTip": MessageLookupByLibrary.simpleMessage(
+      "Android cannot change the system timezone without root. Open Settings → System → Date & time and pick a US zone that matches your exit.",
+    ),
+    "geoIdentityTimezoneApplied": m9,
+    "geoIdentityTimezoneManual": m10,
+    "geoIdentityTimezoneMissing": MessageLookupByLibrary.simpleMessage(
+      "No exit timezone yet. Verify the network environment first.",
+    ),
+    "geoIdentityTimezoneNothingToRestore": MessageLookupByLibrary.simpleMessage(
+      "No previous OS timezone saved.",
+    ),
+    "geoIdentityTimezoneRestored": m11,
+    "geoIdentityTimezoneUnsupported": m12,
     "geoIdentityUsAcceptLanguage": MessageLookupByLibrary.simpleMessage(
       "Probe with US Accept-Language",
     ),
@@ -600,9 +661,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geo Options"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo Resources"),
-    "geoSkipped": m7,
-    "geoUpdated": m8,
-    "geoUpdating": m9,
+    "geoSkipped": m13,
+    "geoUpdated": m14,
+    "geoUpdating": m15,
     "geodataLoader": MessageLookupByLibrary.simpleMessage(
       "Geo Low Memory Mode",
     ),
@@ -630,8 +691,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Use keyboard to control applications",
     ),
     "hours": MessageLookupByLibrary.simpleMessage("hours"),
-    "hoursAgo": m10,
-    "hoursCount": m11,
+    "hoursAgo": m16,
+    "hoursCount": m17,
     "icon": MessageLookupByLibrary.simpleMessage("Icon"),
     "iconRecords": MessageLookupByLibrary.simpleMessage("Icon records"),
     "iconStyle": MessageLookupByLibrary.simpleMessage("Icon style"),
@@ -675,10 +736,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "invalidBackupFile": MessageLookupByLibrary.simpleMessage(
       "Invalid backup file",
     ),
-    "invalidPolicy": m12,
-    "invalidProxy": m13,
-    "invalidProxyProvider": m14,
-    "invalidSubRule": m15,
+    "invalidPolicy": m18,
+    "invalidProxy": m19,
+    "invalidProxyProvider": m20,
+    "invalidSubRule": m21,
     "ipcidr": MessageLookupByLibrary.simpleMessage("Ipcidr"),
     "ipv6Desc": MessageLookupByLibrary.simpleMessage(
       "When turned on it will be able to receive IPv6 traffic",
@@ -712,7 +773,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "locationPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "According to system requirements, obtaining the Wi-Fi name requires you to grant location permission.",
     ),
-    "locationPermissionGuide": m16,
+    "locationPermissionGuide": m22,
     "locationPermissionRequired": MessageLookupByLibrary.simpleMessage(
       "Location Permission Required",
     ),
@@ -742,11 +803,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "minimizeOnExitDesc": MessageLookupByLibrary.simpleMessage(
       "Modify the default system exit event",
     ),
-    "minutesAgo": m17,
+    "minutesAgo": m23,
     "mixedPort": MessageLookupByLibrary.simpleMessage("Mixed Port"),
     "mode": MessageLookupByLibrary.simpleMessage("Mode"),
     "monochromeScheme": MessageLookupByLibrary.simpleMessage("Monochrome"),
-    "monthsAgo": m18,
+    "monthsAgo": m24,
     "more": MessageLookupByLibrary.simpleMessage("More"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "nameserver": MessageLookupByLibrary.simpleMessage("Nameserver"),
@@ -792,8 +853,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "nullProfileDesc": MessageLookupByLibrary.simpleMessage(
       "No profile, Please add a profile",
     ),
-    "nullTip": m19,
-    "numberTip": m20,
+    "nullTip": m25,
+    "numberTip": m26,
     "onDemand": MessageLookupByLibrary.simpleMessage("On Demand"),
     "onDemandDesc": MessageLookupByLibrary.simpleMessage(
       "Configure the program running state for specific scenarios",
@@ -842,7 +903,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "portConflictTip": MessageLookupByLibrary.simpleMessage(
       "Please enter a different port",
     ),
-    "portTip": m21,
+    "portTip": m27,
     "preferH3Desc": MessageLookupByLibrary.simpleMessage(
       "Prioritize the use of DOH\'s http/3",
     ),
@@ -1099,7 +1160,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "seconds": MessageLookupByLibrary.simpleMessage("Seconds"),
-    "secondsCount": m22,
+    "secondsCount": m28,
     "selectAll": MessageLookupByLibrary.simpleMessage("Select all"),
     "selectProxies": MessageLookupByLibrary.simpleMessage("Select proxies"),
     "selectProxyProviders": MessageLookupByLibrary.simpleMessage(
@@ -1115,7 +1176,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please select sub rule",
     ),
     "selected": MessageLookupByLibrary.simpleMessage("Selected"),
-    "selectedCountTitle": m23,
+    "selectedCountTitle": m29,
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "show": MessageLookupByLibrary.simpleMessage("Show"),
     "shrink": MessageLookupByLibrary.simpleMessage("Shrink"),
@@ -1271,7 +1332,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleRoutes": MessageLookupByLibrary.simpleMessage(
       "Route destinations",
     ),
-    "tailscaleRoutesCount": m24,
+    "tailscaleRoutesCount": m30,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "Domains or IPs sent through this node, one per line (e.g. your home PC\'s Tailscale IP or MagicDNS name).",
     ),
@@ -1302,7 +1363,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleStatusNoNodes": MessageLookupByLibrary.simpleMessage(
       "Enabled, but no nodes yet. Add a node to get started.",
     ),
-    "tailscaleStatusReady": m25,
+    "tailscaleStatusReady": m31,
     "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
       "Turn on Enable Tailscale before testing.",
     ),
@@ -1365,7 +1426,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "urlDesc": MessageLookupByLibrary.simpleMessage(
       "Obtain profile through URL",
     ),
-    "urlTip": m26,
+    "urlTip": m32,
     "useHosts": MessageLookupByLibrary.simpleMessage("Use hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("Use system hosts"),
     "userAgent": MessageLookupByLibrary.simpleMessage("User-Agent"),
@@ -1385,7 +1446,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "WebDAV configuration",
     ),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("Whitelist mode"),
-    "yearsAgo": m27,
+    "yearsAgo": m33,
     "zh_CN": MessageLookupByLibrary.simpleMessage("Simplified Chinese"),
   };
 }
