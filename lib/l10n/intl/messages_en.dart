@@ -429,14 +429,50 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityActionsTitle": MessageLookupByLibrary.simpleMessage(
       "External tools",
     ),
+    "geoIdentityCaptureBoth": MessageLookupByLibrary.simpleMessage(
+      "System proxy + TUN/VPN",
+    ),
+    "geoIdentityCaptureBothDesc": MessageLookupByLibrary.simpleMessage(
+      "Both capture paths are on. Traffic should exit through FlClash; keep a US node selected for geo identity.",
+    ),
+    "geoIdentityCaptureInactive": MessageLookupByLibrary.simpleMessage(
+      "Capture off",
+    ),
+    "geoIdentityCaptureInactiveDesc": MessageLookupByLibrary.simpleMessage(
+      "Start FlClash first. Then turn on System proxy and/or TUN (desktop) or VPN (Android) so app traffic exits through the selected node.",
+    ),
+    "geoIdentityCaptureMixedPortOnly": MessageLookupByLibrary.simpleMessage(
+      "Mixed port only",
+    ),
+    "geoIdentityCaptureMixedPortOnlyDesc": MessageLookupByLibrary.simpleMessage(
+      "Core is running, but System proxy and TUN/VPN are off. FlClash’s own check still exits via mixed-port; most apps will not. Enable System proxy or TUN/VPN for undercover coverage.",
+    ),
+    "geoIdentityCaptureSystemProxy": MessageLookupByLibrary.simpleMessage(
+      "System proxy capture",
+    ),
+    "geoIdentityCaptureSystemProxyDesc": MessageLookupByLibrary.simpleMessage(
+      "Apps that honor the system proxy exit through FlClash. Some apps bypass system proxy — prefer TUN/VPN for broader undercover coverage.",
+    ),
+    "geoIdentityCaptureVirtualNic": MessageLookupByLibrary.simpleMessage(
+      "TUN / VPN capture",
+    ),
+    "geoIdentityCaptureVirtualNicDesc": MessageLookupByLibrary.simpleMessage(
+      "Virtual NIC / VPN is capturing traffic. Combined with a US exit node, this is the strongest FlClash network undercover mode.",
+    ),
+    "geoIdentityCheckFailed": MessageLookupByLibrary.simpleMessage(
+      "Network check failed",
+    ),
     "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage(
       "US identity checklist",
     ),
     "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
-      "Align exit IP with OS and browser signals for US AI services",
+      "Protect US AI exit identity in system proxy and TUN modes",
+    ),
+    "geoIdentityExitCountry": MessageLookupByLibrary.simpleMessage(
+      "Exit geo from check",
     ),
     "geoIdentityLimitsBody": MessageLookupByLibrary.simpleMessage(
-      "This page is guidance for geo-identity consistency. It does not spoof fingerprints inside FlClash, does not guarantee access to any AI service, and does not replace each service’s terms of use.",
+      "FlClash undercovers the network exit and can verify IP geo + Accept-Language via FuckClaude’s API. It does not rewrite HTTPS headers for other apps, does not spoof fonts/geolocation, does not guarantee access to any AI service, and does not replace each service’s terms of use.",
     ),
     "geoIdentityLimitsTitle": MessageLookupByLibrary.simpleMessage(
       "Limits and disclaimer",
@@ -449,6 +485,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityLocalTipTitle": MessageLookupByLibrary.simpleMessage(
       "What FlClash cannot change",
+    ),
+    "geoIdentityNeedStart": MessageLookupByLibrary.simpleMessage(
+      "Start FlClash before verifying the network environment.",
+    ),
+    "geoIdentityNetworkCheckTitle": MessageLookupByLibrary.simpleMessage(
+      "Network environment check",
+    ),
+    "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
+      "Network still looks exposed",
+    ),
+    "geoIdentityNetworkProtected": MessageLookupByLibrary.simpleMessage(
+      "Network looks protected",
     ),
     "geoIdentityOpenGeoMirror": MessageLookupByLibrary.simpleMessage(
       "GeoMirror on GitHub",
@@ -470,10 +518,25 @@ class MessageLookup extends MessageLookupByLibrary {
       "FuckClaude — weighted browser / timezone risk scan",
     ),
     "geoIdentityOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "US AI services often compare your exit IP with local signals such as timezone, language, fonts, and geolocation. A Los Angeles IP with Asia/Shanghai timezone or zh-CN language is a high-risk mismatch. FlClash can provide a US exit IP; OS timezone and browser profile must match that exit separately.",
+      "US AI services often compare your exit IP with local signals such as timezone, language, fonts, and geolocation. A Los Angeles IP with Asia/Shanghai timezone or zh-CN language is a high-risk mismatch. FlClash can undercover the network exit in system-proxy and TUN/VPN modes and verify it via FuckClaude’s API; OS timezone and browser profile must still match that exit separately.",
     ),
     "geoIdentityOverviewTitle": MessageLookupByLibrary.simpleMessage(
       "Why this matters",
+    ),
+    "geoIdentityProbeLanguage": MessageLookupByLibrary.simpleMessage(
+      "Accept-Language seen by check",
+    ),
+    "geoIdentityProbeLanguageUnknown": MessageLookupByLibrary.simpleMessage(
+      "unknown",
+    ),
+    "geoIdentityProtectEnable": MessageLookupByLibrary.simpleMessage(
+      "Enable geo identity protect",
+    ),
+    "geoIdentityProtectEnableDesc": MessageLookupByLibrary.simpleMessage(
+      "Treat US exit consistency as active: prefer a US Accept-Language on network probes and show capture-mode guidance for system proxy and TUN/VPN.",
+    ),
+    "geoIdentityProtectTitle": MessageLookupByLibrary.simpleMessage(
+      "Network undercover",
     ),
     "geoIdentityRiskHigh": MessageLookupByLibrary.simpleMessage(
       "High mismatch risk",
@@ -485,7 +548,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Local signals look consistent",
     ),
     "geoIdentityRiskLowDesc": MessageLookupByLibrary.simpleMessage(
-      "This device’s timezone offset and system locale do not look China-local. Still verify the browser profile and that traffic exits via a US node.",
+      "This device’s timezone offset and system locale do not look China-local. Still verify the network check and the browser profile.",
     ),
     "geoIdentityRiskMedium": MessageLookupByLibrary.simpleMessage(
       "Possible geo mismatch",
@@ -500,19 +563,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "1. Use a US exit node",
     ),
     "geoIdentityStep2Body": MessageLookupByLibrary.simpleMessage(
-      "Set the operating-system timezone to the same US region as the exit (for example America/Los_Angeles). Claude Code reads the OS timezone, not only the browser.",
+      "Start FlClash, then enable System proxy and/or TUN on desktop, or VPN on Android, so apps actually exit through the US node. Tap Verify network environment.",
     ),
     "geoIdentityStep2Title": MessageLookupByLibrary.simpleMessage(
-      "2. Match the OS timezone",
+      "2. Capture traffic (system proxy or TUN)",
     ),
     "geoIdentityStep3Body": MessageLookupByLibrary.simpleMessage(
-      "Install GeoMirror (or a similar extension) so geolocation, timezone, language, Accept-Language, and regional font probes follow the exit IP.",
+      "Set the OS timezone to the same US region as the exit. Install GeoMirror so geolocation, timezone, language, Accept-Language, and regional font probes follow the exit IP.",
     ),
     "geoIdentityStep3Title": MessageLookupByLibrary.simpleMessage(
-      "3. Align the browser profile",
+      "3. Match the OS timezone + browser profile",
     ),
     "geoIdentityStep4Body": MessageLookupByLibrary.simpleMessage(
-      "Open the FuckClaude scanner while traffic goes through FlClash. Aim for Low risk, then re-check after OS or browser changes. Rules change; treat this as ongoing hygiene, not a one-time fix.",
+      "Open the FuckClaude browser scanner while traffic goes through FlClash. Aim for Low risk, then re-check after OS or browser changes. Rules change; treat this as ongoing hygiene.",
     ),
     "geoIdentityStep4Title": MessageLookupByLibrary.simpleMessage(
       "4. Self-check, then revisit",
@@ -522,6 +585,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityTimezone": MessageLookupByLibrary.simpleMessage(
       "System timezone",
+    ),
+    "geoIdentityUsAcceptLanguage": MessageLookupByLibrary.simpleMessage(
+      "Probe with US Accept-Language",
+    ),
+    "geoIdentityUsAcceptLanguageDesc": MessageLookupByLibrary.simpleMessage(
+      "Send Accept-Language: en-US,en;q=0.9 on FuckClaude network checks so the estimate is not skewed by zh headers.",
+    ),
+    "geoIdentityVerifyNetwork": MessageLookupByLibrary.simpleMessage(
+      "Verify network environment",
+    ),
+    "geoIdentityVerifyNetworkDesc": MessageLookupByLibrary.simpleMessage(
+      "Call FuckClaude /api/check through FlClash’s mixed-port stack (works with system proxy and TUN/VPN).",
     ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geo Options"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo Resources"),

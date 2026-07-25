@@ -1,4 +1,4 @@
-import 'package:fl_clash/common/geo_identity.dart';
+import 'package:fl_clash/models/geo_identity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -47,9 +47,54 @@ void main() {
     });
   });
 
-  test('GeoIdentityLinks point at known tools', () {
+  group('GeoIdentityNetworkReport', () {
+    test('parses FuckClaude JSON and marks US low as protected', () {
+      final report = GeoIdentityNetworkReport.fromJson({
+        'score': 3,
+        'band': 'low',
+        'verdict': 'Low risk',
+        'message': 'ok',
+        'estimate': true,
+        'geo': {'country': 'US', 'timezone': 'America/Los_Angeles'},
+        'signals': [
+          {'id': 'language', 'value': 'en-US, en'},
+        ],
+      });
+      expect(report.looksUsExit, isTrue);
+      expect(report.isLowRisk, isTrue);
+      expect(report.isProtected, isTrue);
+      expect(report.language, 'en-US, en');
+      expect(report.timezone, 'America/Los_Angeles');
+    });
+
+    test('marks zh Accept-Language on US IP as not protected when band rises', () {
+      final report = GeoIdentityNetworkReport.fromJson({
+        'score': 32,
+        'band': 'medium',
+        'verdict': 'medium',
+        'message': 'maybe',
+        'estimate': true,
+        'geo': {'country': 'US', 'timezone': 'America/Los_Angeles'},
+        'signals': [
+          {'id': 'language', 'value': 'zh'},
+        ],
+      });
+      expect(report.looksUsExit, isTrue);
+      expect(report.isProtected, isFalse);
+      expect(report.language, 'zh');
+    });
+  });
+
+  test('GeoIdentityLinks and probe constants stay wired', () {
     expect(GeoIdentityLinks.fuckClaude, contains('fuck-claude'));
     expect(GeoIdentityLinks.geoMirror, contains('geomirror'));
-    expect(GeoIdentityLinks.geoMirrorReleases, contains('releases'));
+    expect(GeoIdentityLinks.checkApi, contains('format=json'));
+    expect(geoIdentityUsAcceptLanguage, startsWith('en-US'));
+  });
+
+  test('GeoIdentityProps defaults are opt-in', () {
+    const props = GeoIdentityProps();
+    expect(props.enable, isFalse);
+    expect(props.useUsAcceptLanguage, isTrue);
   });
 }

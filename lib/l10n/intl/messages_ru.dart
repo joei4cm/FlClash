@@ -444,14 +444,50 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityActionsTitle": MessageLookupByLibrary.simpleMessage(
       "Внешние инструменты",
     ),
+    "geoIdentityCaptureBoth": MessageLookupByLibrary.simpleMessage(
+      "Системный прокси + TUN/VPN",
+    ),
+    "geoIdentityCaptureBothDesc": MessageLookupByLibrary.simpleMessage(
+      "Оба пути захвата включены. Трафик должен выходить через FlClash; держите выбранным US-узел для геоидентичности.",
+    ),
+    "geoIdentityCaptureInactive": MessageLookupByLibrary.simpleMessage(
+      "Захват выключен",
+    ),
+    "geoIdentityCaptureInactiveDesc": MessageLookupByLibrary.simpleMessage(
+      "Сначала запустите FlClash. Затем включите системный прокси и/или TUN (desktop) либо VPN (Android), чтобы трафик приложений выходил через выбранный узел.",
+    ),
+    "geoIdentityCaptureMixedPortOnly": MessageLookupByLibrary.simpleMessage(
+      "Только mixed-port",
+    ),
+    "geoIdentityCaptureMixedPortOnlyDesc": MessageLookupByLibrary.simpleMessage(
+      "Ядро запущено, но системный прокси и TUN/VPN выключены. Собственная проверка FlClash всё ещё идёт через mixed-port; большинство приложений — нет. Включите системный прокси или TUN/VPN для маскировки.",
+    ),
+    "geoIdentityCaptureSystemProxy": MessageLookupByLibrary.simpleMessage(
+      "Захват системным прокси",
+    ),
+    "geoIdentityCaptureSystemProxyDesc": MessageLookupByLibrary.simpleMessage(
+      "Приложения, уважающие системный прокси, выходят через FlClash. Некоторые приложения его обходят — для более широкой маскировки предпочтителен TUN/VPN.",
+    ),
+    "geoIdentityCaptureVirtualNic": MessageLookupByLibrary.simpleMessage(
+      "Захват TUN / VPN",
+    ),
+    "geoIdentityCaptureVirtualNicDesc": MessageLookupByLibrary.simpleMessage(
+      "Виртуальный NIC / VPN захватывает трафик. Вместе с US exit-узлом это самый сильный режим сетевой маскировки FlClash.",
+    ),
+    "geoIdentityCheckFailed": MessageLookupByLibrary.simpleMessage(
+      "Сетевая проверка не удалась",
+    ),
     "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage(
       "Чеклист US-идентичности",
     ),
     "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
-      "Согласовать exit IP с сигналами ОС и браузера для US AI-сервисов",
+      "Защита US AI exit-идентичности в режиме системного прокси и TUN",
+    ),
+    "geoIdentityExitCountry": MessageLookupByLibrary.simpleMessage(
+      "Гео выхода по проверке",
     ),
     "geoIdentityLimitsBody": MessageLookupByLibrary.simpleMessage(
-      "Эта страница — руководство по согласованности геоидентичности. Она не подделывает отпечатки внутри FlClash, не гарантирует доступ к AI-сервисам и не заменяет условия использования сервисов.",
+      "FlClash маскирует сетевой выход и может проверить IP-гео и Accept-Language через FuckClaude API. Он не переписывает HTTPS-заголовки других приложений, не подделывает шрифты/геолокацию, не гарантирует доступ к AI-сервисам и не заменяет условия использования сервисов.",
     ),
     "geoIdentityLimitsTitle": MessageLookupByLibrary.simpleMessage(
       "Ограничения и отказ от гарантий",
@@ -464,6 +500,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityLocalTipTitle": MessageLookupByLibrary.simpleMessage(
       "Что FlClash не меняет",
+    ),
+    "geoIdentityNeedStart": MessageLookupByLibrary.simpleMessage(
+      "Запустите FlClash перед проверкой сетевой среды.",
+    ),
+    "geoIdentityNetworkCheckTitle": MessageLookupByLibrary.simpleMessage(
+      "Проверка сетевой среды",
+    ),
+    "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
+      "Сеть всё ещё выглядит раскрытой",
+    ),
+    "geoIdentityNetworkProtected": MessageLookupByLibrary.simpleMessage(
+      "Сеть выглядит защищённой",
     ),
     "geoIdentityOpenGeoMirror": MessageLookupByLibrary.simpleMessage(
       "GeoMirror на GitHub",
@@ -485,10 +533,25 @@ class MessageLookup extends MessageLookupByLibrary {
       "FuckClaude — взвешенный скан риска браузера / часового пояса",
     ),
     "geoIdentityOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "US AI-сервисы часто сверяют exit IP с локальными сигналами: часовой пояс, язык, шрифты, геолокация. IP в Лос-Анджелесе при Asia/Shanghai или zh-CN — высокий риск. FlClash даёт US exit IP; часовой пояс ОС и профиль браузера нужно выровнять отдельно.",
+      "US AI-сервисы часто сверяют exit IP с локальными сигналами: часовой пояс, язык, шрифты, геолокация. IP в Лос-Анджелесе при Asia/Shanghai или zh-CN — высокий риск. FlClash может маскировать сетевой выход в режимах системного прокси и TUN/VPN и проверить его через FuckClaude API; часовой пояс ОС и профиль браузера нужно выровнять отдельно.",
     ),
     "geoIdentityOverviewTitle": MessageLookupByLibrary.simpleMessage(
       "Зачем это нужно",
+    ),
+    "geoIdentityProbeLanguage": MessageLookupByLibrary.simpleMessage(
+      "Accept-Language, увиденный проверкой",
+    ),
+    "geoIdentityProbeLanguageUnknown": MessageLookupByLibrary.simpleMessage(
+      "неизвестно",
+    ),
+    "geoIdentityProtectEnable": MessageLookupByLibrary.simpleMessage(
+      "Включить защиту геоидентичности",
+    ),
+    "geoIdentityProtectEnableDesc": MessageLookupByLibrary.simpleMessage(
+      "Считать согласованность US exit активной задачей: предпочитать US Accept-Language в сетевых проверках и показывать статус захвата для системного прокси и TUN/VPN.",
+    ),
+    "geoIdentityProtectTitle": MessageLookupByLibrary.simpleMessage(
+      "Сетевая маскировка",
     ),
     "geoIdentityRiskHigh": MessageLookupByLibrary.simpleMessage(
       "Высокий риск несоответствия",
@@ -500,7 +563,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Локальные сигналы выглядят согласованно",
     ),
     "geoIdentityRiskLowDesc": MessageLookupByLibrary.simpleMessage(
-      "Смещение пояса и системная локаль не выглядят как китайская среда. Всё равно проверьте профиль браузера и выход через US-узел.",
+      "Смещение пояса и системная локаль не выглядят как китайская среда. Всё равно проверьте сетевую проверку и профиль браузера.",
     ),
     "geoIdentityRiskMedium": MessageLookupByLibrary.simpleMessage(
       "Возможен гео-разрыв",
@@ -515,19 +578,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "1. Используйте US exit-узел",
     ),
     "geoIdentityStep2Body": MessageLookupByLibrary.simpleMessage(
-      "Установите часовой пояс ОС в тот же US-регион, что и exit (например America/Los_Angeles). Claude Code читает пояс ОС, а не только браузер.",
+      "Запустите FlClash, затем включите системный прокси и/или TUN на desktop либо VPN на Android, чтобы приложения реально выходили через US-узел. Нажмите «Проверить сетевую среду».",
     ),
     "geoIdentityStep2Title": MessageLookupByLibrary.simpleMessage(
-      "2. Совместите часовой пояс ОС",
+      "2. Захватите трафик (системный прокси или TUN)",
     ),
     "geoIdentityStep3Body": MessageLookupByLibrary.simpleMessage(
-      "Установите GeoMirror (или аналог), чтобы геолокация, пояс, язык, Accept-Language и региональные шрифты следовали за exit IP.",
+      "Установите часовой пояс ОС в тот же US-регион, что и exit. Установите GeoMirror, чтобы геолокация, пояс, язык, Accept-Language и региональные шрифты следовали за exit IP.",
     ),
     "geoIdentityStep3Title": MessageLookupByLibrary.simpleMessage(
-      "3. Выровняйте профиль браузера",
+      "3. Совместите часовой пояс ОС и браузер",
     ),
     "geoIdentityStep4Body": MessageLookupByLibrary.simpleMessage(
-      "Откройте сканер FuckClaude, пока трафик идёт через FlClash. Стремитесь к Low и перепроверяйте после смены ОС/браузера. Правила меняются — это постоянная гигиена, а не разовая настройка.",
+      "Откройте браузерный сканер FuckClaude, пока трафик идёт через FlClash. Стремитесь к Low и перепроверяйте после смены ОС/браузера. Правила меняются — это постоянная гигиена.",
     ),
     "geoIdentityStep4Title": MessageLookupByLibrary.simpleMessage(
       "4. Самопроверка и повтор",
@@ -537,6 +600,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityTimezone": MessageLookupByLibrary.simpleMessage(
       "Системный часовой пояс",
+    ),
+    "geoIdentityUsAcceptLanguage": MessageLookupByLibrary.simpleMessage(
+      "Проверять с US Accept-Language",
+    ),
+    "geoIdentityUsAcceptLanguageDesc": MessageLookupByLibrary.simpleMessage(
+      "Отправлять Accept-Language: en-US,en;q=0.9 в сетевых проверках FuckClaude, чтобы китайские заголовки не завышали оценку риска.",
+    ),
+    "geoIdentityVerifyNetwork": MessageLookupByLibrary.simpleMessage(
+      "Проверить сетевую среду",
+    ),
+    "geoIdentityVerifyNetworkDesc": MessageLookupByLibrary.simpleMessage(
+      "Вызвать FuckClaude /api/check через mixed-port стек FlClash (работает и с системным прокси, и с TUN/VPN).",
     ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Настройки Geo"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Ресурсы Geo"),

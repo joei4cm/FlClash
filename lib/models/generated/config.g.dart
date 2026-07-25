@@ -354,6 +354,11 @@ _Config _$ConfigFromJson(Map<String, dynamic> json) => _Config(
       : TailscaleProps.safeFromJson(
           json['tailscaleProps'] as Map<String, Object?>?,
         ),
+  geoIdentityProps: json['geoIdentityProps'] == null
+      ? defaultGeoIdentityProps
+      : GeoIdentityProps.safeFromJson(
+          json['geoIdentityProps'] as Map<String, Object?>?,
+        ),
 );
 
 Map<String, dynamic> _$ConfigToJson(_Config instance) => <String, dynamic>{
@@ -370,4 +375,5 @@ Map<String, dynamic> _$ConfigToJson(_Config instance) => <String, dynamic>{
   'patchClashConfig': instance.patchClashConfig,
   'excludeSSIDs': instance.excludeSSIDs,
   'tailscaleProps': instance.tailscaleProps,
+  'geoIdentityProps': instance.geoIdentityProps,
 };

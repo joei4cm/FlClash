@@ -340,14 +340,50 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentity": MessageLookupByLibrary.simpleMessage("地理アイデンティティ"),
     "geoIdentityActionsTitle": MessageLookupByLibrary.simpleMessage("外部ツール"),
+    "geoIdentityCaptureBoth": MessageLookupByLibrary.simpleMessage(
+      "システムプロキシ + TUN/VPN",
+    ),
+    "geoIdentityCaptureBothDesc": MessageLookupByLibrary.simpleMessage(
+      "両方のキャプチャ経路がオンです。通信は FlClash 経由になるはずです。地理アイデンティティのため米国ノードを選択したままにしてください。",
+    ),
+    "geoIdentityCaptureInactive": MessageLookupByLibrary.simpleMessage(
+      "キャプチャオフ",
+    ),
+    "geoIdentityCaptureInactiveDesc": MessageLookupByLibrary.simpleMessage(
+      "先に FlClash を開始し、デスクトップではシステムプロキシと/または TUN、Android では VPN を有効にして、アプリ通信が選択ノード経由になるようにしてください。",
+    ),
+    "geoIdentityCaptureMixedPortOnly": MessageLookupByLibrary.simpleMessage(
+      "ミックスポートのみ",
+    ),
+    "geoIdentityCaptureMixedPortOnlyDesc": MessageLookupByLibrary.simpleMessage(
+      "コアは動作中ですが、システムプロキシも TUN/VPN もオフです。FlClash 自身のチェックはミックスポート経由でも、ほとんどのアプリは通りません。潜伏カバレッジにはシステムプロキシか TUN/VPN を有効にしてください。",
+    ),
+    "geoIdentityCaptureSystemProxy": MessageLookupByLibrary.simpleMessage(
+      "システムプロキシキャプチャ",
+    ),
+    "geoIdentityCaptureSystemProxyDesc": MessageLookupByLibrary.simpleMessage(
+      "システムプロキシに従うアプリは FlClash 経由で出口します。バイパスするアプリもあるため、より広い潜伏には TUN/VPN を推奨します。",
+    ),
+    "geoIdentityCaptureVirtualNic": MessageLookupByLibrary.simpleMessage(
+      "TUN / VPN キャプチャ",
+    ),
+    "geoIdentityCaptureVirtualNicDesc": MessageLookupByLibrary.simpleMessage(
+      "仮想 NIC / VPN が通信をキャプチャしています。米国出口ノードと組み合わせると、FlClash の最強のネットワーク潜伏モードです。",
+    ),
+    "geoIdentityCheckFailed": MessageLookupByLibrary.simpleMessage(
+      "ネットワークチェックに失敗",
+    ),
     "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage(
       "米国アイデンティティのチェックリスト",
     ),
     "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
-      "出口 IP と OS / ブラウザ信号を揃え、米国向け AI サービスに合わせる",
+      "システムプロキシと TUN で米国向け AI 出口アイデンティティを保護",
+    ),
+    "geoIdentityExitCountry": MessageLookupByLibrary.simpleMessage(
+      "チェック上の出口地理",
     ),
     "geoIdentityLimitsBody": MessageLookupByLibrary.simpleMessage(
-      "この画面は地理アイデンティティ整合の案内です。FlClash 内で指紋を偽装せず、AI サービス利用を保証せず、各サービスの利用規約の代わりにもなりません。",
+      "FlClash はネットワーク出口を隠し、FuckClaude API で IP 地理と Accept-Language を検証できます。他アプリの HTTPS ヘッダ改変、フォント/位置情報の偽装、AI サービス利用の保証はせず、各サービスの利用規約の代わりにもなりません。",
     ),
     "geoIdentityLimitsTitle": MessageLookupByLibrary.simpleMessage("限界と免責"),
     "geoIdentityLocalSignalsTitle": MessageLookupByLibrary.simpleMessage(
@@ -358,6 +394,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityLocalTipTitle": MessageLookupByLibrary.simpleMessage(
       "FlClash では変えられないもの",
+    ),
+    "geoIdentityNeedStart": MessageLookupByLibrary.simpleMessage(
+      "ネットワーク環境を検証する前に FlClash を開始してください。",
+    ),
+    "geoIdentityNetworkCheckTitle": MessageLookupByLibrary.simpleMessage(
+      "ネットワーク環境チェック",
+    ),
+    "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
+      "ネットワークはまだ露出している可能性",
+    ),
+    "geoIdentityNetworkProtected": MessageLookupByLibrary.simpleMessage(
+      "ネットワークは保護されているように見える",
     ),
     "geoIdentityOpenGeoMirror": MessageLookupByLibrary.simpleMessage(
       "GeoMirror（GitHub）",
@@ -377,9 +425,22 @@ class MessageLookup extends MessageLookupByLibrary {
       "FuckClaude — ブラウザ / タイムゾーンのリスク加重スキャン",
     ),
     "geoIdentityOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "米国の AI サービスは、出口 IP とタイムゾーン・言語・フォント・位置情報などのローカル信号を突き合わせることがあります。ロサンゼルスの IP なのに Asia/Shanghai や zh-CN だと高リスクです。FlClash は米国出口 IP を提供できますが、OS のタイムゾーンとブラウザプロファイルは別途揃える必要があります。",
+      "米国の AI サービスは、出口 IP とタイムゾーン・言語・フォント・位置情報などのローカル信号を突き合わせることがあります。ロサンゼルスの IP なのに Asia/Shanghai や zh-CN だと高リスクです。FlClash はシステムプロキシと TUN/VPN でネットワーク出口を隠し、FuckClaude API で検証できます。OS のタイムゾーンとブラウザプロファイルは別途揃える必要があります。",
     ),
     "geoIdentityOverviewTitle": MessageLookupByLibrary.simpleMessage("なぜ重要か"),
+    "geoIdentityProbeLanguage": MessageLookupByLibrary.simpleMessage(
+      "チェックが見た Accept-Language",
+    ),
+    "geoIdentityProbeLanguageUnknown": MessageLookupByLibrary.simpleMessage(
+      "不明",
+    ),
+    "geoIdentityProtectEnable": MessageLookupByLibrary.simpleMessage(
+      "地理アイデンティティ保護を有効化",
+    ),
+    "geoIdentityProtectEnableDesc": MessageLookupByLibrary.simpleMessage(
+      "米国出口の整合を有効な目標として扱い、ネットワーク探査で米国 Accept-Language を優先し、システムプロキシと TUN/VPN のキャプチャ状態を表示します。",
+    ),
+    "geoIdentityProtectTitle": MessageLookupByLibrary.simpleMessage("ネットワーク潜伏"),
     "geoIdentityRiskHigh": MessageLookupByLibrary.simpleMessage("不一致リスクが高い"),
     "geoIdentityRiskHighDesc": MessageLookupByLibrary.simpleMessage(
       "タイムゾーンとシステムロケールの両方が中国ローカルに見えます。米国出口 IP だけでは足りません。OS のタイムゾーンを変え、ブラウザプロファイルを揃えてください。",
@@ -388,7 +449,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "ローカル信号は整合していそう",
     ),
     "geoIdentityRiskLowDesc": MessageLookupByLibrary.simpleMessage(
-      "タイムゾーンオフセットとシステムロケールは中国ローカルには見えません。それでもブラウザプロファイルと、米国ノード経由であることを確認してください。",
+      "タイムゾーンオフセットとシステムロケールは中国ローカルには見えません。それでもネットワークチェックとブラウザプロファイルを確認してください。",
     ),
     "geoIdentityRiskMedium": MessageLookupByLibrary.simpleMessage("地理の不一致の可能性"),
     "geoIdentityRiskMediumDesc": MessageLookupByLibrary.simpleMessage(
@@ -401,25 +462,37 @@ class MessageLookup extends MessageLookupByLibrary {
       "1. 米国の出口ノードを使う",
     ),
     "geoIdentityStep2Body": MessageLookupByLibrary.simpleMessage(
-      "OS のタイムゾーンを出口と同じ米国地域（例: America/Los_Angeles）に設定します。Claude Code はブラウザではなく OS のタイムゾーンを読みます。",
+      "FlClash を開始し、デスクトップではシステムプロキシと/または TUN、Android では VPN を有効にして、アプリが本当に米国ノード経由になるようにします。その後「ネットワーク環境を検証」をタップします。",
     ),
     "geoIdentityStep2Title": MessageLookupByLibrary.simpleMessage(
-      "2. OS のタイムゾーンを合わせる",
+      "2. 通信をキャプチャ（システムプロキシまたは TUN）",
     ),
     "geoIdentityStep3Body": MessageLookupByLibrary.simpleMessage(
-      "GeoMirror（または同様の拡張）を入れ、位置情報・タイムゾーン・言語・Accept-Language・地域フォントの検出を出口 IP に合わせてください。",
+      "OS のタイムゾーンを出口と同じ米国地域に設定します。GeoMirror を入れ、位置情報・タイムゾーン・言語・Accept-Language・地域フォントの検出を出口 IP に合わせてください。",
     ),
     "geoIdentityStep3Title": MessageLookupByLibrary.simpleMessage(
-      "3. ブラウザプロファイルを揃える",
+      "3. OS のタイムゾーンとブラウザを揃える",
     ),
     "geoIdentityStep4Body": MessageLookupByLibrary.simpleMessage(
-      "通信が FlClash 経由の状態で FuckClaude を開き、Low を目指します。OS やブラウザを変えたら再測定してください。ルールは変わるので、一度きりではなく継続的な衛生管理として扱ってください。",
+      "通信が FlClash 経由の状態で FuckClaude のブラウザスキャンを開き、Low を目指します。OS やブラウザを変えたら再測定してください。ルールは変わるので継続的に管理してください。",
     ),
     "geoIdentityStep4Title": MessageLookupByLibrary.simpleMessage(
       "4. 自己チェックして再確認",
     ),
     "geoIdentitySystemLocale": MessageLookupByLibrary.simpleMessage("システムロケール"),
     "geoIdentityTimezone": MessageLookupByLibrary.simpleMessage("システムタイムゾーン"),
+    "geoIdentityUsAcceptLanguage": MessageLookupByLibrary.simpleMessage(
+      "米国 Accept-Language で探査",
+    ),
+    "geoIdentityUsAcceptLanguageDesc": MessageLookupByLibrary.simpleMessage(
+      "FuckClaude ネットワークチェックで Accept-Language: en-US,en;q=0.9 を送り、中国語ヘッダでスコアが上がらないようにします。",
+    ),
+    "geoIdentityVerifyNetwork": MessageLookupByLibrary.simpleMessage(
+      "ネットワーク環境を検証",
+    ),
+    "geoIdentityVerifyNetworkDesc": MessageLookupByLibrary.simpleMessage(
+      "FlClash のミックスポート経由で FuckClaude /api/check を呼び出します（システムプロキシと TUN/VPN の両方で有効）。",
+    ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geoオプション"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geoリソース"),
     "geoSkipped": m7,
