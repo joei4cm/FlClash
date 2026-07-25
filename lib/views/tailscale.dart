@@ -2,6 +2,7 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/views/proxies/common.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,24 +10,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class TailscaleView extends ConsumerWidget {
   const TailscaleView({super.key});
 
-  String _buildSubtitle(BuildContext context, TailscaleProxy proxy) {
-    final appLocalizations = context.appLocalizations;
-    final parts = <String>[tailscaleProxyType];
-    if (proxy.exitNode.trim().isNotEmpty) {
-      parts.add('${appLocalizations.tailscaleExitNode}: ${proxy.exitNode}');
-    }
-    if (proxy.ephemeral) {
-      parts.add(appLocalizations.tailscaleEphemeral);
-    }
-    return parts.join(' · ');
-  }
-
   void _applyTailscaleConfig(WidgetRef ref) {
     // Tailscale settings are merged into the running profile; re-apply so the
     // toggle / routes take effect without requiring a manual VPN restart.
-    ref
-        .read(setupActionProvider.notifier)
-        .applyProfileDebounce(silence: true);
+    ref.read(setupActionProvider.notifier).applyProfileDebounce(silence: true);
   }
 
   Future<void> _handleAddOrEdit(
@@ -47,6 +34,91 @@ class TailscaleView extends ConsumerWidget {
     }
     ref.read(tailscaleSettingProvider.notifier).addOrUpdate(res);
     _applyTailscaleConfig(ref);
+  }
+
+  Future<void> _handleDelete(
+    BuildContext context,
+    WidgetRef ref,
+    TailscaleProxy proxy,
+  ) async {
+    final appLocalizations = context.appLocalizations;
+    final res = await globalState.showMessage(
+      title: appLocalizations.tip,
+      message: TextSpan(
+        text: appLocalizations.deleteTip(appLocalizations.tailscale),
+      ),
+    );
+    if (res != true) {
+      return;
+    }
+    ref.read(tailscaleSettingProvider.notifier).remove(proxy.name);
+    _applyTailscaleConfig(ref);
+  }
+
+  Future<void> _handleTest(
+    BuildContext context,
+    WidgetRef ref,
+    TailscaleProxy proxy,
+  ) async {
+    final appLocalizations = context.appLocalizations;
+    if (!ref.read(tailscaleSettingProvider).enable) {
+      context.showNotifier(appLocalizations.tailscaleTestNeedEnable);
+      return;
+    }
+    if (!ref.read(isStartProvider)) {
+      context.showNotifier(appLocalizations.tailscaleTestNeedStart);
+      return;
+    }
+    await proxyDelayTest(Proxy(name: proxy.name, type: tailscaleProxyType));
+  }
+
+  Widget _buildScenarioCard(BuildContext context) {
+    final appLocalizations = context.appLocalizations;
+    final isAndroid = system.isAndroid;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: context.colorScheme.primaryContainer.opacity38,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  isAndroid ? Icons.phone_android : Icons.computer,
+                  size: 20,
+                  color: context.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    isAndroid
+                        ? appLocalizations.tailscaleScenarioAndroidTitle
+                        : appLocalizations.tailscaleScenarioDesktopTitle,
+                    style: context.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              isAndroid
+                  ? appLocalizations.tailscaleScenarioAndroidBody
+                  : appLocalizations.tailscaleScenarioDesktopBody,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: context.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildGuideStep(BuildContext context, int number, String text) {
@@ -85,8 +157,9 @@ class TailscaleView extends ConsumerWidget {
 
   Widget _buildGuide(BuildContext context) {
     final appLocalizations = context.appLocalizations;
+    final isAndroid = system.isAndroid;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -99,7 +172,7 @@ class TailscaleView extends ConsumerWidget {
             Row(
               children: [
                 Icon(
-                  Icons.help_outline,
+                  Icons.checklist_outlined,
                   size: 20,
                   color: context.colorScheme.primary,
                 ),
@@ -113,21 +186,55 @@ class TailscaleView extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 12),
-            _buildGuideStep(context, 1, appLocalizations.tailscaleGuideStep1),
-            _buildGuideStep(context, 2, appLocalizations.tailscaleGuideStep2),
-            _buildGuideStep(context, 3, appLocalizations.tailscaleGuideStep3),
-            _buildGuideStep(context, 4, appLocalizations.tailscaleGuideStep4),
-            const SizedBox(height: 8),
-            _buildGuideNote(
-              context,
-              Icons.alt_route_outlined,
-              appLocalizations.tailscaleGuideRoutesNote,
-            ),
-            const SizedBox(height: 8),
-            _buildGuideNote(
-              context,
-              Icons.shield_outlined,
-              appLocalizations.tailscaleGuideBypassNote,
+            if (isAndroid) ...[
+              _buildGuideStep(
+                context,
+                1,
+                appLocalizations.tailscaleAndroidStep1,
+              ),
+              _buildGuideStep(
+                context,
+                2,
+                appLocalizations.tailscaleAndroidStep2,
+              ),
+              _buildGuideStep(
+                context,
+                3,
+                appLocalizations.tailscaleAndroidStep3,
+              ),
+              _buildGuideStep(
+                context,
+                4,
+                appLocalizations.tailscaleAndroidStep4,
+              ),
+            ] else ...[
+              _buildGuideStep(
+                context,
+                1,
+                appLocalizations.tailscaleDesktopStep1,
+              ),
+              _buildGuideStep(
+                context,
+                2,
+                appLocalizations.tailscaleDesktopStep2,
+              ),
+              _buildGuideStep(
+                context,
+                3,
+                appLocalizations.tailscaleDesktopStep3,
+              ),
+              _buildGuideStep(
+                context,
+                4,
+                appLocalizations.tailscaleDesktopStep4,
+              ),
+            ],
+            const SizedBox(height: 4),
+            Text(
+              appLocalizations.tailscaleTestTip,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: context.colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -135,41 +242,140 @@ class TailscaleView extends ConsumerWidget {
     );
   }
 
-  Widget _buildGuideNote(BuildContext context, IconData icon, String text) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 16, color: context.colorScheme.onSurfaceVariant),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            text,
-            style: context.textTheme.bodySmall?.copyWith(
-              color: context.colorScheme.onSurfaceVariant,
+  Widget _buildStatusBanner(
+    BuildContext context,
+    WidgetRef ref, {
+    required bool enable,
+    required int nodeCount,
+  }) {
+    final appLocalizations = context.appLocalizations;
+    final isStart = ref.watch(isStartProvider);
+    final String message;
+    final Color? color;
+    final IconData icon;
+    if (!enable) {
+      message = appLocalizations.tailscaleStatusDisabled;
+      color = context.colorScheme.onSurfaceVariant;
+      icon = Icons.pause_circle_outline;
+    } else if (nodeCount == 0) {
+      message = appLocalizations.tailscaleStatusNoNodes;
+      color = context.colorScheme.tertiary;
+      icon = Icons.info_outline;
+    } else if (!isStart) {
+      message = appLocalizations.tailscaleStatusNeedStart;
+      color = context.colorScheme.tertiary;
+      icon = Icons.play_circle_outline;
+    } else {
+      message = appLocalizations.tailscaleStatusReady(nodeCount);
+      color = context.colorScheme.primary;
+      icon = Icons.check_circle_outline;
+    }
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: color),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message,
+              style: context.textTheme.bodySmall?.copyWith(color: color),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Future<void> _handleDelete(
-    BuildContext context,
-    WidgetRef ref,
-    TailscaleProxy proxy,
-  ) async {
+  Widget _buildNodeDelay(BuildContext context, WidgetRef ref, String name) {
     final appLocalizations = context.appLocalizations;
-    final res = await globalState.showMessage(
-      title: appLocalizations.tip,
-      message: TextSpan(
-        text: appLocalizations.deleteTip(appLocalizations.tailscale),
+    final delay = ref.watch(delayProvider(proxyName: name));
+    if (delay == null) {
+      return Text(
+        appLocalizations.tailscaleNotTested,
+        style: context.textTheme.labelSmall?.copyWith(
+          color: context.colorScheme.onSurfaceVariant,
+        ),
+      );
+    }
+    if (delay == 0) {
+      return SizedBox(
+        width: 14,
+        height: 14,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: context.colorScheme.primary,
+        ),
+      );
+    }
+    return Text(
+      delay > 0 ? '$delay ms' : appLocalizations.timeout,
+      style: context.textTheme.labelSmall?.copyWith(
+        color: utils.getDelayColor(delay),
+        fontWeight: FontWeight.w600,
       ),
     );
-    if (res != true) {
-      return;
+  }
+
+  String _buildSubtitle(BuildContext context, TailscaleProxy proxy) {
+    final appLocalizations = context.appLocalizations;
+    final parts = <String>[];
+    if (proxy.routes.isNotEmpty) {
+      parts.add(
+        appLocalizations.tailscaleRoutesCount(proxy.routes.length),
+      );
+    } else {
+      parts.add(appLocalizations.tailscaleNoRoutes);
     }
-    ref.read(tailscaleSettingProvider.notifier).remove(proxy.name);
-    _applyTailscaleConfig(ref);
+    if (proxy.exitNode.trim().isNotEmpty) {
+      parts.add('${appLocalizations.tailscaleExitNode}: ${proxy.exitNode}');
+    }
+    return parts.join(' · ');
+  }
+
+  Widget _buildNodeTile(
+    BuildContext context,
+    WidgetRef ref, {
+    required TailscaleProxy proxy,
+  }) {
+    final appLocalizations = context.appLocalizations;
+    return ListItem(
+      leading: const Icon(Icons.device_hub),
+      title: Text(
+        proxy.name,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitle: Text(
+        _buildSubtitle(context, proxy),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildNodeDelay(context, ref, proxy.name),
+          const SizedBox(width: 4),
+          IconButton(
+            tooltip: appLocalizations.tailscaleTestNode,
+            onPressed: () {
+              _handleTest(context, ref, proxy);
+            },
+            icon: const Icon(Icons.network_ping),
+          ),
+          IconButton(
+            tooltip: appLocalizations.delete,
+            onPressed: () {
+              _handleDelete(context, ref, proxy);
+            },
+            icon: const Icon(Icons.delete_outline),
+          ),
+        ],
+      ),
+      onTap: () {
+        _handleAddOrEdit(context, ref, proxy);
+      },
+    );
   }
 
   @override
@@ -178,12 +384,14 @@ class TailscaleView extends ConsumerWidget {
     final props = ref.watch(tailscaleSettingProvider);
     final enable = props.enable;
     final proxies = props.proxies;
-    // The header (switch + description) is always index 0; nodes follow.
+    final bypassRecommended = system.isDesktop;
+    // Header block is always index 0; nodes follow.
     final itemCount = proxies.isEmpty ? 1 : proxies.length + 1;
     return CommonScaffold(
       title: appLocalizations.tailscale,
       actions: [
         IconButton(
+          tooltip: appLocalizations.addTailscaleNode,
           onPressed: () {
             _handleAddOrEdit(context, ref);
           },
@@ -199,6 +407,7 @@ class TailscaleView extends ConsumerWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                _buildScenarioCard(context),
                 ListItem.switchItem(
                   leading: const Icon(Icons.vpn_key_outlined),
                   title: Text(appLocalizations.tailscaleEnable),
@@ -216,7 +425,11 @@ class TailscaleView extends ConsumerWidget {
                 ListItem.switchItem(
                   leading: const Icon(Icons.alt_route_outlined),
                   title: Text(appLocalizations.tailscaleBypass),
-                  subtitle: Text(appLocalizations.tailscaleBypassDesc),
+                  subtitle: Text(
+                    bypassRecommended
+                        ? appLocalizations.tailscaleBypassRecommended
+                        : appLocalizations.tailscaleBypassAndroidHint,
+                  ),
                   delegate: SwitchDelegate(
                     value: props.bypassTraffic,
                     onChanged: (value) {
@@ -227,11 +440,17 @@ class TailscaleView extends ConsumerWidget {
                     },
                   ),
                 ),
-                const Divider(height: 0),
+                _buildStatusBanner(
+                  context,
+                  ref,
+                  enable: enable,
+                  nodeCount: proxies.length,
+                ),
+                const Divider(height: 16),
                 _buildGuide(context),
                 if (proxies.isEmpty)
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
+                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
                     child: Column(
                       children: [
                         NullStatus(label: appLocalizations.tailscaleEmptyTip),
@@ -245,32 +464,24 @@ class TailscaleView extends ConsumerWidget {
                         ),
                       ],
                     ),
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    child: Text(
+                      appLocalizations.tailscaleNodesTitle,
+                      style: context.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
               ],
             );
           }
-          final proxy = proxies[index - 1];
-          return ListItem(
-            leading: const Icon(Icons.device_hub),
-            title: Text(
-              proxy.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            subtitle: Text(
-              _buildSubtitle(context, proxy),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            trailing: IconButton(
-              onPressed: () {
-                _handleDelete(context, ref, proxy);
-              },
-              icon: const Icon(Icons.delete_outline),
-            ),
-            onTap: () {
-              _handleAddOrEdit(context, ref, proxy);
-            },
+          return _buildNodeTile(
+            context,
+            ref,
+            proxy: proxies[index - 1],
           );
         },
       ),

@@ -69,9 +69,13 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m23(count) => "已选择 ${count} 项";
 
-  static String m24(label) => "${label}必须为URL";
+  static String m24(count) => "${count} 个路由目标";
 
-  static String m25(count) => "${count} 年前";
+  static String m25(count) => "已有 ${count} 个节点。点击节点旁的测速按钮检查连通性。";
+
+  static String m26(label) => "${label}必须为URL";
+
+  static String m27(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -695,6 +699,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "tabAnimationDesc": MessageLookupByLibrary.simpleMessage("仅在移动视图中有效"),
     "tailscale": MessageLookupByLibrary.simpleMessage("Tailscale"),
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("接受路由"),
+    "tailscaleAndroidStep1": MessageLookupByLibrary.simpleMessage(
+      "在 Tailscale 管理后台（设置 → Keys）获取认证密钥。",
+    ),
+    "tailscaleAndroidStep2": MessageLookupByLibrary.simpleMessage(
+      "添加节点，粘贴认证密钥，并在“路由目标”中填入家里设备的 IP 或 MagicDNS 名称。",
+    ),
+    "tailscaleAndroidStep3": MessageLookupByLibrary.simpleMessage(
+      "打开“启用 Tailscale”。除非本机也安装了 Tailscale 应用，否则请关闭“保持 Tailscale 流量直连”。",
+    ),
+    "tailscaleAndroidStep4": MessageLookupByLibrary.simpleMessage(
+      "启动 FlClash VPN，然后点击节点旁的测速按钮检查连接。",
+    ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("认证密钥"),
     "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
       "来自 Tailscale 管理后台 → 设置 → Keys，用于对节点进行认证。",
@@ -702,14 +718,32 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleBypass": MessageLookupByLibrary.simpleMessage(
       "保持 Tailscale 流量直连",
     ),
+    "tailscaleBypassAndroidHint": MessageLookupByLibrary.simpleMessage(
+      "Android 上通常保持关闭。仅当本机也安装了 Tailscale 应用时再开启。",
+    ),
     "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
       "阻止 FlClash 劫持 Tailscale：自动注入 tailnet 地址段、Tailscale 进程以及控制/DERP 域名的直连规则，并自动在 Fake IP Filter 中添加/移除这些域名（解析为真实公网 IP，而不是 198.18.x.x）。当本设备同时运行 Tailscale 应用/服务时请开启——适用于任意导入的配置。",
+    ),
+    "tailscaleBypassRecommended": MessageLookupByLibrary.simpleMessage(
+      "在已安装 Tailscale 应用/服务的桌面上建议开启。会自动管理直连规则与 Fake IP Filter。",
     ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("控制服务器地址"),
     "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(
       "可选。仅用于自建控制服务器（如 Headscale）。",
     ),
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage("管理 Tailscale 出站节点"),
+    "tailscaleDesktopStep1": MessageLookupByLibrary.simpleMessage(
+      "如果这台电脑同时运行 Tailscale 应用/服务，请开启“保持 Tailscale 流量直连”。",
+    ),
+    "tailscaleDesktopStep2": MessageLookupByLibrary.simpleMessage(
+      "可选：用认证密钥添加一个内置 Tailscale 节点，让 FlClash 将选定流量经由 tailnet 转发。",
+    ),
+    "tailscaleDesktopStep3": MessageLookupByLibrary.simpleMessage(
+      "在“路由目标”中填写目标（家里的 IP / MagicDNS），然后打开“启用 Tailscale”。",
+    ),
+    "tailscaleDesktopStep4": MessageLookupByLibrary.simpleMessage(
+      "启动 FlClash，然后点击节点旁的测速按钮确认连接是否正常。",
+    ),
     "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
       "暂无 Tailscale 节点。添加一个即可让流量经由你的 tailnet 转发。",
     ),
@@ -751,13 +785,49 @@ class MessageLookup extends MessageLookupByLibrary {
       "可选。在 tailnet 中显示的设备名称。",
     ),
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage("已存在同名节点"),
+    "tailscaleNoRoutes": MessageLookupByLibrary.simpleMessage("无路由目标"),
+    "tailscaleNodesTitle": MessageLookupByLibrary.simpleMessage("节点"),
+    "tailscaleNotTested": MessageLookupByLibrary.simpleMessage("未测试"),
     "tailscaleRoutes": MessageLookupByLibrary.simpleMessage("路由目标"),
+    "tailscaleRoutesCount": m24,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "经由该节点转发的域名或 IP，每行一个（例如你家用电脑的 Tailscale IP 或 MagicDNS 名称）。",
+    ),
+    "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
+      "请只保留 FlClash 作为 VPN。不要同时开启 Tailscale 应用的 VPN（Android 同一时间只允许一个）。在下方添加内置 Tailscale 节点，并把家里的设备填入“路由目标”。",
+    ),
+    "tailscaleScenarioAndroidTitle": MessageLookupByLibrary.simpleMessage(
+      "Android 客户端设置",
+    ),
+    "tailscaleScenarioDesktopBody": MessageLookupByLibrary.simpleMessage(
+      "可以同时运行 FlClash 与正式的 Tailscale 应用。请开启“保持 Tailscale 流量直连”，避免 FlClash 劫持 Tailscale 控制面或 fake-IP DNS。",
+    ),
+    "tailscaleScenarioDesktopTitle": MessageLookupByLibrary.simpleMessage(
+      "桌面 / 主机设置",
     ),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage("状态目录"),
     "tailscaleStateDirHint": MessageLookupByLibrary.simpleMessage(
       "可选。用于持久化 Tailscale 状态的目录。",
+    ),
+    "tailscaleStatusDisabled": MessageLookupByLibrary.simpleMessage(
+      "Tailscale 已关闭 — 节点不会注入到运行配置中。",
+    ),
+    "tailscaleStatusNeedStart": MessageLookupByLibrary.simpleMessage(
+      "节点已就绪。请先启动 FlClash VPN，再点击测速。",
+    ),
+    "tailscaleStatusNoNodes": MessageLookupByLibrary.simpleMessage(
+      "已启用，但还没有节点。请先添加一个节点。",
+    ),
+    "tailscaleStatusReady": m25,
+    "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
+      "请先打开“启用 Tailscale”再测试。",
+    ),
+    "tailscaleTestNeedStart": MessageLookupByLibrary.simpleMessage(
+      "请先启动 FlClash VPN 再测试连接。",
+    ),
+    "tailscaleTestNode": MessageLookupByLibrary.simpleMessage("测试连接"),
+    "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
+      "点击节点旁的测速按钮，检查 Tailscale 出站是否能拨号。显示延迟表示连接正常；显示超时请检查认证密钥、“启用”开关，以及 FlClash VPN 是否已启动。",
     ),
     "tailscaleTip": MessageLookupByLibrary.simpleMessage(
       "Tailscale 节点会作为出站代理合并到运行配置中。在代理页面选择该节点，或在规则中将其设为出站目标，即可让流量经由你的 tailnet 转发。",
@@ -797,7 +867,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "upload": MessageLookupByLibrary.simpleMessage("上传"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage("通过URL获取配置文件"),
-    "urlTip": m24,
+    "urlTip": m26,
     "useHosts": MessageLookupByLibrary.simpleMessage("使用Hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("使用系统Hosts"),
     "userAgent": MessageLookupByLibrary.simpleMessage("用户代理"),
@@ -813,7 +883,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnTip": MessageLookupByLibrary.simpleMessage("重启VPN后改变生效"),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV配置"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("白名单模式"),
-    "yearsAgo": m25,
+    "yearsAgo": m27,
     "zh_CN": MessageLookupByLibrary.simpleMessage("中文简体"),
   };
 }

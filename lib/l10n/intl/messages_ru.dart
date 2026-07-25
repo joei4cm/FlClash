@@ -75,9 +75,14 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m23(count) => "Выбрано ${count} элементов";
 
-  static String m24(label) => "${label} должен быть URL";
+  static String m24(count) => "Маршрутов: ${count}";
 
   static String m25(count) =>
+      "Активных узлов: ${count}. Нажмите ping у узла, чтобы проверить связь.";
+
+  static String m26(label) => "${label} должен быть URL";
+
+  static String m27(count) =>
       "${Intl.plural(count, one: '${count} год назад', few: '${count} года назад', many: '${count} лет назад', other: '${count} года назад')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -1046,6 +1051,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage(
       "Принимать маршруты",
     ),
+    "tailscaleAndroidStep1": MessageLookupByLibrary.simpleMessage(
+      "Получите ключ аутентификации в консоли администратора Tailscale (Settings → Keys).",
+    ),
+    "tailscaleAndroidStep2": MessageLookupByLibrary.simpleMessage(
+      "Добавьте узел, вставьте ключ и укажите IP или имя MagicDNS домашнего устройства в пунктах назначения маршрута.",
+    ),
+    "tailscaleAndroidStep3": MessageLookupByLibrary.simpleMessage(
+      "Включите Tailscale. «Оставлять трафик напрямую» обычно выключайте, если приложение Tailscale на телефоне не установлено.",
+    ),
+    "tailscaleAndroidStep4": MessageLookupByLibrary.simpleMessage(
+      "Запустите VPN FlClash, затем нажмите кнопку ping у узла, чтобы проверить соединение.",
+    ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage(
       "Ключ аутентификации",
     ),
@@ -1055,8 +1072,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleBypass": MessageLookupByLibrary.simpleMessage(
       "Оставлять трафик Tailscale напрямую",
     ),
+    "tailscaleBypassAndroidHint": MessageLookupByLibrary.simpleMessage(
+      "На Android обычно оставляйте выключенным. Включайте только если на телефоне также установлено приложение Tailscale.",
+    ),
     "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
       "Не даёт FlClash перехватывать Tailscale: автоматически добавляет правила DIRECT для диапазонов tailnet, процесса Tailscale и доменов управления/DERP, а также автоматически добавляет/удаляет эти домены в Fake IP Filter (они резолвятся в настоящие публичные IP, а не 198.18.x.x). Включите, если на этом устройстве также работает приложение/служба Tailscale — работает с любым импортированным профилем.",
+    ),
+    "tailscaleBypassRecommended": MessageLookupByLibrary.simpleMessage(
+      "Рекомендуется на ПК, где установлено приложение/служба Tailscale. Автоматически управляет правилами DIRECT и Fake IP Filter.",
     ),
     "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage(
       "URL сервера управления",
@@ -1066,6 +1089,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
       "Управление исходящими узлами Tailscale",
+    ),
+    "tailscaleDesktopStep1": MessageLookupByLibrary.simpleMessage(
+      "Если на этом ПК также работает приложение/служба Tailscale, включите «Оставлять трафик Tailscale напрямую».",
+    ),
+    "tailscaleDesktopStep2": MessageLookupByLibrary.simpleMessage(
+      "Необязательно: добавьте встроенный узел Tailscale с ключом, чтобы направлять выбранный трафик через tailnet из FlClash.",
+    ),
+    "tailscaleDesktopStep3": MessageLookupByLibrary.simpleMessage(
+      "Укажите назначения (домашние IP / MagicDNS) в пунктах назначения маршрута и включите Tailscale.",
+    ),
+    "tailscaleDesktopStep4": MessageLookupByLibrary.simpleMessage(
+      "Запустите FlClash и нажмите ping у узла, чтобы убедиться, что соединение стабильно.",
     ),
     "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
       "Узлов Tailscale пока нет. Добавьте узел, чтобы направлять трафик через вашу сеть tailnet.",
@@ -1114,17 +1149,57 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
       "Узел с таким именем уже существует",
     ),
+    "tailscaleNoRoutes": MessageLookupByLibrary.simpleMessage(
+      "Нет пунктов назначения",
+    ),
+    "tailscaleNodesTitle": MessageLookupByLibrary.simpleMessage("Узлы"),
+    "tailscaleNotTested": MessageLookupByLibrary.simpleMessage("Не проверено"),
     "tailscaleRoutes": MessageLookupByLibrary.simpleMessage(
       "Пункты назначения маршрута",
     ),
+    "tailscaleRoutesCount": m24,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "Домены или IP, направляемые через этот узел, по одному в строке (например, Tailscale IP или имя MagicDNS вашего домашнего ПК).",
+    ),
+    "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
+      "Оставьте FlClash единственным VPN. Не запускайте VPN приложения Tailscale одновременно (Android допускает только один). Добавьте встроенный узел Tailscale ниже и укажите домашнее устройство в пунктах назначения маршрута.",
+    ),
+    "tailscaleScenarioAndroidTitle": MessageLookupByLibrary.simpleMessage(
+      "Настройка клиента Android",
+    ),
+    "tailscaleScenarioDesktopBody": MessageLookupByLibrary.simpleMessage(
+      "Можно запускать FlClash и настоящее приложение Tailscale вместе. Включите «Оставлять трафик Tailscale напрямую», чтобы FlClash не перехватывал плоскость управления Tailscale и fake-IP DNS.",
+    ),
+    "tailscaleScenarioDesktopTitle": MessageLookupByLibrary.simpleMessage(
+      "Настройка ПК / хоста",
     ),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage(
       "Каталог состояния",
     ),
     "tailscaleStateDirHint": MessageLookupByLibrary.simpleMessage(
       "Необязательно. Каталог для хранения состояния Tailscale.",
+    ),
+    "tailscaleStatusDisabled": MessageLookupByLibrary.simpleMessage(
+      "Tailscale выключен — узлы не добавляются в рабочий профиль.",
+    ),
+    "tailscaleStatusNeedStart": MessageLookupByLibrary.simpleMessage(
+      "Узлы готовы. Запустите VPN FlClash, затем нажмите ping для проверки.",
+    ),
+    "tailscaleStatusNoNodes": MessageLookupByLibrary.simpleMessage(
+      "Включено, но узлов ещё нет. Добавьте узел, чтобы начать.",
+    ),
+    "tailscaleStatusReady": m25,
+    "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
+      "Перед проверкой включите Tailscale.",
+    ),
+    "tailscaleTestNeedStart": MessageLookupByLibrary.simpleMessage(
+      "Перед проверкой соединения запустите VPN FlClash.",
+    ),
+    "tailscaleTestNode": MessageLookupByLibrary.simpleMessage(
+      "Проверить соединение",
+    ),
+    "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
+      "Кнопка ping рядом с узлом проверяет, может ли исходящий Tailscale установить соединение. Задержка означает, что связь есть; Timeout — проверьте ключ, переключатель включения и что VPN FlClash запущен.",
     ),
     "tailscaleTip": MessageLookupByLibrary.simpleMessage(
       "Узлы Tailscale добавляются в рабочую конфигурацию как исходящие прокси. Выберите узел на странице прокси или укажите его целью в правиле, чтобы направлять трафик через вашу сеть tailnet.",
@@ -1186,7 +1261,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "urlDesc": MessageLookupByLibrary.simpleMessage(
       "Получить профиль через URL",
     ),
-    "urlTip": m24,
+    "urlTip": m26,
     "useHosts": MessageLookupByLibrary.simpleMessage("Использовать hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Использовать системные hosts",
@@ -1210,7 +1285,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "whitelistMode": MessageLookupByLibrary.simpleMessage(
       "Режим белого списка",
     ),
-    "yearsAgo": m25,
+    "yearsAgo": m27,
     "zh_CN": MessageLookupByLibrary.simpleMessage("Упрощенный китайский"),
   };
 }
