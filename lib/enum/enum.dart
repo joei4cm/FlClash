@@ -293,6 +293,7 @@ enum FunctionTag {
   saveSharedFile,
   removeProxy,
   suspend,
+  accessQuery,
 }
 
 enum DashboardWidget {
