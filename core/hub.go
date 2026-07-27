@@ -26,6 +26,7 @@ import (
 	"runtime"
 	"runtime/debug"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -33,6 +34,8 @@ var (
 	isInit            = false
 	externalProviders = map[string]cp.Provider{}
 	logSubscriber     observable.Subscription[log.Event]
+	trafficStopCh     chan struct{}
+	trafficPushMu     sync.Mutex
 )
 
 func handleInitClash(paramsString string) bool {
@@ -55,6 +58,7 @@ func handleStartListener() bool {
 	isRunning = true
 	updateListeners()
 	resolver.ResetConnection()
+	startTrafficPush()
 	return true
 }
 
@@ -62,6 +66,7 @@ func handleStopListener() bool {
 	runLock.Lock()
 	defer runLock.Unlock()
 	isRunning = false
+	stopTrafficPush()
 	listener.StopListener()
 	resolver.ResetConnection()
 	return true
@@ -80,6 +85,7 @@ func handleForceGC() {
 }
 
 func handleShutdown() bool {
+	stopTrafficPush()
 	stopListeners()
 	executor.Shutdown()
 	handleForceGC()
@@ -218,6 +224,64 @@ func handleGetTrafficSnapshot(onlyStatisticsProxy bool) string {
 		return ""
 	}
 	return string(data)
+}
+
+func trafficSnapshotPayload() map[string]int64 {
+	up, down := statistic.DefaultManager.NowTraffic(false)
+	totalUp, totalDown := statistic.DefaultManager.TotalTraffic(false)
+	proxyUp, proxyDown := statistic.DefaultManager.NowTraffic(true)
+	proxyTotalUp, proxyTotalDown := statistic.DefaultManager.TotalTraffic(true)
+	return map[string]int64{
+		"up":             up,
+		"down":           down,
+		"totalUp":        totalUp,
+		"totalDown":      totalDown,
+		"proxyUp":        proxyUp,
+		"proxyDown":      proxyDown,
+		"proxyTotalUp":   proxyTotalUp,
+		"proxyTotalDown": proxyTotalDown,
+	}
+}
+
+func sendTrafficSnapshotMessage() {
+	sendMessage(Message{
+		Type: TrafficMessage,
+		Data: trafficSnapshotPayload(),
+	})
+}
+
+func startTrafficPush() {
+	trafficPushMu.Lock()
+	defer trafficPushMu.Unlock()
+	stopTrafficPushLocked()
+	stopCh := make(chan struct{})
+	trafficStopCh = stopCh
+	go func() {
+		ticker := time.NewTicker(time.Second)
+		defer ticker.Stop()
+		sendTrafficSnapshotMessage()
+		for {
+			select {
+			case <-ticker.C:
+				sendTrafficSnapshotMessage()
+			case <-stopCh:
+				return
+			}
+		}
+	}()
+}
+
+func stopTrafficPush() {
+	trafficPushMu.Lock()
+	defer trafficPushMu.Unlock()
+	stopTrafficPushLocked()
+}
+
+func stopTrafficPushLocked() {
+	if trafficStopCh != nil {
+		close(trafficStopCh)
+		trafficStopCh = nil
+	}
 }
 
 func handleResetTraffic() {

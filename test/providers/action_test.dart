@@ -1,3 +1,4 @@
+import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/action.dart';
@@ -59,6 +60,64 @@ void main() {
 
       container.read(isUpdatingProvider(key).notifier).value = false;
       expect(container.read(isUpdatingProvider(key)), false);
+    });
+  });
+
+  group('CommonAction traffic helpers', () {
+    test('applyTrafficPush honors onlyStatisticsProxy', () {
+      final container = ProviderContainer(
+        overrides: [
+          appSettingProvider.overrideWithBuild(
+            (_, _) => const AppSettingProps(onlyStatisticsProxy: true),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      container.read(commonActionProvider.notifier).applyTrafficPush({
+        'up': 1,
+        'down': 2,
+        'totalUp': 10,
+        'totalDown': 20,
+        'proxyUp': 3,
+        'proxyDown': 4,
+        'proxyTotalUp': 30,
+        'proxyTotalDown': 40,
+      });
+
+      expect(
+        container.read(totalTrafficProvider),
+        const Traffic(up: 30, down: 40),
+      );
+      expect(
+        container.read(trafficsProvider).list.safeLast(const Traffic()),
+        const Traffic(up: 3, down: 4),
+      );
+    });
+
+    test('applyTrafficPush uses all-traffic when proxy-only is off', () {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+
+      container.read(commonActionProvider.notifier).applyTrafficPush({
+        'up': 1,
+        'down': 2,
+        'totalUp': 10,
+        'totalDown': 20,
+        'proxyUp': 3,
+        'proxyDown': 4,
+        'proxyTotalUp': 30,
+        'proxyTotalDown': 40,
+      });
+
+      expect(
+        container.read(totalTrafficProvider),
+        const Traffic(up: 10, down: 20),
+      );
+      expect(
+        container.read(trafficsProvider).list.safeLast(const Traffic()),
+        const Traffic(up: 1, down: 2),
+      );
     });
   });
 }

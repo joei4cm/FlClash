@@ -132,14 +132,19 @@ Upstream history of note: `de9c5ba` dashboard, `c9cd80b` Android VPN, `7e7f1f8` 
 
 ## P2 — Lower priority / larger design
 
-### PERF-11 — Push model for traffic / connections from core
+### PERF-11 — Push model for traffic / connections from core — DONE (traffic)
 
-Replace Dart polling with core-originated events (socket/FFI callbacks). Larger design; supersedes parts of PERF-01/02.
+**Problem:** Dart polled traffic every 1s with request/response IPC while started.
 
-### PERF-12 — Narrow `configProvider` aggregation
+**Done (traffic slice):**
+- Core pushes a `traffic` event every 1s while the listener is running (`TrafficMessage`).
+- Payload includes both all-traffic and proxy-only counters so Dart can honor `onlyStatisticsProxy` without another round trip.
+- Dart timer only updates run-time; one-shot `getTrafficSnapshot` remains for immediate UI on start.
+- Connections page still polls (PERF-02 cadence); full connections push stays future work.
 
-Leaf settings already exist; consumers that only need one leaf should not watch the aggregate (`lib/providers/config.dart`). Audit high-churn listeners.
+**Touches:** `core/hub.go`, `core/constant.go`, `lib/core/event.dart`, `lib/enum/enum.dart`, `lib/manager/core_manager.dart`, `lib/providers/action.dart`
 
+<<<<<<< HEAD
 ### PERF-13 — `EmojiText` cost on proxy names — DONE
 
 **Done:** Skip emoji regex for BMP-only names; cache `TextSpan` lists.
@@ -151,21 +156,49 @@ Leaf settings already exist; consumers that only need one leaf should not watch 
 **Done:** `ThemeAction.updateViewSize` no-ops when size unchanged.
 
 **Touches:** `lib/providers/action.dart`
+=======
+### PERF-12 — Narrow `configProvider` aggregation — DONE
 
-### PERF-15 — Desktop IPC protocol
+**Done:**
+- Preference dirty detection listens to leaf setting providers instead of `configProvider` (avoids rebuilding aggregate `Config` on every leaf change).
+- High-churn derived providers / MaterialApp / sidebar use `.select` for the fields they need.
+- `configProvider` documented as save/load/test aggregate only.
 
-Line-delimited JSON for every action (`lib/core/service.dart`) is an architecture ceiling. Binary framing for hot counters is a long-term option.
+**Touches:** `lib/manager/app_manager.dart`, `lib/providers/state.dart`, `lib/application.dart`, `lib/providers/config.dart`
+
+### PERF-13 — `EmojiText` cost on proxy names — DONE
+>>>>>>> 654ee69 (perf: finish leftover P2 tasks and geo model cleanup)
+
+**Done:** Skip emoji regex for BMP-only names; cache `TextSpan` lists.
+
+**Touches:** `lib/widgets/text.dart`
+
+### PERF-14 — Theme / layout storm — DONE
+
+**Done:** `ThemeAction.updateViewSize` no-ops when size unchanged.
+
+**Touches:** `lib/providers/action.dart`
+
+### PERF-15 — Desktop IPC protocol — DEFERRED
+
+Line-delimited / framed JSON for every action (`lib/core/service.dart`, `core/server.go` length-prefixed frames) is an architecture ceiling. Binary framing for hot counters is a long-term option; traffic push (PERF-11) already removes the request half of the hot path.
 
 ---
 
-## Suggested next sprint (P2)
+## Suggested next sprint
 
 | Order | ID | Why |
 |------|----|-----------|
+<<<<<<< HEAD
 | 1 | PERF-13 | Cheap win on large proxy lists — DONE (EmojiText fast-path + span cache) |
 | 2 | PERF-14 | Resize/layout cascade — DONE (`updateViewSize` equality guard) |
 | 3 | PERF-12 | Reduce config fan-out |
 | 4 | PERF-11 / PERF-15 | Architectural IPC redesign |
+=======
+| — | — | P0–P2 backlog complete except PERF-15 (deferred) and optional connections push |
+| optional | PERF-11 follow-up | Push connections snapshots (supersede remaining poll) |
+| optional | PERF-15 | Binary / shared-memory counters if profiling still shows IPC ceiling |
+>>>>>>> 654ee69 (perf: finish leftover P2 tasks and geo model cleanup)
 
 ## Out of scope for this list
 
