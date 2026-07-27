@@ -10,10 +10,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class TailscaleView extends ConsumerWidget {
   const TailscaleView({super.key});
 
-  void _applyTailscaleConfig(WidgetRef ref) {
-    // Tailscale settings are merged into the running profile; re-apply so the
-    // toggle / routes take effect without requiring a manual VPN restart.
-    ref.read(setupActionProvider.notifier).applyProfileDebounce(silence: true);
+  Future<void> _applyTailscaleConfig(WidgetRef ref) async {
+    // Await apply so ping / status do not race the debounced profile merge.
+    await ref.read(setupActionProvider.notifier).applyProfile(silence: true);
   }
 
   Future<void> _handleAddOrEdit(
@@ -32,8 +31,10 @@ class TailscaleView extends ConsumerWidget {
     if (res == null) {
       return;
     }
-    ref.read(tailscaleSettingProvider.notifier).addOrUpdate(res);
-    _applyTailscaleConfig(ref);
+    ref
+        .read(tailscaleSettingProvider.notifier)
+        .addOrUpdate(res, previousName: proxy?.name);
+    await _applyTailscaleConfig(ref);
   }
 
   Future<void> _handleDelete(
@@ -52,7 +53,7 @@ class TailscaleView extends ConsumerWidget {
       return;
     }
     ref.read(tailscaleSettingProvider.notifier).remove(proxy.name);
-    _applyTailscaleConfig(ref);
+    await _applyTailscaleConfig(ref);
   }
 
   Future<void> _handleTest(
@@ -69,6 +70,7 @@ class TailscaleView extends ConsumerWidget {
       context.showNotifier(appLocalizations.tailscaleTestNeedStart);
       return;
     }
+    await _applyTailscaleConfig(ref);
     await proxyDelayTest(Proxy(name: proxy.name, type: tailscaleProxyType));
   }
 
@@ -247,6 +249,7 @@ class TailscaleView extends ConsumerWidget {
     WidgetRef ref, {
     required bool enable,
     required int nodeCount,
+    required int routeCount,
   }) {
     final appLocalizations = context.appLocalizations;
     final isStart = ref.watch(isStartProvider);
@@ -261,6 +264,10 @@ class TailscaleView extends ConsumerWidget {
       message = appLocalizations.tailscaleStatusNoNodes;
       color = context.colorScheme.tertiary;
       icon = Icons.info_outline;
+    } else if (routeCount == 0) {
+      message = appLocalizations.tailscaleStatusNeedRoutes;
+      color = context.colorScheme.tertiary;
+      icon = Icons.alt_route_outlined;
     } else if (!isStart) {
       message = appLocalizations.tailscaleStatusNeedStart;
       color = context.colorScheme.tertiary;
@@ -384,6 +391,10 @@ class TailscaleView extends ConsumerWidget {
     final props = ref.watch(tailscaleSettingProvider);
     final enable = props.enable;
     final proxies = props.proxies;
+    final routeCount = proxies.fold<int>(
+      0,
+      (sum, proxy) => sum + proxy.routes.length,
+    );
     final bypassRecommended = system.isDesktop;
     // Header block is always index 0; nodes follow.
     final itemCount = proxies.isEmpty ? 1 : proxies.length + 1;
@@ -414,11 +425,18 @@ class TailscaleView extends ConsumerWidget {
                   subtitle: Text(appLocalizations.tailscaleEnableDesc),
                   delegate: SwitchDelegate(
                     value: enable,
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       ref
                           .read(tailscaleSettingProvider.notifier)
                           .setEnable(value);
-                      _applyTailscaleConfig(ref);
+                      if (value &&
+                          bypassRecommended &&
+                          !ref.read(tailscaleSettingProvider).bypassTraffic) {
+                        context.showNotifier(
+                          appLocalizations.tailscaleBypassNudge,
+                        );
+                      }
+                      await _applyTailscaleConfig(ref);
                     },
                   ),
                 ),
@@ -432,11 +450,11 @@ class TailscaleView extends ConsumerWidget {
                   ),
                   delegate: SwitchDelegate(
                     value: props.bypassTraffic,
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       ref
                           .read(tailscaleSettingProvider.notifier)
                           .setBypassTraffic(value);
-                      _applyTailscaleConfig(ref);
+                      await _applyTailscaleConfig(ref);
                     },
                   ),
                 ),
@@ -445,6 +463,7 @@ class TailscaleView extends ConsumerWidget {
                   ref,
                   enable: enable,
                   nodeCount: proxies.length,
+                  routeCount: routeCount,
                 ),
                 const Divider(height: 16),
                 _buildGuide(context),
@@ -658,6 +677,15 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
                   controller: _authKeyController,
                   label: appLocalizations.tailscaleAuthKey,
                   helperText: appLocalizations.tailscaleAuthKeyHint,
+                  validator: (value) {
+                    final key = value?.trim() ?? '';
+                    if (key.isEmpty) {
+                      return appLocalizations.emptyTip(
+                        appLocalizations.tailscaleAuthKey,
+                      );
+                    }
+                    return null;
+                  },
                 ),
                 _buildTextField(
                   controller: _hostnameController,

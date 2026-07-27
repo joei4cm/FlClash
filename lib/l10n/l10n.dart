@@ -5004,6 +5004,26 @@ class AppLocalizations {
     );
   }
 
+  /// `Nodes are added, but no route destinations yet — traffic will not match until you add routes (or pick the node manually).`
+  String get tailscaleStatusNeedRoutes {
+    return Intl.message(
+      'Nodes are added, but no route destinations yet — traffic will not match until you add routes (or pick the node manually).',
+      name: 'tailscaleStatusNeedRoutes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This device likely runs Tailscale already — turn on “Keep Tailscale traffic direct” to avoid fake-IP / control-plane breakage.`
+  String get tailscaleBypassNudge {
+    return Intl.message(
+      'This device likely runs Tailscale already — turn on “Keep Tailscale traffic direct” to avoid fake-IP / control-plane breakage.',
+      name: 'tailscaleBypassNudge',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Turn on Enable Tailscale before testing.`
   String get tailscaleTestNeedEnable {
     return Intl.message(
@@ -5171,6 +5191,46 @@ class AppLocalizations {
       name: 'geoIdentityRecheck',
       desc: '',
       args: [],
+    );
+  }
+
+  /// `Protect is on — start FlClash, then tap Recheck`
+  String get geoIdentityPendingCheck {
+    return Intl.message(
+      'Protect is on — start FlClash, then tap Recheck',
+      name: 'geoIdentityPendingCheck',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network check was cancelled`
+  String get geoIdentityCheckCancelled {
+    return Intl.message(
+      'Network check was cancelled',
+      name: 'geoIdentityCheckCancelled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This covers exit IP + probe language. Browser fonts/geolocation still need GeoMirror; Claude Code still needs a matching OS timezone (and TUN or proxy exports).`
+  String get geoIdentityHonestyLine {
+    return Intl.message(
+      'This covers exit IP + probe language. Browser fonts/geolocation still need GeoMirror; Claude Code still needs a matching OS timezone (and TUN or proxy exports).',
+      name: 'geoIdentityHonestyLine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not align OS timezone ({detail})`
+  String geoIdentityTimezoneAlignFailed(Object detail) {
+    return Intl.message(
+      'Could not align OS timezone ($detail)',
+      name: 'geoIdentityTimezoneAlignFailed',
+      desc: '',
+      args: [detail],
     );
   }
 

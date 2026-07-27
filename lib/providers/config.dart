@@ -136,10 +136,11 @@ class TailscaleSetting extends _$TailscaleSetting with AutoDisposeNotifierMixin 
     });
   }
 
-  void addOrUpdate(TailscaleProxy proxy) {
+  void addOrUpdate(TailscaleProxy proxy, {String? previousName}) {
     update((state) {
       final next = List<TailscaleProxy>.from(state.proxies);
-      final index = next.indexWhere((item) => item.name == proxy.name);
+      final lookupName = previousName ?? proxy.name;
+      final index = next.indexWhere((item) => item.name == lookupName);
       if (index == -1) {
         next.add(proxy);
       } else {
