@@ -535,6 +535,7 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
   late bool _udp;
   late bool _acceptRoutes;
   late bool _exitNodeAllowLanAccess;
+  late bool _showAdvanced;
 
   @override
   void initState() {
@@ -551,6 +552,15 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
     _udp = proxy.udp;
     _acceptRoutes = proxy.acceptRoutes;
     _exitNodeAllowLanAccess = proxy.exitNodeAllowLanAccess;
+    _showAdvanced =
+        proxy.hostname.isNotEmpty ||
+        proxy.controlUrl.isNotEmpty ||
+        proxy.stateDir.isNotEmpty ||
+        proxy.exitNode.isNotEmpty ||
+        proxy.ephemeral ||
+        !proxy.udp ||
+        proxy.acceptRoutes ||
+        proxy.exitNodeAllowLanAccess;
   }
 
   @override
@@ -688,67 +698,87 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
                   },
                 ),
                 _buildTextField(
-                  controller: _hostnameController,
-                  label: appLocalizations.tailscaleHostname,
-                  helperText: appLocalizations.tailscaleHostnameHint,
-                ),
-                _buildTextField(
-                  controller: _controlUrlController,
-                  label: appLocalizations.tailscaleControlUrl,
-                  helperText: appLocalizations.tailscaleControlUrlHint,
-                ),
-                _buildTextField(
-                  controller: _stateDirController,
-                  label: appLocalizations.tailscaleStateDir,
-                  helperText: appLocalizations.tailscaleStateDirHint,
-                ),
-                _buildTextField(
-                  controller: _exitNodeController,
-                  label: appLocalizations.tailscaleExitNode,
-                  helperText: appLocalizations.tailscaleExitNodeHint,
-                ),
-                _buildTextField(
                   controller: _routesController,
                   label: appLocalizations.tailscaleRoutes,
                   helperText: appLocalizations.tailscaleRoutesHint,
                   maxLines: 3,
                 ),
-                _buildSwitch(
-                  label: appLocalizations.tailscaleEphemeral,
-                  value: _ephemeral,
-                  onChanged: (value) {
-                    setState(() {
-                      _ephemeral = value;
-                    });
-                  },
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    onPressed: () {
+                      setState(() => _showAdvanced = !_showAdvanced);
+                    },
+                    icon: Icon(
+                      _showAdvanced
+                          ? Icons.expand_less
+                          : Icons.expand_more,
+                    ),
+                    label: Text(
+                      _showAdvanced
+                          ? appLocalizations.geoIdentityHideAdvanced
+                          : appLocalizations.geoIdentityShowAdvanced,
+                    ),
+                  ),
                 ),
-                _buildSwitch(
-                  label: appLocalizations.tailscaleUdp,
-                  value: _udp,
-                  onChanged: (value) {
-                    setState(() {
-                      _udp = value;
-                    });
-                  },
-                ),
-                _buildSwitch(
-                  label: appLocalizations.tailscaleAcceptRoutes,
-                  value: _acceptRoutes,
-                  onChanged: (value) {
-                    setState(() {
-                      _acceptRoutes = value;
-                    });
-                  },
-                ),
-                _buildSwitch(
-                  label: appLocalizations.tailscaleExitNodeAllowLanAccess,
-                  value: _exitNodeAllowLanAccess,
-                  onChanged: (value) {
-                    setState(() {
-                      _exitNodeAllowLanAccess = value;
-                    });
-                  },
-                ),
+                if (_showAdvanced) ...[
+                  _buildTextField(
+                    controller: _hostnameController,
+                    label: appLocalizations.tailscaleHostname,
+                    helperText: appLocalizations.tailscaleHostnameHint,
+                  ),
+                  _buildTextField(
+                    controller: _controlUrlController,
+                    label: appLocalizations.tailscaleControlUrl,
+                    helperText: appLocalizations.tailscaleControlUrlHint,
+                  ),
+                  _buildTextField(
+                    controller: _stateDirController,
+                    label: appLocalizations.tailscaleStateDir,
+                    helperText: appLocalizations.tailscaleStateDirHint,
+                  ),
+                  _buildTextField(
+                    controller: _exitNodeController,
+                    label: appLocalizations.tailscaleExitNode,
+                    helperText: appLocalizations.tailscaleExitNodeHint,
+                  ),
+                  _buildSwitch(
+                    label: appLocalizations.tailscaleEphemeral,
+                    value: _ephemeral,
+                    onChanged: (value) {
+                      setState(() {
+                        _ephemeral = value;
+                      });
+                    },
+                  ),
+                  _buildSwitch(
+                    label: appLocalizations.tailscaleUdp,
+                    value: _udp,
+                    onChanged: (value) {
+                      setState(() {
+                        _udp = value;
+                      });
+                    },
+                  ),
+                  _buildSwitch(
+                    label: appLocalizations.tailscaleAcceptRoutes,
+                    value: _acceptRoutes,
+                    onChanged: (value) {
+                      setState(() {
+                        _acceptRoutes = value;
+                      });
+                    },
+                  ),
+                  _buildSwitch(
+                    label: appLocalizations.tailscaleExitNodeAllowLanAccess,
+                    value: _exitNodeAllowLanAccess,
+                    onChanged: (value) {
+                      setState(() {
+                        _exitNodeAllowLanAccess = value;
+                      });
+                    },
+                  ),
+                ],
               ],
             ),
           ),
