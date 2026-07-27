@@ -7,9 +7,37 @@ import 'package:fl_clash/core/core.dart';
 import 'package:fl_clash/core/interface.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
-import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
+
+List<TrackerInfo> _parseConnections(String res) {
+  if (res.isEmpty) {
+    return const [];
+  }
+  final connectionsData = json.decode(res) as Map;
+  final connectionsRaw = connectionsData['connections'] as List? ?? [];
+  return connectionsRaw
+      .map((e) => TrackerInfo.fromJson(Map<String, Object?>.from(e as Map)))
+      .toList();
+}
+
+({Traffic now, Traffic total}) _parseTrafficSnapshot(String raw) {
+  if (raw.isEmpty) {
+    return (now: const Traffic(), total: const Traffic());
+  }
+  final map = json.decode(raw) as Map<String, dynamic>;
+  return (
+    now: Traffic(
+      up: map['up'] as num? ?? 0,
+      down: map['down'] as num? ?? 0,
+    ),
+    total: Traffic(
+      up: map['totalUp'] as num? ?? 0,
+      down: map['totalDown'] as num? ?? 0,
+    ),
+  );
+}
 
 class CoreController {
   static CoreController? _instance;
@@ -136,9 +164,7 @@ class CoreController {
 
   Future<List<TrackerInfo>> getConnections() async {
     final res = await _interface.getConnections();
-    final connectionsData = json.decode(res) as Map;
-    final connectionsRaw = connectionsData['connections'] as List? ?? [];
-    return connectionsRaw.map((e) => TrackerInfo.fromJson(e)).toList();
+    return compute(_parseConnections, res);
   }
 
   Future<void> closeConnection(String id) async {
@@ -245,6 +271,13 @@ class CoreController {
       return const Traffic();
     }
     return Traffic.fromJson(json.decode(totalTrafficString));
+  }
+
+  Future<({Traffic now, Traffic total})> getTrafficSnapshot(
+    bool onlyStatisticsProxy,
+  ) async {
+    final raw = await _interface.getTrafficSnapshot(onlyStatisticsProxy);
+    return _parseTrafficSnapshot(raw);
   }
 
   Future<int> getMemory() async {

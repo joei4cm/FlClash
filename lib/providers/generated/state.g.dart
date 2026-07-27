@@ -1503,6 +1503,56 @@ final class ProxiesColumnsProvider extends $FunctionalProvider<int, int, int>
 
 String _$proxiesColumnsHash() => r'e93f980da3d857bd38957635ef944a0db60aaef3';
 
+@ProviderFor(realSelectedProxyStateMap)
+final realSelectedProxyStateMapProvider = RealSelectedProxyStateMapProvider._();
+
+final class RealSelectedProxyStateMapProvider
+    extends
+        $FunctionalProvider<
+          Map<String, SelectedProxyState>,
+          Map<String, SelectedProxyState>,
+          Map<String, SelectedProxyState>
+        >
+    with $Provider<Map<String, SelectedProxyState>> {
+  RealSelectedProxyStateMapProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'realSelectedProxyStateMapProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$realSelectedProxyStateMapHash();
+
+  @$internal
+  @override
+  $ProviderElement<Map<String, SelectedProxyState>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  Map<String, SelectedProxyState> create(Ref ref) {
+    return realSelectedProxyStateMap(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Map<String, SelectedProxyState> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Map<String, SelectedProxyState>>(
+        value,
+      ),
+    );
+  }
+}
+
+String _$realSelectedProxyStateMapHash() =>
+    r'7e9c385d96816c99b6e3e52f336463e74701d97f';
+
 @ProviderFor(realSelectedProxyState)
 final realSelectedProxyStateProvider = RealSelectedProxyStateFamily._();
 
@@ -1568,7 +1618,7 @@ final class RealSelectedProxyStateProvider
 }
 
 String _$realSelectedProxyStateHash() =>
-    r'42fa131419f0a26e30c4f5269bf020893b7f828c';
+    r'540b2d889b07178ea555278c3308efc67fd73ba7';
 
 final class RealSelectedProxyStateFamily extends $Family
     with $FunctionalFamilyOverride<SelectedProxyState, String> {

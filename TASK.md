@@ -24,80 +24,67 @@ Upstream history of note: `de9c5ba` dashboard, `c9cd80b` Android VPN, `7e7f1f8` 
 
 ## P0 — High impact, clear evidence
 
-### PERF-01 — Coalesce traffic IPC (1 Hz → less work)
+### PERF-01 — Coalesce traffic IPC (1 Hz → less work) — DONE
 
-**Problem:** While started, `SetupAction._handleStart` runs a 1s timer that calls both `getTraffic` and `getTotalTraffic` (`lib/providers/action.dart`). That is 2× JSON IPC/FFI per second and feeds dashboard + tray title.
+**Problem:** While started, `SetupAction._handleStart` ran a 1s timer that called both `getTraffic` and `getTotalTraffic`.
 
-**Plan:**
-1. Add a single core API that returns both counters (or push traffic events from core).
-2. Or call one endpoint and derive UI needs on the Dart side.
-3. Optionally skip tray/chart updates when values are unchanged.
+**Done:**
+- Added `getTrafficSnapshot` core action (`core/hub.go`, `ActionMethod.getTrafficSnapshot`).
+- `CommonAction.updateTraffic` uses one IPC call and skips Riverpod writes when values are unchanged.
 
-**Touches:** `lib/providers/action.dart`, `lib/core/*`, `core/hub.go`  
-**Effort:** medium · **Verify:** started idle CPU, tray title still updates
+**Touches:** `lib/providers/action.dart`, `lib/core/*`, `core/hub.go` / `action.go` / `constant.go`
 
-### PERF-02 — Connections page: lazy build + lighter poll
+### PERF-02 — Connections page: lazy build + lighter poll — DONE
 
-**Problem:** `ConnectionsView` polls full snapshots every 1s (`_updateConnectionsTask`) and maps **all** rows into widgets before `SuperListView.builder` (`lib/views/connection/connections.dart`).
+**Problem:** Eager widget map + 1s full snapshot poll.
 
-**Plan:**
-1. Build `TrackerInfoItem` only inside `itemBuilder` (no eager `.map().toList()`).
-2. Diff/replace list by connection id; avoid full notifier replace when empty diff.
-3. Decode JSON off the UI isolate (mirror proxies/`compute` pattern).
-4. Consider 1.5–2s poll or pause when page not visible / app backgrounded.
+**Done:**
+- Build `TrackerInfoItem` only in `itemBuilder` (fixed separator `itemCount`).
+- Poll every 2s; skip notifier updates on identical snapshots; pause when route inactive / app not resumed.
+- Decode connection JSON via `compute()`.
 
-**Touches:** `lib/views/connection/connections.dart`, `lib/core/controller.dart`  
-**Effort:** small–medium · **Verify:** open Connections under heavy traffic; scroll jank
+**Touches:** `lib/views/connection/connections.dart`, `lib/core/controller.dart`
 
-### PERF-03 — Proxies list: stop eager card materialization
+### PERF-03 — Proxies list: stop eager card materialization — DONE
 
-**Problem:** `ProxiesListView.build` calls `_buildItems` and materializes every header/card, then `ListView.builder` only indexes that list (`lib/views/proxies/list.dart`). Any `proxiesListState` change rebuilds the whole tree.
+**Problem:** `_buildItems` materialized every card before `ListView.builder`.
 
-**Plan:**
-1. Store lightweight row descriptors (group / proxy indices) instead of widgets.
-2. Construct `ProxyCard` / headers in `itemBuilder` (+ keep `itemExtentBuilder`).
-3. Narrow watches so delay-only updates do not rebuild non-visible cards.
+**Done:**
+- Row descriptors (`_ProxyListEntry`); widgets built in `itemBuilder` only.
+- Height extents still precomputed from descriptors.
 
-**Touches:** `lib/views/proxies/list.dart`, related proxy widgets  
-**Effort:** medium · **Verify:** large subscription (500+ nodes), expand/collapse, delay test
+**Touches:** `lib/views/proxies/list.dart`
 
-### PERF-04 — Slim per-proxy delay watches
+### PERF-04 — Slim per-proxy delay watches — DONE
 
-**Problem:** `delayProvider` → `realSelectedProxyStateProvider` watches full `groupsProvider` (`lib/providers/state.dart`), so group refreshes ripple through every `ProxyCard`.
+**Problem:** Each `delayProvider` → `realSelectedProxyState` watched full `groupsProvider`.
 
-**Plan:**
-1. Select only the needed group/proxy fields (or maintain a `Map` of selected names / test URLs).
-2. Ensure delay map updates (`delayDataSourceProvider.select`) stay the only hot path for card delay text.
+**Done:**
+- `realSelectedProxyStateMapProvider` resolves once; per-proxy provider selects by name (equality-stable).
 
-**Touches:** `lib/providers/state.dart`, `lib/views/proxies/card.dart`  
-**Effort:** medium · **Verify:** delay test batch does not freeze UI
+**Touches:** `lib/providers/state.dart`
 
-### PERF-05 — Default `findProcessMode` to off (or platform-safe)
+### PERF-05 — Default `findProcessMode` to off — DONE
 
-**Problem:** Default is `FindProcessMode.always` (`lib/models/clash_config.dart`). Product copy already warns of performance loss; mihomo notes process lookup cost/memory.
+**Problem:** Default was `FindProcessMode.always`.
 
-**Plan:**
-1. Change default to `off` for new installs (keep persisted user choice).
-2. Optionally default `always` only when Access / Connections UI needs process names.
-3. Document migration: existing configs unchanged.
+**Done:**
+- Default and unknown-enum fallback set to `off` for new / unspecified configs.
+- Persisted `"always"` values still restore as always.
 
-**Touches:** `lib/models/clash_config.dart`, settings UI if needed, tests  
-**Effort:** small · **Verify:** Connections still works; Android VPN CPU under load
+**Touches:** `lib/models/clash_config.dart` (+ generated)
 
 ---
 
 ## P1 — Medium impact
 
-### PERF-06 — macOS tray: avoid rebuilding all proxy submenus
+### PERF-06 — macOS tray: avoid rebuilding all proxy submenus — PARTIAL
 
-**Problem:** On macOS, tray rebuild walks every group/proxy into `MenuItem.checkbox` (`lib/common/tray.dart`) whenever `trayState` changes (including groups refresh).
+**Done:** Cap each group submenu at 30 proxies (keep selected if outside head) + “Proxies…” to focus the window.
 
-**Plan:**
-1. Rebuild proxy submenus only when groups/selection change (not on traffic).
-2. Cap submenu size or load on demand / “Open Proxies…” only.
-3. Keep title updates on the lightweight `trayTitleState` path.
+**Still open:** Skip full menu rebuilds when only traffic/title changes (title path already separate); optional lazy/open-on-demand menus.
 
-**Effort:** medium · **Verify:** macOS menu open latency with large lists
+**Touches:** `lib/common/tray.dart`
 
 ### PERF-07 — FixedList / event ingest copies
 
@@ -165,15 +152,15 @@ Line-delimited JSON for every action (`lib/core/service.dart`) is an architectur
 
 ---
 
-## Suggested first sprint (fork)
+## Suggested next sprint
 
-| Order | ID | Why first |
+| Order | ID | Why |
 |------|----|-----------|
-| 1 | PERF-05 | One-line default; large real-world win |
-| 2 | PERF-02 | Localized UI fix; easy to measure |
-| 3 | PERF-03 + PERF-04 | Proxies is the primary large-list surface |
-| 4 | PERF-01 | Steady-state CPU while started |
-| 5 | PERF-06 | macOS-specific follow-up to upstream tray work |
+| 1 | PERF-07 | Event flood CPU |
+| 2 | PERF-09 | Delay-test UX on large lists |
+| 3 | PERF-08 | Preference write amplification |
+| 4 | PERF-06 follow-up | Tray rebuild gating |
+| 5 | PERF-10 | Android Access jank |
 
 ## Out of scope for this list
 
