@@ -140,13 +140,17 @@ Replace Dart polling with core-originated events (socket/FFI callbacks). Larger 
 
 Leaf settings already exist; consumers that only need one leaf should not watch the aggregate (`lib/providers/config.dart`). Audit high-churn listeners.
 
-### PERF-13 — `EmojiText` cost on proxy names
+### PERF-13 — `EmojiText` cost on proxy names — DONE
 
-Regex-split every build (`lib/widgets/text.dart`) on every card. Cache spans per string or skip emoji parsing when name has no emoji.
+**Done:** Skip emoji regex for BMP-only names; cache `TextSpan` lists.
 
-### PERF-14 — Theme / layout storm
+**Touches:** `lib/widgets/text.dart`
 
-`ThemeManager` `LayoutBuilder` → `updateViewSize` can cascade viewMode/columns (`lib/manager/theme_manager.dart`). Debounce or equality-guard size updates.
+### PERF-14 — Theme / layout storm — DONE
+
+**Done:** `ThemeAction.updateViewSize` no-ops when size unchanged.
+
+**Touches:** `lib/providers/action.dart`
 
 ### PERF-15 — Desktop IPC protocol
 
@@ -158,8 +162,8 @@ Line-delimited JSON for every action (`lib/core/service.dart`) is an architectur
 
 | Order | ID | Why |
 |------|----|-----------|
-| 1 | PERF-13 | Cheap win on large proxy lists |
-| 2 | PERF-14 | Resize/layout cascade |
+| 1 | PERF-13 | Cheap win on large proxy lists — DONE (EmojiText fast-path + span cache) |
+| 2 | PERF-14 | Resize/layout cascade — DONE (`updateViewSize` equality guard) |
 | 3 | PERF-12 | Reduce config fan-out |
 | 4 | PERF-11 / PERF-15 | Architectural IPC redesign |
 
