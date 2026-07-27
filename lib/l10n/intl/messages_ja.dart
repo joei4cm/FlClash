@@ -34,65 +34,54 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m6(label) => "現在の${label}は既に存在しています";
 
-  static String m7(timezone) => "適用中: ${timezone}";
+  static String m7(timezone) => "${timezone} に戻す";
 
-  static String m8(done, total) => "チェックリスト ${done}/${total}";
+  static String m8(detail) => "OS タイムゾーンを合わせられませんでした（${detail}）";
 
-  static String m9(timezone) => "${timezone} に戻す";
+  static String m9(timezone) => "OS タイムゾーンを ${timezone} に復元しました";
 
-  static String m10(detail) => "OS タイムゾーンを合わせられませんでした（${detail}）";
+  static String m10(name) => "${name} スキップ済み";
 
-  static String m11(timezone) => "OS タイムゾーンを ${timezone} に設定しました";
+  static String m11(name) => "${name} 更新済み";
 
-  static String m12(command) => "タイムゾーンを自動変更できませんでした。実行: ${command}";
+  static String m12(name) => "${name}を更新中...";
 
-  static String m13(timezone) => "OS タイムゾーンを ${timezone} に復元しました";
+  static String m13(count) => "${count}時間前";
 
-  static String m14(timezone) =>
-      "${timezone} の Windows 対応名がありません。日付と時刻の設定で手動選択してください。";
+  static String m14(count) => "${count} 時間";
 
-  static String m15(name) => "${name} スキップ済み";
+  static String m15(target) => "${target} は無効なポリシーです";
 
-  static String m16(name) => "${name} 更新済み";
+  static String m16(proxyName) => "${proxyName} は無効なプロキシです";
 
-  static String m17(name) => "${name}を更新中...";
+  static String m17(providerName) => "${providerName} は無効なプロキシプロバイダーです";
 
-  static String m18(count) => "${count}時間前";
+  static String m18(subRule) => "${subRule} は無効なSUB_RULEです";
 
-  static String m19(count) => "${count} 時間";
-
-  static String m20(target) => "${target} は無効なポリシーです";
-
-  static String m21(proxyName) => "${proxyName} は無効なプロキシです";
-
-  static String m22(providerName) => "${providerName} は無効なプロキシプロバイダーです";
-
-  static String m23(subRule) => "${subRule} は無効なSUB_RULEです";
-
-  static String m24(appName) =>
+  static String m19(appName) =>
       "1. Open System Settings > Privacy & Security\n2. Choose Location Services\n3. Find and check ${appName} in the right list\n\nAfter completing the setup, return to the app and use it normally. Thank you for your cooperation.";
 
-  static String m25(count) => "${count}分前";
+  static String m20(count) => "${count}分前";
 
-  static String m26(count) => "${count}ヶ月前";
+  static String m21(count) => "${count}ヶ月前";
 
-  static String m27(label) => "まだ${label}はありません";
+  static String m22(label) => "まだ${label}はありません";
 
-  static String m28(label) => "${label}は数字でなければなりません";
+  static String m23(label) => "${label}は数字でなければなりません";
 
-  static String m29(label) => "${label} は 1024 から 49151 の間でなければなりません";
+  static String m24(label) => "${label} は 1024 から 49151 の間でなければなりません";
 
-  static String m30(count) => "${count} 秒";
+  static String m25(count) => "${count} 秒";
 
-  static String m31(count) => "${count} 項目が選択されています";
+  static String m26(count) => "${count} 項目が選択されています";
 
-  static String m32(count) => "ルーティング先 ${count} 件";
+  static String m27(count) => "ルーティング先 ${count} 件";
 
-  static String m33(count) => "${count} 個のノードが有効です。ノード横のピンで接続をテストできます。";
+  static String m28(count) => "${count} 個のノードが有効です。ノード横のピンで接続をテストできます。";
 
-  static String m34(label) => "${label}はURLである必要があります";
+  static String m29(label) => "${label}はURLである必要があります";
 
-  static String m35(count) => "${count}年前";
+  static String m30(count) => "${count}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -334,6 +323,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fallback": MessageLookupByLibrary.simpleMessage("フォールバック"),
     "fallbackDesc": MessageLookupByLibrary.simpleMessage("通常はオフショアDNSを使用"),
     "fallbackFilter": MessageLookupByLibrary.simpleMessage("フォールバックフィルター"),
+    "features": MessageLookupByLibrary.simpleMessage("機能"),
     "fidelityScheme": MessageLookupByLibrary.simpleMessage("ハイファイデリティー"),
     "file": MessageLookupByLibrary.simpleMessage("ファイル"),
     "fileDesc": MessageLookupByLibrary.simpleMessage("プロファイルを直接アップロード"),
@@ -356,166 +346,22 @@ class MessageLookup extends MessageLookupByLibrary {
       "自動更新間隔は0より大きくなければなりません",
     ),
     "geoIdentity": MessageLookupByLibrary.simpleMessage("地理アイデンティティ"),
-    "geoIdentityActionsTitle": MessageLookupByLibrary.simpleMessage("外部ツール"),
-    "geoIdentityAlignOsTimezone": MessageLookupByLibrary.simpleMessage(
-      "OS タイムゾーンを出口に合わせる",
-    ),
-    "geoIdentityAlignOsTimezoneApplied": m7,
-    "geoIdentityAlignOsTimezoneDesc": MessageLookupByLibrary.simpleMessage(
-      "ネットワークを検証してから、デスクトップの OS タイムゾーンを出口の地理タイムゾーンに設定します。環境によっては管理者 / polkit が必要です。",
-    ),
-    "geoIdentityAlignOsTimezoneShort": MessageLookupByLibrary.simpleMessage(
-      "OS タイムゾーンを出口に合わせる",
-    ),
-    "geoIdentityAndroidStep1": MessageLookupByLibrary.simpleMessage(
-      "プロキシ画面でクリーンな米国ノードを選びます。",
-    ),
-    "geoIdentityAndroidStep2": MessageLookupByLibrary.simpleMessage(
-      "ワンクリック設定をタップ（VPN キャプチャを有効化し FlClash を開始）。",
-    ),
-    "geoIdentityAndroidStep3": MessageLookupByLibrary.simpleMessage(
-      "ネットワークチェックが保護済みであることを確認します。",
-    ),
-    "geoIdentityAndroidStep4": MessageLookupByLibrary.simpleMessage(
-      "システムの日付と時刻で米国ゾーンを設定します。この端末で閲覧する場合は Chrome に GeoMirror を。",
-    ),
-    "geoIdentityCaptureBoth": MessageLookupByLibrary.simpleMessage(
-      "システムプロキシ + TUN/VPN",
-    ),
-    "geoIdentityCaptureBothDesc": MessageLookupByLibrary.simpleMessage(
-      "両方のキャプチャ経路がオンです。通信は FlClash 経由になるはずです。地理アイデンティティのため米国ノードを選択したままにしてください。",
-    ),
-    "geoIdentityCaptureInactive": MessageLookupByLibrary.simpleMessage(
-      "キャプチャオフ",
-    ),
-    "geoIdentityCaptureInactiveDesc": MessageLookupByLibrary.simpleMessage(
-      "先に FlClash を開始し、デスクトップではシステムプロキシと/または TUN、Android では VPN を有効にして、アプリ通信が選択ノード経由になるようにしてください。",
-    ),
-    "geoIdentityCaptureMixedPortOnly": MessageLookupByLibrary.simpleMessage(
-      "ミックスポートのみ",
-    ),
-    "geoIdentityCaptureMixedPortOnlyDesc": MessageLookupByLibrary.simpleMessage(
-      "コアは動作中ですが、システムプロキシも TUN/VPN もオフです。FlClash 自身のチェックはミックスポート経由でも、ほとんどのアプリは通りません。潜伏カバレッジにはシステムプロキシか TUN/VPN を有効にしてください。",
-    ),
-    "geoIdentityCaptureSystemProxy": MessageLookupByLibrary.simpleMessage(
-      "システムプロキシキャプチャ",
-    ),
-    "geoIdentityCaptureSystemProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "システムプロキシに従うアプリは FlClash 経由で出口します。バイパスするアプリもあるため、より広い潜伏には TUN/VPN を推奨します。",
-    ),
-    "geoIdentityCaptureVirtualNic": MessageLookupByLibrary.simpleMessage(
-      "TUN / VPN キャプチャ",
-    ),
-    "geoIdentityCaptureVirtualNicDesc": MessageLookupByLibrary.simpleMessage(
-      "仮想 NIC / VPN が通信をキャプチャしています。米国出口ノードと組み合わせると、FlClash の最強のネットワーク潜伏モードです。",
-    ),
     "geoIdentityCheckCancelled": MessageLookupByLibrary.simpleMessage(
       "ネットワークチェックがキャンセルされました",
-    ),
-    "geoIdentityCheckCaptureAndroidBody": MessageLookupByLibrary.simpleMessage(
-      "VPN キャプチャがオンで、アプリは FlClash 経由です。",
-    ),
-    "geoIdentityCheckCaptureDesktopBody": MessageLookupByLibrary.simpleMessage(
-      "システムプロキシと/または TUN がアプリとターミナルをキャプチャしています。",
-    ),
-    "geoIdentityCheckCaptureTitle": MessageLookupByLibrary.simpleMessage(
-      "通信キャプチャ準備完了",
     ),
     "geoIdentityCheckFailed": MessageLookupByLibrary.simpleMessage(
       "ネットワークチェックに失敗",
     ),
-    "geoIdentityCheckNetworkBody": MessageLookupByLibrary.simpleMessage(
-      "米国ノードを選んだあと検証（またはワンクリック）を実行してください。",
-    ),
-    "geoIdentityCheckNetworkTitle": MessageLookupByLibrary.simpleMessage(
-      "ネットワークは米国保護に見える",
-    ),
-    "geoIdentityCheckProtectBody": MessageLookupByLibrary.simpleMessage(
-      "米国 Accept-Language 探査と潜伏ガイダンスが有効です。",
-    ),
-    "geoIdentityCheckProtectTitle": MessageLookupByLibrary.simpleMessage(
-      "地理保護オン",
-    ),
-    "geoIdentityCheckStartedBody": MessageLookupByLibrary.simpleMessage(
-      "コアが動作中で、選択ノード経由で出口できます。",
-    ),
-    "geoIdentityCheckStartedTitle": MessageLookupByLibrary.simpleMessage(
-      "FlClash 起動済み",
-    ),
-    "geoIdentityCheckTimezoneBody": MessageLookupByLibrary.simpleMessage(
-      "中国ローカルではなく、または出口タイムゾーンに合わせてあります。",
-    ),
-    "geoIdentityCheckTimezoneTitle": MessageLookupByLibrary.simpleMessage(
-      "Claude Code 向け OS タイムゾーン準備完了",
-    ),
-    "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage(
-      "米国アイデンティティのチェックリスト",
-    ),
-    "geoIdentityChipCapture": MessageLookupByLibrary.simpleMessage("キャプチャ"),
-    "geoIdentityChipNetwork": MessageLookupByLibrary.simpleMessage("米国出口"),
-    "geoIdentityChipProtect": MessageLookupByLibrary.simpleMessage("保護"),
-    "geoIdentityChipStarted": MessageLookupByLibrary.simpleMessage("起動"),
-    "geoIdentityChipTimezone": MessageLookupByLibrary.simpleMessage("タイムゾーン"),
-    "geoIdentityClaudeCodeBaseUrlBody": MessageLookupByLibrary.simpleMessage(
-      "独自 API Base URL を使う場合、中国の AI ラボ / リセラーを連想させるホスト名を避けてください。公式 Anthropic エンドポイントかクリーンなホスト名を使い、通信は米国ノード経由にしてください。",
-    ),
-    "geoIdentityClaudeCodeBaseUrlTitle": MessageLookupByLibrary.simpleMessage(
-      "ANTHROPIC_BASE_URL に注意",
-    ),
-    "geoIdentityClaudeCodeBody": MessageLookupByLibrary.simpleMessage(
-      "GeoMirror は Claude Code には効きません。CLI は OS のタイムゾーンを読み、通信は FlClash 経由で出口する必要があります（TUN/VPN 推奨）。システムプロキシのみの場合は、同じターミナルにプロキシ環境変数を貼ってから claude を実行してください。",
-    ),
-    "geoIdentityClaudeCodeTimezoneTipBody": MessageLookupByLibrary.simpleMessage(
-      "公開された解析によると、ANTHROPIC_BASE_URL が独自エンドポイントのとき Claude Code は Asia/Shanghai と Asia/Urumqi を確認していました。OS のタイムゾーンを米国出口に合わせてください（例: America/Los_Angeles）。",
-    ),
-    "geoIdentityClaudeCodeTimezoneTipTitle":
-        MessageLookupByLibrary.simpleMessage("OS タイムゾーンが CLI の信号"),
-    "geoIdentityClaudeCodeTitle": MessageLookupByLibrary.simpleMessage(
-      "Claude Code（ターミナル）",
-    ),
     "geoIdentityCopyTerminalProxy": MessageLookupByLibrary.simpleMessage(
       "ターミナル用プロキシ環境変数をコピー",
-    ),
-    "geoIdentityCopyTerminalProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "FlClash ミックスポート向けの HTTP(S)_PROXY / ALL_PROXY — TUN なしで Node がシステムプロキシを無視する場合に必要です。",
     ),
     "geoIdentityCopyTerminalProxyShort": MessageLookupByLibrary.simpleMessage(
       "ターミナル用 HTTP(S)_PROXY をコピー",
     ),
     "geoIdentityDesc": MessageLookupByLibrary.simpleMessage("スイッチ一つで米国出口を潜伏"),
-    "geoIdentityDesktopStep1": MessageLookupByLibrary.simpleMessage(
-      "プロキシ画面でクリーンな米国ノードを選びます。",
-    ),
-    "geoIdentityDesktopStep2": MessageLookupByLibrary.simpleMessage(
-      "ワンクリック設定をタップ（またはシステムプロキシ + TUN を有効にして FlClash を開始）。",
-    ),
-    "geoIdentityDesktopStep3": MessageLookupByLibrary.simpleMessage(
-      "チェックリストでネットワーク保護を確認し、必要なら OS タイムゾーンを合わせます。",
-    ),
-    "geoIdentityDesktopStep4": MessageLookupByLibrary.simpleMessage(
-      "ブラウザは GeoMirror を入れてください。Claude Code は TUN 推奨（ターミナルのプロキシ export 不要）。",
-    ),
-    "geoIdentityExitCountry": MessageLookupByLibrary.simpleMessage(
-      "チェック上の出口地理",
-    ),
-    "geoIdentityGuideTitle": MessageLookupByLibrary.simpleMessage("手動ステップ"),
     "geoIdentityHideAdvanced": MessageLookupByLibrary.simpleMessage("詳細を隠す"),
     "geoIdentityHonestyLine": MessageLookupByLibrary.simpleMessage(
       "出口 IP とプローブ言語を対象にします。ブラウザのフォント/位置情報は GeoMirror が必要で、Claude Code は一致する OS タイムゾーン（および TUN またはプロキシ設定）が必要です。",
-    ),
-    "geoIdentityLimitsBody": MessageLookupByLibrary.simpleMessage(
-      "FlClash はネットワーク出口を隠し、FuckClaude API で IP 地理と Accept-Language を検証できます。他アプリの HTTPS ヘッダ改変、フォント/位置情報の偽装、AI サービス利用の保証はせず、各サービスの利用規約の代わりにもなりません。",
-    ),
-    "geoIdentityLimitsTitle": MessageLookupByLibrary.simpleMessage("限界と免責"),
-    "geoIdentityLiveChecklistTitle": m8,
-    "geoIdentityLocalSignalsTitle": MessageLookupByLibrary.simpleMessage(
-      "この端末の信号",
-    ),
-    "geoIdentityLocalTipBody": MessageLookupByLibrary.simpleMessage(
-      "タイムゾーン、ブラウザ言語、フォント、HTML5 位置情報はプロキシの外です。Claude Code / CLI は OS のタイムゾーンを、Web は GeoMirror などの拡張を使って揃えてください。",
-    ),
-    "geoIdentityLocalTipTitle": MessageLookupByLibrary.simpleMessage(
-      "FlClash では変えられないもの",
     ),
     "geoIdentityNeedStart": MessageLookupByLibrary.simpleMessage(
       "ネットワーク環境を検証する前に FlClash を開始してください。",
@@ -523,110 +369,38 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityNetworkBad": MessageLookupByLibrary.simpleMessage(
       "ネットワーク未準備 — 米国ノードを選んでスイッチを入れ直してください",
     ),
-    "geoIdentityNetworkCheckTitle": MessageLookupByLibrary.simpleMessage(
-      "ネットワーク環境チェック",
-    ),
     "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
       "ネットワークはまだ露出している可能性",
     ),
     "geoIdentityNetworkGood": MessageLookupByLibrary.simpleMessage(
       "ネットワークは利用可能な状態です",
     ),
-    "geoIdentityNetworkProtected": MessageLookupByLibrary.simpleMessage(
-      "ネットワークは保護されているように見える",
-    ),
     "geoIdentityOffStatus": MessageLookupByLibrary.simpleMessage(
       "地理アイデンティティ保護はオフです",
-    ),
-    "geoIdentityOneClickSetup": MessageLookupByLibrary.simpleMessage(
-      "ワンクリック設定",
-    ),
-    "geoIdentityOneClickTip": MessageLookupByLibrary.simpleMessage(
-      "先に米国プロキシノードを選んでください。ブラウザ指紋には GeoMirror が必要です。このボタンは FlClash と Claude Code のホスト側をカバーします。",
     ),
     "geoIdentityOpenGeoMirror": MessageLookupByLibrary.simpleMessage(
       "GeoMirror（GitHub）",
     ),
-    "geoIdentityOpenGeoMirrorDesc": MessageLookupByLibrary.simpleMessage(
-      "出口 IP に地理信号を合わせる Chrome 拡張",
-    ),
-    "geoIdentityOpenGeoMirrorReleases": MessageLookupByLibrary.simpleMessage(
-      "GeoMirror リリース",
-    ),
-    "geoIdentityOpenGeoMirrorReleasesDesc":
-        MessageLookupByLibrary.simpleMessage("パッケージ済み拡張をダウンロード"),
     "geoIdentityOpenGeoMirrorShort": MessageLookupByLibrary.simpleMessage(
       "ブラウザ指紋の整合",
     ),
-    "geoIdentityOpenSelfCheck": MessageLookupByLibrary.simpleMessage(
-      "フィンガープリント自己チェックを開く",
-    ),
-    "geoIdentityOpenSelfCheckDesc": MessageLookupByLibrary.simpleMessage(
-      "FuckClaude — ブラウザ / タイムゾーンのリスク加重スキャン",
-    ),
-    "geoIdentityOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "米国の AI サービスは、出口 IP とタイムゾーン・言語・フォント・位置情報などのローカル信号を突き合わせることがあります。ロサンゼルスの IP なのに Asia/Shanghai や zh-CN だと高リスクです。FlClash はシステムプロキシと TUN/VPN でネットワーク出口を隠し、FuckClaude API で検証できます。OS のタイムゾーンとブラウザプロファイルは別途揃える必要があります。",
-    ),
-    "geoIdentityOverviewTitle": MessageLookupByLibrary.simpleMessage("なぜ重要か"),
     "geoIdentityPendingCheck": MessageLookupByLibrary.simpleMessage(
       "保護はオンです — FlClash を起動してから再チェックしてください",
-    ),
-    "geoIdentityProbeLanguage": MessageLookupByLibrary.simpleMessage(
-      "チェックが見た Accept-Language",
-    ),
-    "geoIdentityProbeLanguageUnknown": MessageLookupByLibrary.simpleMessage(
-      "不明",
     ),
     "geoIdentityProtectEnable": MessageLookupByLibrary.simpleMessage(
       "地理アイデンティティ保護を有効化",
     ),
-    "geoIdentityProtectEnableDesc": MessageLookupByLibrary.simpleMessage(
-      "米国出口の整合を有効な目標として扱い、ネットワーク探査で米国 Accept-Language を優先し、システムプロキシと TUN/VPN のキャプチャ状態を表示します。",
-    ),
-    "geoIdentityProtectTitle": MessageLookupByLibrary.simpleMessage("ネットワーク潜伏"),
     "geoIdentityProtectToggleDesc": MessageLookupByLibrary.simpleMessage(
       "セットアップチェックリストを実行し、ネットワークを検証",
     ),
     "geoIdentityPurposeBody": MessageLookupByLibrary.simpleMessage(
       "米国の AI サービスは出口 IP とローカル信号を照合します。オンにすると FlClash が通信をキャプチャし（システムプロキシ / TUN または VPN）、可能ならデスクトップの OS タイムゾーンを合わせ、FuckClaude で出口を検証します。ブラウザのページ指紋には GeoMirror が必要な場合があります。",
     ),
-    "geoIdentityQuickActionsTitle": MessageLookupByLibrary.simpleMessage(
-      "クイック操作",
-    ),
     "geoIdentityRecheck": MessageLookupByLibrary.simpleMessage("再チェック"),
     "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
       "以前の OS タイムゾーンを復元",
     ),
-    "geoIdentityRestoreOsTimezoneDesc": m9,
-    "geoIdentityRiskHigh": MessageLookupByLibrary.simpleMessage("不一致リスクが高い"),
-    "geoIdentityRiskHighDesc": MessageLookupByLibrary.simpleMessage(
-      "タイムゾーンとシステムロケールの両方が中国ローカルに見えます。米国出口 IP だけでは足りません。OS のタイムゾーンを変え、ブラウザプロファイルを揃えてください。",
-    ),
-    "geoIdentityRiskLow": MessageLookupByLibrary.simpleMessage(
-      "ローカル信号は整合していそう",
-    ),
-    "geoIdentityRiskLowDesc": MessageLookupByLibrary.simpleMessage(
-      "タイムゾーンオフセットとシステムロケールは中国ローカルには見えません。それでもネットワークチェックとブラウザプロファイルを確認してください。",
-    ),
-    "geoIdentityRiskMedium": MessageLookupByLibrary.simpleMessage("地理の不一致の可能性"),
-    "geoIdentityRiskMediumDesc": MessageLookupByLibrary.simpleMessage(
-      "タイムゾーンまたはシステムロケールが中国ローカル（あるいは UTC+8）に見えます。出口 IP が米国なら、OS のタイムゾーンとブラウザ言語を先に揃えてください。",
-    ),
-    "geoIdentityScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
-      "ワンクリックで地理保護と VPN キャプチャを有効化し、FlClash を開始して出口を検証します。端末で Claude Code を使う場合は、システムの日付と時刻で米国ゾーンを設定してください。",
-    ),
-    "geoIdentityScenarioAndroidTitle": MessageLookupByLibrary.simpleMessage(
-      "Android 初心者セットアップ",
-    ),
-    "geoIdentityScenarioDesktopBody": MessageLookupByLibrary.simpleMessage(
-      "ワンクリックで地理保護・システムプロキシ・TUN を有効化し、FlClash を開始して出口を検証し、Claude Code 向けに OS タイムゾーンの合わせ込みを試します。",
-    ),
-    "geoIdentityScenarioDesktopTitle": MessageLookupByLibrary.simpleMessage(
-      "デスクトップ初心者セットアップ",
-    ),
-    "geoIdentitySetupDoneNeedTimezone": MessageLookupByLibrary.simpleMessage(
-      "ネットワークは保護されています。Claude Code がまだ中国ゾーンなら OS タイムゾーンを合わせてください。",
-    ),
+    "geoIdentityRestoreOsTimezoneDesc": m7,
     "geoIdentitySetupDoneNeedUsNode": MessageLookupByLibrary.simpleMessage(
       "設定は適用されましたが、出口はまだ米国保護ではありません。米国ノードを選んで再度ワンクリックしてください。",
     ),
@@ -646,77 +420,27 @@ class MessageLookup extends MessageLookupByLibrary {
       "ネットワーク環境を検証中…",
     ),
     "geoIdentityShowAdvanced": MessageLookupByLibrary.simpleMessage("詳細を表示"),
-    "geoIdentityStatusReadyBody": MessageLookupByLibrary.simpleMessage(
-      "ネットワーク潜伏は良好です。米国ノードを選択したままにしてください。",
-    ),
-    "geoIdentityStatusReadyTitle": MessageLookupByLibrary.simpleMessage("準備完了"),
-    "geoIdentityStatusSetupBody": MessageLookupByLibrary.simpleMessage(
-      "米国ノードを選び、ワンクリック設定をタップしてください。",
-    ),
-    "geoIdentityStatusSetupTitle": MessageLookupByLibrary.simpleMessage(
-      "セットアップが必要",
-    ),
-    "geoIdentityStep1Body": MessageLookupByLibrary.simpleMessage(
-      "プロキシ画面でクリーンな米国ノード（ロサンゼルスやニューヨークなど）を選びます。Claude Code を独自 Base URL に向ける場合、ホスト名に AI ラボや中継を連想させる語を避けてください。",
-    ),
-    "geoIdentityStep1Title": MessageLookupByLibrary.simpleMessage(
-      "1. 米国の出口ノードを使う",
-    ),
-    "geoIdentityStep2Body": MessageLookupByLibrary.simpleMessage(
-      "FlClash を開始し、デスクトップではシステムプロキシと/または TUN、Android では VPN を有効にして、アプリが本当に米国ノード経由になるようにします。その後「ネットワーク環境を検証」をタップします。",
-    ),
-    "geoIdentityStep2Title": MessageLookupByLibrary.simpleMessage(
-      "2. 通信をキャプチャ（システムプロキシまたは TUN）",
-    ),
-    "geoIdentityStep3Body": MessageLookupByLibrary.simpleMessage(
-      "OS のタイムゾーンを出口と同じ米国地域に設定します。GeoMirror を入れ、位置情報・タイムゾーン・言語・Accept-Language・地域フォントの検出を出口 IP に合わせてください。",
-    ),
-    "geoIdentityStep3Title": MessageLookupByLibrary.simpleMessage(
-      "3. OS のタイムゾーンとブラウザを揃える",
-    ),
-    "geoIdentityStep4Body": MessageLookupByLibrary.simpleMessage(
-      "通信が FlClash 経由の状態で FuckClaude のブラウザスキャンを開き、Low を目指します。OS やブラウザを変えたら再測定してください。ルールは変わるので継続的に管理してください。",
-    ),
-    "geoIdentityStep4Title": MessageLookupByLibrary.simpleMessage(
-      "4. 自己チェックして再確認",
-    ),
-    "geoIdentitySystemLocale": MessageLookupByLibrary.simpleMessage("システムロケール"),
     "geoIdentityTimezone": MessageLookupByLibrary.simpleMessage("システムタイムゾーン"),
-    "geoIdentityTimezoneAlignFailed": m10,
+    "geoIdentityTimezoneAlignFailed": m8,
     "geoIdentityTimezoneAndroidTip": MessageLookupByLibrary.simpleMessage(
       "Android は root なしではシステムタイムゾーンを変更できません。設定 → システム → 日付と時刻で、出口に合う米国ゾーンを選んでください。",
     ),
-    "geoIdentityTimezoneApplied": m11,
-    "geoIdentityTimezoneManual": m12,
     "geoIdentityTimezoneMissing": MessageLookupByLibrary.simpleMessage(
       "出口タイムゾーンがまだありません。先にネットワーク環境を検証してください。",
     ),
     "geoIdentityTimezoneNothingToRestore": MessageLookupByLibrary.simpleMessage(
       "復元できる以前の OS タイムゾーンがありません。",
     ),
-    "geoIdentityTimezoneRestored": m13,
-    "geoIdentityTimezoneUnsupported": m14,
+    "geoIdentityTimezoneRestored": m9,
     "geoIdentityTurningOff": MessageLookupByLibrary.simpleMessage("オフにしています…"),
     "geoIdentityUsAcceptLanguage": MessageLookupByLibrary.simpleMessage(
       "米国 Accept-Language で探査",
     ),
-    "geoIdentityUsAcceptLanguageDesc": MessageLookupByLibrary.simpleMessage(
-      "FuckClaude ネットワークチェックで Accept-Language: en-US,en;q=0.9 を送り、中国語ヘッダでスコアが上がらないようにします。",
-    ),
-    "geoIdentityVerifyNetwork": MessageLookupByLibrary.simpleMessage(
-      "ネットワーク環境を検証",
-    ),
-    "geoIdentityVerifyNetworkDesc": MessageLookupByLibrary.simpleMessage(
-      "FlClash のミックスポート経由で FuckClaude /api/check を呼び出します（システムプロキシと TUN/VPN の両方で有効）。",
-    ),
-    "geoIdentityVerifyNetworkShort": MessageLookupByLibrary.simpleMessage(
-      "FuckClaude で出口 IP を確認",
-    ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geoオプション"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geoリソース"),
-    "geoSkipped": m15,
-    "geoUpdated": m16,
-    "geoUpdating": m17,
+    "geoSkipped": m10,
+    "geoUpdated": m11,
+    "geoUpdating": m12,
     "geodataLoader": MessageLookupByLibrary.simpleMessage("Geo低メモリモード"),
     "geodataLoaderDesc": MessageLookupByLibrary.simpleMessage(
       "有効化するとGeo低メモリローダーを使用",
@@ -736,8 +460,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "キーボードでアプリを制御",
     ),
     "hours": MessageLookupByLibrary.simpleMessage("時間"),
-    "hoursAgo": m18,
-    "hoursCount": m19,
+    "hoursAgo": m13,
+    "hoursCount": m14,
     "icon": MessageLookupByLibrary.simpleMessage("アイコン"),
     "iconRecords": MessageLookupByLibrary.simpleMessage("アイコン履歴"),
     "iconStyle": MessageLookupByLibrary.simpleMessage("アイコンスタイル"),
@@ -769,10 +493,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "interval": MessageLookupByLibrary.simpleMessage("インターバル"),
     "intranetIP": MessageLookupByLibrary.simpleMessage("イントラネットIP"),
     "invalidBackupFile": MessageLookupByLibrary.simpleMessage("無効なバックアップファイル"),
-    "invalidPolicy": m20,
-    "invalidProxy": m21,
-    "invalidProxyProvider": m22,
-    "invalidSubRule": m23,
+    "invalidPolicy": m15,
+    "invalidProxy": m16,
+    "invalidProxyProvider": m17,
+    "invalidSubRule": m18,
     "ipcidr": MessageLookupByLibrary.simpleMessage("IPCIDR"),
     "ipv6Desc": MessageLookupByLibrary.simpleMessage("有効化するとIPv6トラフィックを受信可能"),
     "ipv6InboundDesc": MessageLookupByLibrary.simpleMessage("IPv6インバウンドを許可"),
@@ -800,7 +524,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "locationPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "According to system requirements, obtaining the Wi-Fi name requires you to grant location permission.",
     ),
-    "locationPermissionGuide": m24,
+    "locationPermissionGuide": m19,
     "locationPermissionRequired": MessageLookupByLibrary.simpleMessage(
       "Location Permission Required",
     ),
@@ -824,11 +548,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "minimizeOnExitDesc": MessageLookupByLibrary.simpleMessage(
       "システムの終了イベントを変更",
     ),
-    "minutesAgo": m25,
+    "minutesAgo": m20,
     "mixedPort": MessageLookupByLibrary.simpleMessage("混合ポート"),
     "mode": MessageLookupByLibrary.simpleMessage("モード"),
     "monochromeScheme": MessageLookupByLibrary.simpleMessage("モノクローム"),
-    "monthsAgo": m26,
+    "monthsAgo": m21,
     "more": MessageLookupByLibrary.simpleMessage("詳細"),
     "name": MessageLookupByLibrary.simpleMessage("名前"),
     "nameserver": MessageLookupByLibrary.simpleMessage("ネームサーバー"),
@@ -862,8 +586,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "nullProfileDesc": MessageLookupByLibrary.simpleMessage(
       "プロファイルがありません。追加してください",
     ),
-    "nullTip": m27,
-    "numberTip": m28,
+    "nullTip": m22,
+    "numberTip": m23,
     "onDemand": MessageLookupByLibrary.simpleMessage("On Demand"),
     "onDemandDesc": MessageLookupByLibrary.simpleMessage(
       "Configure the program running state for specific scenarios",
@@ -906,7 +630,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "port": MessageLookupByLibrary.simpleMessage("ポート"),
     "portConflictTip": MessageLookupByLibrary.simpleMessage("別のポートを入力してください"),
-    "portTip": m29,
+    "portTip": m24,
     "preferH3Desc": MessageLookupByLibrary.simpleMessage("DOHのHTTP/3を優先使用"),
     "prerequisites": MessageLookupByLibrary.simpleMessage("Prerequisites"),
     "pressKeyboard": MessageLookupByLibrary.simpleMessage("キーボードを押してください"),
@@ -1125,7 +849,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "search": MessageLookupByLibrary.simpleMessage("検索"),
     "seconds": MessageLookupByLibrary.simpleMessage("秒"),
-    "secondsCount": m30,
+    "secondsCount": m25,
     "selectAll": MessageLookupByLibrary.simpleMessage("すべて選択"),
     "selectProxies": MessageLookupByLibrary.simpleMessage("プロキシを選択"),
     "selectProxyProviders": MessageLookupByLibrary.simpleMessage(
@@ -1137,7 +861,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "selectSubRule": MessageLookupByLibrary.simpleMessage("サブルールを選択してください"),
     "selected": MessageLookupByLibrary.simpleMessage("選択済み"),
-    "selectedCountTitle": m31,
+    "selectedCountTitle": m26,
     "settings": MessageLookupByLibrary.simpleMessage("設定"),
     "show": MessageLookupByLibrary.simpleMessage("表示"),
     "shrink": MessageLookupByLibrary.simpleMessage("縮小"),
@@ -1207,9 +931,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleBypassAndroidHint": MessageLookupByLibrary.simpleMessage(
       "Android では通常オフのまま。この端末にも Tailscale アプリがある場合だけオンにしてください。",
     ),
-    "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
-      "FlClash による Tailscale の横取りを防ぎます。tailnet レンジ、Tailscale プロセス、コントロール/DERP ドメインの DIRECT ルールを自動注入し、これらのドメインを Fake IP Filter に自動で追加/削除します（198.18.x.x ではなく本物の公開 IP に解決）。この端末で Tailscale アプリ/サービスも動かす場合はオンにしてください（インポートした任意のプロファイルで有効）。",
-    ),
     "tailscaleBypassNudge": MessageLookupByLibrary.simpleMessage(
       "この端末では Tailscale も動いている可能性があります — 「Tailscale 通信を直通」をオンにして Fake IP / 制御面の不具合を避けてください。",
     ),
@@ -1250,24 +971,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
       "任意。すべてのトラフィックを転送する tailnet 出口ノードの IP または名前です。",
     ),
-    "tailscaleGuideBypassNote": MessageLookupByLibrary.simpleMessage(
-      "この端末で Tailscale アプリ/サービスも動かす場合は「Tailscale のトラフィックを直結に保つ」をオンにしてください。FlClash の fake-IP DNS が controlplane.tailscale.com を 198.18.x.x として返し、`tailscale up` が止まるのを防ぎます。",
-    ),
-    "tailscaleGuideRoutesNote": MessageLookupByLibrary.simpleMessage(
-      "特定の端末（例: 自宅の PC）に接続するには、その Tailscale IP または MagicDNS 名をノードの「ルーティング先」に追加します。FlClash はその通信だけを tailnet 経由で送るため、この端末に Tailscale アプリは不要です。",
-    ),
-    "tailscaleGuideStep1": MessageLookupByLibrary.simpleMessage(
-      "Tailscale 管理コンソール（設定 → Keys）で認証キーを取得します。",
-    ),
-    "tailscaleGuideStep2": MessageLookupByLibrary.simpleMessage(
-      "右上の + ボタンをタップしてノードを追加し、認証キーを貼り付けます。",
-    ),
-    "tailscaleGuideStep3": MessageLookupByLibrary.simpleMessage(
-      "上部の「Tailscale を有効化」をオンにして、ノードをアウトバウンドプロキシとして注入します。",
-    ),
-    "tailscaleGuideStep4": MessageLookupByLibrary.simpleMessage(
-      "プロキシページまたはルールでノードを選択すると、トラフィックが tailnet 経由で転送されます。",
-    ),
     "tailscaleGuideTitle": MessageLookupByLibrary.simpleMessage(
       "Tailscale の仕組み",
     ),
@@ -1282,7 +985,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleNodesTitle": MessageLookupByLibrary.simpleMessage("ノード"),
     "tailscaleNotTested": MessageLookupByLibrary.simpleMessage("未テスト"),
     "tailscaleRoutes": MessageLookupByLibrary.simpleMessage("ルーティング先"),
-    "tailscaleRoutesCount": m32,
+    "tailscaleRoutesCount": m27,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "このノード経由で送るドメインまたは IP（1 行に 1 つ、例: 自宅 PC の Tailscale IP や MagicDNS 名）。",
     ),
@@ -1314,7 +1017,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleStatusNoNodes": MessageLookupByLibrary.simpleMessage(
       "有効ですが、ノードがありません。まずノードを追加してください。",
     ),
-    "tailscaleStatusReady": m33,
+    "tailscaleStatusReady": m28,
     "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
       "テストする前に「Tailscale を有効化」をオンにしてください。",
     ),
@@ -1324,9 +1027,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleTestNode": MessageLookupByLibrary.simpleMessage("接続をテスト"),
     "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
       "ノード横のピンボタンで、Tailscale アウトバウンドが発信できるか確認できます。遅延が表示されれば接続は正常です。Timeout の場合は認証キー、「有効化」、FlClash VPN の起動を確認してください。",
-    ),
-    "tailscaleTip": MessageLookupByLibrary.simpleMessage(
-      "Tailscale ノードはアウトバウンドプロキシとして実行中の設定に統合されます。プロキシページでノードを選択するか、ルールのターゲットに指定すると、トラフィックが tailnet 経由で転送されます。",
     ),
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP リレー"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("タップして許可"),
@@ -1365,7 +1065,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage("URL経由でプロファイルを取得"),
-    "urlTip": m34,
+    "urlTip": m29,
     "useHosts": MessageLookupByLibrary.simpleMessage("ホストを使用"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("システムホストを使用"),
     "userAgent": MessageLookupByLibrary.simpleMessage("ユーザーエージェント"),
@@ -1381,7 +1081,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnTip": MessageLookupByLibrary.simpleMessage("変更はVPN再起動後に有効"),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV設定"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("ホワイトリストモード"),
-    "yearsAgo": m35,
+    "yearsAgo": m30,
     "zh_CN": MessageLookupByLibrary.simpleMessage("簡体字中国語"),
   };
 }

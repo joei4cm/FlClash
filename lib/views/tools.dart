@@ -70,6 +70,16 @@ class _ToolViewState extends ConsumerState<ToolsView> {
     );
   }
 
+  List<Widget> _getFeatureList() {
+    return generateSection(
+      title: context.appLocalizations.features,
+      items: [
+        const _TailscaleItem(),
+        const _GeoIdentityItem(),
+      ],
+    );
+  }
+
   List<Widget> _getSettingList() {
     return generateSection(
       title: context.appLocalizations.settings,
@@ -82,8 +92,6 @@ class _ToolViewState extends ConsumerState<ToolsView> {
         if (system.isAndroid) const _AccessItem(),
         const _ConfigItem(),
         const _AdvancedConfigItem(),
-        const _TailscaleItem(),
-        const _GeoIdentityItem(),
         const _SettingItem(),
       ],
     );
@@ -111,6 +119,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
           );
         },
       ),
+      ..._getFeatureList(),
       ..._getSettingList(),
       ..._getOtherList(vm2.b),
     ];

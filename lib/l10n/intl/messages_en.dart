@@ -37,71 +37,59 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m6(label) => "Current ${label} already exists";
 
-  static String m7(timezone) => "Currently applied: ${timezone}";
+  static String m7(timezone) => "Restore ${timezone}";
 
-  static String m8(done, total) => "Checklist ${done}/${total}";
+  static String m8(detail) => "Could not align OS timezone (${detail})";
 
-  static String m9(timezone) => "Restore ${timezone}";
+  static String m9(timezone) => "OS timezone restored to ${timezone}";
 
-  static String m10(detail) => "Could not align OS timezone (${detail})";
+  static String m10(name) => "${name} skipped";
 
-  static String m11(timezone) => "OS timezone set to ${timezone}";
+  static String m11(name) => "${name} updated";
 
-  static String m12(command) =>
-      "Could not change timezone automatically. Run: ${command}";
+  static String m12(name) => "Updating ${name}...";
 
-  static String m13(timezone) => "OS timezone restored to ${timezone}";
-
-  static String m14(timezone) =>
-      "No Windows mapping for ${timezone}. Set it manually in Date & time settings.";
-
-  static String m15(name) => "${name} skipped";
-
-  static String m16(name) => "${name} updated";
-
-  static String m17(name) => "Updating ${name}...";
-
-  static String m18(count) =>
+  static String m13(count) =>
       "${Intl.plural(count, one: '1 hour ago', other: '${count} hours ago')}";
 
-  static String m19(count) => "${count} hours";
+  static String m14(count) => "${count} hours";
 
-  static String m20(target) => "${target} is an invalid policy";
+  static String m15(target) => "${target} is an invalid policy";
 
-  static String m21(proxyName) => "${proxyName} is an invalid proxy";
+  static String m16(proxyName) => "${proxyName} is an invalid proxy";
 
-  static String m22(providerName) =>
+  static String m17(providerName) =>
       "${providerName} is an invalid proxy provider";
 
-  static String m23(subRule) => "${subRule} is an invalid SUB_RULE";
+  static String m18(subRule) => "${subRule} is an invalid SUB_RULE";
 
-  static String m24(appName) =>
+  static String m19(appName) =>
       "1. Open System Settings > Privacy & Security\n2. Choose Location Services\n3. Find and check ${appName} in the right list\n\nAfter completing the setup, return to the app and use it normally. Thank you for your cooperation.";
 
-  static String m25(count) =>
+  static String m20(count) =>
       "${Intl.plural(count, one: '1 minute ago', other: '${count} minutes ago')}";
 
-  static String m26(count) =>
+  static String m21(count) =>
       "${Intl.plural(count, one: '1 month ago', other: '${count} months ago')}";
 
-  static String m27(label) => "No ${label} yet";
+  static String m22(label) => "No ${label} yet";
 
-  static String m28(label) => "${label} must be a number";
+  static String m23(label) => "${label} must be a number";
 
-  static String m29(label) => "${label} must be between 1024 and 49151";
+  static String m24(label) => "${label} must be between 1024 and 49151";
 
-  static String m30(count) => "${count} seconds";
+  static String m25(count) => "${count} seconds";
 
-  static String m31(count) => "${count} items have been selected";
+  static String m26(count) => "${count} items have been selected";
 
-  static String m32(count) => "${count} route(s)";
+  static String m27(count) => "${count} route(s)";
 
-  static String m33(count) =>
+  static String m28(count) =>
       "${count} node(s) active. Tap ping on a node to test connectivity.";
 
-  static String m34(label) => "${label} must be a url";
+  static String m29(label) => "${label} must be a url";
 
-  static String m35(count) =>
+  static String m30(count) =>
       "${Intl.plural(count, one: '1 year ago', other: '${count} years ago')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -420,6 +408,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Generally use offshore DNS",
     ),
     "fallbackFilter": MessageLookupByLibrary.simpleMessage("Fallback filter"),
+    "features": MessageLookupByLibrary.simpleMessage("Features"),
     "fidelityScheme": MessageLookupByLibrary.simpleMessage("Fidelity"),
     "file": MessageLookupByLibrary.simpleMessage("File"),
     "fileDesc": MessageLookupByLibrary.simpleMessage("Directly upload profile"),
@@ -444,130 +433,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "Auto update interval must be greater than 0",
     ),
     "geoIdentity": MessageLookupByLibrary.simpleMessage("Geo identity"),
-    "geoIdentityActionsTitle": MessageLookupByLibrary.simpleMessage(
-      "External tools",
-    ),
-    "geoIdentityAlignOsTimezone": MessageLookupByLibrary.simpleMessage(
-      "Align OS timezone to exit",
-    ),
-    "geoIdentityAlignOsTimezoneApplied": m7,
-    "geoIdentityAlignOsTimezoneDesc": MessageLookupByLibrary.simpleMessage(
-      "Verify the network, then set the desktop OS timezone to the exit geo timezone. Requires admin / polkit on some systems.",
-    ),
-    "geoIdentityAlignOsTimezoneShort": MessageLookupByLibrary.simpleMessage(
-      "Match OS timezone to the exit",
-    ),
-    "geoIdentityAndroidStep1": MessageLookupByLibrary.simpleMessage(
-      "Select a clean US node on the Proxies page.",
-    ),
-    "geoIdentityAndroidStep2": MessageLookupByLibrary.simpleMessage(
-      "Tap One-click setup (enables VPN capture and starts FlClash).",
-    ),
-    "geoIdentityAndroidStep3": MessageLookupByLibrary.simpleMessage(
-      "Confirm the network check is protected.",
-    ),
-    "geoIdentityAndroidStep4": MessageLookupByLibrary.simpleMessage(
-      "Set a US timezone in system Date & time. Use GeoMirror in Chrome if you browse on this device.",
-    ),
-    "geoIdentityCaptureBoth": MessageLookupByLibrary.simpleMessage(
-      "System proxy + TUN/VPN",
-    ),
-    "geoIdentityCaptureBothDesc": MessageLookupByLibrary.simpleMessage(
-      "Both capture paths are on. Traffic should exit through FlClash; keep a US node selected for geo identity.",
-    ),
-    "geoIdentityCaptureInactive": MessageLookupByLibrary.simpleMessage(
-      "Capture off",
-    ),
-    "geoIdentityCaptureInactiveDesc": MessageLookupByLibrary.simpleMessage(
-      "Start FlClash first. Then turn on System proxy and/or TUN (desktop) or VPN (Android) so app traffic exits through the selected node.",
-    ),
-    "geoIdentityCaptureMixedPortOnly": MessageLookupByLibrary.simpleMessage(
-      "Mixed port only",
-    ),
-    "geoIdentityCaptureMixedPortOnlyDesc": MessageLookupByLibrary.simpleMessage(
-      "Core is running, but System proxy and TUN/VPN are off. FlClash’s own check still exits via mixed-port; most apps will not. Enable System proxy or TUN/VPN for undercover coverage.",
-    ),
-    "geoIdentityCaptureSystemProxy": MessageLookupByLibrary.simpleMessage(
-      "System proxy capture",
-    ),
-    "geoIdentityCaptureSystemProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "Apps that honor the system proxy exit through FlClash. Some apps bypass system proxy — prefer TUN/VPN for broader undercover coverage.",
-    ),
-    "geoIdentityCaptureVirtualNic": MessageLookupByLibrary.simpleMessage(
-      "TUN / VPN capture",
-    ),
-    "geoIdentityCaptureVirtualNicDesc": MessageLookupByLibrary.simpleMessage(
-      "Virtual NIC / VPN is capturing traffic. Combined with a US exit node, this is the strongest FlClash network undercover mode.",
-    ),
     "geoIdentityCheckCancelled": MessageLookupByLibrary.simpleMessage(
       "Network check was cancelled",
-    ),
-    "geoIdentityCheckCaptureAndroidBody": MessageLookupByLibrary.simpleMessage(
-      "VPN capture is on so apps exit through FlClash.",
-    ),
-    "geoIdentityCheckCaptureDesktopBody": MessageLookupByLibrary.simpleMessage(
-      "System proxy and/or TUN is capturing apps and terminals.",
-    ),
-    "geoIdentityCheckCaptureTitle": MessageLookupByLibrary.simpleMessage(
-      "Traffic capture ready",
     ),
     "geoIdentityCheckFailed": MessageLookupByLibrary.simpleMessage(
       "Network check failed",
     ),
-    "geoIdentityCheckNetworkBody": MessageLookupByLibrary.simpleMessage(
-      "Run verify (or One-click setup) after selecting a US node.",
-    ),
-    "geoIdentityCheckNetworkTitle": MessageLookupByLibrary.simpleMessage(
-      "Network looks US-protected",
-    ),
-    "geoIdentityCheckProtectBody": MessageLookupByLibrary.simpleMessage(
-      "US Accept-Language probes and undercover guidance are active.",
-    ),
-    "geoIdentityCheckProtectTitle": MessageLookupByLibrary.simpleMessage(
-      "Geo protect on",
-    ),
-    "geoIdentityCheckStartedBody": MessageLookupByLibrary.simpleMessage(
-      "Core is running so traffic can exit through your selected node.",
-    ),
-    "geoIdentityCheckStartedTitle": MessageLookupByLibrary.simpleMessage(
-      "FlClash started",
-    ),
-    "geoIdentityCheckTimezoneBody": MessageLookupByLibrary.simpleMessage(
-      "Not China-local, or already aligned to the exit timezone.",
-    ),
-    "geoIdentityCheckTimezoneTitle": MessageLookupByLibrary.simpleMessage(
-      "OS timezone ready for Claude Code",
-    ),
-    "geoIdentityChecklistTitle": MessageLookupByLibrary.simpleMessage(
-      "US identity checklist",
-    ),
-    "geoIdentityChipCapture": MessageLookupByLibrary.simpleMessage("Capture"),
-    "geoIdentityChipNetwork": MessageLookupByLibrary.simpleMessage("US exit"),
-    "geoIdentityChipProtect": MessageLookupByLibrary.simpleMessage("Protect"),
-    "geoIdentityChipStarted": MessageLookupByLibrary.simpleMessage("Started"),
-    "geoIdentityChipTimezone": MessageLookupByLibrary.simpleMessage("Timezone"),
-    "geoIdentityClaudeCodeBaseUrlBody": MessageLookupByLibrary.simpleMessage(
-      "If you use a custom API base URL, avoid hostnames with China AI-lab / reseller keywords. Prefer the official Anthropic endpoint, or a clean hostname, while traffic exits via a US node.",
-    ),
-    "geoIdentityClaudeCodeBaseUrlTitle": MessageLookupByLibrary.simpleMessage(
-      "Watch ANTHROPIC_BASE_URL",
-    ),
-    "geoIdentityClaudeCodeBody": MessageLookupByLibrary.simpleMessage(
-      "GeoMirror does not help Claude Code. The CLI reads the OS timezone, and its traffic must exit through FlClash (prefer TUN/VPN). With system proxy only, paste the proxy exports into the same terminal before running claude.",
-    ),
-    "geoIdentityClaudeCodeTimezoneTipBody": MessageLookupByLibrary.simpleMessage(
-      "Public reverse-engineering reports say Claude Code checked Asia/Shanghai and Asia/Urumqi when ANTHROPIC_BASE_URL pointed at a custom endpoint. Align the OS timezone to your US exit (for example America/Los_Angeles).",
-    ),
-    "geoIdentityClaudeCodeTimezoneTipTitle":
-        MessageLookupByLibrary.simpleMessage("OS timezone is the CLI signal"),
-    "geoIdentityClaudeCodeTitle": MessageLookupByLibrary.simpleMessage(
-      "Claude Code (terminal)",
-    ),
     "geoIdentityCopyTerminalProxy": MessageLookupByLibrary.simpleMessage(
       "Copy terminal proxy exports",
-    ),
-    "geoIdentityCopyTerminalProxyDesc": MessageLookupByLibrary.simpleMessage(
-      "HTTP(S)_PROXY / ALL_PROXY pointed at FlClash mixed-port — needed when Claude Code runs without TUN and Node ignores the system proxy.",
     ),
     "geoIdentityCopyTerminalProxyShort": MessageLookupByLibrary.simpleMessage(
       "Copy HTTP(S)_PROXY for terminals",
@@ -575,45 +448,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityDesc": MessageLookupByLibrary.simpleMessage(
       "One switch for US exit undercover",
     ),
-    "geoIdentityDesktopStep1": MessageLookupByLibrary.simpleMessage(
-      "Select a clean US node on the Proxies page.",
-    ),
-    "geoIdentityDesktopStep2": MessageLookupByLibrary.simpleMessage(
-      "Tap One-click setup (or enable System proxy + TUN and start FlClash).",
-    ),
-    "geoIdentityDesktopStep3": MessageLookupByLibrary.simpleMessage(
-      "Confirm the checklist shows network protected; align OS timezone if prompted.",
-    ),
-    "geoIdentityDesktopStep4": MessageLookupByLibrary.simpleMessage(
-      "For browsers, install GeoMirror. For Claude Code, prefer TUN so the terminal needs no proxy exports.",
-    ),
-    "geoIdentityExitCountry": MessageLookupByLibrary.simpleMessage(
-      "Exit geo from check",
-    ),
-    "geoIdentityGuideTitle": MessageLookupByLibrary.simpleMessage(
-      "Manual steps",
-    ),
     "geoIdentityHideAdvanced": MessageLookupByLibrary.simpleMessage(
       "Hide advanced",
     ),
     "geoIdentityHonestyLine": MessageLookupByLibrary.simpleMessage(
       "This covers exit IP + probe language. Browser fonts/geolocation still need GeoMirror; Claude Code still needs a matching OS timezone (and TUN or proxy exports).",
-    ),
-    "geoIdentityLimitsBody": MessageLookupByLibrary.simpleMessage(
-      "FlClash undercovers the network exit and can verify IP geo + Accept-Language via FuckClaude’s API. It does not rewrite HTTPS headers for other apps, does not spoof fonts/geolocation, does not guarantee access to any AI service, and does not replace each service’s terms of use.",
-    ),
-    "geoIdentityLimitsTitle": MessageLookupByLibrary.simpleMessage(
-      "Limits and disclaimer",
-    ),
-    "geoIdentityLiveChecklistTitle": m8,
-    "geoIdentityLocalSignalsTitle": MessageLookupByLibrary.simpleMessage(
-      "Signals on this device",
-    ),
-    "geoIdentityLocalTipBody": MessageLookupByLibrary.simpleMessage(
-      "Timezone, browser language, fonts, and HTML5 geolocation are outside the proxy. Change the OS timezone for Claude Code / CLI, and use a browser extension such as GeoMirror for web sessions.",
-    ),
-    "geoIdentityLocalTipTitle": MessageLookupByLibrary.simpleMessage(
-      "What FlClash cannot change",
     ),
     "geoIdentityNeedStart": MessageLookupByLibrary.simpleMessage(
       "Start FlClash before verifying the network environment.",
@@ -621,72 +460,26 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityNetworkBad": MessageLookupByLibrary.simpleMessage(
       "Network is not ready — select a US node and turn this on again",
     ),
-    "geoIdentityNetworkCheckTitle": MessageLookupByLibrary.simpleMessage(
-      "Network environment check",
-    ),
     "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
       "Network still looks exposed",
     ),
     "geoIdentityNetworkGood": MessageLookupByLibrary.simpleMessage(
       "Network looks good to go",
     ),
-    "geoIdentityNetworkProtected": MessageLookupByLibrary.simpleMessage(
-      "Network looks protected",
-    ),
     "geoIdentityOffStatus": MessageLookupByLibrary.simpleMessage(
       "Geo identity protect is off",
-    ),
-    "geoIdentityOneClickSetup": MessageLookupByLibrary.simpleMessage(
-      "One-click setup",
-    ),
-    "geoIdentityOneClickTip": MessageLookupByLibrary.simpleMessage(
-      "Pick a US proxy node first. Browser fingerprints still need GeoMirror; this button covers FlClash + Claude Code host steps.",
     ),
     "geoIdentityOpenGeoMirror": MessageLookupByLibrary.simpleMessage(
       "GeoMirror on GitHub",
     ),
-    "geoIdentityOpenGeoMirrorDesc": MessageLookupByLibrary.simpleMessage(
-      "Chrome extension that mirrors geo signals to the exit IP",
-    ),
-    "geoIdentityOpenGeoMirrorReleases": MessageLookupByLibrary.simpleMessage(
-      "GeoMirror releases",
-    ),
-    "geoIdentityOpenGeoMirrorReleasesDesc":
-        MessageLookupByLibrary.simpleMessage(
-          "Download packaged extension builds",
-        ),
     "geoIdentityOpenGeoMirrorShort": MessageLookupByLibrary.simpleMessage(
       "Browser fingerprint alignment",
-    ),
-    "geoIdentityOpenSelfCheck": MessageLookupByLibrary.simpleMessage(
-      "Open fingerprint self-check",
-    ),
-    "geoIdentityOpenSelfCheckDesc": MessageLookupByLibrary.simpleMessage(
-      "FuckClaude — weighted browser / timezone risk scan",
-    ),
-    "geoIdentityOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "US AI services often compare your exit IP with local signals such as timezone, language, fonts, and geolocation. A Los Angeles IP with Asia/Shanghai timezone or zh-CN language is a high-risk mismatch. FlClash can undercover the network exit in system-proxy and TUN/VPN modes and verify it via FuckClaude’s API; OS timezone and browser profile must still match that exit separately.",
-    ),
-    "geoIdentityOverviewTitle": MessageLookupByLibrary.simpleMessage(
-      "Why this matters",
     ),
     "geoIdentityPendingCheck": MessageLookupByLibrary.simpleMessage(
       "Protect is on — start FlClash, then tap Recheck",
     ),
-    "geoIdentityProbeLanguage": MessageLookupByLibrary.simpleMessage(
-      "Accept-Language seen by check",
-    ),
-    "geoIdentityProbeLanguageUnknown": MessageLookupByLibrary.simpleMessage(
-      "unknown",
-    ),
     "geoIdentityProtectEnable": MessageLookupByLibrary.simpleMessage(
       "Enable geo identity protect",
-    ),
-    "geoIdentityProtectEnableDesc": MessageLookupByLibrary.simpleMessage(
-      "Treat US exit consistency as active: prefer a US Accept-Language on network probes and show capture-mode guidance for system proxy and TUN/VPN.",
-    ),
-    "geoIdentityProtectTitle": MessageLookupByLibrary.simpleMessage(
-      "Network undercover",
     ),
     "geoIdentityProtectToggleDesc": MessageLookupByLibrary.simpleMessage(
       "Run the full setup checklist, then validate the network",
@@ -694,47 +487,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityPurposeBody": MessageLookupByLibrary.simpleMessage(
       "US AI services compare your exit IP with local signals. Turn this on and FlClash will capture traffic (system proxy / TUN or VPN), align the desktop OS timezone when possible, then verify the exit with FuckClaude. Browsers may still need GeoMirror for page fingerprints.",
     ),
-    "geoIdentityQuickActionsTitle": MessageLookupByLibrary.simpleMessage(
-      "Quick actions",
-    ),
     "geoIdentityRecheck": MessageLookupByLibrary.simpleMessage("Recheck"),
     "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
       "Restore previous OS timezone",
     ),
-    "geoIdentityRestoreOsTimezoneDesc": m9,
-    "geoIdentityRiskHigh": MessageLookupByLibrary.simpleMessage(
-      "High mismatch risk",
-    ),
-    "geoIdentityRiskHighDesc": MessageLookupByLibrary.simpleMessage(
-      "Both timezone and system locale look China-local. A US exit IP alone is not enough — change OS timezone and align the browser profile.",
-    ),
-    "geoIdentityRiskLow": MessageLookupByLibrary.simpleMessage(
-      "Local signals look consistent",
-    ),
-    "geoIdentityRiskLowDesc": MessageLookupByLibrary.simpleMessage(
-      "This device’s timezone offset and system locale do not look China-local. Still verify the network check and the browser profile.",
-    ),
-    "geoIdentityRiskMedium": MessageLookupByLibrary.simpleMessage(
-      "Possible geo mismatch",
-    ),
-    "geoIdentityRiskMediumDesc": MessageLookupByLibrary.simpleMessage(
-      "Timezone or system locale looks China-local (or UTC+8). If your exit IP is in the US, align OS timezone and browser language before relying on US AI services.",
-    ),
-    "geoIdentityScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
-      "One click turns on geo protect and VPN capture, starts FlClash, and verifies the exit. Set a US timezone in system Date & time settings for Claude Code / terminal use.",
-    ),
-    "geoIdentityScenarioAndroidTitle": MessageLookupByLibrary.simpleMessage(
-      "Android newbie setup",
-    ),
-    "geoIdentityScenarioDesktopBody": MessageLookupByLibrary.simpleMessage(
-      "One click turns on geo protect, system proxy, and TUN, starts FlClash, verifies the exit, and tries to align the OS timezone for Claude Code.",
-    ),
-    "geoIdentityScenarioDesktopTitle": MessageLookupByLibrary.simpleMessage(
-      "Desktop newbie setup",
-    ),
-    "geoIdentitySetupDoneNeedTimezone": MessageLookupByLibrary.simpleMessage(
-      "Network looks protected. Align or restore OS timezone if Claude Code still sees a China zone.",
-    ),
+    "geoIdentityRestoreOsTimezoneDesc": m7,
     "geoIdentitySetupDoneNeedUsNode": MessageLookupByLibrary.simpleMessage(
       "Setup applied, but the exit is not US-protected yet. Select a US node and tap One-click setup again.",
     ),
@@ -756,85 +513,31 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoIdentityShowAdvanced": MessageLookupByLibrary.simpleMessage(
       "Show advanced",
     ),
-    "geoIdentityStatusReadyBody": MessageLookupByLibrary.simpleMessage(
-      "Network undercover looks good. Keep a US node selected.",
-    ),
-    "geoIdentityStatusReadyTitle": MessageLookupByLibrary.simpleMessage(
-      "Ready",
-    ),
-    "geoIdentityStatusSetupBody": MessageLookupByLibrary.simpleMessage(
-      "Pick a US node, then tap One-click setup.",
-    ),
-    "geoIdentityStatusSetupTitle": MessageLookupByLibrary.simpleMessage(
-      "Needs setup",
-    ),
-    "geoIdentityStep1Body": MessageLookupByLibrary.simpleMessage(
-      "In Proxies, select a clean US node (for example Los Angeles or New York). Avoid proxy hostnames that contain AI-lab or relay keywords when pointing Claude Code at a custom base URL.",
-    ),
-    "geoIdentityStep1Title": MessageLookupByLibrary.simpleMessage(
-      "1. Use a US exit node",
-    ),
-    "geoIdentityStep2Body": MessageLookupByLibrary.simpleMessage(
-      "Start FlClash, then enable System proxy and/or TUN on desktop, or VPN on Android, so apps actually exit through the US node. Tap Verify network environment.",
-    ),
-    "geoIdentityStep2Title": MessageLookupByLibrary.simpleMessage(
-      "2. Capture traffic (system proxy or TUN)",
-    ),
-    "geoIdentityStep3Body": MessageLookupByLibrary.simpleMessage(
-      "Set the OS timezone to the same US region as the exit. Install GeoMirror so geolocation, timezone, language, Accept-Language, and regional font probes follow the exit IP.",
-    ),
-    "geoIdentityStep3Title": MessageLookupByLibrary.simpleMessage(
-      "3. Match the OS timezone + browser profile",
-    ),
-    "geoIdentityStep4Body": MessageLookupByLibrary.simpleMessage(
-      "Open the FuckClaude browser scanner while traffic goes through FlClash. Aim for Low risk, then re-check after OS or browser changes. Rules change; treat this as ongoing hygiene.",
-    ),
-    "geoIdentityStep4Title": MessageLookupByLibrary.simpleMessage(
-      "4. Self-check, then revisit",
-    ),
-    "geoIdentitySystemLocale": MessageLookupByLibrary.simpleMessage(
-      "System locale",
-    ),
     "geoIdentityTimezone": MessageLookupByLibrary.simpleMessage(
       "System timezone",
     ),
-    "geoIdentityTimezoneAlignFailed": m10,
+    "geoIdentityTimezoneAlignFailed": m8,
     "geoIdentityTimezoneAndroidTip": MessageLookupByLibrary.simpleMessage(
       "Android cannot change the system timezone without root. Open Settings → System → Date & time and pick a US zone that matches your exit.",
     ),
-    "geoIdentityTimezoneApplied": m11,
-    "geoIdentityTimezoneManual": m12,
     "geoIdentityTimezoneMissing": MessageLookupByLibrary.simpleMessage(
       "No exit timezone yet. Verify the network environment first.",
     ),
     "geoIdentityTimezoneNothingToRestore": MessageLookupByLibrary.simpleMessage(
       "No previous OS timezone saved.",
     ),
-    "geoIdentityTimezoneRestored": m13,
-    "geoIdentityTimezoneUnsupported": m14,
+    "geoIdentityTimezoneRestored": m9,
     "geoIdentityTurningOff": MessageLookupByLibrary.simpleMessage(
       "Turning off…",
     ),
     "geoIdentityUsAcceptLanguage": MessageLookupByLibrary.simpleMessage(
       "Probe with US Accept-Language",
     ),
-    "geoIdentityUsAcceptLanguageDesc": MessageLookupByLibrary.simpleMessage(
-      "Send Accept-Language: en-US,en;q=0.9 on FuckClaude network checks so the estimate is not skewed by zh headers.",
-    ),
-    "geoIdentityVerifyNetwork": MessageLookupByLibrary.simpleMessage(
-      "Verify network environment",
-    ),
-    "geoIdentityVerifyNetworkDesc": MessageLookupByLibrary.simpleMessage(
-      "Call FuckClaude /api/check through FlClash’s mixed-port stack (works with system proxy and TUN/VPN).",
-    ),
-    "geoIdentityVerifyNetworkShort": MessageLookupByLibrary.simpleMessage(
-      "Check exit IP via FuckClaude",
-    ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geo Options"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo Resources"),
-    "geoSkipped": m15,
-    "geoUpdated": m16,
-    "geoUpdating": m17,
+    "geoSkipped": m10,
+    "geoUpdated": m11,
+    "geoUpdating": m12,
     "geodataLoader": MessageLookupByLibrary.simpleMessage(
       "Geo Low Memory Mode",
     ),
@@ -862,8 +565,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Use keyboard to control applications",
     ),
     "hours": MessageLookupByLibrary.simpleMessage("hours"),
-    "hoursAgo": m18,
-    "hoursCount": m19,
+    "hoursAgo": m13,
+    "hoursCount": m14,
     "icon": MessageLookupByLibrary.simpleMessage("Icon"),
     "iconRecords": MessageLookupByLibrary.simpleMessage("Icon records"),
     "iconStyle": MessageLookupByLibrary.simpleMessage("Icon style"),
@@ -907,10 +610,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "invalidBackupFile": MessageLookupByLibrary.simpleMessage(
       "Invalid backup file",
     ),
-    "invalidPolicy": m20,
-    "invalidProxy": m21,
-    "invalidProxyProvider": m22,
-    "invalidSubRule": m23,
+    "invalidPolicy": m15,
+    "invalidProxy": m16,
+    "invalidProxyProvider": m17,
+    "invalidSubRule": m18,
     "ipcidr": MessageLookupByLibrary.simpleMessage("Ipcidr"),
     "ipv6Desc": MessageLookupByLibrary.simpleMessage(
       "When turned on it will be able to receive IPv6 traffic",
@@ -944,7 +647,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "locationPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "According to system requirements, obtaining the Wi-Fi name requires you to grant location permission.",
     ),
-    "locationPermissionGuide": m24,
+    "locationPermissionGuide": m19,
     "locationPermissionRequired": MessageLookupByLibrary.simpleMessage(
       "Location Permission Required",
     ),
@@ -974,11 +677,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "minimizeOnExitDesc": MessageLookupByLibrary.simpleMessage(
       "Modify the default system exit event",
     ),
-    "minutesAgo": m25,
+    "minutesAgo": m20,
     "mixedPort": MessageLookupByLibrary.simpleMessage("Mixed Port"),
     "mode": MessageLookupByLibrary.simpleMessage("Mode"),
     "monochromeScheme": MessageLookupByLibrary.simpleMessage("Monochrome"),
-    "monthsAgo": m26,
+    "monthsAgo": m21,
     "more": MessageLookupByLibrary.simpleMessage("More"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "nameserver": MessageLookupByLibrary.simpleMessage("Nameserver"),
@@ -1024,8 +727,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "nullProfileDesc": MessageLookupByLibrary.simpleMessage(
       "No profile, Please add a profile",
     ),
-    "nullTip": m27,
-    "numberTip": m28,
+    "nullTip": m22,
+    "numberTip": m23,
     "onDemand": MessageLookupByLibrary.simpleMessage("On Demand"),
     "onDemandDesc": MessageLookupByLibrary.simpleMessage(
       "Configure the program running state for specific scenarios",
@@ -1074,7 +777,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "portConflictTip": MessageLookupByLibrary.simpleMessage(
       "Please enter a different port",
     ),
-    "portTip": m29,
+    "portTip": m24,
     "preferH3Desc": MessageLookupByLibrary.simpleMessage(
       "Prioritize the use of DOH\'s http/3",
     ),
@@ -1331,7 +1034,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "seconds": MessageLookupByLibrary.simpleMessage("Seconds"),
-    "secondsCount": m30,
+    "secondsCount": m25,
     "selectAll": MessageLookupByLibrary.simpleMessage("Select all"),
     "selectProxies": MessageLookupByLibrary.simpleMessage("Select proxies"),
     "selectProxyProviders": MessageLookupByLibrary.simpleMessage(
@@ -1347,7 +1050,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please select sub rule",
     ),
     "selected": MessageLookupByLibrary.simpleMessage("Selected"),
-    "selectedCountTitle": m31,
+    "selectedCountTitle": m26,
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "show": MessageLookupByLibrary.simpleMessage("Show"),
     "shrink": MessageLookupByLibrary.simpleMessage("Shrink"),
@@ -1427,9 +1130,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleBypassAndroidHint": MessageLookupByLibrary.simpleMessage(
       "Usually leave this off on Android. Turn on only if the Tailscale app is also installed on this phone.",
     ),
-    "tailscaleBypassDesc": MessageLookupByLibrary.simpleMessage(
-      "Stops FlClash from hijacking Tailscale: injects DIRECT rules for the tailnet ranges, the Tailscale process and control/DERP domains, and automatically adds/removes those domains from Fake IP Filter (so they resolve to real public IPs, not 198.18.x.x). Turn this on when this device also runs the Tailscale app/service — works with any imported profile.",
-    ),
     "tailscaleBypassNudge": MessageLookupByLibrary.simpleMessage(
       "This device likely runs Tailscale already — turn on “Keep Tailscale traffic direct” to avoid fake-IP / control-plane breakage.",
     ),
@@ -1470,24 +1170,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
       "Optional. IP or name of a tailnet exit node to route all traffic through.",
     ),
-    "tailscaleGuideBypassNote": MessageLookupByLibrary.simpleMessage(
-      "If this device also runs the Tailscale app/service, turn on \"Keep Tailscale traffic direct\". That stops FlClash fake-IP DNS from answering controlplane.tailscale.com as 198.18.x.x and breaking `tailscale up`.",
-    ),
-    "tailscaleGuideRoutesNote": MessageLookupByLibrary.simpleMessage(
-      "To reach a specific device (e.g. your home PC), add its Tailscale IP or MagicDNS name to a node\'s \"Route destinations\" — FlClash sends just that traffic through the tailnet, so you don\'t need the Tailscale app on this device.",
-    ),
-    "tailscaleGuideStep1": MessageLookupByLibrary.simpleMessage(
-      "Get an auth key from the Tailscale admin console (Settings → Keys).",
-    ),
-    "tailscaleGuideStep2": MessageLookupByLibrary.simpleMessage(
-      "Tap the + button (top right) to add a node and paste the auth key.",
-    ),
-    "tailscaleGuideStep3": MessageLookupByLibrary.simpleMessage(
-      "Turn on \"Enable Tailscale\" above to inject the node as an outbound proxy.",
-    ),
-    "tailscaleGuideStep4": MessageLookupByLibrary.simpleMessage(
-      "On the Proxies page, or from a rule, pick the node to route traffic through your tailnet.",
-    ),
     "tailscaleGuideTitle": MessageLookupByLibrary.simpleMessage(
       "How Tailscale works",
     ),
@@ -1506,7 +1188,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleRoutes": MessageLookupByLibrary.simpleMessage(
       "Route destinations",
     ),
-    "tailscaleRoutesCount": m32,
+    "tailscaleRoutesCount": m27,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "Domains or IPs sent through this node, one per line (e.g. your home PC\'s Tailscale IP or MagicDNS name).",
     ),
@@ -1540,7 +1222,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleStatusNoNodes": MessageLookupByLibrary.simpleMessage(
       "Enabled, but no nodes yet. Add a node to get started.",
     ),
-    "tailscaleStatusReady": m33,
+    "tailscaleStatusReady": m28,
     "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
       "Turn on Enable Tailscale before testing.",
     ),
@@ -1552,9 +1234,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
       "Use the ping button next to a node to check whether the Tailscale outbound can dial out. A latency value means the connection is working; Timeout means check the auth key, Enable switch, and that FlClash VPN is started.",
-    ),
-    "tailscaleTip": MessageLookupByLibrary.simpleMessage(
-      "Tailscale nodes are merged into the running configuration as outbound proxies. Select a node in the proxies page or target it from a rule to route traffic through your tailnet.",
     ),
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP relay"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("Tap to authorize"),
@@ -1603,7 +1282,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "urlDesc": MessageLookupByLibrary.simpleMessage(
       "Obtain profile through URL",
     ),
-    "urlTip": m34,
+    "urlTip": m29,
     "useHosts": MessageLookupByLibrary.simpleMessage("Use hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("Use system hosts"),
     "userAgent": MessageLookupByLibrary.simpleMessage("User-Agent"),
@@ -1623,7 +1302,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "WebDAV configuration",
     ),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("Whitelist mode"),
-    "yearsAgo": m35,
+    "yearsAgo": m30,
     "zh_CN": MessageLookupByLibrary.simpleMessage("Simplified Chinese"),
   };
 }
