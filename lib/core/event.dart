@@ -21,6 +21,8 @@ abstract mixin class CoreEventListener {
     bool skipped,
     String? error,
   ) {}
+
+  void onTraffic(Map<String, dynamic> snapshot) {}
 }
 
 class CoreEventManager {
@@ -53,6 +55,12 @@ class CoreEventManager {
               data['skipped'] as bool? ?? false,
               data['error'] as String?,
             );
+            break;
+          case CoreEventType.traffic:
+            final raw = event.data;
+            if (raw is Map) {
+              listener.onTraffic(Map<String, dynamic>.from(raw));
+            }
             break;
         }
       }

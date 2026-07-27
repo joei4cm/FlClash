@@ -131,6 +131,7 @@ const (
 	RequestMessage   MessageType = "request"
 	LoadedMessage    MessageType = "loaded"
 	GeoUpdateMessage MessageType = "geoUpdate"
+	TrafficMessage   MessageType = "traffic"
 )
 
 type GeoUpdateStatus struct {

@@ -61,16 +61,41 @@ class CommonAction extends _$CommonAction {
     final snapshot = await coreController.getTrafficSnapshot(
       onlyStatisticsProxy,
     );
+    applyTrafficSnapshot(now: snapshot.now, total: snapshot.total);
+  }
+
+  void applyTrafficSnapshot({required Traffic now, required Traffic total}) {
     final lastTraffic = ref
         .read(trafficsProvider)
         .list
         .safeLast(const Traffic());
-    if (lastTraffic != snapshot.now) {
-      ref.read(trafficsProvider.notifier).addTraffic(snapshot.now);
+    if (lastTraffic != now) {
+      ref.read(trafficsProvider.notifier).addTraffic(now);
     }
-    if (ref.read(totalTrafficProvider) != snapshot.total) {
-      ref.read(totalTrafficProvider.notifier).value = snapshot.total;
+    if (ref.read(totalTrafficProvider) != total) {
+      ref.read(totalTrafficProvider.notifier).value = total;
     }
+  }
+
+  void applyTrafficPush(Map<String, dynamic> snapshot) {
+    final onlyStatisticsProxy = ref.read(
+      appSettingProvider.select((state) => state.onlyStatisticsProxy),
+    );
+    num read(String key) => snapshot[key] as num? ?? 0;
+    if (onlyStatisticsProxy) {
+      applyTrafficSnapshot(
+        now: Traffic(up: read('proxyUp'), down: read('proxyDown')),
+        total: Traffic(
+          up: read('proxyTotalUp'),
+          down: read('proxyTotalDown'),
+        ),
+      );
+      return;
+    }
+    applyTrafficSnapshot(
+      now: Traffic(up: read('up'), down: read('down')),
+      total: Traffic(up: read('totalUp'), down: read('totalDown')),
+    );
   }
 
   Future<void> autoCheckUpdate() async {
@@ -149,13 +174,14 @@ class SetupAction extends _$SetupAction {
     startTime ??= DateTime.now();
     //The local status must be updated when performing the run task
     ref.read(commonActionProvider.notifier).updateRunTime();
+    // Traffic counters are pushed from core while the listener is running
+    // (PERF-11). Keep a one-shot pull for immediate UI before the first event.
     ref.read(commonActionProvider.notifier).updateTraffic();
     if (!ref.read(suspendProvider)) {
       await coreController.startListener();
     }
     _updateTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       ref.read(commonActionProvider.notifier).updateRunTime();
-      ref.read(commonActionProvider.notifier).updateTraffic();
     });
   }
 

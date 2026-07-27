@@ -167,6 +167,24 @@ void main() {
       expect(event.type, CoreEventType.log);
       expect(event.data, 'test log');
     });
+
+    test('fromJson parses traffic push payload', () {
+      final event = CoreEvent.fromJson({
+        'type': 'traffic',
+        'data': {
+          'up': 1,
+          'down': 2,
+          'totalUp': 3,
+          'totalDown': 4,
+          'proxyUp': 5,
+          'proxyDown': 6,
+          'proxyTotalUp': 7,
+          'proxyTotalDown': 8,
+        },
+      });
+      expect(event.type, CoreEventType.traffic);
+      expect((event.data as Map)['proxyUp'], 5);
+    });
   });
 
   group('InvokeMessage', () {

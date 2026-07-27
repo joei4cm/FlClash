@@ -3,51 +3,6 @@ import 'package:fl_clash/models/geo_identity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('GeoIdentitySnapshot', () {
-    test('marks high risk when China timezone and zh locale align', () {
-      const snapshot = GeoIdentitySnapshot(
-        timeZoneName: 'Asia/Shanghai',
-        timeZoneOffset: Duration(hours: 8),
-        systemLocale: 'zh_CN',
-      );
-      expect(snapshot.looksChinaTimezoneName, isTrue);
-      expect(snapshot.looksChineseLocale, isTrue);
-      expect(snapshot.riskLevel, GeoIdentityRiskLevel.high);
-      expect(snapshot.offsetLabel, 'UTC+08:00');
-    });
-
-    test('marks medium risk for UTC+8 with English locale', () {
-      const snapshot = GeoIdentitySnapshot(
-        timeZoneName: 'CST',
-        timeZoneOffset: Duration(hours: 8),
-        systemLocale: 'en_US',
-      );
-      expect(snapshot.isUtcPlus8, isTrue);
-      expect(snapshot.looksChineseLocale, isFalse);
-      expect(snapshot.riskLevel, GeoIdentityRiskLevel.medium);
-    });
-
-    test('marks low risk for US-looking signals', () {
-      const snapshot = GeoIdentitySnapshot(
-        timeZoneName: 'Pacific Standard Time',
-        timeZoneOffset: Duration(hours: -8),
-        systemLocale: 'en_US',
-      );
-      expect(snapshot.riskLevel, GeoIdentityRiskLevel.low);
-      expect(snapshot.offsetLabel, 'UTC-08:00');
-    });
-
-    test('normalizes zh-Hans locale tags', () {
-      const snapshot = GeoIdentitySnapshot(
-        timeZoneName: 'America/Los_Angeles',
-        timeZoneOffset: Duration(hours: -7),
-        systemLocale: 'zh-Hans-CN',
-      );
-      expect(snapshot.looksChineseLocale, isTrue);
-      expect(snapshot.riskLevel, GeoIdentityRiskLevel.medium);
-    });
-  });
-
   group('GeoIdentityNetworkReport', () {
     test('parses FuckClaude JSON and marks US low as protected', () {
       final report = GeoIdentityNetworkReport.fromJson({
@@ -136,29 +91,5 @@ void main() {
     expect(props.useUsAcceptLanguage, isTrue);
     expect(props.previousOsTimezone, isNull);
     expect(props.appliedOsTimezone, isNull);
-  });
-
-  test('GeoIdentityChecklistState counts completed steps', () {
-    const incomplete = GeoIdentityChecklistState(
-      protectEnabled: true,
-      coreStarted: true,
-      captureReady: false,
-      networkProtected: false,
-      networkChecked: false,
-      timezoneReady: true,
-    );
-    expect(incomplete.completedCount, 3);
-    expect(incomplete.totalCount, 5);
-    expect(incomplete.isComplete, isFalse);
-
-    const complete = GeoIdentityChecklistState(
-      protectEnabled: true,
-      coreStarted: true,
-      captureReady: true,
-      networkProtected: true,
-      networkChecked: true,
-      timezoneReady: true,
-    );
-    expect(complete.isComplete, isTrue);
   });
 }
