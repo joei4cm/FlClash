@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,6 +20,8 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
   String? _statusMessage;
   GeoIdentityNetworkReport? _report;
   CancelToken? _cancelToken;
+  String? _timezoneNote;
+  bool _copiedProxyExports = false;
 
   @override
   void initState() {
@@ -27,6 +30,10 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       final enabled = ref.read(geoIdentitySettingProvider).enable;
       if (enabled && ref.read(isStartProvider)) {
         _validateNetwork(quiet: true);
+      } else if (enabled && mounted) {
+        setState(() {
+          _statusMessage = context.appLocalizations.geoIdentityNeedStart;
+        });
       }
     });
   }
@@ -37,7 +44,26 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     super.dispose();
   }
 
-  Future<void> _copyTerminalProxyExports() async {
+  String _localizeCheckError(String raw) {
+    final l10n = context.appLocalizations;
+    if (raw == 'cancelled' || raw.toLowerCase().contains('cancel')) {
+      return l10n.geoIdentityCheckCancelled;
+    }
+    return l10n.geoIdentityCheckFailed;
+  }
+
+  String _messageForReport(GeoIdentityNetworkReport report) {
+    final l10n = context.appLocalizations;
+    if (report.isProtected) {
+      return l10n.geoIdentityNetworkGood;
+    }
+    if (!report.looksUsExit) {
+      return l10n.geoIdentityNetworkBad;
+    }
+    return l10n.geoIdentityNetworkExposed;
+  }
+
+  Future<void> _copyTerminalProxyExports({bool notify = true}) async {
     final mixedPort = ref.read(
       patchClashConfigProvider.select((state) => state.mixedPort),
     );
@@ -47,6 +73,38 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
           )
         : GeoIdentityHost.buildTerminalProxyExports(mixedPort: mixedPort);
     await Clipboard.setData(ClipboardData(text: text));
+    if (!mounted) {
+      return;
+    }
+    setState(() => _copiedProxyExports = true);
+    if (notify) {
+      context.showNotifier(context.appLocalizations.copySuccess);
+    }
+  }
+
+  Future<void> _awaitCaptureReady() async {
+    final deadline = DateTime.now().add(const Duration(seconds: 6));
+    while (DateTime.now().isBefore(deadline)) {
+      if (!mounted) {
+        return;
+      }
+      if (!ref.read(isStartProvider)) {
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+        continue;
+      }
+      if (system.isDesktop) {
+        final systemProxy = ref.read(networkSettingProvider).systemProxy;
+        final tunReady = ref.read(realTunEnableProvider);
+        if (systemProxy || tunReady) {
+          await Future<void>.delayed(const Duration(milliseconds: 400));
+          return;
+        }
+      } else {
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        return;
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+    }
   }
 
   Future<GeoIdentityNetworkReport?> _validateNetwork({
@@ -54,10 +112,13 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
   }) async {
     final l10n = context.appLocalizations;
     if (!ref.read(isStartProvider)) {
-      if (!quiet && mounted) {
+      if (mounted) {
         setState(() {
           _report = null;
           _statusMessage = l10n.geoIdentityNeedStart;
+          if (!quiet) {
+            _busy = false;
+          }
         });
       }
       return null;
@@ -84,8 +145,8 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       setState(() {
         _busy = false;
         _report = null;
-        _statusMessage = result.message.isNotEmpty
-            ? result.message
+        _statusMessage = result.isError
+            ? _localizeCheckError(result.message)
             : l10n.geoIdentityCheckFailed;
       });
       return null;
@@ -94,27 +155,28 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     setState(() {
       _busy = false;
       _report = report;
-      _statusMessage = report.isProtected
-          ? l10n.geoIdentityNetworkGood
-          : l10n.geoIdentityNetworkBad;
+      _statusMessage = _messageForReport(report);
     });
     return report;
   }
 
-  Future<void> _alignOsTimezoneIfNeeded() async {
+  Future<String?> _alignOsTimezoneIfNeeded() async {
     if (system.isAndroid) {
-      return;
+      return null;
     }
     final target = _report?.timezone;
     if (target == null || target.isEmpty) {
-      return;
+      return context.appLocalizations.geoIdentityTimezoneMissing;
     }
     final previous =
         await GeoIdentityHost.readOsTimezoneId() ??
         ref.read(geoIdentitySettingProvider).previousOsTimezone;
     final error = await GeoIdentityHost.setOsTimezone(target);
-    if (error != null || !mounted) {
-      return;
+    if (!mounted) {
+      return error;
+    }
+    if (error != null) {
+      return error;
     }
     ref
         .read(geoIdentitySettingProvider.notifier)
@@ -122,20 +184,43 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
           previousOsTimezone: previous,
           appliedOsTimezone: target,
         );
+    return null;
   }
 
-  Future<void> _restoreOsTimezoneIfNeeded() async {
+  Future<void> _restoreOsTimezoneIfNeeded({bool notify = false}) async {
     if (system.isAndroid) {
       return;
     }
     final previous = ref.read(geoIdentitySettingProvider).previousOsTimezone;
     if (previous == null || previous.isEmpty) {
+      if (notify && mounted) {
+        context.showNotifier(
+          context.appLocalizations.geoIdentityTimezoneNothingToRestore,
+        );
+      }
       return;
     }
     final error = await GeoIdentityHost.setOsTimezone(previous);
     if (error == null && mounted) {
       ref.read(geoIdentitySettingProvider.notifier).clearTimezoneHistory();
+      setState(() => _timezoneNote = null);
+      if (notify) {
+        context.showNotifier(
+          context.appLocalizations.geoIdentityTimezoneRestored(previous),
+        );
+      }
+    } else if (notify && mounted && error != null) {
+      context.showNotifier(
+        context.appLocalizations.geoIdentityTimezoneAlignFailed(error),
+      );
     }
+  }
+
+  bool get _hasVirtualNicCapture {
+    if (system.isAndroid) {
+      return ref.read(vpnSettingProvider).enable;
+    }
+    return ref.read(realTunEnableProvider);
   }
 
   /// Full checklist when turning protect ON.
@@ -145,6 +230,8 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       _busy = true;
       _statusMessage = l10n.geoIdentitySetupRunning;
       _report = null;
+      _timezoneNote = null;
+      _copiedProxyExports = false;
     });
 
     try {
@@ -175,13 +262,15 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       if (!ref.read(isStartProvider)) {
         setState(() => _statusMessage = l10n.geoIdentitySetupStarting);
         await ref.read(setupActionProvider.notifier).updateStatus(true);
-        await Future<void>.delayed(const Duration(milliseconds: 800));
       } else {
-        ref
+        await ref
             .read(setupActionProvider.notifier)
-            .applyProfileDebounce(silence: true);
-        await Future<void>.delayed(const Duration(milliseconds: 500));
+            .applyProfile(silence: true);
       }
+      if (!mounted) {
+        return;
+      }
+      await _awaitCaptureReady();
       if (!mounted) {
         return;
       }
@@ -193,14 +282,14 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
 
       if (system.isDesktop) {
         setState(() => _statusMessage = l10n.geoIdentitySetupTimezone);
-        await _alignOsTimezoneIfNeeded();
+        final timezoneError = await _alignOsTimezoneIfNeeded();
+        if (timezoneError != null && mounted) {
+          setState(() => _timezoneNote = timezoneError);
+        }
       }
 
-      final virtualNic = system.isAndroid
-          ? ref.read(vpnSettingProvider).enable
-          : ref.read(patchClashConfigProvider).tun.enable;
-      if (!virtualNic) {
-        await _copyTerminalProxyExports();
+      if (!_hasVirtualNicCapture) {
+        await _copyTerminalProxyExports(notify: false);
       }
 
       if (!mounted) {
@@ -209,29 +298,40 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       final protected = report?.isProtected == true;
       setState(() {
         _busy = false;
-        _statusMessage = protected
-            ? l10n.geoIdentityNetworkGood
-            : l10n.geoIdentityNetworkBad;
+        _statusMessage = report == null
+            ? (_statusMessage ?? l10n.geoIdentityCheckFailed)
+            : _messageForReport(report);
       });
-      if (!protected) {
+      if (protected) {
+        context.showNotifier(l10n.geoIdentitySetupDoneProtected);
+      } else if (report == null) {
+        context.showNotifier(l10n.geoIdentityCheckFailed);
+      } else if (!report.looksUsExit) {
         context.showNotifier(l10n.geoIdentitySetupDoneNeedUsNode);
+      } else {
+        context.showNotifier(l10n.geoIdentityNetworkExposed);
+      }
+      if (_timezoneNote != null) {
+        context.showNotifier(
+          l10n.geoIdentityTimezoneAlignFailed(_timezoneNote!),
+        );
+      } else if (_copiedProxyExports) {
+        context.showNotifier(l10n.copySuccess);
       }
     } catch (e) {
       if (!mounted) {
         return;
       }
-      // Roll back the toggle if setup failed hard.
       ref.read(geoIdentitySettingProvider.notifier).setEnable(false);
       setState(() {
         _busy = false;
         _report = null;
-        _statusMessage = e.toString();
+        _statusMessage = _localizeCheckError(e.toString());
       });
-      context.showNotifier(e.toString());
+      context.showNotifier(_localizeCheckError(e.toString()));
     }
   }
 
-  /// Turn protect OFF without tearing down the user's VPN/proxy prefs.
   Future<void> _disableProtect() async {
     final l10n = context.appLocalizations;
     setState(() {
@@ -246,6 +346,8 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     setState(() {
       _busy = false;
       _report = null;
+      _timezoneNote = null;
+      _copiedProxyExports = false;
       _statusMessage = l10n.geoIdentityOffStatus;
     });
   }
@@ -264,6 +366,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
   Widget _buildStatusBanner(BuildContext context) {
     final l10n = context.appLocalizations;
     final enabled = ref.watch(geoIdentitySettingProvider).enable;
+    final isStart = ref.watch(isStartProvider);
     final protected = _report?.isProtected == true;
     final Color accent;
     final IconData icon;
@@ -276,6 +379,14 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       accent = context.colorScheme.onSurfaceVariant;
       icon = Icons.shield_outlined;
       title = _statusMessage ?? l10n.geoIdentityOffStatus;
+    } else if (!isStart) {
+      accent = context.colorScheme.tertiary;
+      icon = Icons.play_circle_outline;
+      title = _statusMessage ?? l10n.geoIdentityNeedStart;
+    } else if (_report == null) {
+      accent = context.colorScheme.tertiary;
+      icon = Icons.info_outline;
+      title = _statusMessage ?? l10n.geoIdentityPendingCheck;
     } else if (protected) {
       accent = context.colorScheme.primary;
       icon = Icons.verified_user_outlined;
@@ -283,7 +394,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     } else {
       accent = context.colorScheme.error;
       icon = Icons.warning_amber_outlined;
-      title = _statusMessage ?? l10n.geoIdentityNetworkBad;
+      title = _statusMessage ?? _messageForReport(_report!);
     }
 
     final detail = _report == null
@@ -345,8 +456,54 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
                 ),
               ),
             ],
+            if (_timezoneNote != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                l10n.geoIdentityTimezoneAlignFailed(_timezoneNote!),
+                style: context.textTheme.bodySmall?.copyWith(
+                  color: context.colorScheme.error,
+                ),
+              ),
+            ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildRecoveryActions(BuildContext context) {
+    final l10n = context.appLocalizations;
+    final previous = ref.watch(
+      geoIdentitySettingProvider.select((state) => state.previousOsTimezone),
+    );
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+      child: Column(
+        children: [
+          ListItem(
+            leading: const Icon(Icons.content_copy_outlined),
+            title: Text(l10n.geoIdentityCopyTerminalProxy),
+            subtitle: Text(l10n.geoIdentityCopyTerminalProxyShort),
+            onTap: _busy ? null : () => _copyTerminalProxyExports(),
+          ),
+          ListItem(
+            leading: const Icon(Icons.extension_outlined),
+            title: Text(l10n.geoIdentityOpenGeoMirror),
+            subtitle: Text(l10n.geoIdentityOpenGeoMirrorShort),
+            onTap: () {
+              globalState.openUrl(GeoIdentityLinks.geoMirror);
+            },
+          ),
+          if (!system.isAndroid && previous != null && previous.isNotEmpty)
+            ListItem(
+              leading: const Icon(Icons.restore_outlined),
+              title: Text(l10n.geoIdentityRestoreOsTimezone),
+              subtitle: Text(l10n.geoIdentityRestoreOsTimezoneDesc(previous)),
+              onTap: _busy
+                  ? null
+                  : () => _restoreOsTimezoneIfNeeded(notify: true),
+            ),
+        ],
       ),
     );
   }
@@ -379,6 +536,15 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
             ),
           ),
           _buildStatusBanner(context),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Text(
+              l10n.geoIdentityHonestyLine,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: context.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
           if (system.isAndroid && enabled)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
@@ -389,6 +555,10 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
                 ),
               ),
             ),
+          if (enabled) ...[
+            const SizedBox(height: 8),
+            _buildRecoveryActions(context),
+          ],
           const SizedBox(height: 20),
         ],
       ),

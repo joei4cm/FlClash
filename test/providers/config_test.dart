@@ -269,6 +269,19 @@ void main() {
       expect(value.proxies.first.authKey, 'new-key');
     });
 
+    test('addOrUpdate renames without duplicating', () {
+      final notifier = container.read(tailscaleSettingProvider.notifier);
+      notifier.addOrUpdate(const TailscaleProxy(name: 'old-name'));
+      notifier.addOrUpdate(
+        const TailscaleProxy(name: 'new-name', authKey: 'key'),
+        previousName: 'old-name',
+      );
+      final value = container.read(tailscaleSettingProvider);
+      expect(value.proxies.length, 1);
+      expect(value.proxies.first.name, 'new-name');
+      expect(value.proxies.first.authKey, 'key');
+    });
+
     test('remove deletes a node by name', () {
       final notifier = container.read(tailscaleSettingProvider.notifier);
       notifier.addOrUpdate(const TailscaleProxy(name: 'ts-node'));
