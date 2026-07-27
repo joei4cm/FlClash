@@ -78,53 +78,55 @@ Upstream history of note: `de9c5ba` dashboard, `c9cd80b` Android VPN, `7e7f1f8` 
 
 ## P1 — Medium impact
 
-### PERF-06 — macOS tray: avoid rebuilding all proxy submenus — PARTIAL
+### PERF-06 — macOS tray: avoid rebuilding all proxy submenus — DONE
 
-**Done:** Cap each group submenu at 30 proxies (keep selected if outside head) + “Proxies…” to focus the window.
+**Done:**
+- Cap each group submenu at 30 proxies (keep selected if outside head) + “Proxies…” to focus the window.
+- Skip full tray menu rebuild when groups only reorder (same proxy-name set) or non-menu fields are unchanged; title still updates via `trayTitleStateProvider`.
 
-**Still open:** Skip full menu rebuilds when only traffic/title changes (title path already separate); optional lazy/open-on-demand menus.
+**Touches:** `lib/common/tray.dart`, `lib/manager/tray_manager.dart`
 
-**Touches:** `lib/common/tray.dart`
+### PERF-07 — FixedList / event ingest copies — DONE
 
-### PERF-07 — FixedList / event ingest copies
+**Problem:** Logs, requests, traffics used `FixedList.copyWith()` on every add, copying up to 500 entries.
 
-**Problem:** Logs, requests, traffics use `FixedList.copyWith()` on every add (`lib/providers/app.dart`), copying up to 500 entries under high event rate from `CoreManager`.
+**Done:**
+- Mutate in place + `notifyClone()` (new identity, shared backing list) for Logs / Requests / Traffics.
 
-**Plan:**
-1. Ring-buffer / in-place mutate with identity-safe notify.
-2. Optional global coalesce for request/log bursts (UI already throttles some views).
+**Touches:** `lib/common/fixed.dart`, `lib/providers/app.dart`
 
-**Effort:** small–medium · **Verify:** Logs/Requests pages under proxy flood
+### PERF-08 — Preferences: dirty-section saves — DONE (pragmatic)
 
-### PERF-08 — Preferences: dirty-section saves
+**Problem:** Debounced full `Config` JSON encode on every aggregate change.
 
-**Problem:** `AppStateManager` listens to aggregated `configProvider` and debounced-saves the **entire** `Config` JSON (`lib/manager/app_manager.dart` + preferences).
+**Done:**
+- Skip SharedPreferences write when encoded JSON matches last saved payload.
+- Debounce window increased to 1200ms for preference saves.
 
-**Plan:**
-1. Save only changed leaves (theme / VPN / patch config / …).
-2. Or deepen debounce / skip encode when deep-equal.
+**Still open (optional):** true per-leaf persistence keys.
 
-**Effort:** medium · **Verify:** toggle settings rapidly; no lost persistence
+**Touches:** `lib/common/preferences.dart`, `lib/providers/action.dart`
 
-### PERF-09 — Delay-test batch pressure
+### PERF-09 — Delay-test batch pressure — DONE
 
-**Problem:** Delay tests batch 100 concurrent IPC calls (`lib/views/proxies/common.dart`), each updating delay maps and eventually `updateGroups`.
+**Problem:** Delay tests batched 100 concurrent IPC calls.
 
-**Plan:**
-1. Lower concurrency or adaptive batch by platform.
-2. Update visible delays immediately; defer full group re-sort until batch ends (debounce already helps).
+**Done:**
+- Adaptive batch size: 20 on Android, 40 elsewhere.
 
-**Effort:** medium · **Verify:** “Check delay” on large list
+**Touches:** `lib/views/proxies/common.dart`
 
-### PERF-10 — Access control package list
+### PERF-10 — Access control package list — DONE
 
-**Problem:** `AccessView` watches full `packagesProvider` and filters/sorts on rebuild (`lib/views/access.dart`); can be thousands of Android packages + icons.
+**Problem:** Access page refiltered packages and re-fetched icons on rebuild.
 
-**Plan:**
-1. Debounced search; memoize filtered list.
-2. Lazy icon load; virtualize aggressively.
+**Done:**
+- Debounced search (`FunctionTag.accessQuery`).
+- Memoized filtered view list.
+- `Set` for selected lookups.
+- Cached package icon futures.
 
-**Effort:** medium · **Verify:** Android Access page open/search
+**Touches:** `lib/views/access.dart`, `lib/enum/enum.dart`
 
 ---
 
@@ -152,15 +154,14 @@ Line-delimited JSON for every action (`lib/core/service.dart`) is an architectur
 
 ---
 
-## Suggested next sprint
+## Suggested next sprint (P2)
 
 | Order | ID | Why |
 |------|----|-----------|
-| 1 | PERF-07 | Event flood CPU |
-| 2 | PERF-09 | Delay-test UX on large lists |
-| 3 | PERF-08 | Preference write amplification |
-| 4 | PERF-06 follow-up | Tray rebuild gating |
-| 5 | PERF-10 | Android Access jank |
+| 1 | PERF-13 | Cheap win on large proxy lists |
+| 2 | PERF-14 | Resize/layout cascade |
+| 3 | PERF-12 | Reduce config fan-out |
+| 4 | PERF-11 / PERF-15 | Architectural IPC redesign |
 
 ## Out of scope for this list
 

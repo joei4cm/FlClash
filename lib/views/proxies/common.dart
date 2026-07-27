@@ -78,7 +78,9 @@ Future<void> delayTest(List<Proxy> proxies, [String? testUrl]) async {
     await proxyDelayTest(proxy, testUrl);
   }).toList();
 
-  final batchesDelayProxies = delayProxies.batch(100);
+  // Keep concurrency modest so large subscriptions do not flood core IPC.
+  final batchSize = system.isAndroid ? 20 : 40;
+  final batchesDelayProxies = delayProxies.batch(batchSize);
   for (final batchDelayProxies in batchesDelayProxies) {
     await Future.wait(batchDelayProxies);
   }
