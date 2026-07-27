@@ -58,10 +58,19 @@ class CommonAction extends _$CommonAction {
     final onlyStatisticsProxy = ref.read(
       appSettingProvider.select((state) => state.onlyStatisticsProxy),
     );
-    final traffic = await coreController.getTraffic(onlyStatisticsProxy);
-    ref.read(trafficsProvider.notifier).addTraffic(traffic);
-    ref.read(totalTrafficProvider.notifier).value = await coreController
-        .getTotalTraffic(onlyStatisticsProxy);
+    final snapshot = await coreController.getTrafficSnapshot(
+      onlyStatisticsProxy,
+    );
+    final lastTraffic = ref
+        .read(trafficsProvider)
+        .list
+        .safeLast(const Traffic());
+    if (lastTraffic != snapshot.now) {
+      ref.read(trafficsProvider.notifier).addTraffic(snapshot.now);
+    }
+    if (ref.read(totalTrafficProvider) != snapshot.total) {
+      ref.read(totalTrafficProvider.notifier).value = snapshot.total;
+    }
   }
 
   Future<void> autoCheckUpdate() async {

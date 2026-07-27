@@ -467,13 +467,40 @@ int proxiesColumns(Ref ref) {
 }
 
 @riverpod
-SelectedProxyState realSelectedProxyState(Ref ref, String proxyName) {
+Map<String, SelectedProxyState> realSelectedProxyStateMap(Ref ref) {
   final groups = ref.watch(groupsProvider);
   final selectedMap = ref.watch(selectedMapProvider);
-  return computeRealSelectedProxyState(
-    proxyName,
-    groups: groups,
-    selectedMap: selectedMap,
+  final map = <String, SelectedProxyState>{};
+  for (final group in groups) {
+    map.putIfAbsent(
+      group.name,
+      () => computeRealSelectedProxyState(
+        group.name,
+        groups: groups,
+        selectedMap: selectedMap,
+      ),
+    );
+    for (final proxy in group.all) {
+      map.putIfAbsent(
+        proxy.name,
+        () => computeRealSelectedProxyState(
+          proxy.name,
+          groups: groups,
+          selectedMap: selectedMap,
+        ),
+      );
+    }
+  }
+  return map;
+}
+
+@riverpod
+SelectedProxyState realSelectedProxyState(Ref ref, String proxyName) {
+  return ref.watch(
+    realSelectedProxyStateMapProvider.select(
+      (state) =>
+          state[proxyName] ?? SelectedProxyState(proxyName: proxyName),
+    ),
   );
 }
 
