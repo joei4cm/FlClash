@@ -250,6 +250,16 @@ func sendTrafficSnapshotMessage() {
 	})
 }
 
+func sendConnectionsSnapshotMessage() {
+	runLock.Lock()
+	snapshot := statistic.DefaultManager.Snapshot()
+	runLock.Unlock()
+	sendMessage(Message{
+		Type: ConnectionsMessage,
+		Data: snapshot,
+	})
+}
+
 func startTrafficPush() {
 	trafficPushMu.Lock()
 	defer trafficPushMu.Unlock()
@@ -260,10 +270,16 @@ func startTrafficPush() {
 		ticker := time.NewTicker(time.Second)
 		defer ticker.Stop()
 		sendTrafficSnapshotMessage()
+		sendConnectionsSnapshotMessage()
+		ticks := 0
 		for {
 			select {
 			case <-ticker.C:
 				sendTrafficSnapshotMessage()
+				ticks++
+				if ticks%2 == 0 {
+					sendConnectionsSnapshotMessage()
+				}
 			case <-stopCh:
 				return
 			}

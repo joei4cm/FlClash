@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,11 +22,6 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
     const TrackerInfosState(),
   );
   final ScrollController _scrollController = ScrollController();
-
-  Timer? timer;
-  bool _pollScheduled = false;
-
-  static const _pollInterval = Duration(seconds: 2);
 
   List<Widget> _buildActions() {
     return [
@@ -66,34 +60,21 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
         WidgetsBinding.instance.lifecycleState == null;
   }
 
-  void _schedulePoll() {
-    if (_pollScheduled || !mounted) {
-      return;
-    }
-    _pollScheduled = true;
-    timer?.cancel();
-    timer = Timer(_pollInterval, () async {
-      _pollScheduled = false;
-      if (!mounted) {
-        return;
-      }
-      if (_isPageActive) {
-        await _updateConnections();
-      }
-      _schedulePoll();
-    });
-  }
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    ref.listenManual(connectionsSnapshotProvider, (prev, next) {
+      if (!_isPageActive) {
+        return;
+      }
+      _applyTrackerInfos(next);
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) {
         return;
       }
       await _updateConnections();
-      _schedulePoll();
     });
   }
 
@@ -127,11 +108,7 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
     return true;
   }
 
-  Future<void> _updateConnections() async {
-    final trackerInfos = await coreController.getConnections();
-    if (!mounted) {
-      return;
-    }
+  void _applyTrackerInfos(List<TrackerInfo> trackerInfos) {
     final current = _connectionsStateNotifier.value;
     if (_isSameSnapshot(current.trackerInfos, trackerInfos)) {
       return;
@@ -139,6 +116,14 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
     _connectionsStateNotifier.value = current.copyWith(
       trackerInfos: trackerInfos,
     );
+  }
+
+  Future<void> _updateConnections() async {
+    final trackerInfos = await coreController.getConnections();
+    if (!mounted) {
+      return;
+    }
+    _applyTrackerInfos(trackerInfos);
   }
 
   Future<void> _handleBlockConnection(String id) async {
@@ -149,10 +134,8 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    timer?.cancel();
     _connectionsStateNotifier.dispose();
     _scrollController.dispose();
-    timer = null;
     super.dispose();
   }
 

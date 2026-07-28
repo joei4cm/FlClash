@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
@@ -26,6 +27,23 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
   @override
   void initState() {
     super.initState();
+    ref.listenManual(isStartProvider, (prev, next) {
+      if (!mounted) {
+        return;
+      }
+      final enabled = ref.read(geoIdentitySettingProvider).enable;
+      if (!enabled) {
+        return;
+      }
+      if (prev != true && next == true) {
+        _validateNetwork(quiet: true);
+      } else if (next == false) {
+        setState(() {
+          _report = null;
+          _statusMessage = context.appLocalizations.geoIdentityNeedStart;
+        });
+      }
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final enabled = ref.read(geoIdentitySettingProvider).enable;
       if (enabled && ref.read(isStartProvider)) {
@@ -440,6 +458,26 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
                     ),
                   ),
                 ),
+                if (enabled && !_busy && !isStart)
+                  TextButton(
+                    onPressed: () {
+                      ref.read(setupActionProvider.notifier).updateStatus(true);
+                    },
+                    child: Text(l10n.start),
+                  ),
+                if (enabled &&
+                    !_busy &&
+                    isStart &&
+                    _report != null &&
+                    _report!.isProtected != true)
+                  TextButton(
+                    onPressed: () {
+                      ref
+                          .read(currentPageLabelProvider.notifier)
+                          .toPage(PageLabel.proxies);
+                    },
+                    child: Text(l10n.proxies),
+                  ),
                 if (enabled && !_busy)
                   TextButton(
                     onPressed: () => _validateNetwork(),
@@ -555,10 +593,8 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
                 ),
               ),
             ),
-          if (enabled) ...[
-            const SizedBox(height: 8),
-            _buildRecoveryActions(context),
-          ],
+          const SizedBox(height: 8),
+          _buildRecoveryActions(context),
           const SizedBox(height: 20),
         ],
       ),

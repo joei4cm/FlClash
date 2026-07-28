@@ -327,7 +327,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "请先启动 FlClash，再验证网络环境。",
     ),
     "geoIdentityNetworkBad": MessageLookupByLibrary.simpleMessage(
-      "网络未就绪 — 请选择美区节点后重新打开此开关",
+      "出口还不是美国 — 先选美区节点，再点重新检查",
     ),
     "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
       "网络仍可能暴露",
@@ -341,16 +341,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "浏览器指纹对齐",
     ),
     "geoIdentityPendingCheck": MessageLookupByLibrary.simpleMessage(
-      "保护已开启 — 请先启动 FlClash，再点重新检测",
+      "保护已开启 — 等待网络检查",
     ),
     "geoIdentityProtectEnable": MessageLookupByLibrary.simpleMessage(
       "启用地理身份保护",
     ),
     "geoIdentityProtectToggleDesc": MessageLookupByLibrary.simpleMessage(
-      "执行完整设置清单，并验证网络",
+      "接管流量、尽量对齐桌面时区，并验证出口",
     ),
     "geoIdentityPurposeBody": MessageLookupByLibrary.simpleMessage(
-      "美区 AI 服务会比对出口 IP 与本地信号。打开后，FlClash 会捕获流量（系统代理 / TUN 或 VPN），在桌面尽量对齐系统时区，再用 FuckClaude 验证出口。浏览器页面指纹仍可能需要 GeoMirror。",
+      "开启后，FlClash 会接管流量并检查出口是否适合美区 AI 工具。浏览器页面指纹仍可能需要 GeoMirror。",
     ),
     "geoIdentityRecheck": MessageLookupByLibrary.simpleMessage("重新检测"),
     "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
@@ -358,7 +358,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityRestoreOsTimezoneDesc": m7,
     "geoIdentitySetupDoneNeedUsNode": MessageLookupByLibrary.simpleMessage(
-      "设置已应用，但出口尚未受美区保护。请选择美区节点后再次点击一键设置。",
+      "设置已应用，但出口尚未受保护。请选择美区节点，然后点重新检查。",
     ),
     "geoIdentitySetupDoneProtected": MessageLookupByLibrary.simpleMessage(
       "设置完成 — 网络看起来已受美区保护。",
@@ -405,6 +405,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "goDownload": MessageLookupByLibrary.simpleMessage("前往下载"),
     "goToConfigureScript": MessageLookupByLibrary.simpleMessage("前往配置脚本"),
     "hasCacheChange": MessageLookupByLibrary.simpleMessage("是否缓存修改"),
+    "hideAdvanced": MessageLookupByLibrary.simpleMessage("隐藏高级选项"),
     "hideFromList": MessageLookupByLibrary.simpleMessage("从列表中隐藏"),
     "host": MessageLookupByLibrary.simpleMessage("主机"),
     "hostsDesc": MessageLookupByLibrary.simpleMessage("追加Hosts"),
@@ -750,6 +751,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectedCountTitle": m26,
     "settings": MessageLookupByLibrary.simpleMessage("设置"),
     "show": MessageLookupByLibrary.simpleMessage("显示"),
+    "showAdvanced": MessageLookupByLibrary.simpleMessage("显示高级选项"),
     "shrink": MessageLookupByLibrary.simpleMessage("紧凑"),
     "silentLaunch": MessageLookupByLibrary.simpleMessage("静默启动"),
     "silentLaunchDesc": MessageLookupByLibrary.simpleMessage("后台启动"),
@@ -840,6 +842,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "暂无 Tailscale 节点。添加一个即可让流量经由你的 tailnet 转发。",
     ),
     "tailscaleEnable": MessageLookupByLibrary.simpleMessage("启用 Tailscale"),
+    "tailscaleEnableBypassAction": MessageLookupByLibrary.simpleMessage("开启"),
     "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
       "将 Tailscale 节点作为出站注入。关闭后 Tailscale 将不再处理流量，普通流量不受影响。",
     ),
@@ -859,6 +862,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "可选。在 tailnet 中显示的设备名称。",
     ),
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage("已存在同名节点"),
+    "tailscaleNameHelper": MessageLookupByLibrary.simpleMessage(
+      "代理列表中的出站名称。重命名会改变选中项与延迟测试的对应关系。",
+    ),
     "tailscaleNoRoutes": MessageLookupByLibrary.simpleMessage("无路由目标"),
     "tailscaleNodesTitle": MessageLookupByLibrary.simpleMessage("节点"),
     "tailscaleNotTested": MessageLookupByLibrary.simpleMessage("未测试"),
@@ -879,6 +885,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleScenarioDesktopTitle": MessageLookupByLibrary.simpleMessage(
       "桌面 / 主机设置",
     ),
+    "tailscaleShowSetupGuide": MessageLookupByLibrary.simpleMessage("设置指南"),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage("状态目录"),
     "tailscaleStateDirHint": MessageLookupByLibrary.simpleMessage(
       "可选。用于持久化 Tailscale 状态的目录。",

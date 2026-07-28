@@ -3149,6 +3149,26 @@ class AppLocalizations {
     return Intl.message('Restart', name: 'restart', desc: '', args: []);
   }
 
+  /// `Hide advanced`
+  String get hideAdvanced {
+    return Intl.message(
+      'Hide advanced',
+      name: 'hideAdvanced',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show advanced`
+  String get showAdvanced {
+    return Intl.message(
+      'Show advanced',
+      name: 'showAdvanced',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Speed statistics`
   String get speedStatistics {
     return Intl.message(
@@ -4949,6 +4969,36 @@ class AppLocalizations {
     );
   }
 
+  /// `Setup guide`
+  String get tailscaleShowSetupGuide {
+    return Intl.message(
+      'Setup guide',
+      name: 'tailscaleShowSetupGuide',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable`
+  String get tailscaleEnableBypassAction {
+    return Intl.message(
+      'Enable',
+      name: 'tailscaleEnableBypassAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Outbound name used in Proxies. Renaming changes how selections and delay tests key this node.`
+  String get tailscaleNameHelper {
+    return Intl.message(
+      'Outbound name used in Proxies. Renaming changes how selections and delay tests key this node.',
+      name: 'tailscaleNameHelper',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Turn on Enable Tailscale before testing.`
   String get tailscaleTestNeedEnable {
     return Intl.message(
@@ -5049,20 +5099,20 @@ class AppLocalizations {
     );
   }
 
-  /// `US AI services compare your exit IP with local signals. Turn this on and FlClash will capture traffic (system proxy / TUN or VPN), align the desktop OS timezone when possible, then verify the exit with FuckClaude. Browsers may still need GeoMirror for page fingerprints.`
+  /// `Turn this on so FlClash captures traffic and checks that your exit looks US-ready for AI tools. Browsers may still need GeoMirror for page fingerprints.`
   String get geoIdentityPurposeBody {
     return Intl.message(
-      'US AI services compare your exit IP with local signals. Turn this on and FlClash will capture traffic (system proxy / TUN or VPN), align the desktop OS timezone when possible, then verify the exit with FuckClaude. Browsers may still need GeoMirror for page fingerprints.',
+      'Turn this on so FlClash captures traffic and checks that your exit looks US-ready for AI tools. Browsers may still need GeoMirror for page fingerprints.',
       name: 'geoIdentityPurposeBody',
       desc: '',
       args: [],
     );
   }
 
-  /// `Run the full setup checklist, then validate the network`
+  /// `Capture traffic, align desktop timezone when possible, then verify the exit`
   String get geoIdentityProtectToggleDesc {
     return Intl.message(
-      'Run the full setup checklist, then validate the network',
+      'Capture traffic, align desktop timezone when possible, then verify the exit',
       name: 'geoIdentityProtectToggleDesc',
       desc: '',
       args: [],
@@ -5079,10 +5129,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Network is not ready — select a US node and turn this on again`
+  /// `Exit is not US yet — pick a US node, then tap Recheck`
   String get geoIdentityNetworkBad {
     return Intl.message(
-      'Network is not ready — select a US node and turn this on again',
+      'Exit is not US yet — pick a US node, then tap Recheck',
       name: 'geoIdentityNetworkBad',
       desc: '',
       args: [],
@@ -5119,10 +5169,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Protect is on — start FlClash, then tap Recheck`
+  /// `Protect is on — waiting for a network check`
   String get geoIdentityPendingCheck {
     return Intl.message(
-      'Protect is on — start FlClash, then tap Recheck',
+      'Protect is on — waiting for a network check',
       name: 'geoIdentityPendingCheck',
       desc: '',
       args: [],
@@ -5349,10 +5399,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Setup applied, but the exit is not US-protected yet. Select a US node and tap One-click setup again.`
+  /// `Setup applied, but the exit is not US-protected yet. Select a US node, then tap Recheck.`
   String get geoIdentitySetupDoneNeedUsNode {
     return Intl.message(
-      'Setup applied, but the exit is not US-protected yet. Select a US node and tap One-click setup again.',
+      'Setup applied, but the exit is not US-protected yet. Select a US node, then tap Recheck.',
       name: 'geoIdentitySetupDoneNeedUsNode',
       desc: '',
       args: [],

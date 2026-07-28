@@ -136,4 +136,10 @@ class _CoreContainerState extends ConsumerState<CoreManager>
     ref.read(commonActionProvider.notifier).applyTrafficPush(snapshot);
     super.onTraffic(snapshot);
   }
+
+  @override
+  void onConnections(List<TrackerInfo> connections) {
+    ref.read(connectionsSnapshotProvider.notifier).apply(connections);
+    super.onConnections(connections);
+  }
 }

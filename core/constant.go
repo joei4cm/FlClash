@@ -126,12 +126,13 @@ type Message struct {
 }
 
 const (
-	LogMessage       MessageType = "log"
-	DelayMessage     MessageType = "delay"
-	RequestMessage   MessageType = "request"
-	LoadedMessage    MessageType = "loaded"
-	GeoUpdateMessage MessageType = "geoUpdate"
-	TrafficMessage   MessageType = "traffic"
+	LogMessage         MessageType = "log"
+	DelayMessage       MessageType = "delay"
+	RequestMessage     MessageType = "request"
+	LoadedMessage      MessageType = "loaded"
+	GeoUpdateMessage   MessageType = "geoUpdate"
+	TrafficMessage     MessageType = "traffic"
+	ConnectionsMessage MessageType = "connections"
 )
 
 type GeoUpdateStatus struct {

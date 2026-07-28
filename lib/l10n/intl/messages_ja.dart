@@ -367,7 +367,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "ネットワーク環境を検証する前に FlClash を開始してください。",
     ),
     "geoIdentityNetworkBad": MessageLookupByLibrary.simpleMessage(
-      "ネットワーク未準備 — 米国ノードを選んでスイッチを入れ直してください",
+      "出口が US ではありません。US ノードを選んでから再確認してください",
     ),
     "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
       "ネットワークはまだ露出している可能性",
@@ -385,16 +385,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "ブラウザ指紋の整合",
     ),
     "geoIdentityPendingCheck": MessageLookupByLibrary.simpleMessage(
-      "保護はオンです — FlClash を起動してから再チェックしてください",
+      "保護はオンです。ネットワーク確認待ちです",
     ),
     "geoIdentityProtectEnable": MessageLookupByLibrary.simpleMessage(
       "地理アイデンティティ保護を有効化",
     ),
     "geoIdentityProtectToggleDesc": MessageLookupByLibrary.simpleMessage(
-      "セットアップチェックリストを実行し、ネットワークを検証",
+      "通信を取り込み、可能ならデスクトップのタイムゾーンを合わせ、出口を確認します",
     ),
     "geoIdentityPurposeBody": MessageLookupByLibrary.simpleMessage(
-      "米国の AI サービスは出口 IP とローカル信号を照合します。オンにすると FlClash が通信をキャプチャし（システムプロキシ / TUN または VPN）、可能ならデスクトップの OS タイムゾーンを合わせ、FuckClaude で出口を検証します。ブラウザのページ指紋には GeoMirror が必要な場合があります。",
+      "オンにすると FlClash が通信を取り込み、AI 向けに US 出口かどうかを確認します。ブラウザ指紋は GeoMirror が別途必要な場合があります。",
     ),
     "geoIdentityRecheck": MessageLookupByLibrary.simpleMessage("再チェック"),
     "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
@@ -402,7 +402,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityRestoreOsTimezoneDesc": m7,
     "geoIdentitySetupDoneNeedUsNode": MessageLookupByLibrary.simpleMessage(
-      "設定は適用されましたが、出口はまだ米国保護ではありません。米国ノードを選んで再度ワンクリックしてください。",
+      "設定は適用されましたが、出口はまだ US 保護ではありません。US ノードを選んで再確認してください。",
     ),
     "geoIdentitySetupDoneProtected": MessageLookupByLibrary.simpleMessage(
       "セットアップ完了 — ネットワークは米国保護に見えます。",
@@ -451,6 +451,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "goDownload": MessageLookupByLibrary.simpleMessage("ダウンロードへ"),
     "goToConfigureScript": MessageLookupByLibrary.simpleMessage("スクリプト設定に移動"),
     "hasCacheChange": MessageLookupByLibrary.simpleMessage("変更をキャッシュしますか？"),
+    "hideAdvanced": MessageLookupByLibrary.simpleMessage("詳細設定を隠す"),
     "hideFromList": MessageLookupByLibrary.simpleMessage("リストから隠す"),
     "host": MessageLookupByLibrary.simpleMessage("ホスト"),
     "hostsDesc": MessageLookupByLibrary.simpleMessage("ホストを追加"),
@@ -864,6 +865,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectedCountTitle": m26,
     "settings": MessageLookupByLibrary.simpleMessage("設定"),
     "show": MessageLookupByLibrary.simpleMessage("表示"),
+    "showAdvanced": MessageLookupByLibrary.simpleMessage("詳細設定を表示"),
     "shrink": MessageLookupByLibrary.simpleMessage("縮小"),
     "silentLaunch": MessageLookupByLibrary.simpleMessage("バックグラウンド起動"),
     "silentLaunchDesc": MessageLookupByLibrary.simpleMessage("バックグラウンドで起動"),
@@ -960,6 +962,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Tailscale ノードがありません。追加すると、トラフィックを tailnet 経由で転送できます。",
     ),
     "tailscaleEnable": MessageLookupByLibrary.simpleMessage("Tailscale を有効化"),
+    "tailscaleEnableBypassAction": MessageLookupByLibrary.simpleMessage(
+      "有効にする",
+    ),
     "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
       "Tailscale ノードをアウトバウンドとして注入します。オフにすると Tailscale はトラフィックを処理しなくなりますが、通常のトラフィックには影響しません。",
     ),
@@ -981,6 +986,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
       "同じ名前のノードが既に存在します",
     ),
+    "tailscaleNameHelper": MessageLookupByLibrary.simpleMessage(
+      "プロキシ一覧の出站名です。名前を変えると選択や遅延テストの対応も変わります。",
+    ),
     "tailscaleNoRoutes": MessageLookupByLibrary.simpleMessage("ルーティング先なし"),
     "tailscaleNodesTitle": MessageLookupByLibrary.simpleMessage("ノード"),
     "tailscaleNotTested": MessageLookupByLibrary.simpleMessage("未テスト"),
@@ -1000,6 +1008,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleScenarioDesktopTitle": MessageLookupByLibrary.simpleMessage(
       "デスクトップ / ホスト設定",
+    ),
+    "tailscaleShowSetupGuide": MessageLookupByLibrary.simpleMessage(
+      "セットアップガイド",
     ),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage("状態ディレクトリ"),
     "tailscaleStateDirHint": MessageLookupByLibrary.simpleMessage(

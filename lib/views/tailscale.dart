@@ -434,6 +434,16 @@ class TailscaleView extends ConsumerWidget {
                           !ref.read(tailscaleSettingProvider).bypassTraffic) {
                         context.showNotifier(
                           appLocalizations.tailscaleBypassNudge,
+                          actionState: MessageActionState(
+                            actionText:
+                                appLocalizations.tailscaleEnableBypassAction,
+                            action: () async {
+                              ref
+                                  .read(tailscaleSettingProvider.notifier)
+                                  .setBypassTraffic(true);
+                              await _applyTailscaleConfig(ref);
+                            },
+                          ),
                         );
                       }
                       await _applyTailscaleConfig(ref);
@@ -466,7 +476,14 @@ class TailscaleView extends ConsumerWidget {
                   routeCount: routeCount,
                 ),
                 const Divider(height: 16),
-                _buildGuide(context),
+                if (proxies.isEmpty)
+                  _buildGuide(context)
+                else
+                  ExpansionTile(
+                    tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+                    title: Text(appLocalizations.tailscaleShowSetupGuide),
+                    children: [_buildGuide(context)],
+                  ),
                 if (proxies.isEmpty)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
@@ -536,6 +553,7 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
   late bool _acceptRoutes;
   late bool _exitNodeAllowLanAccess;
   late bool _showAdvanced;
+  late bool _obscureAuthKey;
 
   @override
   void initState() {
@@ -552,6 +570,7 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
     _udp = proxy.udp;
     _acceptRoutes = proxy.acceptRoutes;
     _exitNodeAllowLanAccess = proxy.exitNodeAllowLanAccess;
+    _obscureAuthKey = true;
     _showAdvanced =
         proxy.hostname.isNotEmpty ||
         proxy.controlUrl.isNotEmpty ||
@@ -605,6 +624,8 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
     required String label,
     String? helperText,
     int maxLines = 1,
+    bool obscureText = false,
+    Widget? suffixIcon,
     String? Function(String?)? validator,
   }) {
     return Padding(
@@ -612,13 +633,15 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
       child: TextFormField(
         controller: controller,
         validator: validator,
-        maxLines: maxLines,
+        maxLines: obscureText ? 1 : maxLines,
+        obscureText: obscureText,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           labelText: label,
           helperText: helperText,
           helperMaxLines: 3,
           alignLabelWithHint: maxLines > 1,
+          suffixIcon: suffixIcon,
         ),
       ),
     );
@@ -670,6 +693,7 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
                 _buildTextField(
                   controller: _nameController,
                   label: appLocalizations.name,
+                  helperText: appLocalizations.tailscaleNameHelper,
                   validator: (value) {
                     final name = value?.trim() ?? '';
                     if (name.isEmpty) {
@@ -687,6 +711,17 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
                   controller: _authKeyController,
                   label: appLocalizations.tailscaleAuthKey,
                   helperText: appLocalizations.tailscaleAuthKeyHint,
+                  obscureText: _obscureAuthKey,
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() => _obscureAuthKey = !_obscureAuthKey);
+                    },
+                    icon: Icon(
+                      _obscureAuthKey
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                    ),
+                  ),
                   validator: (value) {
                     final key = value?.trim() ?? '';
                     if (key.isEmpty) {
@@ -716,8 +751,8 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
                     ),
                     label: Text(
                       _showAdvanced
-                          ? appLocalizations.geoIdentityHideAdvanced
-                          : appLocalizations.geoIdentityShowAdvanced,
+                          ? appLocalizations.hideAdvanced
+                          : appLocalizations.showAdvanced,
                     ),
                   ),
                 ),
