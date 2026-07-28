@@ -474,7 +474,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Запустите FlClash перед проверкой сетевой среды.",
     ),
     "geoIdentityNetworkBad": MessageLookupByLibrary.simpleMessage(
-      "Сеть не готова — выберите US-узел и включите снова",
+      "Выход ещё не US — выберите US-узел и нажмите «Проверить снова»",
     ),
     "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
       "Сеть всё ещё выглядит раскрытой",
@@ -492,16 +492,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Выравнивание отпечатка браузера",
     ),
     "geoIdentityPendingCheck": MessageLookupByLibrary.simpleMessage(
-      "Защита включена — запустите FlClash, затем нажмите Перепроверить",
+      "Защита включена — ожидается проверка сети",
     ),
     "geoIdentityProtectEnable": MessageLookupByLibrary.simpleMessage(
       "Включить защиту геоидентичности",
     ),
     "geoIdentityProtectToggleDesc": MessageLookupByLibrary.simpleMessage(
-      "Пройти чеклист настройки и проверить сеть",
+      "Захват трафика, выравнивание часового пояса на ПК и проверка выхода",
     ),
     "geoIdentityPurposeBody": MessageLookupByLibrary.simpleMessage(
-      "US AI-сервисы сравнивают exit IP с локальными сигналами. Включите — FlClash захватит трафик (системный прокси / TUN или VPN), по возможности выровняет часовой пояс ОС на desktop и проверит exit через FuckClaude. Для отпечатков страниц в браузере по-прежнему может понадобиться GeoMirror.",
+      "Включите, чтобы FlClash захватил трафик и проверил US-выход для AI. Для отпечатков браузера по-прежнему может понадобиться GeoMirror.",
     ),
     "geoIdentityRecheck": MessageLookupByLibrary.simpleMessage(
       "Проверить снова",
@@ -511,7 +511,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityRestoreOsTimezoneDesc": m7,
     "geoIdentitySetupDoneNeedUsNode": MessageLookupByLibrary.simpleMessage(
-      "Настройка применена, но exit ещё не US-protected. Выберите US-узел и снова нажмите One-click setup.",
+      "Настройка применена, но выход ещё не US. Выберите US-узел и нажмите «Проверить снова».",
     ),
     "geoIdentitySetupDoneProtected": MessageLookupByLibrary.simpleMessage(
       "Готово — сеть выглядит US-защищённой.",
@@ -571,6 +571,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "hasCacheChange": MessageLookupByLibrary.simpleMessage(
       "Хотите сохранить изменения в кэше?",
+    ),
+    "hideAdvanced": MessageLookupByLibrary.simpleMessage(
+      "Скрыть дополнительно",
     ),
     "hideFromList": MessageLookupByLibrary.simpleMessage("Скрыть из списка"),
     "host": MessageLookupByLibrary.simpleMessage("Хост"),
@@ -1103,6 +1106,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectedCountTitle": m26,
     "settings": MessageLookupByLibrary.simpleMessage("Настройки"),
     "show": MessageLookupByLibrary.simpleMessage("Показать"),
+    "showAdvanced": MessageLookupByLibrary.simpleMessage(
+      "Показать дополнительно",
+    ),
     "shrink": MessageLookupByLibrary.simpleMessage("Сжать"),
     "silentLaunch": MessageLookupByLibrary.simpleMessage("Тихий запуск"),
     "silentLaunchDesc": MessageLookupByLibrary.simpleMessage(
@@ -1219,6 +1225,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleEnable": MessageLookupByLibrary.simpleMessage(
       "Включить Tailscale",
     ),
+    "tailscaleEnableBypassAction": MessageLookupByLibrary.simpleMessage(
+      "Включить",
+    ),
     "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
       "Добавлять узлы Tailscale как исходящие. При отключении Tailscale перестаёт обрабатывать трафик; обычный трафик не затрагивается.",
     ),
@@ -1241,6 +1250,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
       "Узел с таким именем уже существует",
+    ),
+    "tailscaleNameHelper": MessageLookupByLibrary.simpleMessage(
+      "Имя исходящего узла в Proxies. Переименование меняет привязку выбора и тестов задержки.",
     ),
     "tailscaleNoRoutes": MessageLookupByLibrary.simpleMessage(
       "Нет пунктов назначения",
@@ -1265,6 +1277,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleScenarioDesktopTitle": MessageLookupByLibrary.simpleMessage(
       "Настройка ПК / хоста",
+    ),
+    "tailscaleShowSetupGuide": MessageLookupByLibrary.simpleMessage(
+      "Инструкция",
     ),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage(
       "Каталог состояния",

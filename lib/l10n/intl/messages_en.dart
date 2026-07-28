@@ -458,7 +458,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Start FlClash before verifying the network environment.",
     ),
     "geoIdentityNetworkBad": MessageLookupByLibrary.simpleMessage(
-      "Network is not ready — select a US node and turn this on again",
+      "Exit is not US yet — pick a US node, then tap Recheck",
     ),
     "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
       "Network still looks exposed",
@@ -476,16 +476,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Browser fingerprint alignment",
     ),
     "geoIdentityPendingCheck": MessageLookupByLibrary.simpleMessage(
-      "Protect is on — start FlClash, then tap Recheck",
+      "Protect is on — waiting for a network check",
     ),
     "geoIdentityProtectEnable": MessageLookupByLibrary.simpleMessage(
       "Enable geo identity protect",
     ),
     "geoIdentityProtectToggleDesc": MessageLookupByLibrary.simpleMessage(
-      "Run the full setup checklist, then validate the network",
+      "Capture traffic, align desktop timezone when possible, then verify the exit",
     ),
     "geoIdentityPurposeBody": MessageLookupByLibrary.simpleMessage(
-      "US AI services compare your exit IP with local signals. Turn this on and FlClash will capture traffic (system proxy / TUN or VPN), align the desktop OS timezone when possible, then verify the exit with FuckClaude. Browsers may still need GeoMirror for page fingerprints.",
+      "Turn this on so FlClash captures traffic and checks that your exit looks US-ready for AI tools. Browsers may still need GeoMirror for page fingerprints.",
     ),
     "geoIdentityRecheck": MessageLookupByLibrary.simpleMessage("Recheck"),
     "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
@@ -493,7 +493,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "geoIdentityRestoreOsTimezoneDesc": m7,
     "geoIdentitySetupDoneNeedUsNode": MessageLookupByLibrary.simpleMessage(
-      "Setup applied, but the exit is not US-protected yet. Select a US node and tap One-click setup again.",
+      "Setup applied, but the exit is not US-protected yet. Select a US node, then tap Recheck.",
     ),
     "geoIdentitySetupDoneProtected": MessageLookupByLibrary.simpleMessage(
       "Setup complete — network looks US-protected.",
@@ -554,6 +554,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "hasCacheChange": MessageLookupByLibrary.simpleMessage(
       "Do you want to cache the changes?",
     ),
+    "hideAdvanced": MessageLookupByLibrary.simpleMessage("Hide advanced"),
     "hideFromList": MessageLookupByLibrary.simpleMessage("Hide from list"),
     "host": MessageLookupByLibrary.simpleMessage("Host"),
     "hostsDesc": MessageLookupByLibrary.simpleMessage("Add Hosts"),
@@ -1053,6 +1054,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectedCountTitle": m26,
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "show": MessageLookupByLibrary.simpleMessage("Show"),
+    "showAdvanced": MessageLookupByLibrary.simpleMessage("Show advanced"),
     "shrink": MessageLookupByLibrary.simpleMessage("Shrink"),
     "silentLaunch": MessageLookupByLibrary.simpleMessage("SilentLaunch"),
     "silentLaunchDesc": MessageLookupByLibrary.simpleMessage(
@@ -1159,6 +1161,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "No Tailscale nodes yet. Add one to route traffic through your tailnet.",
     ),
     "tailscaleEnable": MessageLookupByLibrary.simpleMessage("Enable Tailscale"),
+    "tailscaleEnableBypassAction": MessageLookupByLibrary.simpleMessage(
+      "Enable",
+    ),
     "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
       "Inject Tailscale nodes as outbounds. Turning this off stops Tailscale from handling traffic; normal traffic is unaffected.",
     ),
@@ -1179,6 +1184,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
       "A node with this name already exists",
+    ),
+    "tailscaleNameHelper": MessageLookupByLibrary.simpleMessage(
+      "Outbound name used in Proxies. Renaming changes how selections and delay tests key this node.",
     ),
     "tailscaleNoRoutes": MessageLookupByLibrary.simpleMessage(
       "No route destinations",
@@ -1203,6 +1211,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "tailscaleScenarioDesktopTitle": MessageLookupByLibrary.simpleMessage(
       "Desktop / host setup",
+    ),
+    "tailscaleShowSetupGuide": MessageLookupByLibrary.simpleMessage(
+      "Setup guide",
     ),
     "tailscaleStateDir": MessageLookupByLibrary.simpleMessage(
       "State directory",

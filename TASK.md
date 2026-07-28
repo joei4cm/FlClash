@@ -132,31 +132,18 @@ Upstream history of note: `de9c5ba` dashboard, `c9cd80b` Android VPN, `7e7f1f8` 
 
 ## P2 — Lower priority / larger design
 
-### PERF-11 — Push model for traffic / connections from core — DONE (traffic)
+### PERF-11 — Push model for traffic / connections from core — DONE
 
-**Problem:** Dart polled traffic every 1s with request/response IPC while started.
+**Problem:** Dart polled traffic every 1s (and connections every 2s) with request/response IPC while started.
 
-**Done (traffic slice):**
+**Done:**
 - Core pushes a `traffic` event every 1s while the listener is running (`TrafficMessage`).
 - Payload includes both all-traffic and proxy-only counters so Dart can honor `onlyStatisticsProxy` without another round trip.
 - Dart timer only updates run-time; one-shot `getTrafficSnapshot` remains for immediate UI on start.
-- Connections page still polls (PERF-02 cadence); full connections push stays future work.
+- Core also pushes a `connections` snapshot every 2s while listening (`ConnectionsMessage`); Connections page consumes the push and no longer polls when the listener is active.
 
-**Touches:** `core/hub.go`, `core/constant.go`, `lib/core/event.dart`, `lib/enum/enum.dart`, `lib/manager/core_manager.dart`, `lib/providers/action.dart`
+**Touches:** `core/hub.go`, `core/constant.go`, `lib/core/event.dart`, `lib/enum/enum.dart`, `lib/manager/core_manager.dart`, `lib/providers/action.dart`, `lib/views/connection/connections.dart`
 
-<<<<<<< HEAD
-### PERF-13 — `EmojiText` cost on proxy names — DONE
-
-**Done:** Skip emoji regex for BMP-only names; cache `TextSpan` lists.
-
-**Touches:** `lib/widgets/text.dart`
-
-### PERF-14 — Theme / layout storm — DONE
-
-**Done:** `ThemeAction.updateViewSize` no-ops when size unchanged.
-
-**Touches:** `lib/providers/action.dart`
-=======
 ### PERF-12 — Narrow `configProvider` aggregation — DONE
 
 **Done:**
@@ -167,7 +154,6 @@ Upstream history of note: `de9c5ba` dashboard, `c9cd80b` Android VPN, `7e7f1f8` 
 **Touches:** `lib/manager/app_manager.dart`, `lib/providers/state.dart`, `lib/application.dart`, `lib/providers/config.dart`
 
 ### PERF-13 — `EmojiText` cost on proxy names — DONE
->>>>>>> 654ee69 (perf: finish leftover P2 tasks and geo model cleanup)
 
 **Done:** Skip emoji regex for BMP-only names; cache `TextSpan` lists.
 
@@ -181,7 +167,7 @@ Upstream history of note: `de9c5ba` dashboard, `c9cd80b` Android VPN, `7e7f1f8` 
 
 ### PERF-15 — Desktop IPC protocol — DEFERRED
 
-Line-delimited / framed JSON for every action (`lib/core/service.dart`, `core/server.go` length-prefixed frames) is an architecture ceiling. Binary framing for hot counters is a long-term option; traffic push (PERF-11) already removes the request half of the hot path.
+Line-delimited / framed JSON for every action (`lib/core/service.dart`, `core/server.go` length-prefixed frames) is an architecture ceiling. Binary framing for hot counters is a long-term option; traffic/connections push (PERF-11) already removes the request half of those hot paths.
 
 ---
 
@@ -189,16 +175,9 @@ Line-delimited / framed JSON for every action (`lib/core/service.dart`, `core/se
 
 | Order | ID | Why |
 |------|----|-----------|
-<<<<<<< HEAD
-| 1 | PERF-13 | Cheap win on large proxy lists — DONE (EmojiText fast-path + span cache) |
-| 2 | PERF-14 | Resize/layout cascade — DONE (`updateViewSize` equality guard) |
-| 3 | PERF-12 | Reduce config fan-out |
-| 4 | PERF-11 / PERF-15 | Architectural IPC redesign |
-=======
-| — | — | P0–P2 backlog complete except PERF-15 (deferred) and optional connections push |
-| optional | PERF-11 follow-up | Push connections snapshots (supersede remaining poll) |
+| — | — | P0–P2 backlog complete except PERF-15 (deferred) |
 | optional | PERF-15 | Binary / shared-memory counters if profiling still shows IPC ceiling |
->>>>>>> 654ee69 (perf: finish leftover P2 tasks and geo model cleanup)
+| optional | PERF-08 follow-up | True per-leaf preference persistence keys |
 
 ## Out of scope for this list
 
