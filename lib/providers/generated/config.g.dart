@@ -47,7 +47,7 @@ abstract class _$AppSetting extends $Notifier<AppSettingProps> {
   AppSettingProps build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<AppSettingProps, AppSettingProps>;
     final element =
         ref.element
@@ -57,7 +57,7 @@ abstract class _$AppSetting extends $Notifier<AppSettingProps> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }
 
@@ -99,7 +99,7 @@ abstract class _$WindowSetting extends $Notifier<WindowProps> {
   WindowProps build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<WindowProps, WindowProps>;
     final element =
         ref.element
@@ -109,7 +109,7 @@ abstract class _$WindowSetting extends $Notifier<WindowProps> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }
 
@@ -150,7 +150,7 @@ abstract class _$VpnSetting extends $Notifier<VpnProps> {
   VpnProps build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<VpnProps, VpnProps>;
     final element =
         ref.element
@@ -160,7 +160,7 @@ abstract class _$VpnSetting extends $Notifier<VpnProps> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }
 
@@ -202,7 +202,7 @@ abstract class _$NetworkSetting extends $Notifier<NetworkProps> {
   NetworkProps build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<NetworkProps, NetworkProps>;
     final element =
         ref.element
@@ -212,7 +212,7 @@ abstract class _$NetworkSetting extends $Notifier<NetworkProps> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }
 
@@ -254,7 +254,7 @@ abstract class _$ThemeSetting extends $Notifier<ThemeProps> {
   ThemeProps build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<ThemeProps, ThemeProps>;
     final element =
         ref.element
@@ -264,7 +264,7 @@ abstract class _$ThemeSetting extends $Notifier<ThemeProps> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }
 
@@ -306,7 +306,7 @@ abstract class _$CurrentProfileId extends $Notifier<int?> {
   int? build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<int?, int?>;
     final element =
         ref.element
@@ -316,7 +316,7 @@ abstract class _$CurrentProfileId extends $Notifier<int?> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }
 
@@ -358,7 +358,7 @@ abstract class _$DavSetting extends $Notifier<DAVProps?> {
   DAVProps? build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<DAVProps?, DAVProps?>;
     final element =
         ref.element
@@ -368,7 +368,7 @@ abstract class _$DavSetting extends $Notifier<DAVProps?> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }
 
@@ -409,7 +409,7 @@ abstract class _$OverrideDns extends $Notifier<bool> {
   bool build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -419,7 +419,7 @@ abstract class _$OverrideDns extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }
 
@@ -461,7 +461,7 @@ abstract class _$HotKeyActions extends $Notifier<List<HotKeyAction>> {
   List<HotKeyAction> build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<List<HotKeyAction>, List<HotKeyAction>>;
     final element =
         ref.element
@@ -471,7 +471,7 @@ abstract class _$HotKeyActions extends $Notifier<List<HotKeyAction>> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }
 
@@ -514,7 +514,7 @@ abstract class _$ProxiesStyleSetting extends $Notifier<ProxiesStyleProps> {
   ProxiesStyleProps build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<ProxiesStyleProps, ProxiesStyleProps>;
     final element =
         ref.element
@@ -524,7 +524,7 @@ abstract class _$ProxiesStyleSetting extends $Notifier<ProxiesStyleProps> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }
 
@@ -566,7 +566,7 @@ abstract class _$PatchClashConfig extends $Notifier<PatchClashConfig> {
   PatchClashConfig build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<PatchClashConfig, PatchClashConfig>;
     final element =
         ref.element
@@ -576,7 +576,7 @@ abstract class _$PatchClashConfig extends $Notifier<PatchClashConfig> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }
 
@@ -618,7 +618,7 @@ abstract class _$ExcludeSSIDs extends $Notifier<List<String>> {
   List<String> build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<List<String>, List<String>>;
     final element =
         ref.element
@@ -628,7 +628,7 @@ abstract class _$ExcludeSSIDs extends $Notifier<List<String>> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }
 
@@ -670,7 +670,7 @@ abstract class _$TailscaleSetting extends $Notifier<TailscaleProps> {
   TailscaleProps build();
   @$mustCallSuper
   @override
-  WhenComplete runBuild() {
+  void runBuild() {
     final ref = this.ref as $Ref<TailscaleProps, TailscaleProps>;
     final element =
         ref.element
@@ -680,15 +680,82 @@ abstract class _$TailscaleSetting extends $Notifier<TailscaleProps> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(GeoIdentitySetting)
+final geoIdentitySettingProvider = GeoIdentitySettingProvider._();
+
+final class GeoIdentitySettingProvider
+    extends $NotifierProvider<GeoIdentitySetting, GeoIdentityProps> {
+  GeoIdentitySettingProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'geoIdentitySettingProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$geoIdentitySettingHash();
+
+  @$internal
+  @override
+  GeoIdentitySetting create() => GeoIdentitySetting();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GeoIdentityProps value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GeoIdentityProps>(value),
+    );
+  }
+}
+
+String _$geoIdentitySettingHash() =>
+    r'f33c24840a0569d1d06f3deda136aea3aab0c600';
+
+abstract class _$GeoIdentitySetting extends $Notifier<GeoIdentityProps> {
+  GeoIdentityProps build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<GeoIdentityProps, GeoIdentityProps>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<GeoIdentityProps, GeoIdentityProps>,
+              GeoIdentityProps,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+/// Aggregate Config for save/load and tests only.
+///
+/// UI and derived providers should watch leaf setting providers (with
+/// `.select` when possible) instead of this aggregate (PERF-12).
 
 @ProviderFor(_config)
 final configProvider = _ConfigProvider._();
 
+/// Aggregate Config for save/load and tests only.
+///
+/// UI and derived providers should watch leaf setting providers (with
+/// `.select` when possible) instead of this aggregate (PERF-12).
+
 final class _ConfigProvider extends $FunctionalProvider<Config, Config, Config>
     with $Provider<Config> {
+  /// Aggregate Config for save/load and tests only.
+  ///
+  /// UI and derived providers should watch leaf setting providers (with
+  /// `.select` when possible) instead of this aggregate (PERF-12).
   _ConfigProvider._()
     : super(
         from: null,
@@ -722,4 +789,4 @@ final class _ConfigProvider extends $FunctionalProvider<Config, Config, Config>
   }
 }
 
-String _$_configHash() => r'2151b4807c98ef67c0c0d122e0dcd0e9394e65c7';
+String _$_configHash() => r'6ce9a2b7ed1b2827cdc6de5249f81be2266d3d4a';
