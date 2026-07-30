@@ -1,3 +1,221 @@
+## v0.8.101
+
+- chore: bump version to 0.8.101 for simplified Geo identity release
+
+- Ship the purpose + one-switch + FuckClaude validation Geo identity UI.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- refactor(geo-identity): reduce UI to purpose, on/off, and API status
+
+- Show a short purpose blurb, a single protect switch that runs the setup
+
+- checklist, and a FuckClaude-backed status banner (good to go / not ready)
+
+- with an optional Recheck action.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- refactor(geo-identity): simplify UI to status card and quick actions
+
+- Collapse the long multi-section menu into a Ready/Needs-setup status
+
+- card with compact chips, one-click setup, a short Quick actions list,
+
+- and an Advanced toggle for the remaining switches and links.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+## v0.8.100
+
+- fix(test): update config overrides count for geo identity
+
+- buildConfigOverrides now includes geoIdentitySettingProvider, so the
+
+- provider test expectation must be 14 and cover the new defaults.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- chore: bump version to 0.8.100 for Geo identity release
+
+- Ship Tools → Geo identity: one-click undercover checklist, FuckClaude
+
+- network verify, Claude Code OS timezone align, and terminal proxy exports.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- feat(geo-identity): Tailscale-style one-click checklist for newbies
+
+- Add a live 5-step checklist and One-click setup that enables protect,
+
+- turns on system proxy + TUN (or Android VPN), starts FlClash, verifies
+
+- the FuckClaude network exit, and tries to align the OS timezone.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- feat(geo-identity): help Claude Code via OS timezone and terminal proxy
+
+- Add a Claude Code terminal section: align/restore desktop OS timezone to
+
+- the exit geo (the CLI signal GeoMirror cannot change), copy HTTP(S)_PROXY
+
+- exports for system-proxy-only terminals, and document TUN preference plus
+
+- ANTHROPIC_BASE_URL hostname hygiene.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- feat(geo-identity): verify network undercover via FuckClaude API
+
+- Add an opt-in protect mode that works with system proxy and TUN/VPN:
+
+- show capture-mode status, probe /api/check through the mixed-port stack
+
+- with optional US Accept-Language, and surface protected vs exposed
+
+- results from exit geo + band.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- feat(tools): add Geo identity guide for US AI exit consistency
+
+- Add a Tools menu that explains exit-IP vs OS/browser fingerprint
+
+- alignment, surfaces local timezone/locale risk heuristics, and links
+
+- FuckClaude self-check plus GeoMirror for browser-side geo mirroring.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+## v0.8.99
+
+- chore: bump version to 0.8.99 for Tailscale friendly UX release
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- feat(tailscale): friendlier setup guide and one-tap connection test
+
+- Make the Tailscale screen easier to use on Android and desktop:
+
+- - Platform-specific scenario card and step-by-step guide (Android client vs desktop host)
+
+- - Context-aware bypass hint (recommended on desktop; usually off on Android)
+
+- - Live status banner (disabled / no nodes / start VPN / ready)
+
+- - Per-node ping button reusing the existing delay test, with latency or Timeout
+
+- - Clear prompts if Enable is off or FlClash VPN is not started
+
+- Localized in en/zh_CN/ja/ru.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+## v0.8.98
+
+- chore: bump version to 0.8.98 for Tailscale fake-IP bypass release
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- feat(tailscale): sync Fake IP Filter with bypass toggle
+
+- Turning 'Keep Tailscale traffic direct' on now adds +.tailscale.com / +.tailscale.io / +.ts.net to Config → DNS → Fake IP Filter; turning it off removes only those entries and leaves unrelated filters alone. Also re-applies the running profile so the change takes effect without a manual VPN restart.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- fix(tailscale): exclude control plane from fake-IP DNS on bypass
+
+- The curl diagnostic showing controlplane.tailscale.com -> 198.18.0.12 is Clash fake-IP DNS poisoning. DOMAIN-SUFFIX DIRECT alone does not stop that; the TLS handshake then hangs mid-certificate and tailscale up never completes.
+
+- When 'Keep Tailscale traffic direct' is on:
+
+- - Expand DIRECT domains to tailscale.com / tailscale.io / ts.net
+
+- - Inject fake-ip-filter entries (+.tailscale.com, +.tailscale.io, +.ts.net) into the running DNS config so those names resolve to real public IPs
+
+- Also updates the in-app copy to call out the 198.18.x.x symptom.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+## v0.8.97
+
+- chore: bump version to 0.8.97 for Tailscale UX release
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- feat(tailscale): one-click bypass + per-node route destinations
+
+- Adds provider-agnostic Tailscale routing controls so users don't hand-edit rules per VPN profile:
+
+- - 'Keep Tailscale traffic direct' toggle: auto-injects DIRECT rules for the tailnet CGNAT ranges, control/DERP domains and the tailscaled process, so a host that also runs the Tailscale service isn't hijacked by FlClash's VPN.
+
+- - Per-node 'Route destinations': domains/IPs routed through that embedded Tailscale node, so a phone can reach a home host through FlClash's built-in tailnet node without running the Tailscale app (avoids the Android single-VPN conflict).
+
+- Rules are injected at the top of the running config (highest priority) via MakeRealProfileState, independent of the imported profile. Localized in en/zh_CN/ja/ru; adds model/provider tests.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- feat(tailscale): add in-app guide and a prominent add-node button
+
+- The only way to add a node was a small + icon in the app bar, which was easy to miss on the full-page view. Add a clear FilledButton in the empty state and an inline 'How Tailscale works' guide (auth key -> add node -> enable -> select on proxies page). Also add helper text to the node dialog fields explaining each option. Localized in en/zh_CN/ja/ru.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+## v0.8.96
+
+- chore: bump version to 0.8.96 for Tailscale + Android CI release
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- ci: build Android in release workflow without requiring signing secrets
+
+- The build-android job was gated behind the ENABLE_ANDROID repo variable, so it was skipped and no Android artifacts appeared in releases.
+
+- - Remove the ENABLE_ANDROID gate so Android builds by default.
+
+- - Make signing optional: use KEYSTORE/SERVICE_JSON/etc. only when present, otherwise build a debug-signed '.dev' APK covered by the bundled placeholder google-services.json.
+
+- - Disable the Crashlytics mapping upload on the unsigned '.dev' fallback so the minified release build cannot fail trying to reach the dummy Firebase project.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+## v0.0.0-ci-test
+
+- ci: add fork-friendly release workflow
+
+- Adds .github/workflows/release.yaml that builds desktop (and optionally
+
+- Android) and publishes a GitHub Release on the current repo using the
+
+- built-in GITHUB_TOKEN, without upstream-only Telegram/Homebrew/F-Droid steps.
+
+- Guards build.yaml jobs so the upstream pipeline no longer runs on forks.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- feat(tailscale): gate outbound injection behind an opt-in enable switch
+
+- Tailscale is now off by default. A master switch controls whether authored
+
+- nodes are merged into the running config; when off, Tailscale handles no
+
+- traffic and normal global/VPN traffic is unaffected.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- test(tailscale): cover Tailscale model, merge, and provider
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- feat(tailscale): add Tailscale node management UI and localization
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- feat(tailscale): add Tailscale outbound model and merge into generated config
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
 ## v0.8.94
 
 - Fix macos performance issue
