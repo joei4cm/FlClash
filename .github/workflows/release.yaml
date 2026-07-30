@@ -1,0 +1,252 @@
+name: release
+
+# Fork-friendly release workflow.
+#
+# Builds FlClash for desktop and Android and publishes a GitHub Release on THIS
+# repository using the built-in GITHUB_TOKEN. Unlike build.yaml it does not push
+# to Telegram / Homebrew / F-Droid or the upstream repo, so it works out of the
+# box on a fork.
+#
+# Triggers:
+#   * push a tag like `v1.2.3`  -> builds that tag and creates the release
+#   * manual "Run workflow"     -> provide a `version` (e.g. v1.2.3-test)
+#
+# Android builds by default with NO extra setup: without signing secrets it
+# produces a debug-signed APK with the `.dev` application id (installable, and
+# covered by the bundled placeholder google-services.json). To ship a properly
+# signed release instead, add the optional secrets below and they are picked up
+# automatically:
+#   Secrets: KEYSTORE, SERVICE_JSON, KEY_ALIAS, STORE_PASSWORD, KEY_PASSWORD
+#            (KEYSTORE and SERVICE_JSON are base64 encoded)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release tag to create (e.g. v1.2.3)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  FLUTTER_VERSION: '3.44.4'
+  GO_VERSION: '1.26.4'
+  # Resolved release tag for both trigger types.
+  RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.version || github.ref_name }}
+  # Stable unless the tag contains a pre-release marker like `-beta`.
+  IS_STABLE: ${{ !contains(github.event_name == 'workflow_dispatch' && inputs.version || github.ref_name, '-') }}
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run tests
+        run: flutter test --reporter expanded
+
+  build-desktop:
+    needs: [ test ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows
+            os: Windows-2022
+            arch: amd64
+          - platform: windows
+            os: windows-11-arm
+            arch: arm64
+          - platform: linux
+            os: ubuntu-22.04
+            arch: amd64
+          - platform: linux
+            os: ubuntu-24.04-arm
+            arch: arm64
+          - platform: macos
+            os: macos-15-intel
+            arch: amd64
+          - platform: macos
+            os: macos-latest
+            arch: arm64
+
+    steps:
+      - name: Setup Rust (Windows arm64)
+        if: startsWith(matrix.os, 'windows-11-arm')
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri "https://win.rustup.rs/aarch64" -OutFile rustup-init.exe
+          .\rustup-init.exe -y --default-toolchain stable
+          $cargoPath = "$env:USERPROFILE\.cargo\bin"
+          Add-Content $env:GITHUB_PATH $cargoPath
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: |
+            core/go.sum
+
+      - name: Enable git long paths (Windows)
+        if: startsWith(matrix.os, 'windows')
+        run: git config --global core.longpaths true
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: master
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Setup Xcode
+        if: startsWith(matrix.platform, 'macos')
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.3.app || sudo xcode-select -s /Applications/Xcode_26.2.app
+          xcodebuild -version
+
+      - name: Setup appdmg (macOS)
+        if: startsWith(matrix.platform, 'macos')
+        run: npm install -g appdmg
+
+      - name: Get Flutter dependencies
+        run: |
+          flutter --version
+          flutter pub get
+
+      - name: Build
+        run: dart setup.dart ${{ matrix.platform }} ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-${{ matrix.platform }}-${{ matrix.arch }}
+          path: ./dist
+          overwrite: true
+
+  build-android:
+    needs: [ test ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Android signing (optional)
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+          SERVICE_JSON: ${{ secrets.SERVICE_JSON }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE" ]; then
+            echo "Signing secrets found: building a signed release APK."
+            echo "$KEYSTORE" | base64 --decode > android/app/keystore.jks
+            if [ -n "$SERVICE_JSON" ]; then
+              echo "$SERVICE_JSON" | base64 --decode > android/app/google-services.json
+            fi
+            {
+              echo "keyAlias=$KEY_ALIAS"
+              echo "storePassword=$STORE_PASSWORD"
+              echo "keyPassword=$KEY_PASSWORD"
+            } >> android/local.properties
+          else
+            echo "No signing secrets: building a debug-signed '.dev' APK using the bundled placeholder google-services.json."
+          fi
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: |
+            core/go.sum
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: master
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Setup NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r28c
+          add-to-path: true
+          link-to-sdk: true
+
+      - name: Get Flutter dependencies
+        run: |
+          flutter --version
+          flutter pub get
+
+      - name: Build
+        run: dart setup.dart android ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-android
+          path: ./dist
+          overwrite: true
+
+  release:
+    needs: [ build-desktop, build-android ]
+    # Run once desktop builds succeed even if the optional Android job was
+    # skipped or failed, so a missing Android setup never blocks a release.
+    if: ${{ always() && needs.build-desktop.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist/
+          pattern: artifact-*
+          merge-multiple: true
+
+      - name: Generate SHA256SUMS
+        run: |
+          cd ./dist
+          sha256sum ./* > SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: ${{ env.RELEASE_TAG }}
+          files: ./dist/*
+          draft: false
+          prerelease: ${{ env.IS_STABLE != 'true' }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
