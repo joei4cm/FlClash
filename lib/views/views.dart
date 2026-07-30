@@ -13,3 +13,4 @@ export 'proxies/proxies.dart';
 export 'resources.dart';
 export 'tailscale.dart';
 export 'tools.dart';
+export 'geo_identity.dart';

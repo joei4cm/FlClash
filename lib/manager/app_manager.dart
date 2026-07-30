@@ -54,6 +54,7 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
     ref.listenManual(patchClashConfigProvider, schedulePreferencesSave);
     ref.listenManual(excludeSSIDsProvider, schedulePreferencesSave);
     ref.listenManual(tailscaleSettingProvider, schedulePreferencesSave);
+    ref.listenManual(geoIdentitySettingProvider, schedulePreferencesSave);
     ref.listenManual(needUpdateGroupsProvider, (prev, next) {
       if (prev != next) {
         globalState.container

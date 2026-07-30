@@ -684,11 +684,78 @@ abstract class _$TailscaleSetting extends $Notifier<TailscaleProps> {
   }
 }
 
+@ProviderFor(GeoIdentitySetting)
+final geoIdentitySettingProvider = GeoIdentitySettingProvider._();
+
+final class GeoIdentitySettingProvider
+    extends $NotifierProvider<GeoIdentitySetting, GeoIdentityProps> {
+  GeoIdentitySettingProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'geoIdentitySettingProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$geoIdentitySettingHash();
+
+  @$internal
+  @override
+  GeoIdentitySetting create() => GeoIdentitySetting();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GeoIdentityProps value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GeoIdentityProps>(value),
+    );
+  }
+}
+
+String _$geoIdentitySettingHash() =>
+    r'f33c24840a0569d1d06f3deda136aea3aab0c600';
+
+abstract class _$GeoIdentitySetting extends $Notifier<GeoIdentityProps> {
+  GeoIdentityProps build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<GeoIdentityProps, GeoIdentityProps>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<GeoIdentityProps, GeoIdentityProps>,
+              GeoIdentityProps,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+/// Aggregate Config for save/load and tests only.
+///
+/// UI and derived providers should watch leaf setting providers (with
+/// `.select` when possible) instead of this aggregate (PERF-12).
+
 @ProviderFor(_config)
 final configProvider = _ConfigProvider._();
 
+/// Aggregate Config for save/load and tests only.
+///
+/// UI and derived providers should watch leaf setting providers (with
+/// `.select` when possible) instead of this aggregate (PERF-12).
+
 final class _ConfigProvider extends $FunctionalProvider<Config, Config, Config>
     with $Provider<Config> {
+  /// Aggregate Config for save/load and tests only.
+  ///
+  /// UI and derived providers should watch leaf setting providers (with
+  /// `.select` when possible) instead of this aggregate (PERF-12).
   _ConfigProvider._()
     : super(
         from: null,
@@ -722,4 +789,4 @@ final class _ConfigProvider extends $FunctionalProvider<Config, Config, Config>
   }
 }
 
-String _$_configHash() => r'2151b4807c98ef67c0c0d122e0dcd0e9394e65c7';
+String _$_configHash() => r'6ce9a2b7ed1b2827cdc6de5249f81be2266d3d4a';

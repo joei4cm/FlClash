@@ -34,48 +34,54 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m6(label) => "${label}当前已存在";
 
-  static String m7(name) => "${name} 已是最新版本";
+  static String m7(timezone) => "恢复为 ${timezone}";
 
-  static String m8(name) => "${name} 已更新";
+  static String m8(detail) => "无法对齐系统时区（${detail}）";
 
-  static String m9(name) => "正在更新 ${name}...";
+  static String m9(timezone) => "系统时区已恢复为 ${timezone}";
 
-  static String m10(count) => "${count} 小时前";
+  static String m10(name) => "${name} 已是最新版本";
 
-  static String m11(count) => "${count} 小时";
+  static String m11(name) => "${name} 已更新";
 
-  static String m12(target) => "${target} 是一个无效的策略";
+  static String m12(name) => "正在更新 ${name}...";
 
-  static String m13(proxyName) => "${proxyName} 是一个无效的代理";
+  static String m13(count) => "${count} 小时前";
 
-  static String m14(providerName) => "${providerName} 是一个无效的代理集";
+  static String m14(count) => "${count} 小时";
 
-  static String m15(subRule) => "${subRule} 是一个无效的SUB_RULE";
+  static String m15(target) => "${target} 是一个无效的策略";
 
-  static String m16(appName) =>
+  static String m16(proxyName) => "${proxyName} 是一个无效的代理";
+
+  static String m17(providerName) => "${providerName} 是一个无效的代理集";
+
+  static String m18(subRule) => "${subRule} 是一个无效的SUB_RULE";
+
+  static String m19(appName) =>
       "1. 打开 系统设置 > 隐私与安全性\n2. 选择 定位服务\n3. 在右侧列表中找到并勾选 ${appName}\n\n完成设置后，返回应用即可正常使用。感谢您的配合。";
 
-  static String m17(count) => "${count} 分钟前";
+  static String m20(count) => "${count} 分钟前";
 
-  static String m18(count) => "${count} 个月前";
+  static String m21(count) => "${count} 个月前";
 
-  static String m19(label) => "暂无${label}";
+  static String m22(label) => "暂无${label}";
 
-  static String m20(label) => "${label}必须为数字";
+  static String m23(label) => "${label}必须为数字";
 
-  static String m21(label) => "${label} 必须在 1024 到 49151 之间";
+  static String m24(label) => "${label} 必须在 1024 到 49151 之间";
 
-  static String m22(count) => "${count} 秒";
+  static String m25(count) => "${count} 秒";
 
-  static String m23(count) => "已选择 ${count} 项";
+  static String m26(count) => "已选择 ${count} 项";
 
-  static String m24(count) => "${count} 个路由目标";
+  static String m27(count) => "${count} 个路由目标";
 
-  static String m25(count) => "已有 ${count} 个节点。点击节点旁的测速按钮检查连通性。";
+  static String m28(count) => "已有 ${count} 个节点。点击节点旁的测速按钮检查连通性。";
 
-  static String m26(label) => "${label}必须为URL";
+  static String m29(label) => "${label}必须为URL";
 
-  static String m27(count) => "${count} 年前";
+  static String m30(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -305,11 +311,96 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoAutoUpdateIntervalTip": MessageLookupByLibrary.simpleMessage(
       "自动更新间隔必须大于0",
     ),
+    "geoIdentity": MessageLookupByLibrary.simpleMessage("地理身份"),
+    "geoIdentityCheckCancelled": MessageLookupByLibrary.simpleMessage(
+      "网络检测已取消",
+    ),
+    "geoIdentityCheckFailed": MessageLookupByLibrary.simpleMessage("网络检测失败"),
+    "geoIdentityCopyTerminalProxy": MessageLookupByLibrary.simpleMessage(
+      "复制终端代理环境变量",
+    ),
+    "geoIdentityCopyTerminalProxyShort": MessageLookupByLibrary.simpleMessage(
+      "复制终端用的 HTTP(S)_PROXY",
+    ),
+    "geoIdentityDesc": MessageLookupByLibrary.simpleMessage("一个开关完成美区出口掩护"),
+    "geoIdentityHideAdvanced": MessageLookupByLibrary.simpleMessage("隐藏高级选项"),
+    "geoIdentityHonestyLine": MessageLookupByLibrary.simpleMessage(
+      "这里覆盖出口 IP 与探测语言。浏览器字体/定位仍需 GeoMirror；Claude Code 仍需匹配的系统时区（以及 TUN 或代理环境变量）。",
+    ),
+    "geoIdentityNeedStart": MessageLookupByLibrary.simpleMessage(
+      "请先启动 FlClash，再验证网络环境。",
+    ),
+    "geoIdentityNetworkBad": MessageLookupByLibrary.simpleMessage(
+      "出口还不是美国 — 先选美区节点，再点重新检查",
+    ),
+    "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
+      "网络仍可能暴露",
+    ),
+    "geoIdentityNetworkGood": MessageLookupByLibrary.simpleMessage("网络看起来已就绪"),
+    "geoIdentityOffStatus": MessageLookupByLibrary.simpleMessage("地理身份保护已关闭"),
+    "geoIdentityOpenGeoMirror": MessageLookupByLibrary.simpleMessage(
+      "GeoMirror（GitHub）",
+    ),
+    "geoIdentityOpenGeoMirrorShort": MessageLookupByLibrary.simpleMessage(
+      "浏览器指纹对齐",
+    ),
+    "geoIdentityPendingCheck": MessageLookupByLibrary.simpleMessage(
+      "保护已开启 — 等待网络检查",
+    ),
+    "geoIdentityProtectEnable": MessageLookupByLibrary.simpleMessage(
+      "启用地理身份保护",
+    ),
+    "geoIdentityProtectToggleDesc": MessageLookupByLibrary.simpleMessage(
+      "接管流量、尽量对齐桌面时区，并验证出口",
+    ),
+    "geoIdentityPurposeBody": MessageLookupByLibrary.simpleMessage(
+      "开启后，FlClash 会接管流量并检查出口是否适合美区 AI 工具。浏览器页面指纹仍可能需要 GeoMirror。",
+    ),
+    "geoIdentityRecheck": MessageLookupByLibrary.simpleMessage("重新检测"),
+    "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
+      "恢复之前的系统时区",
+    ),
+    "geoIdentityRestoreOsTimezoneDesc": m7,
+    "geoIdentitySetupDoneNeedUsNode": MessageLookupByLibrary.simpleMessage(
+      "设置已应用，但出口尚未受保护。请选择美区节点，然后点重新检查。",
+    ),
+    "geoIdentitySetupDoneProtected": MessageLookupByLibrary.simpleMessage(
+      "设置完成 — 网络看起来已受美区保护。",
+    ),
+    "geoIdentitySetupRunning": MessageLookupByLibrary.simpleMessage(
+      "正在应用新手设置…",
+    ),
+    "geoIdentitySetupStarting": MessageLookupByLibrary.simpleMessage(
+      "正在启动 FlClash…",
+    ),
+    "geoIdentitySetupTimezone": MessageLookupByLibrary.simpleMessage(
+      "正在对齐系统时区…",
+    ),
+    "geoIdentitySetupVerifying": MessageLookupByLibrary.simpleMessage(
+      "正在验证网络环境…",
+    ),
+    "geoIdentityShowAdvanced": MessageLookupByLibrary.simpleMessage("显示高级选项"),
+    "geoIdentityTimezone": MessageLookupByLibrary.simpleMessage("系统时区"),
+    "geoIdentityTimezoneAlignFailed": m8,
+    "geoIdentityTimezoneAndroidTip": MessageLookupByLibrary.simpleMessage(
+      "Android 无 root 时无法由应用改系统时区。请打开 设置 → 系统 → 日期和时间，选择与出口一致的美区时区。",
+    ),
+    "geoIdentityTimezoneMissing": MessageLookupByLibrary.simpleMessage(
+      "还没有出口时区。请先验证网络环境。",
+    ),
+    "geoIdentityTimezoneNothingToRestore": MessageLookupByLibrary.simpleMessage(
+      "没有可恢复的先前系统时区。",
+    ),
+    "geoIdentityTimezoneRestored": m9,
+    "geoIdentityTurningOff": MessageLookupByLibrary.simpleMessage("正在关闭…"),
+    "geoIdentityUsAcceptLanguage": MessageLookupByLibrary.simpleMessage(
+      "用美区 Accept-Language 探测",
+    ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geo 选项"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geo 资源"),
-    "geoSkipped": m7,
-    "geoUpdated": m8,
-    "geoUpdating": m9,
+    "geoSkipped": m10,
+    "geoUpdated": m11,
+    "geoUpdating": m12,
     "geodataLoader": MessageLookupByLibrary.simpleMessage("Geo低内存模式"),
     "geodataLoaderDesc": MessageLookupByLibrary.simpleMessage("开启将使用Geo低内存加载器"),
     "geoipCode": MessageLookupByLibrary.simpleMessage("Geoip代码"),
@@ -326,8 +417,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "hotkeyManagement": MessageLookupByLibrary.simpleMessage("快捷键管理"),
     "hotkeyManagementDesc": MessageLookupByLibrary.simpleMessage("使用键盘控制应用程序"),
     "hours": MessageLookupByLibrary.simpleMessage("小时"),
-    "hoursAgo": m10,
-    "hoursCount": m11,
+    "hoursAgo": m13,
+    "hoursCount": m14,
     "icon": MessageLookupByLibrary.simpleMessage("图片"),
     "iconRecords": MessageLookupByLibrary.simpleMessage("图标记录"),
     "iconStyle": MessageLookupByLibrary.simpleMessage("图标样式"),
@@ -355,10 +446,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "interval": MessageLookupByLibrary.simpleMessage("间隔"),
     "intranetIP": MessageLookupByLibrary.simpleMessage("内网 IP"),
     "invalidBackupFile": MessageLookupByLibrary.simpleMessage("无效备份文件"),
-    "invalidPolicy": m12,
-    "invalidProxy": m13,
-    "invalidProxyProvider": m14,
-    "invalidSubRule": m15,
+    "invalidPolicy": m15,
+    "invalidProxy": m16,
+    "invalidProxyProvider": m17,
+    "invalidSubRule": m18,
     "ipcidr": MessageLookupByLibrary.simpleMessage("IP/掩码"),
     "ipv6Desc": MessageLookupByLibrary.simpleMessage("开启后将可以接收IPv6流量"),
     "ipv6InboundDesc": MessageLookupByLibrary.simpleMessage("允许IPv6入站"),
@@ -382,7 +473,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "locationPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "根据系统要求，获取Wi-Fi名称需要您授予位置权限。",
     ),
-    "locationPermissionGuide": m16,
+    "locationPermissionGuide": m19,
     "locationPermissionRequired": MessageLookupByLibrary.simpleMessage(
       "需要位置权限",
     ),
@@ -404,11 +495,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "min": MessageLookupByLibrary.simpleMessage("最小"),
     "minimizeOnExit": MessageLookupByLibrary.simpleMessage("退出时最小化"),
     "minimizeOnExitDesc": MessageLookupByLibrary.simpleMessage("修改系统默认退出事件"),
-    "minutesAgo": m17,
+    "minutesAgo": m20,
     "mixedPort": MessageLookupByLibrary.simpleMessage("混合端口"),
     "mode": MessageLookupByLibrary.simpleMessage("模式"),
     "monochromeScheme": MessageLookupByLibrary.simpleMessage("单色"),
-    "monthsAgo": m18,
+    "monthsAgo": m21,
     "more": MessageLookupByLibrary.simpleMessage("更多"),
     "name": MessageLookupByLibrary.simpleMessage("名称"),
     "nameserver": MessageLookupByLibrary.simpleMessage("域名服务器"),
@@ -434,8 +525,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "none": MessageLookupByLibrary.simpleMessage("无"),
     "notSelectedTip": MessageLookupByLibrary.simpleMessage("当前代理组无法选中"),
     "nullProfileDesc": MessageLookupByLibrary.simpleMessage("没有配置文件,请先添加配置文件"),
-    "nullTip": m19,
-    "numberTip": m20,
+    "nullTip": m22,
+    "numberTip": m23,
     "onDemand": MessageLookupByLibrary.simpleMessage("按需运行"),
     "onDemandDesc": MessageLookupByLibrary.simpleMessage("配置程序特定场景运行状态"),
     "onlyIcon": MessageLookupByLibrary.simpleMessage("仅图标"),
@@ -470,7 +561,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "port": MessageLookupByLibrary.simpleMessage("端口"),
     "portConflictTip": MessageLookupByLibrary.simpleMessage("请输入不同的端口"),
-    "portTip": m21,
+    "portTip": m24,
     "preferH3Desc": MessageLookupByLibrary.simpleMessage("优先使用DOH的http/3"),
     "prerequisites": MessageLookupByLibrary.simpleMessage("前置条件"),
     "pressKeyboard": MessageLookupByLibrary.simpleMessage("请按下按键"),
@@ -653,7 +744,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "search": MessageLookupByLibrary.simpleMessage("搜索"),
     "seconds": MessageLookupByLibrary.simpleMessage("秒"),
-    "secondsCount": m22,
+    "secondsCount": m25,
     "selectAll": MessageLookupByLibrary.simpleMessage("全选"),
     "selectProxies": MessageLookupByLibrary.simpleMessage("选择代理"),
     "selectProxyProviders": MessageLookupByLibrary.simpleMessage("选择代理集"),
@@ -661,7 +752,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectSplitStrategy": MessageLookupByLibrary.simpleMessage("请选择分流策略"),
     "selectSubRule": MessageLookupByLibrary.simpleMessage("请选择子规则"),
     "selected": MessageLookupByLibrary.simpleMessage("已选择"),
-    "selectedCountTitle": m23,
+    "selectedCountTitle": m26,
     "settings": MessageLookupByLibrary.simpleMessage("设置"),
     "show": MessageLookupByLibrary.simpleMessage("显示"),
     "showAdvanced": MessageLookupByLibrary.simpleMessage("显示高级选项"),
@@ -782,7 +873,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleNodesTitle": MessageLookupByLibrary.simpleMessage("节点"),
     "tailscaleNotTested": MessageLookupByLibrary.simpleMessage("未测试"),
     "tailscaleRoutes": MessageLookupByLibrary.simpleMessage("路由目标"),
-    "tailscaleRoutesCount": m24,
+    "tailscaleRoutesCount": m27,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "经由该节点转发的域名或 IP，每行一个（例如你家用电脑的 Tailscale IP 或 MagicDNS 名称）。",
     ),
@@ -815,7 +906,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleStatusNoNodes": MessageLookupByLibrary.simpleMessage(
       "已启用，但还没有节点。请先添加一个节点。",
     ),
-    "tailscaleStatusReady": m25,
+    "tailscaleStatusReady": m28,
     "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
       "请先打开“启用 Tailscale”再测试。",
     ),
@@ -861,7 +952,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "upload": MessageLookupByLibrary.simpleMessage("上传"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage("通过URL获取配置文件"),
-    "urlTip": m26,
+    "urlTip": m29,
     "useHosts": MessageLookupByLibrary.simpleMessage("使用Hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("使用系统Hosts"),
     "userAgent": MessageLookupByLibrary.simpleMessage("用户代理"),
@@ -877,7 +968,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnTip": MessageLookupByLibrary.simpleMessage("重启VPN后改变生效"),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV配置"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("白名单模式"),
-    "yearsAgo": m27,
+    "yearsAgo": m30,
     "zh_CN": MessageLookupByLibrary.simpleMessage("中文简体"),
   };
 }
