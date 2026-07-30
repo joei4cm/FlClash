@@ -162,6 +162,13 @@ func handleMethodCall(call *MethodCall, response MethodResponse) {
 		}
 		response.success(handleGetTotalTraffic(onlyStatisticsProxy))
 		return
+	case getTrafficSnapshotMethod:
+		onlyStatisticsProxy, ok := request.Params.(bool)
+		if !ok {
+			response.error(formatInvalidParamsError(getTrafficSnapshotMethod, "bool", request.Params))
+			return
+		}
+		response.success(handleGetTrafficSnapshot(onlyStatisticsProxy))
 	case resetTrafficMethod:
 		handleResetTraffic()
 		response.success(true)
