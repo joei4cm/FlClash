@@ -105,6 +105,45 @@ class ExcludeSSIDs extends _$ExcludeSSIDs with AutoDisposeNotifierMixin {
   }
 }
 
+@riverpod
+class GeoIdentitySetting extends _$GeoIdentitySetting
+    with AutoDisposeNotifierMixin {
+  @override
+  GeoIdentityProps build() {
+    return const GeoIdentityProps();
+  }
+
+  void setEnable(bool enable) {
+    update((state) => state.copyWith(enable: enable));
+  }
+
+  void setUseUsAcceptLanguage(bool useUsAcceptLanguage) {
+    update((state) => state.copyWith(useUsAcceptLanguage: useUsAcceptLanguage));
+  }
+
+  void setTimezoneHistory({
+    String? previousOsTimezone,
+    String? appliedOsTimezone,
+  }) {
+    update(
+      (state) => state.copyWith(
+        previousOsTimezone: previousOsTimezone,
+        appliedOsTimezone: appliedOsTimezone,
+      ),
+    );
+  }
+
+  void clearTimezoneHistory() {
+    update(
+      (state) => state.copyWith(
+        previousOsTimezone: null,
+        appliedOsTimezone: null,
+      ),
+    );
+  }
+}
+
+
 @Riverpod(name: 'configProvider')
 Config _config(Ref ref) {
   final appSettingProps = ref.watch(appSettingProvider);
@@ -119,6 +158,7 @@ Config _config(Ref ref) {
   final proxiesStyleProps = ref.watch(proxiesStyleSettingProvider);
   final patchClashConfig = ref.watch(patchClashConfigProvider);
   final excludeSSIDs = ref.watch(excludeSSIDsProvider);
+  final geoIdentityProps = ref.watch(geoIdentitySettingProvider);
   return Config(
     appSettingProps: appSettingProps,
     windowProps: windowProps,
@@ -132,6 +172,7 @@ Config _config(Ref ref) {
     proxiesStyleProps: proxiesStyleProps,
     patchClashConfig: patchClashConfig,
     excludeSSIDs: excludeSSIDs,
+    geoIdentityProps: geoIdentityProps,
   );
 }
 
@@ -155,5 +196,8 @@ List<Override> buildConfigOverrides(Config config) {
       (_, _) => config.patchClashConfig,
     ),
     excludeSSIDsProvider.overrideWithBuild((_, _) => config.excludeSSIDs),
+    geoIdentitySettingProvider.overrideWithBuild(
+      (_, _) => config.geoIdentityProps,
+    ),
   ];
 }

@@ -11,6 +11,7 @@ import 'package:fl_clash/views/application_setting.dart';
 import 'package:fl_clash/views/backup_and_restore.dart';
 import 'package:fl_clash/views/config/config.dart';
 import 'package:fl_clash/views/hotkey.dart';
+import 'package:fl_clash/views/geo_identity.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -66,6 +67,16 @@ class _ToolViewState extends ConsumerState<ToolsView> {
     );
   }
 
+
+  List<Widget> _getFeatureList() {
+    return generateSection(
+      title: context.appLocalizations.features,
+      items: [
+        const _GeoIdentityItem(),
+      ],
+    );
+  }
+
   List<Widget> _getSettingList() {
     return generateSection(
       title: context.appLocalizations.settings,
@@ -105,6 +116,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
           );
         },
       ),
+      ..._getFeatureList(),
       ..._getSettingList(),
       ..._getOtherList(vm2.b),
     ];
@@ -251,6 +263,21 @@ class _AdvancedConfigItem extends StatelessWidget {
       title: Text(context.appLocalizations.advancedConfig),
       subtitle: Text(context.appLocalizations.advancedConfigDesc),
       widget: const AdvancedConfigView(),
+    );
+  }
+}
+
+
+class _GeoIdentityItem extends StatelessWidget {
+  const _GeoIdentityItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListItem.open(
+      leading: const Icon(Icons.fingerprint),
+      title: Text(context.appLocalizations.geoIdentity),
+      subtitle: Text(context.appLocalizations.geoIdentityDesc),
+      widget: const GeoIdentityView(),
     );
   }
 }
