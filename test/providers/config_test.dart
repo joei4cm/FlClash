@@ -193,6 +193,25 @@ void main() {
     });
   });
 
+  group('GeoIdentitySetting provider', () {
+    test('default is disabled with US Accept-Language on', () {
+      final value = container.read(geoIdentitySettingProvider);
+      expect(value.enable, false);
+      expect(value.useUsAcceptLanguage, true);
+      expect(value.previousOsTimezone, isNull);
+      expect(value.appliedOsTimezone, isNull);
+    });
+
+    test('setEnable and setUseUsAcceptLanguage update independently', () {
+      final notifier = container.read(geoIdentitySettingProvider.notifier);
+      notifier.setEnable(true);
+      notifier.setUseUsAcceptLanguage(false);
+      final value = container.read(geoIdentitySettingProvider);
+      expect(value.enable, true);
+      expect(value.useUsAcceptLanguage, false);
+    });
+  });
+
   group('configProvider (composite)', () {
     test('composes all sub-providers with defaults', () {
       final config = container.read(configProvider);
@@ -205,6 +224,8 @@ void main() {
       expect(config.hotKeyActions, isEmpty);
       expect(config.patchClashConfig, const PatchClashConfig());
       expect(config.excludeSSIDs, isEmpty);
+      expect(config.geoIdentityProps.enable, false);
+      expect(config.geoIdentityProps.useUsAcceptLanguage, true);
     });
 
     test('reflects updated sub-provider values', () {
@@ -231,9 +252,10 @@ void main() {
         themeProps: ThemeProps(),
         currentProfileId: 7,
         overrideDns: true,
+        geoIdentityProps: GeoIdentityProps(enable: true),
       );
       final overrides = buildConfigOverrides(config);
-      expect(overrides.length, 12);
+      expect(overrides.length, 13);
 
       final overrideContainer = ProviderContainer(overrides: overrides);
       addTearDown(overrideContainer.dispose);
@@ -245,6 +267,11 @@ void main() {
         config.patchClashConfig,
       );
       expect(overrideContainer.read(excludeSSIDsProvider), config.excludeSSIDs);
+      expect(overrideContainer.read(geoIdentitySettingProvider).enable, true);
+      expect(
+        overrideContainer.read(geoIdentitySettingProvider).useUsAcceptLanguage,
+        true,
+      );
       expect(
         overrideContainer.read(appSettingProvider).onlyStatisticsProxy,
         false,

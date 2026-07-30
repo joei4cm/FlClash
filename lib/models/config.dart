@@ -246,6 +246,9 @@ abstract class Config with _$Config {
     @Default(defaultWindowProps) WindowProps windowProps,
     @Default(defaultClashConfig) PatchClashConfig patchClashConfig,
     @Default([]) List<String> excludeSSIDs,
+    @JsonKey(fromJson: GeoIdentityProps.safeFromJson)
+    @Default(defaultGeoIdentityProps)
+    GeoIdentityProps geoIdentityProps,
   }) = _Config;
 
   factory Config.fromJson(Map<String, Object?> json) => _$ConfigFromJson(json);

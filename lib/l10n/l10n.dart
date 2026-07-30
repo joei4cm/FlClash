@@ -4493,6 +4493,381 @@ class AppLocalizations {
       args: [count],
     );
   }
+
+  /// `Features`
+  String get features {
+    return Intl.message('Features', name: 'features', desc: '', args: []);
+  }
+
+  /// `Geo identity`
+  String get geoIdentity {
+    return Intl.message(
+      'Geo identity',
+      name: 'geoIdentity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One switch for US exit undercover`
+  String get geoIdentityDesc {
+    return Intl.message(
+      'One switch for US exit undercover',
+      name: 'geoIdentityDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Turn this on so FlClash captures traffic and checks that your exit looks US-ready for AI tools. Browsers may still need GeoMirror for page fingerprints.`
+  String get geoIdentityPurposeBody {
+    return Intl.message(
+      'Turn this on so FlClash captures traffic and checks that your exit looks US-ready for AI tools. Browsers may still need GeoMirror for page fingerprints.',
+      name: 'geoIdentityPurposeBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Capture traffic, align desktop timezone when possible, then verify the exit`
+  String get geoIdentityProtectToggleDesc {
+    return Intl.message(
+      'Capture traffic, align desktop timezone when possible, then verify the exit',
+      name: 'geoIdentityProtectToggleDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network looks good to go`
+  String get geoIdentityNetworkGood {
+    return Intl.message(
+      'Network looks good to go',
+      name: 'geoIdentityNetworkGood',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit is not US yet — pick a US node, then tap Recheck`
+  String get geoIdentityNetworkBad {
+    return Intl.message(
+      'Exit is not US yet — pick a US node, then tap Recheck',
+      name: 'geoIdentityNetworkBad',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Geo identity protect is off`
+  String get geoIdentityOffStatus {
+    return Intl.message(
+      'Geo identity protect is off',
+      name: 'geoIdentityOffStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Turning off…`
+  String get geoIdentityTurningOff {
+    return Intl.message(
+      'Turning off…',
+      name: 'geoIdentityTurningOff',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recheck`
+  String get geoIdentityRecheck {
+    return Intl.message(
+      'Recheck',
+      name: 'geoIdentityRecheck',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Protect is on — waiting for a network check`
+  String get geoIdentityPendingCheck {
+    return Intl.message(
+      'Protect is on — waiting for a network check',
+      name: 'geoIdentityPendingCheck',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network check was cancelled`
+  String get geoIdentityCheckCancelled {
+    return Intl.message(
+      'Network check was cancelled',
+      name: 'geoIdentityCheckCancelled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This covers exit IP + probe language. Browser fonts/geolocation still need GeoMirror; Claude Code still needs a matching OS timezone (and TUN or proxy exports).`
+  String get geoIdentityHonestyLine {
+    return Intl.message(
+      'This covers exit IP + probe language. Browser fonts/geolocation still need GeoMirror; Claude Code still needs a matching OS timezone (and TUN or proxy exports).',
+      name: 'geoIdentityHonestyLine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not align OS timezone ({detail})`
+  String geoIdentityTimezoneAlignFailed(Object detail) {
+    return Intl.message(
+      'Could not align OS timezone ($detail)',
+      name: 'geoIdentityTimezoneAlignFailed',
+      desc: '',
+      args: [detail],
+    );
+  }
+
+  /// `Enable geo identity protect`
+  String get geoIdentityProtectEnable {
+    return Intl.message(
+      'Enable geo identity protect',
+      name: 'geoIdentityProtectEnable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Probe with US Accept-Language`
+  String get geoIdentityUsAcceptLanguage {
+    return Intl.message(
+      'Probe with US Accept-Language',
+      name: 'geoIdentityUsAcceptLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start FlClash before verifying the network environment.`
+  String get geoIdentityNeedStart {
+    return Intl.message(
+      'Start FlClash before verifying the network environment.',
+      name: 'geoIdentityNeedStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network check failed`
+  String get geoIdentityCheckFailed {
+    return Intl.message(
+      'Network check failed',
+      name: 'geoIdentityCheckFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network still looks exposed`
+  String get geoIdentityNetworkExposed {
+    return Intl.message(
+      'Network still looks exposed',
+      name: 'geoIdentityNetworkExposed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System timezone`
+  String get geoIdentityTimezone {
+    return Intl.message(
+      'System timezone',
+      name: 'geoIdentityTimezone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `GeoMirror on GitHub`
+  String get geoIdentityOpenGeoMirror {
+    return Intl.message(
+      'GeoMirror on GitHub',
+      name: 'geoIdentityOpenGeoMirror',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restore previous OS timezone`
+  String get geoIdentityRestoreOsTimezone {
+    return Intl.message(
+      'Restore previous OS timezone',
+      name: 'geoIdentityRestoreOsTimezone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restore {timezone}`
+  String geoIdentityRestoreOsTimezoneDesc(Object timezone) {
+    return Intl.message(
+      'Restore $timezone',
+      name: 'geoIdentityRestoreOsTimezoneDesc',
+      desc: '',
+      args: [timezone],
+    );
+  }
+
+  /// `OS timezone restored to {timezone}`
+  String geoIdentityTimezoneRestored(Object timezone) {
+    return Intl.message(
+      'OS timezone restored to $timezone',
+      name: 'geoIdentityTimezoneRestored',
+      desc: '',
+      args: [timezone],
+    );
+  }
+
+  /// `No exit timezone yet. Verify the network environment first.`
+  String get geoIdentityTimezoneMissing {
+    return Intl.message(
+      'No exit timezone yet. Verify the network environment first.',
+      name: 'geoIdentityTimezoneMissing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No previous OS timezone saved.`
+  String get geoIdentityTimezoneNothingToRestore {
+    return Intl.message(
+      'No previous OS timezone saved.',
+      name: 'geoIdentityTimezoneNothingToRestore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Android cannot change the system timezone without root. Open Settings → System → Date & time and pick a US zone that matches your exit.`
+  String get geoIdentityTimezoneAndroidTip {
+    return Intl.message(
+      'Android cannot change the system timezone without root. Open Settings → System → Date & time and pick a US zone that matches your exit.',
+      name: 'geoIdentityTimezoneAndroidTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy terminal proxy exports`
+  String get geoIdentityCopyTerminalProxy {
+    return Intl.message(
+      'Copy terminal proxy exports',
+      name: 'geoIdentityCopyTerminalProxy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Applying newbie setup…`
+  String get geoIdentitySetupRunning {
+    return Intl.message(
+      'Applying newbie setup…',
+      name: 'geoIdentitySetupRunning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Starting FlClash…`
+  String get geoIdentitySetupStarting {
+    return Intl.message(
+      'Starting FlClash…',
+      name: 'geoIdentitySetupStarting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verifying network environment…`
+  String get geoIdentitySetupVerifying {
+    return Intl.message(
+      'Verifying network environment…',
+      name: 'geoIdentitySetupVerifying',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Aligning OS timezone…`
+  String get geoIdentitySetupTimezone {
+    return Intl.message(
+      'Aligning OS timezone…',
+      name: 'geoIdentitySetupTimezone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Setup complete — network looks US-protected.`
+  String get geoIdentitySetupDoneProtected {
+    return Intl.message(
+      'Setup complete — network looks US-protected.',
+      name: 'geoIdentitySetupDoneProtected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Setup applied, but the exit is not US-protected yet. Select a US node, then tap Recheck.`
+  String get geoIdentitySetupDoneNeedUsNode {
+    return Intl.message(
+      'Setup applied, but the exit is not US-protected yet. Select a US node, then tap Recheck.',
+      name: 'geoIdentitySetupDoneNeedUsNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy HTTP(S)_PROXY for terminals`
+  String get geoIdentityCopyTerminalProxyShort {
+    return Intl.message(
+      'Copy HTTP(S)_PROXY for terminals',
+      name: 'geoIdentityCopyTerminalProxyShort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Browser fingerprint alignment`
+  String get geoIdentityOpenGeoMirrorShort {
+    return Intl.message(
+      'Browser fingerprint alignment',
+      name: 'geoIdentityOpenGeoMirrorShort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show advanced`
+  String get geoIdentityShowAdvanced {
+    return Intl.message(
+      'Show advanced',
+      name: 'geoIdentityShowAdvanced',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hide advanced`
+  String get geoIdentityHideAdvanced {
+    return Intl.message(
+      'Hide advanced',
+      name: 'geoIdentityHideAdvanced',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
