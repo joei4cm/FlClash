@@ -1,3 +1,9 @@
+## v0.8.106
+
+- Port fork main features onto upstream/dev: performance push path, Tailscale outbounds/bypass, and Geo identity.
+- Add fork-friendly release.yaml workflow.
+- Include delay-test and CoreEventManager dispatch robustness.
+
 ## v0.8.94
 
 - Fix macos performance issue
