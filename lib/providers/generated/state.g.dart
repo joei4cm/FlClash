@@ -395,46 +395,6 @@ final class NavigationStateProvider
 
 String _$navigationStateHash() => r'd02e0af677f818cc77a06905c646fc346c50769f';
 
-@ProviderFor(contentWidth)
-final contentWidthProvider = ContentWidthProvider._();
-
-final class ContentWidthProvider
-    extends $FunctionalProvider<double, double, double>
-    with $Provider<double> {
-  ContentWidthProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'contentWidthProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$contentWidthHash();
-
-  @$internal
-  @override
-  $ProviderElement<double> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  double create(Ref ref) {
-    return contentWidth(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(double value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<double>(value),
-    );
-  }
-}
-
-String _$contentWidthHash() => r'4710fee8f91b08dc88520798fb6b1d4f61f090e6';
 
 @ProviderFor(dashboardState)
 final dashboardStateProvider = DashboardStateProvider._();
@@ -1463,45 +1423,6 @@ final class CurrentProfileProvider
 
 String _$currentProfileHash() => r'55f3cb9570a0aa6b9e0b83a36693b69d52e753ab';
 
-@ProviderFor(proxiesColumns)
-final proxiesColumnsProvider = ProxiesColumnsProvider._();
-
-final class ProxiesColumnsProvider extends $FunctionalProvider<int, int, int>
-    with $Provider<int> {
-  ProxiesColumnsProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'proxiesColumnsProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$proxiesColumnsHash();
-
-  @$internal
-  @override
-  $ProviderElement<int> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  int create(Ref ref) {
-    return proxiesColumns(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(int value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<int>(value),
-    );
-  }
-}
-
-String _$proxiesColumnsHash() => r'e93f980da3d857bd38957635ef944a0db60aaef3';
 
 @ProviderFor(realSelectedProxyStateMap)
 final realSelectedProxyStateMapProvider = RealSelectedProxyStateMapProvider._();
