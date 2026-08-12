@@ -1,3 +1,121 @@
+## v0.8.105
+
+- chore: bump version to 0.8.105 for delay/event robustness release
+
+- Includes hardened proxy delay batching and CoreEventManager dispatch
+
+- isolation merged from the upstream/dev port.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- fix: harden delay tests and core event dispatch
+
+- Port robustness from the upstream/dev performance branch: catch
+
+- individual delay IPC failures so batch tests keep going, and isolate
+
+- listener errors in CoreEventManager so traffic/connections pushes
+
+- cannot abort the event loop.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- chore: bump version to 0.8.103 for connections push and UX polish
+
+- Ship connections core push, Geo/Tailscale recovery polish, and the
+
+- TASK.md conflict cleanup since 0.8.102.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- fix: connections push, Geo/Tailscale polish, fix TASK.md
+
+- Resolve leftover merge conflict markers in TASK.md. Push live
+
+- connection snapshots from core every 2s (PERF-11 follow-up) and drop
+
+- Connections page polling. Polish Geo identity recovery/start copy and
+
+- Tailscale bypass/auth-key/guide UX.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- chore: bump version to 0.8.102 for perf and UX release
+
+- Ship traffic push IPC, config leaf watches, Geo/Tailscale UX polish,
+
+- and remaining P2 performance work since 0.8.101.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- perf: finish leftover P2 tasks and geo model cleanup
+
+- Push traffic counters from core while listening (PERF-11), narrow
+
+- config/leaf Riverpod watches (PERF-12), add EmojiText/viewSize
+
+- micro-wins (PERF-13/14), defer binary IPC (PERF-15), and remove
+
+- unused geo checklist/capture/snapshot types.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- docs: mark PERF-13/14 done in TASK.md
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- feat(ux): Tailscale advanced collapse, Features section, ARB prune
+
+- Collapse uncommon Tailscale node fields behind Show advanced, surface
+
+- Tailscale/Geo under Tools → Features, prune unused geo/tailscale ARB
+
+- keys, and ship EmojiText/viewSize perf micro-wins.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- fix(ux): honest Geo status and Tailscale setup edges
+
+- Clarify Geo identity banner/failure paths, wait for capture before
+
+- verify, surface timezone/clipboard outcomes, and restore thin recovery
+
+- actions. Fix Tailscale rename duplicates, require auth keys, warn on
+
+- empty routes, await profile apply before ping, and nudge desktop bypass.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- perf: FixedList notify, delay batches, prefs skip, tray/access
+
+- Second TASK.md sprint: in-place FixedList notifyClone for event
+
+- ingest, adaptive delay-test concurrency, preference save skip +
+
+- longer debounce, tray menu rebuild gating, and Access list/icon
+
+- caching with debounced search.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- perf: cut traffic IPC, list rebuilds, and find-process default
+
+- Implement first TASK.md sprint: coalesce traffic via getTrafficSnapshot,
+
+- lazy Connections/Proxies builds, slim delay watches, default
+
+- findProcessMode to off, and cap macOS tray proxy submenus.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
+- docs: add TASK.md performance improvement plan
+
+- Track investigated Flutter/Go hotspots (traffic IPC, Connections/Proxies
+
+- rebuilds, find-process default, macOS tray) as prioritized PERF tasks.
+
+- Co-authored-by: MichaelZ <joei4cm@users.noreply.github.com>
+
 ## v0.8.101
 
 - chore: bump version to 0.8.101 for simplified Geo identity release
