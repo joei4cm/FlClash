@@ -10,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('RunTimeText emphasizes the hundreds hour digit', (tester) async {
+  testWidgets('RunTimeText emphasizes the day prefix', (tester) async {
     const colorScheme = ColorScheme.light(
       primary: Color(0xFF6750A4),
       onPrimaryContainer: Color(0xFF21005D),
@@ -18,7 +18,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(colorScheme: colorScheme),
-        home: const RunTimeText(timeStamp: 100 * 60 * 60 * 1000),
+        home: RunTimeText(
+          timeStamp: const Duration(days: 5, hours: 1).inMilliseconds,
+        ),
       ),
     );
 
@@ -30,8 +32,8 @@ void main() {
     );
     final span = text.textSpan! as TextSpan;
 
-    expect(span.toPlainText(), '100:00:00');
-    expect(span.text, '1');
+    expect(span.toPlainText(), '5d 01:00:00');
+    expect(span.text, '5d ');
     expect(span.style?.color, colorScheme.primary);
     expect(span.style?.fontWeight, FontWeight.w600);
     expect(span.children, hasLength(1));
@@ -41,7 +43,7 @@ void main() {
     );
   });
 
-  testWidgets('RunTimeText uses one color below 100 hours', (tester) async {
+  testWidgets('RunTimeText uses one color under one day', (tester) async {
     const colorScheme = ColorScheme.light(
       primary: Color(0xFF6750A4),
       onPrimaryContainer: Color(0xFF21005D),
@@ -49,7 +51,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(colorScheme: colorScheme),
-        home: const RunTimeText(timeStamp: 99 * 60 * 60 * 1000),
+        home: const RunTimeText(timeStamp: 23 * 60 * 60 * 1000),
       ),
     );
 
@@ -60,11 +62,11 @@ void main() {
       ),
     );
 
-    expect(text.data, '99:00:00');
+    expect(text.data, '23:00:00');
     expect(text.style?.color, colorScheme.onPrimaryContainer);
   });
 
-  testWidgets('StartButton animates its width when hours reach three digits', (
+  testWidgets('StartButton animates its width when uptime reaches a day', (
     tester,
   ) async {
     final container = ProviderContainer(
@@ -77,7 +79,7 @@ void main() {
     );
     addTearDown(container.dispose);
     globalState.container = container;
-    container.read(runTimeProvider.notifier).value = 99 * 60 * 60 * 1000;
+    container.read(runTimeProvider.notifier).value = 23 * 60 * 60 * 1000;
 
     await tester.pumpWidget(
       UncontrolledProviderScope(
@@ -89,15 +91,16 @@ void main() {
 
     final button = find.byType(FloatingActionButton);
     expect(tester.getSize(button).height, 56);
-    final twoDigitWidth = tester.getSize(button).width;
+    final underOneDayWidth = tester.getSize(button).width;
 
-    container.read(runTimeProvider.notifier).value = 100 * 60 * 60 * 1000;
+    container.read(runTimeProvider.notifier).value =
+        const Duration(days: 1).inMilliseconds;
     await tester.pump();
-    expect(tester.getSize(button).width, twoDigitWidth);
+    expect(tester.getSize(button).width, underOneDayWidth);
 
     await tester.pump(const Duration(milliseconds: 100));
     final animatedWidth = tester.getSize(button).width;
-    expect(animatedWidth, greaterThan(twoDigitWidth));
+    expect(animatedWidth, greaterThan(underOneDayWidth));
 
     await tester.pumpAndSettle();
     expect(tester.getSize(button).width, greaterThan(animatedWidth));
@@ -117,7 +120,8 @@ void main() {
     addTearDown(container.dispose);
     globalState.container = container;
     container.read(runTimeProvider.notifier).value = const Duration(
-      hours: 100,
+      days: 2,
+      hours: 1,
       minutes: 2,
       seconds: 3,
     ).inMilliseconds;
@@ -146,7 +150,7 @@ void main() {
         .constraints
         ?.maxWidth;
     final expandedButtonWidth = tester.getSize(button).width;
-    expect(runTimeText(), '100:02:03');
+    expect(runTimeText(), '2d 01:02:03');
 
     container.read(runTimeProvider.notifier).value = null;
     await tester.pump();
@@ -161,12 +165,12 @@ void main() {
           ?.maxWidth,
       expandedTextWidth,
     );
-    expect(runTimeText(), '100:02:03');
+    expect(runTimeText(), '2d 01:02:03');
 
     await tester.pump(const Duration(milliseconds: 100));
 
     expect(tester.getSize(button).width, 56);
-    expect(runTimeText(), '100:02:03');
+    expect(runTimeText(), '2d 01:02:03');
 
     await tester.pumpAndSettle();
 
