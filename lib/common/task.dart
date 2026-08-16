@@ -218,6 +218,25 @@ Future<VM2<String, String>> _makeRealProfileTask(
       rawConfig['dns']['nameserver'] = [...nameserver, systemDns];
     }
   }
+
+  // Keep Tailscale control/DERP/MagicDNS out of Clash fake-IP so the real
+  // Tailscale daemon (or curl diagnostics) gets a public IP, not 198.18.x.x.
+  if (data.tailscaleFakeIpFilters.isNotEmpty) {
+    if (rawConfig['dns'] == null) {
+      rawConfig['dns'] = <String, dynamic>{};
+    }
+    final existingFilters = <String>[
+      ...?((rawConfig['dns'] as Map)['fake-ip-filter'] as List?)?.map(
+        (item) => item.toString(),
+      ),
+    ];
+    for (final filter in data.tailscaleFakeIpFilters) {
+      if (!existingFilters.contains(filter)) {
+        existingFilters.add(filter);
+      }
+    }
+    rawConfig['dns']['fake-ip-filter'] = existingFilters;
+  }
   List<String> rules = [];
   if (data.rules.isEmpty) {
     if (rawConfig['rules'] != null) {
@@ -266,8 +285,17 @@ Future<VM2<String, String>> _makeRealProfileTask(
   if (data.proxyGroups.isNotEmpty) {
     rawConfig['proxy-groups'] = data.proxyGroups;
   }
+
+  // Tailscale rules are injected at the very top so they take priority over the
+  // imported provider profile, without the user editing rules per profile.
+  if (data.tailscaleRules.isNotEmpty) {
+    rules = [...data.tailscaleRules, ...rules];
+  }
   rawConfig['rules'] = rules;
-  final yaml = await _encodeYaml(Map<String, dynamic>.from(rawConfig));
+  final mergedConfig = data.tailscaleProxies.mergeInto(
+    Map<String, dynamic>.from(rawConfig),
+  );
+  final yaml = await _encodeYaml(Map<String, dynamic>.from(mergedConfig));
   return VM2(yaml, yaml.toMd5());
 }
 
@@ -364,9 +392,6 @@ Future<MigrationData> _oldToNowTask(
   configMap['appSettingProps'] = appSettingProps;
   configMap['proxiesStyleProps'] = configMap['proxiesStyle'];
   configMap['proxiesStyleProps'] = configMap['proxiesStyle'];
-  // final overwriteMap = configMap['overwrite'] as Map? ?? {};
-  // configMap['overwriteType'] = overwriteMap['type'];
-  // configMap['scriptId'] = overwriteMap['scriptOverwrite'];
   List rawScripts = configMap['scripts'] as List<dynamic>? ?? [];
   if (rawScripts.isEmpty) {
     final scriptPropsJson = configMap['scriptProps'] as Map<String, dynamic>?;

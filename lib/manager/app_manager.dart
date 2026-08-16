@@ -32,13 +32,30 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
         ref.read(networkDetectionProvider.notifier).startCheck();
       }
     });
-    ref.listenManual(configProvider, (prev, next) {
+    // Prefer leaf listens over configProvider so preference dirty detection
+    // does not rebuild the aggregate Config on every leaf change (PERF-12).
+    void schedulePreferencesSave<T>(T? prev, T next) {
       if (prev != next) {
         globalState.container
             .read(storeActionProvider.notifier)
             .savePreferencesDebounce();
       }
-    });
+    }
+
+    ref.listenManual(appSettingProvider, schedulePreferencesSave);
+    ref.listenManual(windowSettingProvider, schedulePreferencesSave);
+    ref.listenManual(vpnSettingProvider, schedulePreferencesSave);
+    ref.listenManual(networkSettingProvider, schedulePreferencesSave);
+    ref.listenManual(themeSettingProvider, schedulePreferencesSave);
+    ref.listenManual(currentProfileIdProvider, schedulePreferencesSave);
+    ref.listenManual(davSettingProvider, schedulePreferencesSave);
+    ref.listenManual(overrideDnsProvider, schedulePreferencesSave);
+    ref.listenManual(hotKeyActionsProvider, schedulePreferencesSave);
+    ref.listenManual(proxiesStyleSettingProvider, schedulePreferencesSave);
+    ref.listenManual(patchClashConfigProvider, schedulePreferencesSave);
+    ref.listenManual(excludeSSIDsProvider, schedulePreferencesSave);
+    ref.listenManual(tailscaleSettingProvider, schedulePreferencesSave);
+    ref.listenManual(geoIdentitySettingProvider, schedulePreferencesSave);
     ref.listenManual(needUpdateGroupsProvider, (prev, next) {
       if (prev != next) {
         globalState.container
@@ -140,36 +157,11 @@ class AppSidebarContainer extends ConsumerWidget {
 
   const AppSidebarContainer({super.key, required this.child});
 
-  // Widget _buildLoading() {
-  //   return Consumer(
-  //     builder: (_, ref, _) {
-  //       final loading = ref.watch(loadingProvider);
-  //       final isMobileView = ref.watch(isMobileViewProvider);
-  //       return loading && !isMobileView
-  //           ? RotatedBox(
-  //               quarterTurns: 1,
-  //               child: const LinearProgressIndicator(),
-  //             )
-  //           : Container();
-  //     },
-  //   );
-  // }
-
   Widget _buildBackground({
     required BuildContext context,
     required Widget child,
   }) {
     return Material(color: context.colorScheme.surfaceContainer, child: child);
-    // if (!system.isMacOS) {
-    //   return Material(
-    //     color: context.colorScheme.surfaceContainer,
-    //     child: child,
-    //   );
-    // }
-    // return child;
-    // return TransparentMacOSSidebar(
-    //   child: Material(color: Colors.transparent, child: child),
-    // );
   }
 
   void _updateSideBarWidth(WidgetRef ref, double contentWidth) {
@@ -204,7 +196,9 @@ class AppSidebarContainer extends ConsumerWidget {
     final navigationItems = navigationState.navigationItems;
     final isMobileView = navigationState.viewMode == ViewMode.mobile;
     final currentIndex = navigationState.currentIndex;
-    final showLabel = ref.watch(appSettingProvider).showLabel;
+    final showLabel = ref.watch(
+      appSettingProvider.select((state) => state.showLabel),
+    );
     return Container(
       color: context.colorScheme.surfaceContainer,
       child: Row(

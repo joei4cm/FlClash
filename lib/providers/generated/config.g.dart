@@ -632,6 +632,58 @@ abstract class _$ExcludeSSIDs extends $Notifier<List<String>> {
   }
 }
 
+@ProviderFor(TailscaleSetting)
+final tailscaleSettingProvider = TailscaleSettingProvider._();
+
+final class TailscaleSettingProvider
+    extends $NotifierProvider<TailscaleSetting, TailscaleProps> {
+  TailscaleSettingProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'tailscaleSettingProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$tailscaleSettingHash();
+
+  @$internal
+  @override
+  TailscaleSetting create() => TailscaleSetting();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(TailscaleProps value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<TailscaleProps>(value),
+    );
+  }
+}
+
+String _$tailscaleSettingHash() => r'0671fd8714eec5eafdf6f51ffae54abe45b66e69';
+
+abstract class _$TailscaleSetting extends $Notifier<TailscaleProps> {
+  TailscaleProps build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<TailscaleProps, TailscaleProps>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<TailscaleProps, TailscaleProps>,
+              TailscaleProps,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(_config)
 final configProvider = _ConfigProvider._();
 
@@ -670,4 +722,56 @@ final class _ConfigProvider extends $FunctionalProvider<Config, Config, Config>
   }
 }
 
-String _$_configHash() => r'7f29da1e31a3393fb36ab43c21f0d1b38223afec';
+String _$_configHash() => r'2151b4807c98ef67c0c0d122e0dcd0e9394e65c7';
+
+@ProviderFor(GeoIdentitySetting)
+final geoIdentitySettingProvider = GeoIdentitySettingProvider._();
+
+final class GeoIdentitySettingProvider
+    extends $NotifierProvider<GeoIdentitySetting, GeoIdentityProps> {
+  GeoIdentitySettingProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'geoIdentitySettingProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$geoIdentitySettingHash();
+
+  @$internal
+  @override
+  GeoIdentitySetting create() => GeoIdentitySetting();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GeoIdentityProps value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GeoIdentityProps>(value),
+    );
+  }
+}
+
+String _$geoIdentitySettingHash() => r'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+
+abstract class _$GeoIdentitySetting extends $Notifier<GeoIdentityProps> {
+  GeoIdentityProps build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<GeoIdentityProps, GeoIdentityProps>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<GeoIdentityProps, GeoIdentityProps>,
+              GeoIdentityProps,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

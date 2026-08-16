@@ -142,6 +142,45 @@ class Request {
     token.cancel();
     return res;
   }
+  /// Server-side FuckClaude estimate via the FlClash mixed-port stack.
+  ///
+  /// Works for both system-proxy and TUN/VPN modes as long as the core is
+  /// started: [dio] honors [FlClashHttpOverrides] and exits through the
+  /// selected outbound. Optional [acceptLanguage] overrides the request header
+  /// so protect mode can probe with a US language profile.
+  Future<Result<GeoIdentityNetworkReport?>> checkGeoIdentity({
+    String? acceptLanguage,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      final headers = <String, dynamic>{};
+      if (acceptLanguage != null && acceptLanguage.isNotEmpty) {
+        headers['Accept-Language'] = acceptLanguage;
+      }
+      final response = await dio
+          .get<Map<String, dynamic>>(
+            geoIdentityCheckApiUrl,
+            cancelToken: cancelToken,
+            options: Options(
+              responseType: ResponseType.json,
+              headers: headers.isEmpty ? null : headers,
+            ),
+          )
+          .timeout(const Duration(seconds: 12));
+      if (response.statusCode != HttpStatus.ok || response.data == null) {
+        return Result.success(null);
+      }
+      return Result.success(GeoIdentityNetworkReport.fromJson(response.data!));
+    } catch (e) {
+      if (e is DioException && e.type == DioExceptionType.cancel) {
+        return Result.error('cancelled');
+      }
+      commonPrint.log('checkGeoIdentity error $e', logLevel: LogLevel.warning);
+      return Result.error(e.toString());
+    }
+  }
+
+
 }
 
 final request = Request();

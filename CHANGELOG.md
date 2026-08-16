@@ -1,20 +1,12 @@
-## v0.8.95
+## v0.8.107
 
-- Optimize core service
+- Integrate upstream/dev: package icon loading + connections ActivePolling, Windows group delay/RPC fix, commented-policy cleanup.
 
-- Optimize Android TV launcher icon
+## v0.8.106
 
-- Optimize back navigation
-
-- Optimize more details
-
-- Fix some issues
-
-- Optimize app layout
-
-- Optimize focus control
-
-- Adjust android process
+- Port fork main features onto upstream/dev: performance push path, Tailscale outbounds/bypass, and Geo identity.
+- Add fork-friendly release.yaml workflow.
+- Include delay-test and CoreEventManager dispatch robustness.
 
 ## v0.8.94
 
