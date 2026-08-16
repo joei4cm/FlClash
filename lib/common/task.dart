@@ -218,6 +218,7 @@ Future<VM2<String, String>> _makeRealProfileTask(
       rawConfig['dns']['nameserver'] = [...nameserver, systemDns];
     }
   }
+
   // Keep Tailscale control/DERP/MagicDNS out of Clash fake-IP so the real
   // Tailscale daemon (or curl diagnostics) gets a public IP, not 198.18.x.x.
   if (data.tailscaleFakeIpFilters.isNotEmpty) {
@@ -284,6 +285,7 @@ Future<VM2<String, String>> _makeRealProfileTask(
   if (data.proxyGroups.isNotEmpty) {
     rawConfig['proxy-groups'] = data.proxyGroups;
   }
+
   // Tailscale rules are injected at the very top so they take priority over the
   // imported provider profile, without the user editing rules per profile.
   if (data.tailscaleRules.isNotEmpty) {
@@ -390,9 +392,6 @@ Future<MigrationData> _oldToNowTask(
   configMap['appSettingProps'] = appSettingProps;
   configMap['proxiesStyleProps'] = configMap['proxiesStyle'];
   configMap['proxiesStyleProps'] = configMap['proxiesStyle'];
-  // final overwriteMap = configMap['overwrite'] as Map? ?? {};
-  // configMap['overwriteType'] = overwriteMap['type'];
-  // configMap['scriptId'] = overwriteMap['scriptOverwrite'];
   List rawScripts = configMap['scripts'] as List<dynamic>? ?? [];
   if (rawScripts.isEmpty) {
     final scriptPropsJson = configMap['scriptProps'] as Map<String, dynamic>?;

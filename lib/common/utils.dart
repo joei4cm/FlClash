@@ -91,13 +91,14 @@ class Utils {
     }
     final diff = timeStamp / 1000;
     final inHours = (diff / 3600).floor();
-    if (inHours > 99) {
-      return '99:59:59';
+    if (inHours > 999) {
+      return '999:59:59';
     }
     final inMinutes = (diff / 60 % 60).floor();
     final inSeconds = (diff % 60).floor();
+    final hoursText = inHours.toString().padLeft(2, '0');
 
-    return '${getDateStringLast2(inHours)}:${getDateStringLast2(inMinutes)}:${getDateStringLast2(inSeconds)}';
+    return '$hoursText:${getDateStringLast2(inMinutes)}:${getDateStringLast2(inSeconds)}';
   }
 
   Locale? getLocaleForString(String? localString) {
@@ -182,12 +183,6 @@ class Utils {
         : 0;
     return build1.compareTo(build2);
   }
-
-  // String getPinyin(String value) {
-  //   return value.isNotEmpty
-  //       ? PinyinHelper.getFirstWordPinyin(value.substring(0, 1))
-  //       : '';
-  // }
 
   String? getFileNameForDisposition(String? disposition) {
     if (disposition == null) return null;

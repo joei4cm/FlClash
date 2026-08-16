@@ -115,12 +115,13 @@ void main() {
       const davProps = DAVProps(
         uri: 'https://dav.example.com',
         user: 'user',
-        password: 'password',
+        password: 'secret',
       );
 
       container.read(davSettingProvider.notifier).update((_) => davProps);
 
       expect(container.read(davSettingProvider), davProps);
+      expect(container.read(configProvider).davProps?.password, 'secret');
     });
   });
 
@@ -290,6 +291,26 @@ void main() {
     });
   });
 
+
+  group('GeoIdentitySetting provider', () {
+    test('default is disabled with US Accept-Language on', () {
+      final value = container.read(geoIdentitySettingProvider);
+      expect(value.enable, false);
+      expect(value.useUsAcceptLanguage, true);
+      expect(value.previousOsTimezone, isNull);
+      expect(value.appliedOsTimezone, isNull);
+    });
+
+    test('setEnable and setUseUsAcceptLanguage update independently', () {
+      final notifier = container.read(geoIdentitySettingProvider.notifier);
+      notifier.setEnable(true);
+      notifier.setUseUsAcceptLanguage(false);
+      final value = container.read(geoIdentitySettingProvider);
+      expect(value.enable, true);
+      expect(value.useUsAcceptLanguage, false);
+    });
+  });
+
   group('configProvider (composite)', () {
     test('composes all sub-providers with defaults', () {
       final config = container.read(configProvider);
@@ -326,25 +347,6 @@ void main() {
     });
   });
 
-  group('GeoIdentitySetting provider', () {
-    test('default is disabled with US Accept-Language on', () {
-      final value = container.read(geoIdentitySettingProvider);
-      expect(value.enable, false);
-      expect(value.useUsAcceptLanguage, true);
-      expect(value.previousOsTimezone, isNull);
-      expect(value.appliedOsTimezone, isNull);
-    });
-
-    test('setEnable and setUseUsAcceptLanguage update independently', () {
-      final notifier = container.read(geoIdentitySettingProvider.notifier);
-      notifier.setEnable(true);
-      notifier.setUseUsAcceptLanguage(false);
-      final value = container.read(geoIdentitySettingProvider);
-      expect(value.enable, true);
-      expect(value.useUsAcceptLanguage, false);
-    });
-  });
-
   group('buildConfigOverrides', () {
     test('produces correct overrides', () {
       const config = Config(
@@ -366,14 +368,14 @@ void main() {
         config.patchClashConfig,
       );
       expect(overrideContainer.read(excludeSSIDsProvider), config.excludeSSIDs);
-      expect(
-        overrideContainer.read(appSettingProvider).onlyStatisticsProxy,
-        false,
-      );
       expect(overrideContainer.read(geoIdentitySettingProvider).enable, true);
       expect(
         overrideContainer.read(geoIdentitySettingProvider).useUsAcceptLanguage,
         true,
+      );
+      expect(
+        overrideContainer.read(appSettingProvider).onlyStatisticsProxy,
+        false,
       );
     });
   });

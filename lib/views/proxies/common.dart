@@ -30,12 +30,6 @@ List<Group> getGroups() {
   return globalState.container.read(groupsProvider);
 }
 
-String? getCurrentGroupName() {
-  return globalState.container.read(
-    currentProfileProvider.select((state) => state?.currentGroupName),
-  );
-}
-
 void updateCurrentGroupName(String groupName) {
   globalState.container
       .read(proxiesActionProvider.notifier)
@@ -77,7 +71,7 @@ Future<void> proxyDelayTest(Proxy proxy, [String? testUrl]) async {
   } catch (error) {
     commonPrint.log(
       'Delay test failed for ${state.proxyName}: $error',
-      logLevel: LogLevel.error,
+      logLevel: coreFailureLogLevel(error),
     );
     ref
         .read(proxiesActionProvider.notifier)
@@ -86,15 +80,13 @@ Future<void> proxyDelayTest(Proxy proxy, [String? testUrl]) async {
 }
 
 Future<void> delayTest(List<Proxy> proxies, [String? testUrl]) async {
-  final delayProxies = proxies.map<Future>((proxy) async {
-    await proxyDelayTest(proxy, testUrl);
-  }).toList();
-
-  // Keep concurrency modest so large subscriptions do not flood core IPC.
-  final batchSize = system.isAndroid ? 20 : 40;
-  final batchesDelayProxies = delayProxies.batch(batchSize);
-  for (final batchDelayProxies in batchesDelayProxies) {
-    await Future.wait(batchDelayProxies);
+  final batches = proxies.batch(maxConcurrentDelayTests);
+  for (final batch in batches) {
+    await Future.wait(
+      batch.map((proxy) async {
+        await proxyDelayTest(proxy, testUrl);
+      }),
+    );
   }
   globalState.container.read(sortNumProvider.notifier).add();
 }
@@ -102,9 +94,9 @@ Future<void> delayTest(List<Proxy> proxies, [String? testUrl]) async {
 double getScrollToSelectedOffset({
   required String groupName,
   required List<Proxy> proxies,
+  required int columns,
 }) {
   final ref = globalState.container;
-  final columns = ref.read(proxiesColumnsProvider);
   final proxyCardType = ref.read(
     proxiesStyleSettingProvider.select((state) => state.cardType),
   );

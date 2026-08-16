@@ -1,7 +1,7 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/controller.dart';
+import 'package:fl_clash/core/method.dart';
 import 'package:fl_clash/models/models.dart';
-import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,25 +10,30 @@ import 'package:super_sliver_list/super_sliver_list.dart';
 import 'item.dart';
 
 class ConnectionsView extends ConsumerStatefulWidget {
-  const ConnectionsView({super.key});
+  final Future<List<TrackerInfo>> Function()? connectionsReader;
+
+  const ConnectionsView({super.key, @visibleForTesting this.connectionsReader});
 
   @override
   ConsumerState<ConnectionsView> createState() => _ConnectionsViewState();
 }
 
 class _ConnectionsViewState extends ConsumerState<ConnectionsView>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, ActivePollingMixin<ConnectionsView> {
   final _connectionsStateNotifier = ValueNotifier<TrackerInfosState>(
     const TrackerInfosState(),
   );
   final ScrollController _scrollController = ScrollController();
+
+  @override
+  Duration get pollInterval => const Duration(seconds: 1);
 
   List<Widget> _buildActions() {
     return [
       IconButton(
         onPressed: () async {
           coreController.closeConnections();
-          await _updateConnections();
+          await _refreshConnections();
         },
         icon: const Icon(Icons.delete_sweep_outlined),
       ),
@@ -47,117 +52,54 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
     );
   }
 
-  bool get _isPageActive {
-    if (!mounted) {
-      return false;
-    }
-    final route = ModalRoute.of(context);
-    if (route != null && !route.isCurrent) {
-      return false;
-    }
-    return WidgetsBinding.instance.lifecycleState ==
-            AppLifecycleState.resumed ||
-        WidgetsBinding.instance.lifecycleState == null;
-  }
-
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    ref.listenManual(connectionsSnapshotProvider, (prev, next) {
-      if (!_isPageActive) {
-        return;
-      }
-      _applyTrackerInfos(next);
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) {
-        return;
-      }
-      await _updateConnections();
-    });
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && mounted) {
-      _updateConnections();
-    }
-  }
-
-  bool _isSameSnapshot(List<TrackerInfo> previous, List<TrackerInfo> next) {
-    if (identical(previous, next)) {
-      return true;
-    }
-    if (previous.length != next.length) {
-      return false;
-    }
-    for (var i = 0; i < previous.length; i++) {
-      final a = previous[i];
-      final b = next[i];
-      if (a.id != b.id ||
-          a.upload != b.upload ||
-          a.download != b.download ||
-          a.uploadSpeed != b.uploadSpeed ||
-          a.downloadSpeed != b.downloadSpeed ||
-          a.rule != b.rule ||
-          a.rulePayload != b.rulePayload) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  void _applyTrackerInfos(List<TrackerInfo> trackerInfos) {
-    final current = _connectionsStateNotifier.value;
-    if (_isSameSnapshot(current.trackerInfos, trackerInfos)) {
+  Future<void> poll(PollGuard isCurrent) async {
+    final trackerInfos = await _readConnections();
+    if (trackerInfos == null || !isCurrent()) {
       return;
     }
-    _connectionsStateNotifier.value = current.copyWith(
+    _applyConnections(trackerInfos);
+  }
+
+  Future<void> _refreshConnections() async {
+    final trackerInfos = await _readConnections();
+    if (trackerInfos == null || !mounted) {
+      return;
+    }
+    _applyConnections(trackerInfos);
+  }
+
+  Future<List<TrackerInfo>?> _readConnections() async {
+    try {
+      final connectionsReader = widget.connectionsReader;
+      return connectionsReader != null
+          ? await connectionsReader()
+          : await coreController.getConnections();
+    } catch (error) {
+      commonPrint.log(
+        'updateConnections error: $error',
+        logLevel: coreFailureLogLevel(error),
+      );
+      return null;
+    }
+  }
+
+  void _applyConnections(List<TrackerInfo> trackerInfos) {
+    _connectionsStateNotifier.value = _connectionsStateNotifier.value.copyWith(
       trackerInfos: trackerInfos,
     );
   }
 
-  Future<void> _updateConnections() async {
-    final trackerInfos = await coreController.getConnections();
-    if (!mounted) {
-      return;
-    }
-    _applyTrackerInfos(trackerInfos);
-  }
-
   Future<void> _handleBlockConnection(String id) async {
     await coreController.closeConnection(id);
-    await _updateConnections();
+    await _refreshConnections();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _connectionsStateNotifier.dispose();
     _scrollController.dispose();
     super.dispose();
-  }
-
-  Widget _buildConnectionItem(TrackerInfo trackerInfo) {
-    final appLocalizations = context.appLocalizations;
-    return TrackerInfoItem(
-      key: Key(trackerInfo.id),
-      trackerInfo: trackerInfo,
-      onClickKeyword: (value) {
-        context.commonScaffoldState?.addKeyword(value);
-      },
-      trailing: IconButton(
-        padding: EdgeInsets.zero,
-        visualDensity: VisualDensity.compact,
-        style: IconButton.styleFrom(minimumSize: Size.zero),
-        icon: const Icon(Icons.block),
-        onPressed: () {
-          _handleBlockConnection(trackerInfo.id);
-        },
-      ),
-      detailTitle: appLocalizations.details(appLocalizations.connection),
-    );
   }
 
   @override
@@ -178,16 +120,32 @@ class _ConnectionsViewState extends ConsumerState<ConnectionsView>
               illustration: const ConnectionEmptyIllustration(),
             );
           }
-          final itemCount = connections.length * 2 - 1;
-          return SuperListView.builder(
+          return SuperListView.separated(
             controller: _scrollController,
-            itemBuilder: (context, index) {
-              if (index.isOdd) {
-                return const Divider(height: 0);
-              }
-              return _buildConnectionItem(connections[index ~/ 2]);
+            itemCount: connections.length,
+            separatorBuilder: (_, _) => const Divider(height: 0),
+            itemBuilder: (_, index) {
+              final trackerInfo = connections[index];
+              return TrackerInfoItem(
+                key: Key(trackerInfo.id),
+                trackerInfo: trackerInfo,
+                onClickKeyword: (value) {
+                  context.commonScaffoldState?.addKeyword(value);
+                },
+                trailing: IconButton(
+                  padding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                  style: IconButton.styleFrom(minimumSize: Size.zero),
+                  icon: const Icon(Icons.block),
+                  onPressed: () {
+                    _handleBlockConnection(trackerInfo.id);
+                  },
+                ),
+                detailTitle: appLocalizations.details(
+                  appLocalizations.connection,
+                ),
+              );
             },
-            itemCount: itemCount,
           );
         },
       ),
