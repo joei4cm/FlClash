@@ -315,7 +315,7 @@ class _AccessViewState extends ConsumerState<AccessView> {
       builder: (context, snapshot) {
         final appLocalizations = context.appLocalizations;
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CommonCircleLoading());
         }
         return packages.isEmpty
             ? NullStatus(label: appLocalizations.noData)
@@ -477,8 +477,6 @@ class PackageListItem extends StatelessWidget {
   final bool value;
   final void Function(bool?) onChanged;
 
-  static final Map<String, Future<ImageProvider?>> _iconFutures = {};
-
   const PackageListItem({
     super.key,
     required this.package,
@@ -486,36 +484,10 @@ class PackageListItem extends StatelessWidget {
     required this.onChanged,
   });
 
-  Future<ImageProvider?> _iconFuture() {
-    return _iconFutures.putIfAbsent(
-      package.packageName,
-      () => app?.getPackageIcon(package.packageName) ??
-          Future<ImageProvider?>.value(null),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListItem.checkbox(
-      leading: SizedBox(
-        width: 48,
-        height: 48,
-        child: FutureBuilder<ImageProvider?>(
-          future: _iconFuture(),
-          builder: (_, snapshot) {
-            if (!snapshot.hasData && snapshot.data == null) {
-              return Container();
-            } else {
-              return Image(
-                image: snapshot.data!,
-                gaplessPlayback: true,
-                width: 48,
-                height: 48,
-              );
-            }
-          },
-        ),
-      ),
+      leading: PackageIcon(packageName: package.packageName, size: 48),
       title: Text(
         package.label,
         style: const TextStyle(overflow: TextOverflow.ellipsis),
@@ -526,7 +498,8 @@ class PackageListItem extends StatelessWidget {
         style: const TextStyle(overflow: TextOverflow.ellipsis),
         maxLines: 1,
       ),
-      delegate: CheckboxDelegate(value: value, onChanged: onChanged),
+      value: value,
+      onChanged: onChanged,
     );
   }
 }

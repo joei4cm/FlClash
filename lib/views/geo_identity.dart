@@ -112,7 +112,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       }
       if (system.isDesktop) {
         final systemProxy = ref.read(networkSettingProvider).systemProxy;
-        final tunReady = ref.read(realTunEnableProvider);
+        final tunReady = ref.read(autoSetSystemDnsStateProvider).a;
         if (systemProxy || tunReady) {
           await Future<void>.delayed(const Duration(milliseconds: 400));
           return;
@@ -238,7 +238,11 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     if (system.isAndroid) {
       return ref.read(vpnSettingProvider).enable;
     }
-    return ref.read(realTunEnableProvider);
+    final tunEnable = ref.read(patchClashConfigProvider).tun.enable;
+    final authorized =
+        ref.read(authorizedTunEnableProvider) ==
+        TunAuthorizationState.authorized;
+    return tunEnable && authorized;
   }
 
   /// Full checklist when turning protect ON.
@@ -279,7 +283,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
 
       if (!ref.read(isStartProvider)) {
         setState(() => _statusMessage = l10n.geoIdentitySetupStarting);
-        await ref.read(setupActionProvider.notifier).updateStatus(true);
+        await ref.read(setupActionProvider.notifier).setRunning(true);
       } else {
         await ref
             .read(setupActionProvider.notifier)
@@ -461,7 +465,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
                 if (enabled && !_busy && !isStart)
                   TextButton(
                     onPressed: () {
-                      ref.read(setupActionProvider.notifier).updateStatus(true);
+                      ref.read(setupActionProvider.notifier).setRunning(true);
                     },
                     child: Text(l10n.start),
                   ),
@@ -564,14 +568,12 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
               ),
             ),
           ),
-          ListItem.switchItem(
+          ListItem.toggle(
             leading: const Icon(Icons.shield_outlined),
             title: Text(l10n.geoIdentityProtectEnable),
             subtitle: Text(l10n.geoIdentityProtectToggleDesc),
-            delegate: SwitchDelegate(
-              value: enabled,
-              onChanged: _busy ? null : _handleToggle,
-            ),
+            value: enabled,
+            onChanged: _busy ? null : _handleToggle,
           ),
           _buildStatusBanner(context),
           Padding(

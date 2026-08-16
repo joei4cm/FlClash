@@ -419,38 +419,36 @@ class TailscaleView extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildScenarioCard(context),
-                ListItem.switchItem(
+                ListItem.toggle(
                   leading: const Icon(Icons.vpn_key_outlined),
                   title: Text(appLocalizations.tailscaleEnable),
                   subtitle: Text(appLocalizations.tailscaleEnableDesc),
-                  delegate: SwitchDelegate(
-                    value: enable,
-                    onChanged: (value) async {
-                      ref
-                          .read(tailscaleSettingProvider.notifier)
-                          .setEnable(value);
-                      if (value &&
-                          bypassRecommended &&
-                          !ref.read(tailscaleSettingProvider).bypassTraffic) {
-                        context.showNotifier(
-                          appLocalizations.tailscaleBypassNudge,
-                          actionState: MessageActionState(
-                            actionText:
-                                appLocalizations.tailscaleEnableBypassAction,
-                            action: () async {
-                              ref
-                                  .read(tailscaleSettingProvider.notifier)
-                                  .setBypassTraffic(true);
-                              await _applyTailscaleConfig(ref);
-                            },
-                          ),
-                        );
-                      }
-                      await _applyTailscaleConfig(ref);
-                    },
-                  ),
+                  value: enable,
+                  onChanged: (value) async {
+                    ref
+                        .read(tailscaleSettingProvider.notifier)
+                        .setEnable(value);
+                    if (value &&
+                        bypassRecommended &&
+                        !ref.read(tailscaleSettingProvider).bypassTraffic) {
+                      context.showNotifier(
+                        appLocalizations.tailscaleBypassNudge,
+                        actionState: MessageActionState(
+                          actionText:
+                              appLocalizations.tailscaleEnableBypassAction,
+                          action: () async {
+                            ref
+                                .read(tailscaleSettingProvider.notifier)
+                                .setBypassTraffic(true);
+                            await _applyTailscaleConfig(ref);
+                          },
+                        ),
+                      );
+                    }
+                    await _applyTailscaleConfig(ref);
+                  },
                 ),
-                ListItem.switchItem(
+                ListItem.toggle(
                   leading: const Icon(Icons.alt_route_outlined),
                   title: Text(appLocalizations.tailscaleBypass),
                   subtitle: Text(
@@ -458,15 +456,13 @@ class TailscaleView extends ConsumerWidget {
                         ? appLocalizations.tailscaleBypassRecommended
                         : appLocalizations.tailscaleBypassAndroidHint,
                   ),
-                  delegate: SwitchDelegate(
-                    value: props.bypassTraffic,
-                    onChanged: (value) async {
-                      ref
-                          .read(tailscaleSettingProvider.notifier)
-                          .setBypassTraffic(value);
-                      await _applyTailscaleConfig(ref);
-                    },
-                  ),
+                  value: props.bypassTraffic,
+                  onChanged: (value) async {
+                    ref
+                        .read(tailscaleSettingProvider.notifier)
+                        .setBypassTraffic(value);
+                    await _applyTailscaleConfig(ref);
+                  },
                 ),
                 _buildStatusBanner(
                   context,

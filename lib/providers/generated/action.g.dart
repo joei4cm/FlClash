@@ -40,13 +40,13 @@ final class CommonActionProvider extends $NotifierProvider<CommonAction, void> {
   }
 }
 
-String _$commonActionHash() => r'217f861755eebca6ada6c6a88243802ebfd568c2';
+String _$commonActionHash() => r'81d01cab066e94793cdaa4ff89806ebff6030f50';
 
 abstract class _$CommonAction extends $Notifier<void> {
   void build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -56,7 +56,7 @@ abstract class _$CommonAction extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -91,13 +91,13 @@ final class SetupActionProvider extends $NotifierProvider<SetupAction, void> {
   }
 }
 
-String _$setupActionHash() => r'cc25dda1ed89c352ca77a85ac443f928f5461729';
+String _$setupActionHash() => r'0bff03f323d82075b2fb7481e24b10ed08771eee';
 
 abstract class _$SetupAction extends $Notifier<void> {
   void build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -107,7 +107,7 @@ abstract class _$SetupAction extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -142,13 +142,13 @@ final class BackupActionProvider extends $NotifierProvider<BackupAction, void> {
   }
 }
 
-String _$backupActionHash() => r'4953679dac7f99f6e076720a2a6f9750a22fd74f';
+String _$backupActionHash() => r'3c115d169b912577a3bd87796cefafce3695a019';
 
 abstract class _$BackupAction extends $Notifier<void> {
   void build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -158,7 +158,7 @@ abstract class _$BackupAction extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -193,13 +193,13 @@ final class CoreActionProvider extends $NotifierProvider<CoreAction, void> {
   }
 }
 
-String _$coreActionHash() => r'2b8d02ad5d8219e07bf721268639c619a93c39c1';
+String _$coreActionHash() => r'f07e30b5c450b0ed90b5e5fc7faa1113374f6516';
 
 abstract class _$CoreAction extends $Notifier<void> {
   void build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -209,7 +209,7 @@ abstract class _$CoreAction extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -250,7 +250,7 @@ abstract class _$SystemAction extends $Notifier<void> {
   void build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -260,7 +260,7 @@ abstract class _$SystemAction extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -295,13 +295,13 @@ final class StoreActionProvider extends $NotifierProvider<StoreAction, void> {
   }
 }
 
-String _$storeActionHash() => r'ebec2123f54027cfee8ecf71001aac74ddf26016';
+String _$storeActionHash() => r'e95aaafbf5be8d9d57be16ebc44bf3dcc556619d';
 
 abstract class _$StoreAction extends $Notifier<void> {
   void build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -311,7 +311,7 @@ abstract class _$StoreAction extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -346,13 +346,13 @@ final class ThemeActionProvider extends $NotifierProvider<ThemeAction, void> {
   }
 }
 
-String _$themeActionHash() => r'768b70c888a2545e6aedf3f0087b40118bc03d6e';
+String _$themeActionHash() => r'9802c7ba8247f8c2d396fab398642567d8eecf62';
 
 abstract class _$ThemeAction extends $Notifier<void> {
   void build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -362,7 +362,7 @@ abstract class _$ThemeAction extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -404,7 +404,7 @@ abstract class _$ProxiesAction extends $Notifier<void> {
   void build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -414,7 +414,7 @@ abstract class _$ProxiesAction extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -450,13 +450,13 @@ final class ProfilesActionProvider
   }
 }
 
-String _$profilesActionHash() => r'b2457dc5b18d51204d17995949a52cffce41df38';
+String _$profilesActionHash() => r'e67a3e4a98c1b3b668275721491a2b0318d27550';
 
 abstract class _$ProfilesAction extends $Notifier<void> {
   void build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -466,7 +466,7 @@ abstract class _$ProfilesAction extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -508,7 +508,7 @@ abstract class _$GeoResourceAction extends $Notifier<void> {
   void build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -518,6 +518,6 @@ abstract class _$GeoResourceAction extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

@@ -204,11 +204,6 @@ class AppLocalizations {
     return Intl.message('More', name: 'more', desc: '', args: []);
   }
 
-  /// `Features`
-  String get features {
-    return Intl.message('Features', name: 'features', desc: '', args: []);
-  }
-
   /// `Other`
   String get other {
     return Intl.message('Other', name: 'other', desc: '', args: []);
@@ -2434,6 +2429,26 @@ class AppLocalizations {
     return Intl.message('Crash test', name: 'crashTest', desc: '', args: []);
   }
 
+  /// `Crash detected`
+  String get crashDetected {
+    return Intl.message(
+      'Crash detected',
+      name: 'crashDetected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The app crashed during the previous run. To prevent repeated crashes, the current profile has been cleared and automatic configuration setup was skipped.`
+  String get crashDetectedTip {
+    return Intl.message(
+      'The app crashed during the previous run. To prevent repeated crashes, the current profile has been cleared and automatic configuration setup was skipped.',
+      name: 'crashDetectedTip',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Clear Data`
   String get clearData {
     return Intl.message('Clear Data', name: 'clearData', desc: '', args: []);
@@ -3149,26 +3164,6 @@ class AppLocalizations {
     return Intl.message('Restart', name: 'restart', desc: '', args: []);
   }
 
-  /// `Hide advanced`
-  String get hideAdvanced {
-    return Intl.message(
-      'Hide advanced',
-      name: 'hideAdvanced',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Show advanced`
-  String get showAdvanced {
-    return Intl.message(
-      'Show advanced',
-      name: 'showAdvanced',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Speed statistics`
   String get speedStatistics {
     return Intl.message(
@@ -3479,6 +3474,16 @@ class AppLocalizations {
     return Intl.message(
       'Input proxy group name',
       name: 'inputProxyGroupName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Helper service unavailable; TUN mode cannot be enabled. Reinstall FlClash to restore it.`
+  String get helperCorruptTip {
+    return Intl.message(
+      'Helper service unavailable; TUN mode cannot be enabled. Reinstall FlClash to restore it.',
+      name: 'helperCorruptTip',
       desc: '',
       args: [],
     );
@@ -4479,10 +4484,10 @@ class AppLocalizations {
     );
   }
 
-  /// `{name} skipped`
+  /// `{name} is already up to date`
   String geoSkipped(Object name) {
     return Intl.message(
-      '$name skipped',
+      '$name is already up to date',
       name: 'geoSkipped',
       desc: '',
       args: [name],
@@ -4516,6 +4521,31 @@ class AppLocalizations {
       name: 'entriesCount',
       desc: '',
       args: [count],
+    );
+  }
+
+  /// `Features`
+  String get features {
+    return Intl.message('Features', name: 'features', desc: '', args: []);
+  }
+
+  /// `Hide advanced`
+  String get hideAdvanced {
+    return Intl.message(
+      'Hide advanced',
+      name: 'hideAdvanced',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show advanced`
+  String get showAdvanced {
+    return Intl.message(
+      'Show advanced',
+      name: 'showAdvanced',
+      desc: '',
+      args: [],
     );
   }
 
@@ -5078,7 +5108,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Geo identity`
   String get geoIdentity {
     return Intl.message(
@@ -5088,7 +5117,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `One switch for US exit undercover`
   String get geoIdentityDesc {
     return Intl.message(
@@ -5098,7 +5126,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Turn this on so FlClash captures traffic and checks that your exit looks US-ready for AI tools. Browsers may still need GeoMirror for page fingerprints.`
   String get geoIdentityPurposeBody {
     return Intl.message(
@@ -5108,7 +5135,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Capture traffic, align desktop timezone when possible, then verify the exit`
   String get geoIdentityProtectToggleDesc {
     return Intl.message(
@@ -5118,7 +5144,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Network looks good to go`
   String get geoIdentityNetworkGood {
     return Intl.message(
@@ -5128,7 +5153,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Exit is not US yet — pick a US node, then tap Recheck`
   String get geoIdentityNetworkBad {
     return Intl.message(
@@ -5138,7 +5162,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Geo identity protect is off`
   String get geoIdentityOffStatus {
     return Intl.message(
@@ -5148,7 +5171,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Turning off…`
   String get geoIdentityTurningOff {
     return Intl.message(
@@ -5158,7 +5180,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Recheck`
   String get geoIdentityRecheck {
     return Intl.message(
@@ -5168,7 +5189,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Protect is on — waiting for a network check`
   String get geoIdentityPendingCheck {
     return Intl.message(
@@ -5178,7 +5198,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Network check was cancelled`
   String get geoIdentityCheckCancelled {
     return Intl.message(
@@ -5188,7 +5207,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `This covers exit IP + probe language. Browser fonts/geolocation still need GeoMirror; Claude Code still needs a matching OS timezone (and TUN or proxy exports).`
   String get geoIdentityHonestyLine {
     return Intl.message(
@@ -5198,7 +5216,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Could not align OS timezone ({detail})`
   String geoIdentityTimezoneAlignFailed(Object detail) {
     return Intl.message(
@@ -5208,7 +5225,6 @@ class AppLocalizations {
       args: [detail],
     );
   }
-
   /// `Enable geo identity protect`
   String get geoIdentityProtectEnable {
     return Intl.message(
@@ -5218,7 +5234,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Probe with US Accept-Language`
   String get geoIdentityUsAcceptLanguage {
     return Intl.message(
@@ -5228,7 +5243,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Start FlClash before verifying the network environment.`
   String get geoIdentityNeedStart {
     return Intl.message(
@@ -5238,7 +5252,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Network check failed`
   String get geoIdentityCheckFailed {
     return Intl.message(
@@ -5248,7 +5261,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Network still looks exposed`
   String get geoIdentityNetworkExposed {
     return Intl.message(
@@ -5258,7 +5270,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `System timezone`
   String get geoIdentityTimezone {
     return Intl.message(
@@ -5268,7 +5279,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `GeoMirror on GitHub`
   String get geoIdentityOpenGeoMirror {
     return Intl.message(
@@ -5278,7 +5288,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Restore previous OS timezone`
   String get geoIdentityRestoreOsTimezone {
     return Intl.message(
@@ -5288,7 +5297,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Restore {timezone}`
   String geoIdentityRestoreOsTimezoneDesc(Object timezone) {
     return Intl.message(
@@ -5298,7 +5306,6 @@ class AppLocalizations {
       args: [timezone],
     );
   }
-
   /// `OS timezone restored to {timezone}`
   String geoIdentityTimezoneRestored(Object timezone) {
     return Intl.message(
@@ -5308,7 +5315,6 @@ class AppLocalizations {
       args: [timezone],
     );
   }
-
   /// `No exit timezone yet. Verify the network environment first.`
   String get geoIdentityTimezoneMissing {
     return Intl.message(
@@ -5318,7 +5324,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `No previous OS timezone saved.`
   String get geoIdentityTimezoneNothingToRestore {
     return Intl.message(
@@ -5328,7 +5333,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Android cannot change the system timezone without root. Open Settings → System → Date & time and pick a US zone that matches your exit.`
   String get geoIdentityTimezoneAndroidTip {
     return Intl.message(
@@ -5338,7 +5342,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Copy terminal proxy exports`
   String get geoIdentityCopyTerminalProxy {
     return Intl.message(
@@ -5348,7 +5351,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Applying newbie setup…`
   String get geoIdentitySetupRunning {
     return Intl.message(
@@ -5358,7 +5360,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Starting FlClash…`
   String get geoIdentitySetupStarting {
     return Intl.message(
@@ -5368,7 +5369,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Verifying network environment…`
   String get geoIdentitySetupVerifying {
     return Intl.message(
@@ -5378,7 +5378,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Aligning OS timezone…`
   String get geoIdentitySetupTimezone {
     return Intl.message(
@@ -5388,7 +5387,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Setup complete — network looks US-protected.`
   String get geoIdentitySetupDoneProtected {
     return Intl.message(
@@ -5398,7 +5396,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Setup applied, but the exit is not US-protected yet. Select a US node, then tap Recheck.`
   String get geoIdentitySetupDoneNeedUsNode {
     return Intl.message(
@@ -5408,7 +5405,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Copy HTTP(S)_PROXY for terminals`
   String get geoIdentityCopyTerminalProxyShort {
     return Intl.message(
@@ -5418,7 +5414,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Browser fingerprint alignment`
   String get geoIdentityOpenGeoMirrorShort {
     return Intl.message(
@@ -5428,7 +5423,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Show advanced`
   String get geoIdentityShowAdvanced {
     return Intl.message(
@@ -5438,7 +5432,6 @@ class AppLocalizations {
       args: [],
     );
   }
-
   /// `Hide advanced`
   String get geoIdentityHideAdvanced {
     return Intl.message(
@@ -5448,6 +5441,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
