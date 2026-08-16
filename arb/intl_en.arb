@@ -650,5 +650,75 @@
   "geoIdentityCopyTerminalProxyShort": "Copy HTTP(S)_PROXY for terminals",
   "geoIdentityOpenGeoMirrorShort": "Browser fingerprint alignment",
   "geoIdentityShowAdvanced": "Show advanced",
-  "geoIdentityHideAdvanced": "Hide advanced"
+  "geoIdentityHideAdvanced": "Hide advanced",
+  "serviceReachability": "Service reachability",
+  "serviceProbeCategorySearch": "Search",
+  "serviceProbeCategorySocial": "Social",
+  "serviceProbeCategoryAi": "AI",
+  "serviceProbeCategoryStreaming": "Streaming",
+  "serviceProbeCategoryGeneral": "General",
+  "serviceProbeNeedStart": "Start VPN to test node quality",
+  "serviceProbeNoProxy": "No selected node",
+  "serviceProbeRunning": "Testing services…",
+  "serviceProbeTapToTest": "Tap refresh to test services",
+  "serviceProbeTesting": "Testing",
+  "serviceProbeCurrentNode": "Current node",
+  "serviceProbeDisclaimer": "Checks HTTP reachability/latency through the current node. This is not a streaming unlock or account-region test.",
+  "enableAutoSelect": "Enable auto select",
+  "enableAutoSelectCreateTip": "No url-test/fallback group found. Create a simple “FlClash Auto” url-test group? This switches the profile overwrite to Custom and replaces empty custom strategy groups with Auto + PROXY (subscription nodes are kept via include-all-proxies).",
+  "enableAutoSelectFailed": "Failed to enable auto select",
+  "restoreAutoSelect": "Restore auto",
+  "groupTypeUrlTest": "URLTest",
+  "groupTypeFallback": "Fallback",
+  "serviceProbeSummary": "{success} reachable · {fail} failed",
+  "@serviceProbeSummary": {
+    "placeholders": {
+      "success": {
+        "type": "int"
+      },
+      "fail": {
+        "type": "int"
+      }
+    }
+  },
+  "enableAutoSelectRestored": "Auto select restored for {group}",
+  "@enableAutoSelectRestored": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "enableAutoSelectCreated": "Created auto group {group}. Select it under Proxies if needed.",
+  "@enableAutoSelectCreated": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupTitle": "Auto · {type}",
+  "@autoGroupTitle": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupCurrent": "Current node: {node}",
+  "@autoGroupCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupOverride": "Manual override: {node}",
+  "@autoGroupOverride": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  }
 }
