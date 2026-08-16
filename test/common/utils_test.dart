@@ -54,16 +54,40 @@ void main() {
       expect(utils.getTimeText(125000), '00:02:05');
     });
 
-    test('formats hours', () {
+    test('formats hours under one day', () {
       expect(utils.getTimeText(3661000), '01:01:01');
+      expect(utils.getTimeText(23 * 3600 * 1000), '23:00:00');
     });
 
-    test('formats three digit hours', () {
-      expect(utils.getTimeText(100 * 3600 * 1000), '100:00:00');
+    test('formats multi-day uptime without a 99/999 hour ceiling', () {
+      expect(
+        utils.getTimeText(const Duration(days: 1).inMilliseconds),
+        '1d 00:00:00',
+      );
+      expect(
+        utils.getTimeText(
+          const Duration(days: 5, hours: 12, minutes: 3, seconds: 4)
+              .inMilliseconds,
+        ),
+        '5d 12:03:04',
+      );
+      expect(
+        utils.getTimeText(const Duration(days: 42).inMilliseconds),
+        '42d 00:00:00',
+      );
+      expect(
+        utils.getTimeText(const Duration(days: 400, hours: 2).inMilliseconds),
+        '400d 02:00:00',
+      );
     });
+  });
 
-    test('caps at 999:59:59', () {
-      expect(utils.getTimeText(1000 * 3600 * 1000), '999:59:59');
+  group('getTimeDifference', () {
+    test('delegates to getTimeText for multi-day spans', () {
+      final past = DateTime.now().subtract(
+        const Duration(days: 3, hours: 4, minutes: 5, seconds: 6),
+      );
+      expect(utils.getTimeDifference(past), matches(RegExp(r'^3d 0[34]:\d{2}:\d{2}$')));
     });
   });
 
