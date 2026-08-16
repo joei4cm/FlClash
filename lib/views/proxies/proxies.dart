@@ -3,6 +3,7 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/common.dart';
 import 'package:fl_clash/models/state.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/proxies/list.dart';
 import 'package:fl_clash/views/proxies/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -60,6 +61,44 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
                     );
                   },
                 );
+              },
+            ),
+            PopupMenuItemData(
+              icon: Icons.auto_mode,
+              label: appLocalizations.enableAutoSelect,
+              onPressed: () async {
+                final groups = ref.read(groupsProvider);
+                final hasAuto = groups.any(
+                  (group) => group.type.isComputedSelected,
+                );
+                if (!hasAuto) {
+                  final confirmed = await globalState.showMessage(
+                    title: appLocalizations.enableAutoSelect,
+                    message: TextSpan(
+                      text: appLocalizations.enableAutoSelectCreateTip,
+                    ),
+                  );
+                  if (confirmed != true) {
+                    return;
+                  }
+                }
+                final result = await enableAutoSelectWithContainer(
+                  globalState.container,
+                );
+                final message = switch (result.message) {
+                  'no_profile' => appLocalizations.nullProfileDesc,
+                  'create_failed' => appLocalizations.enableAutoSelectFailed,
+                  _ when result.enabledExisting =>
+                    appLocalizations.enableAutoSelectRestored(
+                      result.groupName ?? '',
+                    ),
+                  _ when result.createdGroups =>
+                    appLocalizations.enableAutoSelectCreated(
+                      result.groupName ?? '',
+                    ),
+                  _ => appLocalizations.enableAutoSelectFailed,
+                };
+                globalState.showNotifier(message);
               },
             ),
             if (_hasProviders)

@@ -5108,6 +5108,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Geo identity`
   String get geoIdentity {
     return Intl.message(
@@ -5117,6 +5118,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `One switch for US exit undercover`
   String get geoIdentityDesc {
     return Intl.message(
@@ -5126,6 +5128,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Turn this on so FlClash captures traffic and checks that your exit looks US-ready for AI tools. Browsers may still need GeoMirror for page fingerprints.`
   String get geoIdentityPurposeBody {
     return Intl.message(
@@ -5135,6 +5138,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Capture traffic, align desktop timezone when possible, then verify the exit`
   String get geoIdentityProtectToggleDesc {
     return Intl.message(
@@ -5144,6 +5148,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Network looks good to go`
   String get geoIdentityNetworkGood {
     return Intl.message(
@@ -5153,6 +5158,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Exit is not US yet — pick a US node, then tap Recheck`
   String get geoIdentityNetworkBad {
     return Intl.message(
@@ -5162,6 +5168,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Geo identity protect is off`
   String get geoIdentityOffStatus {
     return Intl.message(
@@ -5171,6 +5178,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Turning off…`
   String get geoIdentityTurningOff {
     return Intl.message(
@@ -5180,6 +5188,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Recheck`
   String get geoIdentityRecheck {
     return Intl.message(
@@ -5189,6 +5198,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Protect is on — waiting for a network check`
   String get geoIdentityPendingCheck {
     return Intl.message(
@@ -5198,6 +5208,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Network check was cancelled`
   String get geoIdentityCheckCancelled {
     return Intl.message(
@@ -5207,6 +5218,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `This covers exit IP + probe language. Browser fonts/geolocation still need GeoMirror; Claude Code still needs a matching OS timezone (and TUN or proxy exports).`
   String get geoIdentityHonestyLine {
     return Intl.message(
@@ -5216,6 +5228,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Could not align OS timezone ({detail})`
   String geoIdentityTimezoneAlignFailed(Object detail) {
     return Intl.message(
@@ -5225,6 +5238,7 @@ class AppLocalizations {
       args: [detail],
     );
   }
+
   /// `Enable geo identity protect`
   String get geoIdentityProtectEnable {
     return Intl.message(
@@ -5234,6 +5248,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Probe with US Accept-Language`
   String get geoIdentityUsAcceptLanguage {
     return Intl.message(
@@ -5243,6 +5258,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Start FlClash before verifying the network environment.`
   String get geoIdentityNeedStart {
     return Intl.message(
@@ -5252,6 +5268,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Network check failed`
   String get geoIdentityCheckFailed {
     return Intl.message(
@@ -5261,6 +5278,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Network still looks exposed`
   String get geoIdentityNetworkExposed {
     return Intl.message(
@@ -5270,6 +5288,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `System timezone`
   String get geoIdentityTimezone {
     return Intl.message(
@@ -5279,6 +5298,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `GeoMirror on GitHub`
   String get geoIdentityOpenGeoMirror {
     return Intl.message(
@@ -5288,6 +5308,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Restore previous OS timezone`
   String get geoIdentityRestoreOsTimezone {
     return Intl.message(
@@ -5297,6 +5318,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Restore {timezone}`
   String geoIdentityRestoreOsTimezoneDesc(Object timezone) {
     return Intl.message(
@@ -5306,6 +5328,7 @@ class AppLocalizations {
       args: [timezone],
     );
   }
+
   /// `OS timezone restored to {timezone}`
   String geoIdentityTimezoneRestored(Object timezone) {
     return Intl.message(
@@ -5315,6 +5338,7 @@ class AppLocalizations {
       args: [timezone],
     );
   }
+
   /// `No exit timezone yet. Verify the network environment first.`
   String get geoIdentityTimezoneMissing {
     return Intl.message(
@@ -5324,6 +5348,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `No previous OS timezone saved.`
   String get geoIdentityTimezoneNothingToRestore {
     return Intl.message(
@@ -5333,6 +5358,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Android cannot change the system timezone without root. Open Settings → System → Date & time and pick a US zone that matches your exit.`
   String get geoIdentityTimezoneAndroidTip {
     return Intl.message(
@@ -5342,6 +5368,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Copy terminal proxy exports`
   String get geoIdentityCopyTerminalProxy {
     return Intl.message(
@@ -5351,6 +5378,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Applying newbie setup…`
   String get geoIdentitySetupRunning {
     return Intl.message(
@@ -5360,6 +5388,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Starting FlClash…`
   String get geoIdentitySetupStarting {
     return Intl.message(
@@ -5369,6 +5398,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Verifying network environment…`
   String get geoIdentitySetupVerifying {
     return Intl.message(
@@ -5378,6 +5408,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Aligning OS timezone…`
   String get geoIdentitySetupTimezone {
     return Intl.message(
@@ -5387,6 +5418,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Setup complete — network looks US-protected.`
   String get geoIdentitySetupDoneProtected {
     return Intl.message(
@@ -5396,6 +5428,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Setup applied, but the exit is not US-protected yet. Select a US node, then tap Recheck.`
   String get geoIdentitySetupDoneNeedUsNode {
     return Intl.message(
@@ -5405,6 +5438,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Copy HTTP(S)_PROXY for terminals`
   String get geoIdentityCopyTerminalProxyShort {
     return Intl.message(
@@ -5414,6 +5448,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Browser fingerprint alignment`
   String get geoIdentityOpenGeoMirrorShort {
     return Intl.message(
@@ -5423,6 +5458,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Show advanced`
   String get geoIdentityShowAdvanced {
     return Intl.message(
@@ -5432,6 +5468,7 @@ class AppLocalizations {
       args: [],
     );
   }
+
   /// `Hide advanced`
   String get geoIdentityHideAdvanced {
     return Intl.message(
@@ -5442,6 +5479,255 @@ class AppLocalizations {
     );
   }
 
+  /// `Service reachability`
+  String get serviceReachability {
+    return Intl.message(
+      'Service reachability',
+      name: 'serviceReachability',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search`
+  String get serviceProbeCategorySearch {
+    return Intl.message(
+      'Search',
+      name: 'serviceProbeCategorySearch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Social`
+  String get serviceProbeCategorySocial {
+    return Intl.message(
+      'Social',
+      name: 'serviceProbeCategorySocial',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AI`
+  String get serviceProbeCategoryAi {
+    return Intl.message(
+      'AI',
+      name: 'serviceProbeCategoryAi',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Streaming`
+  String get serviceProbeCategoryStreaming {
+    return Intl.message(
+      'Streaming',
+      name: 'serviceProbeCategoryStreaming',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `General`
+  String get serviceProbeCategoryGeneral {
+    return Intl.message(
+      'General',
+      name: 'serviceProbeCategoryGeneral',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start VPN to test node quality`
+  String get serviceProbeNeedStart {
+    return Intl.message(
+      'Start VPN to test node quality',
+      name: 'serviceProbeNeedStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No selected node`
+  String get serviceProbeNoProxy {
+    return Intl.message(
+      'No selected node',
+      name: 'serviceProbeNoProxy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Testing services…`
+  String get serviceProbeRunning {
+    return Intl.message(
+      'Testing services…',
+      name: 'serviceProbeRunning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap refresh to test services`
+  String get serviceProbeTapToTest {
+    return Intl.message(
+      'Tap refresh to test services',
+      name: 'serviceProbeTapToTest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Testing`
+  String get serviceProbeTesting {
+    return Intl.message(
+      'Testing',
+      name: 'serviceProbeTesting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current node`
+  String get serviceProbeCurrentNode {
+    return Intl.message(
+      'Current node',
+      name: 'serviceProbeCurrentNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Checks HTTP reachability/latency through the current node. This is not a streaming unlock or account-region test.`
+  String get serviceProbeDisclaimer {
+    return Intl.message(
+      'Checks HTTP reachability/latency through the current node. This is not a streaming unlock or account-region test.',
+      name: 'serviceProbeDisclaimer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable auto select`
+  String get enableAutoSelect {
+    return Intl.message(
+      'Enable auto select',
+      name: 'enableAutoSelect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No url-test/fallback group found. Create a simple “FlClash Auto” url-test group? This switches the profile overwrite to Custom and replaces empty custom strategy groups with Auto + PROXY (subscription nodes are kept via include-all-proxies).`
+  String get enableAutoSelectCreateTip {
+    return Intl.message(
+      'No url-test/fallback group found. Create a simple “FlClash Auto” url-test group? This switches the profile overwrite to Custom and replaces empty custom strategy groups with Auto + PROXY (subscription nodes are kept via include-all-proxies).',
+      name: 'enableAutoSelectCreateTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to enable auto select`
+  String get enableAutoSelectFailed {
+    return Intl.message(
+      'Failed to enable auto select',
+      name: 'enableAutoSelectFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restore auto`
+  String get restoreAutoSelect {
+    return Intl.message(
+      'Restore auto',
+      name: 'restoreAutoSelect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `URLTest`
+  String get groupTypeUrlTest {
+    return Intl.message(
+      'URLTest',
+      name: 'groupTypeUrlTest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fallback`
+  String get groupTypeFallback {
+    return Intl.message(
+      'Fallback',
+      name: 'groupTypeFallback',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{success} reachable · {fail} failed`
+  String serviceProbeSummary(int success, int fail) {
+    return Intl.message(
+      '$success reachable · $fail failed',
+      name: 'serviceProbeSummary',
+      desc: '',
+      args: [success, fail],
+    );
+  }
+
+  /// `Auto select restored for {group}`
+  String enableAutoSelectRestored(String group) {
+    return Intl.message(
+      'Auto select restored for $group',
+      name: 'enableAutoSelectRestored',
+      desc: '',
+      args: [group],
+    );
+  }
+
+  /// `Created auto group {group}. Select it under Proxies if needed.`
+  String enableAutoSelectCreated(String group) {
+    return Intl.message(
+      'Created auto group $group. Select it under Proxies if needed.',
+      name: 'enableAutoSelectCreated',
+      desc: '',
+      args: [group],
+    );
+  }
+
+  /// `Auto · {type}`
+  String autoGroupTitle(String type) {
+    return Intl.message(
+      'Auto · $type',
+      name: 'autoGroupTitle',
+      desc: '',
+      args: [type],
+    );
+  }
+
+  /// `Current node: {node}`
+  String autoGroupCurrent(String node) {
+    return Intl.message(
+      'Current node: $node',
+      name: 'autoGroupCurrent',
+      desc: '',
+      args: [node],
+    );
+  }
+
+  /// `Manual override: {node}`
+  String autoGroupOverride(String node) {
+    return Intl.message(
+      'Manual override: $node',
+      name: 'autoGroupOverride',
+      desc: '',
+      args: [node],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
