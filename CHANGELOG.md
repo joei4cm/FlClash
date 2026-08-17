@@ -1,3 +1,9 @@
+## v0.8.108
+
+- Fix VPN uptime display for multi-day sessions (no more `999:59:59` ceiling; show `Nd HH:MM:SS`).
+- Add dashboard service-reachability tile (search / social / AI / streaming probes through the current node).
+- Show url-test / fallback current node with restore-auto, plus enable-auto-select flow.
+
 ## v0.8.107
 
 - Integrate upstream/dev: package icon loading + connections ActivePolling, Windows group delay/RPC fix, commented-policy cleanup.
