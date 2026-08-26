@@ -1,3 +1,14 @@
+## v0.8.107
+
+- Integrate upstream/dev: package icon loading + connections ActivePolling, Windows group delay/RPC fix, commented-policy cleanup.
+- Rebase fork onto upstream/main with performance push path, Tailscale outbounds/bypass, and Geo identity.
+
+## v0.8.106
+
+- Port fork main features onto upstream/dev: performance push path, Tailscale outbounds/bypass, and Geo identity.
+- Add fork-friendly release.yaml workflow.
+- Include delay-test and CoreEventManager dispatch robustness.
+
 ## v0.8.96
 
 - Optimize commented policy
