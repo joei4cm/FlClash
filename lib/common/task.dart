@@ -117,13 +117,13 @@ Future<({String yaml, String md5})> _makeRealProfileTask(
   final addedRules = data.addedRules;
   final appendSystemDns = data.appendSystemDns;
   final defaultUA = data.defaultUA;
-  String getProvidersFilePathInner(String type, String url) {
+  String getProvidersFilePathInner(String type, String key) {
     return join(
       profilesPath,
       providersDirectoryName,
       profileId.toString(),
       type,
-      url.toMd5(),
+      key.toMd5(),
     );
   }
 
@@ -137,17 +137,18 @@ Future<({String yaml, String md5})> _makeRealProfileTask(
       if (provider is! Map || provider['type'] == 'inline') {
         continue;
       }
+      // Two providers may share a URL and differ only by header.
       final url = provider['url'];
       provider['path'] = getProvidersFilePathInner(
         type,
-        url is String && url.isNotEmpty ? url : '$section/$name',
+        url is String && url.isNotEmpty ? '$name@$url' : '$section/$name',
       );
     }
   }
 
   rawConfig['external-controller'] = realPatchConfig.externalController.value;
   rawConfig['external-ui'] = '';
-  rawConfig['interface-name'] = '';
+  rawConfig['interface-name'] ??= '';
   rawConfig['external-ui-url'] = '';
   rawConfig['tcp-concurrent'] = realPatchConfig.tcpConcurrent;
   rawConfig['unified-delay'] = realPatchConfig.unifiedDelay;
@@ -198,24 +199,24 @@ Future<({String yaml, String md5})> _makeRealProfileTask(
   for (final host in realPatchConfig.hosts.entries) {
     rawConfig['hosts'][host.key] = host.value.splitByMultipleSeparators;
   }
-  if (rawConfig['dns'] == null) {
-    rawConfig['dns'] = {};
-  }
-  final isEnableDns = rawConfig['dns']['enable'] == true;
+  final rawDns = rawConfig['dns'] is Map
+      ? Map<String, dynamic>.from(rawConfig['dns'] as Map)
+      : <String, dynamic>{};
+  rawConfig['dns'] = rawDns;
+  final isEnableDns = rawDns['enable'] == true;
   const systemDns = 'system://';
   if (overrideDns || !isEnableDns) {
-    final dns = switch (!isEnableDns) {
-      true => realPatchConfig.dns.copyWith(
-        nameserver: [...realPatchConfig.dns.nameserver, systemDns],
-      ),
-      false => realPatchConfig.dns,
-    };
-    rawConfig['dns'] = dns.toJson();
-    rawConfig['dns']['nameserver-policy'] = {};
+    final dns = realPatchConfig.dns;
+    final nameserverPolicy = <String, dynamic>{};
     for (final entry in dns.nameserverPolicy.entries) {
-      rawConfig['dns']['nameserver-policy'][entry.key] =
-          entry.value.splitByMultipleSeparators;
+      nameserverPolicy[entry.key] = entry.value.splitByMultipleSeparators;
     }
+    // Merged, not assigned: the model only covers the keys FlClash can edit.
+    rawConfig['dns'] = {
+      ...rawDns,
+      ...dns.toJson(),
+      'nameserver-policy': nameserverPolicy,
+    };
   }
   if (appendSystemDns) {
     final List<String> nameserver = List<String>.from(

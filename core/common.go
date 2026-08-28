@@ -52,10 +52,11 @@ var (
 	// configMu -> selectMu.
 	selectMu sync.Mutex
 
-	isInit     atomic.Bool
-	isRunning  atomic.Bool
-	sdkVersion atomic.Int32
-	testURL    atomic.Pointer[string]
+	isInit      atomic.Bool
+	isRunning   atomic.Bool
+	isSuspended atomic.Bool
+	sdkVersion  atomic.Int32
+	testURL     atomic.Pointer[string]
 
 	delayTestSlots = make(chan struct{}, delayTestConcurrency)
 
@@ -357,6 +358,15 @@ func applyConfig(params *SetupParams) error {
 	setTestURL(params.TestURL)
 	cfg, err := loadConfig(filepath.Join(constant.Path.HomeDir(), "config.yaml"))
 	if err != nil {
+		// The fallback is what keeps the listeners serving while the host
+		// reports the error, but it applies a config with no proxies in it.
+		// From the UI that is indistinguishable from a subscription that went
+		// dead: the profile still lists every node, every delay test answers
+		// Timeout, and nothing routes. Name the real cause in the log.
+		logError(
+			"config apply failed, falling back to the built-in default - no proxies will be available: %v",
+			err,
+		)
 		fallback, fallbackErr := config.ParseRawConfig(config.DefaultRawConfig())
 		if fallbackErr != nil {
 			return err

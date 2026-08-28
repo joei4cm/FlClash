@@ -51,6 +51,8 @@
   "logcatDesc": "無効化するとログエントリを非表示",
   "autoCheckUpdate": "自動更新チェック",
   "autoCheckUpdateDesc": "起動時に更新を自動チェック",
+  "checkCertificate": "TLS 証明書を検証",
+  "checkCertificateDesc": "信頼できない証明書を拒否します。無効にするとサブスクリプションとバックアップが中間者攻撃にさらされます",
   "accessControl": "アクセス制御",
   "accessControlDesc": "アプリケーションのプロキシアクセスを設定",
   "application": "アプリケーション",
@@ -586,5 +588,9 @@
   "clearSearch": "検索をクリア",
   "addWidget": "ウィジェットを追加",
   "showPassword": "パスワードを表示",
-  "hidePassword": "パスワードを非表示"
+  "hidePassword": "パスワードを非表示",
+  "authorize": "許可する",
+  "installedAppsPermissionRequired": "アプリ一覧の権限が必要です",
+  "installedAppsPermissionDesc": "このシステムでは、権限を許可するまでインストール済みアプリの一覧を取得できません。許可するとアプリごとのプロキシを設定できます。",
+  "installedAppsPermissionDeniedMessage": "アプリ一覧の権限が拒否されたため、インストール済みアプリを取得できません。システム設定で手動で許可してください。"
 }

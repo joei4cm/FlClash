@@ -1775,14 +1775,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
-  webdav_client:
-    dependency: "direct main"
-    description:
-      name: webdav_client
-      sha256: "682fffc50b61dc0e8f46717171db03bf9caaa17347be41c0c91e297553bf86b2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.2"
   webkit_inspection_protocol:
     dependency: transitive
     description:
@@ -1818,8 +1810,8 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/window_manager"
-      ref: "v0.5.1-flclash.1"
-      resolved-ref: "207a99ca9dbaf0585e9a337eacc4fa4848809984"
+      ref: "v0.5.1-flclash.2"
+      resolved-ref: "3f2e35e9c2912df7dabd6a1bf5f401715d1ef5cd"
       url: "https://github.com/chen08209/window_manager"
     source: git
     version: "0.5.1"

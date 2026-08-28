@@ -166,6 +166,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "applicationDesc": MessageLookupByLibrary.simpleMessage(
       "Modify application related settings",
     ),
+    "authorize": MessageLookupByLibrary.simpleMessage("Authorize"),
     "authorized": MessageLookupByLibrary.simpleMessage("Authorized"),
     "auto": MessageLookupByLibrary.simpleMessage("Auto"),
     "autoCheckUpdate": MessageLookupByLibrary.simpleMessage(
@@ -240,6 +241,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "changelogFixes": MessageLookupByLibrary.simpleMessage("Bug fixes"),
     "changelogPerformance": MessageLookupByLibrary.simpleMessage("Performance"),
     "changelogReverts": MessageLookupByLibrary.simpleMessage("Reverts"),
+    "checkCertificate": MessageLookupByLibrary.simpleMessage(
+      "Verify TLS certificates",
+    ),
+    "checkCertificateDesc": MessageLookupByLibrary.simpleMessage(
+      "Reject untrusted certificates. Turning this off exposes subscriptions and backups to man-in-the-middle attacks",
+    ),
     "checkUpdate": MessageLookupByLibrary.simpleMessage("Check for updates"),
     "checkUpdateError": MessageLookupByLibrary.simpleMessage(
       "The current application is already the latest version",
@@ -518,6 +525,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Input rule content",
+    ),
+    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
+      "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
+    ),
+    "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
+      "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
+    ),
+    "installedAppsPermissionRequired": MessageLookupByLibrary.simpleMessage(
+      "App list permission required",
     ),
     "intelligentSelected": MessageLookupByLibrary.simpleMessage(
       "Intelligent selection",

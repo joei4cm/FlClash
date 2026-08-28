@@ -12,3 +12,11 @@ linked .agents documentation, preserve existing lifecycle and serialization cont
 changes untouched. Trace the affected call path before editing, update focused tests when behavior changes, and report
 the
 files changed plus the verification actually run.
+
+Comments are allowed; excess is not. Write one only when it carries something the code cannot — a non-obvious
+constraint, an upstream behavior being worked around, a reason the next reader would get wrong. Never restate what the
+code does, narrate what you just changed, or annotate step by step; a block wanting a comment per line wants better
+names instead. Keep a file's added lines under 10% standalone comments — a `comment-density` hook reports above that
+after the write, and pre-commit fails there. Healthy changes here sit under 4%. Preserve `// ignore:`-style directives,
+license headers, codegen markers, and vendored upstream comments; delete commented-out code and stale notes in files
+you already touched. This is restated here in full because you may never open AGENTS.md yourself.

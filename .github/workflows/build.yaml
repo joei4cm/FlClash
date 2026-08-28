@@ -30,6 +30,10 @@ jobs:
         shell: bash
         run: bash tool/check_commit_msg_test.sh
 
+      - name: Test comment density hook
+        shell: bash
+        run: bash tool/check_comment_density_test.sh
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:

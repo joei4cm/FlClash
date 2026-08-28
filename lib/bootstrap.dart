@@ -203,7 +203,8 @@ class Bootstrap {
       final file = File(await appPath.sharedPreferencesPath);
       await file.safeDelete();
     }
-    await _container.read(systemActionProvider.notifier).handleExit();
+    // Saving here would rewrite the preferences file the user just chose to delete.
+    await _container.read(systemActionProvider.notifier).handleExit(false);
   }
 
   Future<void> _showCrashlyticsTip() async {

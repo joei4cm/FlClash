@@ -48,7 +48,14 @@ String _randomPipeId() {
 final defaultTextScaleFactor =
     WidgetsBinding.instance.platformDispatcher.textScaleFactor;
 
-const httpTimeoutDuration = Duration(milliseconds: 5000);
+/// How long the Core may spend on one delay test. It spends this twice in the
+/// worst case - once queueing for a slot, once on the probe itself - so the
+/// guard below has to outlast twice this value.
+///
+/// The old five seconds covered a whole QUIC or TLS handshake plus an HTTP
+/// HEAD, which a Hysteria2 or AnyTLS node on a weak mobile link routinely
+/// misses on the first attempt, so healthy nodes reported Timeout.
+const delayTestTimeoutDuration = Duration(seconds: 8);
 
 const delayTestGuardDuration = Duration(seconds: 30);
 

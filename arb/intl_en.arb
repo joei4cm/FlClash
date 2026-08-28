@@ -51,6 +51,8 @@
   "logcatDesc": "Disabling will hide the log entry",
   "autoCheckUpdate": "Auto check updates",
   "autoCheckUpdateDesc": "Auto check for updates when the app starts",
+  "checkCertificate": "Verify TLS certificates",
+  "checkCertificateDesc": "Reject untrusted certificates. Turning this off exposes subscriptions and backups to man-in-the-middle attacks",
   "accessControl": "AccessControl",
   "accessControlDesc": "Configure application access proxy",
   "application": "Application",
@@ -586,5 +588,9 @@
   "clearSearch": "Clear search",
   "addWidget": "Add widget",
   "showPassword": "Show password",
-  "hidePassword": "Hide password"
+  "hidePassword": "Hide password",
+  "authorize": "Authorize",
+  "installedAppsPermissionRequired": "App list permission required",
+  "installedAppsPermissionDesc": "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
+  "installedAppsPermissionDeniedMessage": "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings."
 }

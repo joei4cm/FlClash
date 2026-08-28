@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/common/app_ports.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/manager/window_manager.dart';
+import 'package:fl_clash/models/config.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:material_ui/material_ui.dart';
@@ -25,17 +27,55 @@ class _RecordingSystemAction extends SystemAction {
   }
 
   @override
-  Future<void> handleExit([bool needSave = false]) async {
+  Future<void> handleExit([bool needSave = true]) async {
     calls.add('exit');
   }
+}
+
+class _RecordingWindowPort implements WindowPort {
+  Rect bounds = const Rect.fromLTWH(0, 0, 1000, 800);
+  Completer<void>? geometryGate;
+  bool isNormal = true;
+  bool supportsPosition = true;
+
+  @override
+  Future<WindowProps?> captureNormalGeometry(WindowProps current) async {
+    final capturedBounds = bounds;
+    final capturedGate = geometryGate;
+    final capturedIsNormal = isNormal;
+    await capturedGate?.future;
+    if (!capturedIsNormal) {
+      return null;
+    }
+    return current.copyWith(
+      width: capturedBounds.width,
+      height: capturedBounds.height,
+      left: supportsPosition ? capturedBounds.left : current.left,
+      top: supportsPosition ? capturedBounds.top : current.top,
+    );
+  }
+
+  @override
+  Future<void> close() async {}
+
+  @override
+  void forceExit() {}
+
+  @override
+  Future<void> hide() async {}
+
+  @override
+  Future<bool> get isVisible async => true;
+
+  @override
+  Future<void> show() async {}
 }
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late ProviderContainer container;
-  late Rect bounds;
-  Completer<void>? boundsGate;
+  late _RecordingWindowPort window;
 
   setUpAll(() async {
     await AppLocalizations.load(const Locale('en'));
@@ -43,8 +83,8 @@ void main() {
 
   setUp(() {
     _RecordingSystemAction.calls.clear();
-    bounds = const Rect.fromLTWH(0, 0, 1000, 800);
-    boundsGate = null;
+    window = _RecordingWindowPort();
+    windowPort = window;
     container = ProviderContainer(
       overrides: [
         profilesProvider.overrideWith(TestProfiles.new),
@@ -54,15 +94,6 @@ void main() {
     globalState.container = container;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(_windowChannel, (call) async {
-          if (call.method == 'getBounds') {
-            await boundsGate?.future;
-            return <String, double>{
-              'x': bounds.left,
-              'y': bounds.top,
-              'width': bounds.width,
-              'height': bounds.height,
-            };
-          }
           if (call.method == 'isMaximized' || call.method == 'isAlwaysOnTop') {
             return false;
           }
@@ -71,6 +102,7 @@ void main() {
   });
 
   tearDown(() {
+    windowPort = null;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(_windowChannel, null);
     container.dispose();
@@ -85,6 +117,11 @@ void main() {
     );
     await tester.pump();
     return tester.state(find.byType(WindowManager)) as WindowListener;
+  }
+
+  Future<void> settleWindowGeometry(WidgetTester tester) async {
+    await tester.pump(const Duration(milliseconds: 150));
+    await tester.pump();
   }
 
   testWidgets('renders its child untouched', (tester) async {
@@ -117,10 +154,10 @@ void main() {
 
   testWidgets('moving the window records its new position', (tester) async {
     final listener = await pumpWindowManager(tester);
-    bounds = const Rect.fromLTWH(120, 64, 1000, 800);
+    window.bounds = const Rect.fromLTWH(120, 64, 1000, 800);
 
-    listener.onWindowMoved();
-    await tester.pumpAndSettle();
+    listener.onWindowMove();
+    await settleWindowGeometry(tester);
 
     final setting = container.read(windowSettingProvider);
     expect(setting.left, 120);
@@ -129,10 +166,10 @@ void main() {
 
   testWidgets('resizing the window records its new size', (tester) async {
     final listener = await pumpWindowManager(tester);
-    bounds = const Rect.fromLTWH(0, 0, 1280, 960);
+    window.bounds = const Rect.fromLTWH(0, 0, 1280, 960);
 
-    listener.onWindowResized();
-    await tester.pumpAndSettle();
+    listener.onWindowResize();
+    await settleWindowGeometry(tester);
 
     final setting = container.read(windowSettingProvider);
     expect(setting.width, 1280);
@@ -155,11 +192,12 @@ void main() {
 
   testWidgets('a move that resolves after disposal is dropped', (tester) async {
     final listener = await pumpWindowManager(tester);
-    bounds = const Rect.fromLTWH(500, 500, 640, 480);
+    window.bounds = const Rect.fromLTWH(500, 500, 640, 480);
     final gate = Completer<void>();
-    boundsGate = gate;
+    window.geometryGate = gate;
 
-    listener.onWindowMoved();
+    listener.onWindowMove();
+    await settleWindowGeometry(tester);
     await tester.pumpWidget(const SizedBox.shrink());
     gate.complete();
     await tester.pumpAndSettle();
@@ -172,17 +210,76 @@ void main() {
     tester,
   ) async {
     final listener = await pumpWindowManager(tester);
-    bounds = const Rect.fromLTWH(0, 0, 640, 480);
+    window.bounds = const Rect.fromLTWH(0, 0, 640, 480);
     final gate = Completer<void>();
-    boundsGate = gate;
+    window.geometryGate = gate;
 
-    listener.onWindowResized();
+    listener.onWindowResize();
+    await settleWindowGeometry(tester);
     await tester.pumpWidget(const SizedBox.shrink());
     gate.complete();
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
     expect(container.read(windowSettingProvider).width, isNot(640));
+  });
+
+  testWidgets('non-normal window bounds are not persisted', (tester) async {
+    final listener = await pumpWindowManager(tester);
+    window.bounds = const Rect.fromLTWH(0, 0, 1920, 1080);
+    window.isNormal = false;
+
+    listener.onWindowResize();
+    await settleWindowGeometry(tester);
+
+    expect(container.read(windowSettingProvider).width, isNot(1920));
+  });
+
+  testWidgets('Wayland geometry keeps compositor-owned position', (
+    tester,
+  ) async {
+    final listener = await pumpWindowManager(tester);
+    container.read(windowSettingProvider.notifier).value = const WindowProps(
+      width: 800,
+      height: 600,
+      left: 40,
+      top: 32,
+    );
+    window.bounds = const Rect.fromLTWH(0, 0, 1200, 900);
+    window.supportsPosition = false;
+
+    listener.onWindowMove();
+    await settleWindowGeometry(tester);
+
+    expect(
+      container.read(windowSettingProvider),
+      const WindowProps(width: 1200, height: 900, left: 40, top: 32),
+    );
+  });
+
+  testWidgets('a newer geometry event supersedes an older async capture', (
+    tester,
+  ) async {
+    final listener = await pumpWindowManager(tester);
+    final firstGate = Completer<void>();
+    window.bounds = const Rect.fromLTWH(10, 10, 640, 480);
+    window.geometryGate = firstGate;
+
+    listener.onWindowMove();
+    await settleWindowGeometry(tester);
+
+    window.bounds = const Rect.fromLTWH(80, 64, 1200, 900);
+    window.geometryGate = null;
+    listener.onWindowMove();
+    await settleWindowGeometry(tester);
+
+    firstGate.complete();
+    await tester.pumpAndSettle();
+
+    expect(
+      container.read(windowSettingProvider),
+      const WindowProps(width: 1200, height: 900, left: 80, top: 64),
+    );
   });
 
   group('WindowHeaderContainer', () {

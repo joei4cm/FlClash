@@ -97,6 +97,12 @@ class ApplicationSettingView extends StatelessWidget {
         select: (state) => state.autoCheckUpdate,
         update: (state, value) => state.copyWith(autoCheckUpdate: value),
       ),
+      _appSettingToggle(
+        title: (l) => l.checkCertificate,
+        subtitle: (l) => l.checkCertificateDesc,
+        select: (state) => state.checkCertificate,
+        update: (state, value) => state.copyWith(checkCertificate: value),
+      ),
     ];
     return BaseScaffold(
       title: context.appLocalizations.application,

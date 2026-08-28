@@ -16,6 +16,8 @@ import (
 
 	"github.com/metacubex/mihomo/adapter"
 	"github.com/metacubex/mihomo/adapter/outbound"
+	"github.com/metacubex/mihomo/adapter/outboundgroup"
+	"github.com/metacubex/mihomo/adapter/provider"
 	"github.com/metacubex/mihomo/common/utils"
 	"github.com/metacubex/mihomo/config"
 	"github.com/metacubex/mihomo/constant"
@@ -26,6 +28,148 @@ import (
 
 func namedProxy(name string) constant.Proxy {
 	return adapter.NewProxy(outbound.NewDirectWithOption(outbound.DirectOption{Name: name}))
+}
+
+// selectorGroup builds a real Selector over a compatible provider, so the
+// selection paths under test run against mihomo's own group rather than a stub
+// that could agree with a wrong assumption.
+func selectorGroup(t *testing.T, name string, members ...string) constant.Proxy {
+	t.Helper()
+
+	proxies := make([]constant.Proxy, 0, len(members))
+	for _, member := range members {
+		proxies = append(proxies, namedProxy(member))
+	}
+
+	// An empty url leaves the check interval at zero, so nothing schedules
+	// itself and no test reaches the network.
+	health := provider.NewHealthCheck(proxies, "", 0, 0, true, nil)
+	pd, err := provider.NewCompatibleProvider(name+"-provider", proxies, health)
+	if err != nil {
+		t.Fatalf("NewCompatibleProvider: %v", err)
+	}
+
+	group, err := outboundgroup.NewSelector(
+		outboundgroup.GroupCommonOption{Name: name},
+		outboundgroup.SelectorOption{},
+		nil,
+		[]cp.ProxyProvider{pd},
+	)
+	if err != nil {
+		t.Fatalf("NewSelector: %v", err)
+	}
+	return adapter.NewProxy(group)
+}
+
+func groupNow(t *testing.T, proxy constant.Proxy) string {
+	t.Helper()
+
+	outboundProxy, ok := proxy.(*adapter.Proxy)
+	if !ok {
+		t.Fatalf("proxy %q is not an adapter.Proxy", proxy.Name())
+	}
+	group, ok := outboundProxy.ProxyAdapter.(outboundgroup.ProxyGroup)
+	if !ok {
+		t.Fatalf("proxy %q is not a group", proxy.Name())
+	}
+	return group.Now()
+}
+
+// patchSelectGroup restores selections before the providers behind the groups
+// have loaded - executor.loadProvider never waits for them - so it has to write
+// names through unvalidated and let Selector resolve them at dial time. A name
+// that never comes back has to degrade to the group's first member rather than
+// break the group.
+func TestPatchSelectGroupRestoresASelectionWithoutValidatingIt(t *testing.T) {
+	group := selectorGroup(t, "group", "node-a", "node-b")
+	tunnel.UpdateProxies(map[string]constant.Proxy{"group": group}, nil)
+	t.Cleanup(func() { tunnel.UpdateProxies(nil, nil) })
+
+	patchSelectGroup(map[string]string{"group": "node-b"})
+	if got := groupNow(t, group); got != "node-b" {
+		t.Fatalf("group resolved to %q, want the selection that was restored", got)
+	}
+
+	patchSelectGroup(map[string]string{"group": "a name the provider dropped"})
+	if got := groupNow(t, group); got != "node-a" {
+		t.Errorf("group resolved to %q after a stale selection, want it to fall through to the first member", got)
+	}
+}
+
+// Coming out of Doze has to re-probe. The health checks that ran while the app
+// had no network at all left every proxy marked dead and every delay reading
+// Timeout, and a lazy provider skips its next tick because nothing touched it
+// in the meantime.
+func TestHandleSuspendRefreshesHealthChecksOnResume(t *testing.T) {
+	var refreshes atomic.Int32
+
+	previous := refreshHealthChecks
+	previousRunning := isRunning.Load()
+	refreshHealthChecks = func() { refreshes.Add(1) }
+	t.Cleanup(func() {
+		refreshHealthChecks = previous
+		isRunning.Store(previousRunning)
+		isSuspended.Store(false)
+		tunnel.OnRunning()
+	})
+
+	isSuspended.Store(false)
+	isRunning.Store(true)
+
+	handleSuspend(false)
+	if got := refreshes.Load(); got != 0 {
+		t.Errorf("refreshes = %d, want none: the device was never suspended", got)
+	}
+
+	handleSuspend(true)
+	if !isSuspended.Load() {
+		t.Error("handleSuspend(true) did not record the suspension")
+	}
+	if got := refreshes.Load(); got != 0 {
+		t.Errorf("refreshes = %d, want none while the device is still suspended", got)
+	}
+
+	handleSuspend(false)
+	if isSuspended.Load() {
+		t.Error("handleSuspend(false) did not clear the suspension")
+	}
+	if got := refreshes.Load(); got != 1 {
+		t.Errorf("refreshes = %d, want exactly one on resume", got)
+	}
+
+	handleSuspend(false)
+	if got := refreshes.Load(); got != 1 {
+		t.Errorf("refreshes = %d, want a redundant resume to change nothing", got)
+	}
+
+	// The service resumes the core on its way down, and probing every node
+	// through a teardown only produces failures nobody asked for.
+	isRunning.Store(false)
+	handleSuspend(true)
+	handleSuspend(false)
+	if got := refreshes.Load(); got != 1 {
+		t.Errorf("refreshes = %d, want no probe while the listeners are stopped", got)
+	}
+}
+
+func TestShouldPublishDelayDropsFailuresMeasuredInDoze(t *testing.T) {
+	t.Cleanup(func() { isSuspended.Store(false) })
+
+	isSuspended.Store(false)
+	if !shouldPublishDelay(0) {
+		t.Error("a failure measured while the device is awake is a real result")
+	}
+	if !shouldPublishDelay(120) {
+		t.Error("a successful probe while awake must reach the host")
+	}
+
+	isSuspended.Store(true)
+	if shouldPublishDelay(0) {
+		t.Error("a failure measured in Doze says nothing about the node, want it dropped")
+	}
+	if !shouldPublishDelay(120) {
+		t.Error("a probe that succeeded anyway is still worth publishing")
+	}
 }
 
 // typeMap turns a name -> adapter type table into the lookup proxyGroupNames

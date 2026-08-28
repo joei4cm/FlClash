@@ -269,7 +269,7 @@ void main() {
     },
   );
 
-  test('makeRealProfileTask replaces DNS and explicit custom data', () async {
+  test('makeRealProfileTask overrides DNS and explicit custom data', () async {
     final result = await makeRealProfileTask(
       const MakeRealProfileState(
         profilesPath: '/profiles',
@@ -300,9 +300,56 @@ void main() {
     final config = loadYaml(result.yaml) as YamlMap;
 
     expect(config['dns']['enable'], true);
-    expect(config['dns']['nameserver'], contains('system://'));
+    expect(config['dns']['nameserver'], isNot(contains('system://')));
     expect(config['proxy-groups'], hasLength(1));
     expect(config['rules'], ['DOMAIN,custom.example,DIRECT']);
+  });
+
+  test('makeRealProfileTask keeps the DNS keys it cannot edit', () async {
+    final rawConfig = await decodeJSONTask<Map<String, dynamic>>(
+      await encodeJSONTask({
+        'interface-name': 'en0',
+        'dns': {
+          'enable': false,
+          'direct-nameserver': ['223.5.5.5'],
+          'proxy-server-nameserver-policy': {
+            'www.example.com': ['8.8.8.8'],
+          },
+          'nameserver': ['9.9.9.9'],
+        },
+        'proxy-providers': {
+          'first': {'type': 'http', 'url': 'https://example.com/shared.yaml'},
+          'second': {'type': 'http', 'url': 'https://example.com/shared.yaml'},
+        },
+      }),
+    );
+
+    final result = await makeRealProfileTask(
+      MakeRealProfileState(
+        profilesPath: '/profiles',
+        profileId: 13,
+        rawConfig: rawConfig,
+        realPatchConfig: const PatchClashConfig(),
+        overrideDns: false,
+        appendSystemDns: false,
+        proxyGroups: const [],
+        rules: const [],
+        addedRules: const [],
+        defaultUA: 'FlClash-Test',
+      ),
+    );
+    final config = loadYaml(result.yaml) as YamlMap;
+
+    expect(config['interface-name'], 'en0');
+    expect(config['dns']['direct-nameserver'], ['223.5.5.5']);
+    expect(config['dns']['proxy-server-nameserver-policy'], {
+      'www.example.com': ['8.8.8.8'],
+    });
+    expect(config['dns']['nameserver'], isNot(contains('system://')));
+    expect(
+      config['proxy-providers']['first']['path'],
+      isNot(config['proxy-providers']['second']['path']),
+    );
   });
 
   test('log and list tasks produce stable mapped output', () async {

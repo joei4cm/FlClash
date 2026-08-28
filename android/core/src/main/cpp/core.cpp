@@ -7,11 +7,13 @@
 #include "bride.h"
 
 extern "C"
-JNIEXPORT void JNICALL
+JNIEXPORT jboolean JNICALL
 Java_com_follow_clash_core_Core_startTun(JNIEnv *env, jobject thiz, jint fd, jobject cb,
                                          jstring stack, jstring address, jstring dns) {
     const auto interface = new_global(cb);
-    startTUN(interface, fd, get_string(stack), get_string(address), get_string(dns));
+    return startTUN(interface, fd, get_string(stack), get_string(address), get_string(dns))
+           ? JNI_TRUE
+           : JNI_FALSE;
 }
 
 extern "C"
@@ -95,12 +97,15 @@ static void free_string_impl(char *str) {
     free(str);
 }
 
-static void call_tun_interface_protect_impl(void *tun_interface, const int fd) {
+static int call_tun_interface_protect_impl(void *tun_interface, const int fd) {
     ATTACH_JNI();
-    env->CallVoidMethod(static_cast<jobject>(tun_interface),
-                        m_tun_interface_protect,
-                        fd);
-    jni_clear_exception(env);
+    const auto accepted = env->CallBooleanMethod(static_cast<jobject>(tun_interface),
+                                                 m_tun_interface_protect,
+                                                 fd);
+    if (jni_clear_exception(env)) {
+        return 0;
+    }
+    return accepted == JNI_TRUE ? 1 : 0;
 }
 
 static char *
@@ -158,7 +163,7 @@ JNI_OnLoad(JavaVM *vm, void *) {
 
     const auto c_invoke_interface = find_class("com/follow/clash/core/InvokeInterface");
 
-    m_tun_interface_protect = find_method(c_tun_interface, "protect", "(I)V");
+    m_tun_interface_protect = find_method(c_tun_interface, "protect", "(I)Z");
     m_tun_interface_resolve_process = find_method(c_tun_interface, "resolverProcess",
                                                   "(ILjava/lang/String;Ljava/lang/String;I)Ljava/lang/String;");
     m_invoke_interface_result = find_method(c_invoke_interface, "onResult",
@@ -175,9 +180,10 @@ JNI_OnLoad(JavaVM *vm, void *) {
 }
 #else
 extern "C"
-JNIEXPORT void JNICALL
+JNIEXPORT jboolean JNICALL
 Java_com_follow_clash_core_Core_startTun(JNIEnv *env, jobject thiz, jint fd, jobject cb,
                                          jstring stack, jstring address, jstring dns) {
+    return JNI_FALSE;
 }
 
 extern "C"

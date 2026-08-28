@@ -406,13 +406,30 @@ class SetupAction extends _$SetupAction {
     }
   }
 
+  /// An empty profile list is left alone: it is the first-run state, and it is
+  /// what the profile stream holds before its first emission.
+  @visibleForTesting
+  Profile? recoverMissingProfile() {
+    final profileId = ref.read(currentProfileIdProvider);
+    if (profileId == null) return null;
+    final profiles = ref.read(profilesProvider);
+    if (profiles.isEmpty) return null;
+    final fallback = profiles.first;
+    commonPrint.log(
+      'profile $profileId is missing, falling back to ${fallback.id}',
+      logLevel: LogLevel.warning,
+    );
+    ref.read(currentProfileIdProvider.notifier).value = fallback.id;
+    return fallback;
+  }
+
   Future<_SetupTaskResult> _setupConfig({
     bool force = false,
     bool silence = false,
     Future<void> Function()? preloadInvoke,
     FutureOr Function()? onUpdated,
   }) async {
-    var profile = ref.read(currentProfileProvider);
+    var profile = ref.read(currentProfileProvider) ?? recoverMissingProfile();
     final refresh = await globalState.safeRun(
       () async => (
         profile: await profile?.checkAndUpdateAndCopy(

@@ -356,6 +356,53 @@ void main() {
     });
   });
 
+  group('recoverMissingProfile', () {
+    ProviderContainer buildScoped(List<Profile> profiles, int? profileId) {
+      final scoped = ProviderContainer(
+        overrides: [
+          profilesProvider.overrideWith(() => TestProfiles(profiles)),
+          currentProfileIdProvider.overrideWithBuild((_, _) => profileId),
+          setupActionProvider.overrideWith(TestSetupAction.new),
+        ],
+      );
+      addTearDown(scoped.dispose);
+      return scoped;
+    }
+
+    test('a dangling profile id falls back to the first profile', () {
+      final profile = Profile.normal(label: 'p').copyWith(id: 1);
+      final scoped = buildScoped([profile], 404);
+
+      final recovered = scoped
+          .read(setupActionProvider.notifier)
+          .recoverMissingProfile();
+
+      expect(recovered?.id, profile.id);
+      expect(scoped.read(currentProfileIdProvider), profile.id);
+    });
+
+    test('no profiles keeps the stored id untouched', () {
+      final scoped = buildScoped(const [], 404);
+
+      expect(
+        scoped.read(setupActionProvider.notifier).recoverMissingProfile(),
+        isNull,
+      );
+      expect(scoped.read(currentProfileIdProvider), 404);
+    });
+
+    test('an unset id is the first-run state, not a dangling one', () {
+      final profile = Profile.normal(label: 'p').copyWith(id: 1);
+      final scoped = buildScoped([profile], null);
+
+      expect(
+        scoped.read(setupActionProvider.notifier).recoverMissingProfile(),
+        isNull,
+      );
+      expect(scoped.read(currentProfileIdProvider), isNull);
+    });
+  });
+
   group('changeMode', () {
     test('records the requested mode', () {
       container.read(setupActionProvider.notifier).changeMode(Mode.direct);

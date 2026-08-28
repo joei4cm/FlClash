@@ -132,6 +132,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "application": MessageLookupByLibrary.simpleMessage("アプリケーション"),
     "applicationDesc": MessageLookupByLibrary.simpleMessage("アプリ関連設定を変更"),
+    "authorize": MessageLookupByLibrary.simpleMessage("許可する"),
     "authorized": MessageLookupByLibrary.simpleMessage("許可済み"),
     "auto": MessageLookupByLibrary.simpleMessage("自動"),
     "autoCheckUpdate": MessageLookupByLibrary.simpleMessage("自動更新チェック"),
@@ -184,6 +185,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "changelogFixes": MessageLookupByLibrary.simpleMessage("不具合修正"),
     "changelogPerformance": MessageLookupByLibrary.simpleMessage("パフォーマンス"),
     "changelogReverts": MessageLookupByLibrary.simpleMessage("取り消し"),
+    "checkCertificate": MessageLookupByLibrary.simpleMessage("TLS 証明書を検証"),
+    "checkCertificateDesc": MessageLookupByLibrary.simpleMessage(
+      "信頼できない証明書を拒否します。無効にするとサブスクリプションとバックアップが中間者攻撃にさらされます",
+    ),
     "checkUpdate": MessageLookupByLibrary.simpleMessage("更新を確認"),
     "checkUpdateError": MessageLookupByLibrary.simpleMessage("アプリは最新版です"),
     "clearData": MessageLookupByLibrary.simpleMessage("データを消去"),
@@ -411,6 +416,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputCorrectHotkey": MessageLookupByLibrary.simpleMessage("正しいホットキーを入力"),
     "inputProxyGroupName": MessageLookupByLibrary.simpleMessage("プロキシグループ名を入力"),
     "inputRuleContent": MessageLookupByLibrary.simpleMessage("ルール内容を入力"),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "アプリ一覧の権限が拒否されたため、インストール済みアプリを取得できません。システム設定で手動で許可してください。",
+        ),
+    "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
+      "このシステムでは、権限を許可するまでインストール済みアプリの一覧を取得できません。許可するとアプリごとのプロキシを設定できます。",
+    ),
+    "installedAppsPermissionRequired": MessageLookupByLibrary.simpleMessage(
+      "アプリ一覧の権限が必要です",
+    ),
     "intelligentSelected": MessageLookupByLibrary.simpleMessage("インテリジェント選択"),
     "internet": MessageLookupByLibrary.simpleMessage("インターネット"),
     "interval": MessageLookupByLibrary.simpleMessage("インターバル"),

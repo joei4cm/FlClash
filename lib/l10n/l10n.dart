@@ -429,6 +429,26 @@ class AppLocalizations {
     );
   }
 
+  /// `Verify TLS certificates`
+  String get checkCertificate {
+    return Intl.message(
+      'Verify TLS certificates',
+      name: 'checkCertificate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reject untrusted certificates. Turning this off exposes subscriptions and backups to man-in-the-middle attacks`
+  String get checkCertificateDesc {
+    return Intl.message(
+      'Reject untrusted certificates. Turning this off exposes subscriptions and backups to man-in-the-middle attacks',
+      name: 'checkCertificateDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `AccessControl`
   String get accessControl {
     return Intl.message(
@@ -4808,6 +4828,41 @@ class AppLocalizations {
     return Intl.message(
       'Hide password',
       name: 'hidePassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Authorize`
+  String get authorize {
+    return Intl.message('Authorize', name: 'authorize', desc: '', args: []);
+  }
+
+  /// `App list permission required`
+  String get installedAppsPermissionRequired {
+    return Intl.message(
+      'App list permission required',
+      name: 'installedAppsPermissionRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.`
+  String get installedAppsPermissionDesc {
+    return Intl.message(
+      'This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.',
+      name: 'installedAppsPermissionDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.`
+  String get installedAppsPermissionDeniedMessage {
+    return Intl.message(
+      'The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.',
+      name: 'installedAppsPermissionDeniedMessage',
       desc: '',
       args: [],
     );

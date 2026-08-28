@@ -23,7 +23,7 @@ class _RecordingSystemAction extends SystemAction {
   static final exits = <bool>[];
 
   @override
-  Future<void> handleExit([bool needSave = false]) async {
+  Future<void> handleExit([bool needSave = true]) async {
     exits.add(needSave);
   }
 }

@@ -62,6 +62,8 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
 
     private val requestNotificationCallback = PendingCallback<Boolean>()
 
+    private val requestInstalledAppsCallback = PendingCallback<Boolean>()
+
     private var isRequestingNotificationPermission = false
 
     private val gson = Gson()
@@ -131,6 +133,16 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                 scope.launch(Dispatchers.IO) {
                     result.success(gson.toJson(packageResolver.getChinaPackageNames()))
                 }
+            }
+
+            "isInstalledAppsPermissionGranted" -> {
+                scope.launch(Dispatchers.IO) {
+                    result.success(packageResolver.hasInstalledAppsPermission())
+                }
+            }
+
+            "requestInstalledAppsPermission" -> {
+                requestInstalledAppsPermission { granted -> result.success(granted) }
             }
 
             "getPackageIcon" -> {
@@ -282,6 +294,31 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         requestNotificationCallback.resolve(shouldStart)
     }
 
+    private fun requestInstalledAppsPermission(callback: (Boolean) -> Unit) = onMainThread {
+        requestInstalledAppsCallback.replace(callback, supersededValue = false)
+        val activity = activity
+        if (packageResolver.hasInstalledAppsPermission()) {
+            invokeRequestInstalledAppsCallback(true)
+            return@onMainThread
+        }
+        if (activity == null) {
+            invokeRequestInstalledAppsCallback(false)
+            return@onMainThread
+        }
+        ActivityCompat.requestPermissions(
+            activity,
+            arrayOf(PackageResolver.GET_INSTALLED_APPS),
+            INSTALLED_APPS_PERMISSION_REQUEST_CODE,
+        )
+    }
+
+    private fun invokeRequestInstalledAppsCallback(granted: Boolean) {
+        if (granted) {
+            packageResolver.invalidate()
+        }
+        requestInstalledAppsCallback.resolve(granted)
+    }
+
     fun prepareVpn(needPrepare: Boolean, callback: (Boolean) -> Unit) = onMainThread {
         vpnPrepareCallback.replace(callback, supersededValue = false)
         if (!needPrepare) {
@@ -324,6 +361,7 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         scope.cancel()
         invokeVpnPrepareCallback(false)
         invokeRequestNotificationCallback(false)
+        invokeRequestInstalledAppsCallback(false)
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
@@ -359,6 +397,7 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         detachFromActivity()
         invokeVpnPrepareCallback(false)
         invokeRequestNotificationCallback(false)
+        invokeRequestInstalledAppsCallback(false)
     }
 
     private fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
@@ -373,17 +412,27 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         requestCode: Int,
         permissions: Array<String>,
         grantResults: IntArray,
-    ): Boolean {
-        if (requestCode != NOTIFICATION_PERMISSION_REQUEST_CODE) {
-            return false
+    ): Boolean = when (requestCode) {
+        NOTIFICATION_PERMISSION_REQUEST_CODE -> {
+            skipNotificationPermissionRequest = true
+            invokeRequestNotificationCallback(true)
+            true
         }
-        skipNotificationPermissionRequest = true
-        invokeRequestNotificationCallback(true)
-        return true
+
+        INSTALLED_APPS_PERMISSION_REQUEST_CODE -> {
+            invokeRequestInstalledAppsCallback(
+                grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED,
+            )
+            true
+        }
+
+        else -> false
     }
 
     private companion object {
         const val VPN_PERMISSION_REQUEST_CODE = 1001
         const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1002
+        const val INSTALLED_APPS_PERMISSION_REQUEST_CODE = 1003
     }
 }

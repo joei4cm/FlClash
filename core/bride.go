@@ -6,8 +6,8 @@ package main
 import "C"
 import "unsafe"
 
-func protect(callback unsafe.Pointer, fd int) {
-	C.protect(callback, C.int(fd))
+func protect(callback unsafe.Pointer, fd int) bool {
+	return C.protect(callback, C.int(fd)) != 0
 }
 
 func resolveProcess(callback unsafe.Pointer, protocol int, source, target string, uid int) string {

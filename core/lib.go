@@ -40,7 +40,7 @@ type TunHandler struct {
 	mu sync.RWMutex
 }
 
-func (th *TunHandler) start(fd int, stack, address, dns string) {
+func (th *TunHandler) start(fd int, stack, address, dns string) bool {
 	configMu.Lock()
 	defer configMu.Unlock()
 
@@ -60,9 +60,10 @@ func (th *TunHandler) start(fd int, stack, address, dns string) {
 	if tunListener != nil {
 		log.Infoln("TUN address: %v", tunListener.Address())
 		th.listener = tunListener
-		return
+		return true
 	}
 	th.clear()
+	return false
 }
 
 func (th *TunHandler) close() {
@@ -83,15 +84,33 @@ func (th *TunHandler) clear() {
 	th.listener = nil
 }
 
-func (th *TunHandler) handleProtect(fd int) {
+// protectFailing tracks whether the last protect call was refused, so a stuck
+// VpnService produces one log line rather than one per connection.
+var protectFailing atomic.Bool
+
+func (th *TunHandler) handleProtect(fd int) error {
 	th.mu.RLock()
 	defer th.mu.RUnlock()
 
-	if th.listener == nil {
-		return
+	if th.listener == nil || th.callback == nil {
+		// The tun routes are already live at this point (Android establishes
+		// them before it hands the fd over), so an unprotected socket would be
+		// routed straight back into the tunnel and hang until it times out.
+		// Failing it here costs nothing and is at least visible.
+		return errTunNotReady
 	}
 
-	protect(th.callback, fd)
+	if !protect(th.callback, fd) {
+		if protectFailing.CompareAndSwap(false, true) {
+			logError("VpnService.protect refused a socket; connections would loop back into the tunnel")
+		}
+		return errProtectRefused
+	}
+
+	if protectFailing.CompareAndSwap(true, false) {
+		log.Infoln("[TUN] VpnService.protect recovered")
+	}
+	return nil
 }
 
 func (th *TunHandler) handleResolveProcess(source, target net.Addr) string {
@@ -130,9 +149,13 @@ func installHooks() {
 			if th == nil {
 				return nil
 			}
-			return conn.Control(func(fd uintptr) {
-				th.handleProtect(int(fd))
-			})
+			var protectErr error
+			if err := conn.Control(func(fd uintptr) {
+				protectErr = th.handleProtect(int(fd))
+			}); err != nil {
+				return err
+			}
+			return protectErr
 		}
 		process.DefaultPackageNameResolver = func(metadata *constant.Metadata) (string, error) {
 			th := activeTunHandler.Load()
@@ -161,9 +184,11 @@ func (th *TunHandler) removeHook() {
 }
 
 var (
-	tunLock    sync.Mutex
-	errBlocked = errors.New("blocked")
-	tunHandler *TunHandler
+	tunLock           sync.Mutex
+	errBlocked        = errors.New("blocked: the process is out of file descriptors")
+	errTunNotReady    = errors.New("blocked: the tun listener is not ready")
+	errProtectRefused = errors.New("blocked: VpnService.protect refused the socket")
+	tunHandler        *TunHandler
 )
 
 func handleStopTun() {
@@ -180,7 +205,7 @@ func stopTunLocked() {
 	tunHandler = nil
 }
 
-func handleStartTun(callback unsafe.Pointer, fd int, stack, address, dns string) {
+func handleStartTun(callback unsafe.Pointer, fd int, stack, address, dns string) bool {
 	tunLock.Lock()
 	defer tunLock.Unlock()
 	stopTunLocked()
@@ -188,12 +213,20 @@ func handleStartTun(callback unsafe.Pointer, fd int, stack, address, dns string)
 		if callback != nil {
 			releaseObject(callback)
 		}
-		return
+		logError("startTun was handed no tun descriptor")
+		return false
 	}
 	tunHandler = &TunHandler{
 		callback: callback,
 	}
-	tunHandler.start(fd, stack, address, dns)
+	if tunHandler.start(fd, stack, address, dns) {
+		return true
+	}
+	// start() already cleared the handler, so nothing protects sockets from
+	// here on. Android has the routes up regardless, so the caller has to tear
+	// the VPN down rather than leave the device pointed at a black hole.
+	tunHandler = nil
+	return false
 }
 
 var (
@@ -246,7 +279,10 @@ func invokeMethod(callback unsafe.Pointer, paramsChar *C.char) {
 
 //export startTUN
 func startTUN(callback unsafe.Pointer, fd C.int, stackChar, addressChar, dnsChar *C.char) bool {
-	handleStartTun(callback, int(fd), takeCString(stackChar), takeCString(addressChar), takeCString(dnsChar))
+	started := handleStartTun(callback, int(fd), takeCString(stackChar), takeCString(addressChar), takeCString(dnsChar))
+	if !started {
+		return false
+	}
 	if !isRunning.Load() {
 		handleStartListener()
 	} else {

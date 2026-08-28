@@ -10,3 +10,9 @@ Review the current changes without editing files. Inspect the diff, trace the re
 ownership, serialization or IPC contracts, error handling, and test coverage. Run focused read-only checks when useful.
 Report actionable findings first, ordered by severity, with file paths and line references; state explicitly when no issue is
 found and note any validation or platform coverage gaps.
+
+Judge the comments the diff adds, since the density gate counts them but cannot tell a useful one from noise. Report as
+findings those that restate what the code does, narrate the change, or annotate step by step, and quote them. Say so
+explicitly when the comments earn their place. Where one carries a fact worth keeping, name the test or `.agents/`
+entry that should hold it instead. Exempt `// ignore:`-style directives, license headers, codegen markers, and vendored
+upstream code.

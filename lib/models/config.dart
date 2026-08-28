@@ -85,6 +85,7 @@ abstract class AppSettingProps with _$AppSettingProps {
     @Default(false) bool developerMode,
     @Default(RestoreStrategy.compatible) RestoreStrategy restoreStrategy,
     @Default(true) bool showTrayTitle,
+    @Default(true) bool checkCertificate,
     @Default('') String customUserAgent,
   }) = _AppSettingProps;
 

@@ -13,6 +13,7 @@ import (
 	"slices"
 	"strconv"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/metacubex/mihomo/adapter"
@@ -240,6 +241,24 @@ func delayTestTimeout(milliseconds int64) time.Duration {
 	return time.Duration(milliseconds) * time.Millisecond
 }
 
+var missingDelayTestProxyAt atomic.Int64
+
+// A delay test against a name the tunnel does not know is what an apply that
+// fell back to the default config looks like from the outside: the profile
+// still lists every node and every one of them reports Timeout. Say so, once a
+// second rather than once per node, so the log names the real failure.
+func reportMissingDelayTestProxy(name string) {
+	now := time.Now().UnixNano()
+	last := missingDelayTestProxyAt.Load()
+	if last != 0 && now-last < int64(time.Second) {
+		return
+	}
+	if !missingDelayTestProxyAt.CompareAndSwap(last, now) {
+		return
+	}
+	logError("delay test: %q is not part of the applied config", name)
+}
+
 func handleTestDelay(params *TestDelayParams) *Delay {
 	url := params.TestUrl
 	if url == "" {
@@ -253,16 +272,27 @@ func handleTestDelay(params *TestDelayParams) *Delay {
 
 	proxy := lookupProxy(params.ProxyName)
 	if proxy == nil {
+		reportMissingDelayTestProxy(params.ProxyName)
 		return delayData
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), delayTestTimeout(params.Timeout))
-	defer cancel()
+	timeout := delayTestTimeout(params.Timeout)
 
-	if !acquireDelayTestSlot(ctx) {
+	// Queueing for a slot and probing the node each get the full timeout.
+	// Sharing one deadline meant a node that waited four seconds behind a
+	// saturated semaphore had one second left to connect, so a bulk test of a
+	// large subscription reported Timeout for whatever happened to be at the
+	// back of the queue.
+	queueCtx, cancelQueue := context.WithTimeout(context.Background(), timeout)
+	granted := acquireDelayTestSlot(queueCtx)
+	cancelQueue()
+	if !granted {
 		return nil
 	}
 	defer releaseDelayTestSlot()
+
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
 
 	delay, err := proxy.URLTest(ctx, url, anyDelayTestStatus)
 	if err != nil {
@@ -484,13 +514,49 @@ func handleSideLoadExternalProvider(providerName string, data []byte) *MethodErr
 	return nil
 }
 
+// defaultRefreshHealthChecks re-probes every proxy provider off the calling
+// thread. Providers coalesce concurrent checks internally, so an extra call
+// costs nothing when one is already running.
+func defaultRefreshHealthChecks() {
+	safeGoDetached("refreshHealthChecks", func() {
+		for name, p := range tunnel.ProvidersSnapshot() {
+			log.Debugln("[APP] re-checking provider %s after resume", name)
+			p.HealthCheck()
+		}
+	})
+}
+
+var refreshHealthChecks = defaultRefreshHealthChecks
+
 func handleSuspend(suspended bool) bool {
+	wasSuspended := isSuspended.Swap(suspended)
 	if suspended {
 		tunnel.OnSuspend()
-	} else {
-		tunnel.OnRunning()
+		return true
+	}
+
+	tunnel.OnRunning()
+	// Provider health checks keep ticking through Doze, where the app has no
+	// network at all, so coming back means every proxy is marked dead and every
+	// delay reads Timeout. A lazy provider then skips its next tick because
+	// nothing touched it in the meantime, and the whole list stays wrong until
+	// the user tests by hand. Re-check now instead - but not while the
+	// listeners are stopped, since the service also resumes the core on its way
+	// down.
+	if wasSuspended && isRunning.Load() {
+		refreshHealthChecks()
 	}
 	return true
+}
+
+// shouldPublishDelay reports whether a probe result is worth showing.
+//
+// A failure measured while the device is dozing says nothing about the node -
+// the app had no network at all - and publishing it repaints the entire list as
+// Timeout for a user who is not even looking. Successes still are worth having,
+// whenever they happen.
+func shouldPublishDelay(delay uint16) bool {
+	return delay != 0 || !isSuspended.Load()
 }
 
 func handleStartLog() {
@@ -617,6 +683,9 @@ func handleSetupConfig(params *SetupParams) string {
 
 func init() {
 	adapter.UrlTestHook = func(url string, name string, delay uint16) {
+		if !shouldPublishDelay(delay) {
+			return
+		}
 		sendMessage(Message{
 			Type: DelayMessage,
 			Data: &Delay{

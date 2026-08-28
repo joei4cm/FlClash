@@ -75,11 +75,11 @@ void main() {
 
     expect(
       config['proxy-providers']['a']['path'],
-      join(proxiesDir, proxiesUrl.toMd5()),
+      join(proxiesDir, 'a@$proxiesUrl'.toMd5()),
     );
     expect(
       config['rule-providers']['b']['path'],
-      join(rulesDir, rulesUrl.toMd5()),
+      join(rulesDir, 'b@$rulesUrl'.toMd5()),
     );
   });
 

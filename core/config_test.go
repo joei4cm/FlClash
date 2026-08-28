@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"net"
 	"os"
 	"path/filepath"
 	"strings"
@@ -685,6 +686,103 @@ func TestTestDelayQueuesWhenTheTimeoutIsUnset(t *testing.T) {
 	if delay.Value != -1 {
 		t.Errorf("value = %d, want -1 for a probe against a refused port", delay.Value)
 	}
+}
+
+// blackHoleServer accepts connections and then says nothing, so a probe against
+// it connects and waits out its deadline rather than failing fast the way a
+// refused port would.
+func blackHoleServer(t *testing.T) net.Addr {
+	t.Helper()
+
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("listen: %v", err)
+	}
+
+	var conns []net.Conn
+	accepting := make(chan struct{})
+	go func() {
+		defer close(accepting)
+		for {
+			conn, err := listener.Accept()
+			if err != nil {
+				return
+			}
+			conns = append(conns, conn)
+		}
+	}()
+
+	t.Cleanup(func() {
+		_ = listener.Close()
+		// Join the accept loop before touching conns: the close above is what
+		// ends it, and the receive is the only ordering between the two.
+		<-accepting
+		for _, conn := range conns {
+			_ = conn.Close()
+		}
+	})
+
+	return listener.Addr()
+}
+
+// Queueing for a slot and probing the node must not share one deadline. They
+// used to, so a node that waited out most of its timeout behind a saturated
+// semaphore had only the remainder to connect in and reported Timeout while it
+// was perfectly healthy - which is what a bulk test of a large subscription
+// does to everything at the back of the queue.
+func TestTestDelayDoesNotSpendTheProbeBudgetQueueing(t *testing.T) {
+	const (
+		timeout  = 200 * time.Millisecond
+		queueFor = 150 * time.Millisecond
+	)
+
+	addr := blackHoleServer(t)
+
+	for i := 0; i < delayTestConcurrency; i++ {
+		delayTestSlots <- struct{}{}
+	}
+	t.Cleanup(func() {
+		for i := 0; i < delayTestConcurrency; i++ {
+			<-delayTestSlots
+		}
+	})
+
+	tunnel.UpdateProxies(map[string]constant.Proxy{"queued": namedProxy("queued")}, nil)
+	t.Cleanup(func() { tunnel.UpdateProxies(nil, nil) })
+
+	done := make(chan *Delay, 1)
+	start := time.Now()
+	go func() {
+		done <- handleTestDelay(&TestDelayParams{
+			ProxyName: "queued",
+			TestUrl:   "http://" + addr.String(),
+			Timeout:   timeout.Milliseconds(),
+		})
+	}()
+
+	time.Sleep(queueFor)
+	<-delayTestSlots
+
+	select {
+	case delay := <-done:
+		elapsed := time.Since(start)
+		if delay == nil {
+			t.Fatal("handleTestDelay gave up queueing even though a slot came free")
+		}
+		if elapsed < queueFor+timeout {
+			t.Errorf(
+				"handleTestDelay returned after %v, want at least %v: the probe inherited the deadline the wait had already spent",
+				elapsed,
+				queueFor+timeout,
+			)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("handleTestDelay never returned")
+	}
+
+	// handleTestDelay released the slot it was handed; put it back so the
+	// cleanup above drains what it put in.
+	delayTestSlots <- struct{}{}
 }
 
 func TestTestDelayStopsQueueingOnceTheTimeoutIsSpent(t *testing.T) {

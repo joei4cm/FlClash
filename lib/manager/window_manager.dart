@@ -3,10 +3,13 @@ import 'dart:async';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/common/launch.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/models/config.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
+
+const _windowGeometryDelay = Duration(milliseconds: 120);
 
 class WindowManager extends ConsumerStatefulWidget {
   final Widget child;
@@ -19,6 +22,9 @@ class WindowManager extends ConsumerStatefulWidget {
 
 class _WindowContainerState extends ConsumerState<WindowManager>
     with WindowListener {
+  Timer? _windowGeometryTimer;
+  int _windowGeometryRevision = 0;
+
   @override
   Widget build(BuildContext context) {
     return widget.child;
@@ -59,35 +65,94 @@ class _WindowContainerState extends ConsumerState<WindowManager>
     super.onWindowShouldTerminate();
   }
 
-  @override
-  void onWindowMoved() {
-    super.onWindowMoved();
-    windowManager.getPosition().then((offset) {
-      if (!mounted) {
-        return;
-      }
-      ref
-          .read(windowSettingProvider.notifier)
-          .update((state) => state.copyWith(top: offset.dy, left: offset.dx));
+  void _scheduleWindowGeometryCapture() {
+    final revision = ++_windowGeometryRevision;
+    _windowGeometryTimer?.cancel();
+    _windowGeometryTimer = Timer(_windowGeometryDelay, () {
+      _windowGeometryTimer = null;
+      unawaited(_captureWindowGeometry(revision));
     });
   }
 
-  @override
-  Future<void> onWindowResized() async {
-    super.onWindowResized();
-    final size = await windowManager.getSize();
-    if (!mounted) {
+  Future<void> _captureWindowGeometry(int revision) async {
+    final port = windowPort;
+    if (port == null || !mounted) {
       return;
     }
-    ref
-        .read(windowSettingProvider.notifier)
-        .update(
-          (state) => state.copyWith(width: size.width, height: size.height),
-        );
+    final current = ref.read(windowSettingProvider);
+    WindowProps? geometry;
+    try {
+      geometry = await port.captureNormalGeometry(current);
+    } catch (error) {
+      commonPrint.log(
+        'Window geometry capture failed: ${compactError(error)}',
+        logLevel: LogLevel.warning,
+      );
+      return;
+    }
+    if (!mounted || revision != _windowGeometryRevision || geometry == null) {
+      return;
+    }
+    ref.read(windowSettingProvider.notifier).value = geometry;
+  }
+
+  void _invalidateWindowGeometryCapture() {
+    _windowGeometryRevision++;
+    _windowGeometryTimer?.cancel();
+    _windowGeometryTimer = null;
+  }
+
+  @override
+  void onWindowMove() {
+    super.onWindowMove();
+    _scheduleWindowGeometryCapture();
+  }
+
+  @override
+  void onWindowMoved() {
+    super.onWindowMoved();
+    _scheduleWindowGeometryCapture();
+  }
+
+  @override
+  void onWindowResize() {
+    super.onWindowResize();
+    _scheduleWindowGeometryCapture();
+  }
+
+  @override
+  void onWindowResized() {
+    super.onWindowResized();
+    _scheduleWindowGeometryCapture();
+  }
+
+  @override
+  void onWindowMaximize() {
+    _invalidateWindowGeometryCapture();
+    super.onWindowMaximize();
+  }
+
+  @override
+  void onWindowUnmaximize() {
+    super.onWindowUnmaximize();
+    _scheduleWindowGeometryCapture();
+  }
+
+  @override
+  void onWindowEnterFullScreen() {
+    _invalidateWindowGeometryCapture();
+    super.onWindowEnterFullScreen();
+  }
+
+  @override
+  void onWindowLeaveFullScreen() {
+    super.onWindowLeaveFullScreen();
+    _scheduleWindowGeometryCapture();
   }
 
   @override
   void onWindowMinimize() async {
+    _invalidateWindowGeometryCapture();
     ref.read(storeActionProvider.notifier).savePreferencesDebounce();
     commonPrint.log('minimize');
     render?.pause();
@@ -99,10 +164,12 @@ class _WindowContainerState extends ConsumerState<WindowManager>
     commonPrint.log('restore');
     render?.resume();
     super.onWindowRestore();
+    _scheduleWindowGeometryCapture();
   }
 
   @override
   void dispose() {
+    _invalidateWindowGeometryCapture();
     windowManager.removeListener(this);
     super.dispose();
   }

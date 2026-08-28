@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:fl_clash/common/constant.dart';
 import 'package:fl_clash/common/http.dart';
 import 'package:fl_clash/models/models.dart';
@@ -5,6 +8,29 @@ import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:riverpod/riverpod.dart';
+
+class _FakeCertificate implements X509Certificate {
+  @override
+  String get issuer => 'CN=Untrusted';
+
+  @override
+  String get subject => 'CN=example.com';
+
+  @override
+  DateTime get startValidity => DateTime(2026);
+
+  @override
+  DateTime get endValidity => DateTime(2027);
+
+  @override
+  Uint8List get der => Uint8List(0);
+
+  @override
+  String get pem => '';
+
+  @override
+  Uint8List get sha1 => Uint8List(0);
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +40,7 @@ void main() {
     String? currentSsid,
     List<String> excludeSSIDs = const [],
     int mixedPort = 7890,
+    bool checkCertificate = true,
   }) {
     final container = ProviderContainer(
       overrides: [excludeSSIDsProvider.overrideWithValue(excludeSSIDs)],
@@ -23,6 +50,8 @@ void main() {
     container.read(currentSSIDProvider.notifier).value = currentSsid;
     container.read(patchClashConfigProvider.notifier).value =
         const PatchClashConfig().copyWith(mixedPort: mixedPort);
+    container.read(appSettingProvider.notifier).value = const AppSettingProps()
+        .copyWith(checkCertificate: checkCertificate);
     return container;
   }
 
@@ -73,6 +102,34 @@ void main() {
     expect(
       FlClashHttpOverrides.findProxyFor(container, remote),
       'PROXY localhost:7890',
+    );
+  });
+
+  test('an untrusted certificate is rejected by default', () {
+    final container = buildContainer();
+
+    expect(
+      FlClashHttpOverrides.allowBadCertificate(
+        container,
+        _FakeCertificate(),
+        'example.com',
+        443,
+      ),
+      isFalse,
+    );
+  });
+
+  test('turning the check off accepts an untrusted certificate', () {
+    final container = buildContainer(checkCertificate: false);
+
+    expect(
+      FlClashHttpOverrides.allowBadCertificate(
+        container,
+        _FakeCertificate(),
+        'example.com',
+        443,
+      ),
+      isTrue,
     );
   });
 }

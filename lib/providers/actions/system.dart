@@ -20,7 +20,20 @@ class SystemAction extends _$SystemAction {
     return ref.read(packagesProvider);
   }
 
-  Future<void> handleExit([bool needSave = false]) {
+  Future<List<Package>> refreshPackages() async {
+    ref.read(packagesProvider.notifier).value = await app?.getPackages() ?? [];
+    return ref.read(packagesProvider);
+  }
+
+  Future<bool> isInstalledAppsPermissionGranted() async {
+    return await app?.isInstalledAppsPermissionGranted() ?? true;
+  }
+
+  Future<bool> requestInstalledAppsPermission() async {
+    return await app?.requestInstalledAppsPermission() ?? false;
+  }
+
+  Future<void> handleExit([bool needSave = true]) {
     final coordinator = _exitCoordinator ??= SystemExitCoordinator(
       watchdogDuration: exitWatchdogDuration,
       closeWindow: closeWindow,
@@ -35,6 +48,7 @@ class SystemAction extends _$SystemAction {
 
   @protected
   Future<void> cleanupExitResources(bool needSave) async {
+    final saveOperation = needSave ? _savePreferencesSafely() : null;
     final tray = trayPort;
     if (tray != null) {
       await tray.shutdown().onError<Object>((error, stackTrace) {
@@ -45,11 +59,42 @@ class SystemAction extends _$SystemAction {
       });
     }
     await Future.wait([
-      if (needSave) preferences.saveConfig(ref.read(configProvider)),
+      ?saveOperation,
       bootGuard.markClosed(),
       if (systemDnsCoordinator != null) systemDnsCoordinator!.shutdown(),
       if (proxy != null) proxy!.stopProxy(),
     ]);
+  }
+
+  Future<void> _savePreferencesSafely() async {
+    try {
+      await savePreferences();
+    } catch (error) {
+      commonPrint.log(
+        'Preferences save failed: ${compactError(error)}',
+        logLevel: LogLevel.error,
+      );
+    }
+  }
+
+  @protected
+  Future<void> savePreferences() async {
+    final port = windowPort;
+    if (port != null) {
+      try {
+        final current = ref.read(windowSettingProvider);
+        final geometry = await port.captureNormalGeometry(current);
+        if (geometry != null) {
+          ref.read(windowSettingProvider.notifier).value = geometry;
+        }
+      } catch (error) {
+        commonPrint.log(
+          'Window geometry capture failed: ${compactError(error)}',
+          logLevel: LogLevel.warning,
+        );
+      }
+    }
+    await preferences.saveConfig(ref.read(configProvider));
   }
 
   @protected
@@ -72,7 +117,7 @@ class SystemAction extends _$SystemAction {
   Future<void> handleClose([bool exit = true]) async {
     if (ref.read(appSettingProvider).minimizeOnExit || !exit) {
       if (system.isDesktop) {
-        await preferences.saveConfig(ref.read(configProvider));
+        await _savePreferencesSafely();
       }
       await system.back();
       await windowPort?.hide();

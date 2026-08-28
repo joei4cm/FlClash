@@ -126,6 +126,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "appendSystemDnsTip": MessageLookupByLibrary.simpleMessage("强制为配置附加系统DNS"),
     "application": MessageLookupByLibrary.simpleMessage("应用程序"),
     "applicationDesc": MessageLookupByLibrary.simpleMessage("修改应用程序相关设置"),
+    "authorize": MessageLookupByLibrary.simpleMessage("授权"),
     "authorized": MessageLookupByLibrary.simpleMessage("已授权"),
     "auto": MessageLookupByLibrary.simpleMessage("自动"),
     "autoCheckUpdate": MessageLookupByLibrary.simpleMessage("自动检查更新"),
@@ -174,6 +175,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "changelogFixes": MessageLookupByLibrary.simpleMessage("问题修复"),
     "changelogPerformance": MessageLookupByLibrary.simpleMessage("性能优化"),
     "changelogReverts": MessageLookupByLibrary.simpleMessage("已回滚"),
+    "checkCertificate": MessageLookupByLibrary.simpleMessage("校验 TLS 证书"),
+    "checkCertificateDesc": MessageLookupByLibrary.simpleMessage(
+      "拒绝不受信任的证书。关闭后订阅和备份将暴露于中间人攻击",
+    ),
     "checkUpdate": MessageLookupByLibrary.simpleMessage("检查更新"),
     "checkUpdateError": MessageLookupByLibrary.simpleMessage("当前应用已经是最新版了"),
     "clearData": MessageLookupByLibrary.simpleMessage("清除数据"),
@@ -367,6 +372,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputCorrectHotkey": MessageLookupByLibrary.simpleMessage("请输入正确的快捷键"),
     "inputProxyGroupName": MessageLookupByLibrary.simpleMessage("输入策略组名称"),
     "inputRuleContent": MessageLookupByLibrary.simpleMessage("输入规则内容"),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "读取应用列表权限已被拒绝，无法获取已安装的应用。请前往系统设置手动开启。",
+        ),
+    "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
+      "当前系统在授权前不会提供已安装的应用列表，授权后即可配置分应用代理。",
+    ),
+    "installedAppsPermissionRequired": MessageLookupByLibrary.simpleMessage(
+      "需要读取应用列表权限",
+    ),
     "intelligentSelected": MessageLookupByLibrary.simpleMessage("智能选择"),
     "internet": MessageLookupByLibrary.simpleMessage("互联网"),
     "interval": MessageLookupByLibrary.simpleMessage("间隔"),

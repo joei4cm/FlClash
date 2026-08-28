@@ -23,6 +23,7 @@ class _AccessViewState extends ConsumerState<AccessView> {
   late ScrollController _controller;
   List<String>? _pinedList;
   bool _isInit = false;
+  bool _installedAppsPermissionGranted = true;
 
   final _completer = Completer();
 
@@ -30,7 +31,7 @@ class _AccessViewState extends ConsumerState<AccessView> {
   void initState() {
     super.initState();
     _controller = ScrollController();
-    _completer.complete(ref.read(systemActionProvider.notifier).getPackages());
+    _completer.complete(_loadPackages());
     final accessControl = ref
         .read(vpnSettingProvider.select((state) => state.accessControlProps))
         .copyWith();
@@ -45,6 +46,47 @@ class _AccessViewState extends ConsumerState<AccessView> {
     ref.listenManual(
       accessControlStateProvider.select((state) => state.mode),
       (_, _) => _pinList(),
+    );
+  }
+
+  Future<void> _loadPackages({bool force = false}) async {
+    final action = ref.read(systemActionProvider.notifier);
+    final packages = force
+        ? await action.refreshPackages()
+        : await action.getPackages();
+    final granted =
+        packages.isNotEmpty || await action.isInstalledAppsPermissionGranted();
+    if (!mounted || granted == _installedAppsPermissionGranted) {
+      return;
+    }
+    setState(() {
+      _installedAppsPermissionGranted = granted;
+    });
+  }
+
+  Future<void> _handleGrantInstalledAppsPermission() async {
+    final appLocalizations = context.appLocalizations;
+    final granted = await ref
+        .read(systemActionProvider.notifier)
+        .requestInstalledAppsPermission();
+    if (!mounted) {
+      return;
+    }
+    if (!granted) {
+      final res = await dialogs.showMessage(
+        message: TextSpan(
+          text: appLocalizations.installedAppsPermissionDeniedMessage,
+        ),
+        confirmText: appLocalizations.settings,
+      );
+      if (res == true) {
+        await app?.openAppSettings();
+      }
+      return;
+    }
+    await globalState.loadingRun(
+      () => _loadPackages(force: true),
+      tag: LoadingTag.access,
     );
   }
 
@@ -357,6 +399,19 @@ class _AccessViewState extends ConsumerState<AccessView> {
     );
   }
 
+  Widget _buildInstalledAppsPermissionStatus() {
+    final appLocalizations = context.appLocalizations;
+    return NullStatus(
+      label: appLocalizations.installedAppsPermissionRequired,
+      description: appLocalizations.installedAppsPermissionDesc,
+      action: FilledButton.tonalIcon(
+        onPressed: _handleGrantInstalledAppsPermission,
+        icon: const Icon(Icons.lock_open),
+        label: Text(appLocalizations.authorize),
+      ),
+    );
+  }
+
   Widget _buildBannerBar({
     required bool enable,
     required AccessControlMode mode,
@@ -437,6 +492,8 @@ class _AccessViewState extends ConsumerState<AccessView> {
     final currentList = accessControl.currentList;
     final viewPackageNameList = viewPackages.map((e) => e.packageName).toList();
     final valueList = currentList.intersection(viewPackageNameList);
+    final needsInstalledAppsPermission =
+        packages.isEmpty && !_installedAppsPermissionGranted;
     return CommonScaffold(
       key: _scaffoldKey,
       isLoading: isLoading,
@@ -453,17 +510,20 @@ class _AccessViewState extends ConsumerState<AccessView> {
           ),
           const SizedBox(height: 8),
           Expanded(
-            child: DisabledMask(
-              status: !accessControl.enable,
-              child: _buildContent(
-                packages: viewPackages,
-                valueList: valueList,
-              ),
-            ),
+            child: needsInstalledAppsPermission
+                ? _buildInstalledAppsPermissionStatus()
+                : DisabledMask(
+                    status: !accessControl.enable,
+                    child: _buildContent(
+                      packages: viewPackages,
+                      valueList: valueList,
+                    ),
+                  ),
           ),
         ],
       ),
-      floatingActionButton: accessControl.enable
+      floatingActionButton:
+          accessControl.enable && !needsInstalledAppsPermission
           ? _buildSelectedAllButton(
               isSelectedAll: valueList.length == viewPackageNameList.length,
               allValueList: viewPackageNameList,

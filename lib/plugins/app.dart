@@ -47,6 +47,20 @@ class App {
     return packagesRaw.map((e) => Package.fromJson(e)).toSet().toList();
   }
 
+  Future<bool> isInstalledAppsPermissionGranted() async {
+    return await methodChannel.invokeMethod<bool>(
+          'isInstalledAppsPermissionGranted',
+        ) ??
+        true;
+  }
+
+  Future<bool> requestInstalledAppsPermission() async {
+    return await methodChannel.invokeMethod<bool>(
+          'requestInstalledAppsPermission',
+        ) ??
+        false;
+  }
+
   Future<List<String>> getChinaPackageNames() async {
     final packageNamesString = await methodChannel.invokeMethod<String>(
       'getChinaPackageNames',

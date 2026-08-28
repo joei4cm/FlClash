@@ -150,4 +150,31 @@ void main() {
 
     expect(await App().getLastExitInfo(), isNull);
   });
+
+  test('reports the installed apps permission Android answers with', () async {
+    final methods = <String>[];
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async {
+          methods.add(call.method);
+          return false;
+        });
+
+    expect(await App().isInstalledAppsPermissionGranted(), isFalse);
+    expect(await App().requestInstalledAppsPermission(), isFalse);
+    expect(methods, [
+      'isInstalledAppsPermissionGranted',
+      'requestInstalledAppsPermission',
+    ]);
+  });
+
+  test(
+    'treats a missing installed apps permission answer as granted',
+    () async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (_) async => null);
+
+      expect(await App().isInstalledAppsPermissionGranted(), isTrue);
+      expect(await App().requestInstalledAppsPermission(), isFalse);
+    },
+  );
 }

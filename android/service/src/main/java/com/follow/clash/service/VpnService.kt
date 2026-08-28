@@ -147,14 +147,21 @@ class VpnService : SystemVpnService(), ManagedService {
         synchronized(tunLock) {
             tunRunning = true
             try {
-                Core.startTun(
-                    fd = fd,
-                    protect = this::protect,
-                    resolverProcess = this::resolverProcess,
-                    stack = options.stack,
-                    address = options.tunAddress,
-                    dns = options.tunDns,
-                )
+                // A Core that fails to take the descriptor leaves the system
+                // routes pointing at an interface nothing reads, and it no
+                // longer keeps its own sockets out of them: every connection
+                // then hangs until it times out. Tear the VPN down instead of
+                // reporting a start that only looks successful.
+                check(
+                    Core.startTun(
+                        fd = fd,
+                        protect = this::protect,
+                        resolverProcess = this::resolverProcess,
+                        stack = options.stack,
+                        address = options.tunAddress,
+                        dns = options.tunDns,
+                    ),
+                ) { "Core rejected the tun file descriptor" }
             } catch (error: Exception) {
                 stopTunLocked()
                 throw error

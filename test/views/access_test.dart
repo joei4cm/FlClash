@@ -1,5 +1,6 @@
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/providers/action.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/database.dart';
@@ -36,14 +37,46 @@ final _packages = [
   _package('com.example.offline', label: 'Offline', internet: false),
 ];
 
+class _TestSystemAction extends SystemAction {
+  bool installedAppsPermissionGranted = true;
+  bool grantOnRequest = true;
+  int requestCount = 0;
+  List<Package> grantedPackages = const [];
+
+  @override
+  Future<List<Package>> getPackages() async => ref.read(packagesProvider);
+
+  @override
+  Future<List<Package>> refreshPackages() async {
+    ref.read(packagesProvider.notifier).value = grantedPackages;
+    return ref.read(packagesProvider);
+  }
+
+  @override
+  Future<bool> isInstalledAppsPermissionGranted() async =>
+      installedAppsPermissionGranted;
+
+  @override
+  Future<bool> requestInstalledAppsPermission() async {
+    requestCount++;
+    installedAppsPermissionGranted = grantOnRequest;
+    return grantOnRequest;
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late ProviderContainer container;
+  late _TestSystemAction systemAction;
 
   setUp(() {
+    systemAction = _TestSystemAction();
     container = ProviderContainer(
-      overrides: [profilesProvider.overrideWith(TestProfiles.new)],
+      overrides: [
+        profilesProvider.overrideWith(TestProfiles.new),
+        systemActionProvider.overrideWith(() => systemAction),
+      ],
     );
     globalState.container = container;
     container.read(packagesProvider.notifier).value = _packages;
@@ -61,6 +94,9 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
+    container
+        .read(viewSizeProvider.notifier)
+        .update((_) => const Size(1400, 1400));
 
     await tester.pumpWidget(
       UncontrolledProviderScope(
@@ -215,6 +251,79 @@ void main() {
       final state = container.read(accessControlStateProvider);
       expect(state.acceptList, ['com.example.chat']);
       expect(state.rejectList, isEmpty);
+
+      await teardownView(tester);
+    });
+  });
+
+  group('installed apps permission', () {
+    testWidgets('prompts for the permission when the app list is empty', (
+      tester,
+    ) async {
+      container.read(packagesProvider.notifier).value = [];
+      systemAction.installedAppsPermissionGranted = false;
+      seedAccessControl(const AccessControlProps(enable: true));
+
+      await pumpAccessView(tester);
+
+      expect(find.text('App list permission required'), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, 'Authorize'), findsOneWidget);
+      expect(find.text('No data'), findsNothing);
+      expect(find.byType(FloatingActionButton), findsNothing);
+
+      await teardownView(tester);
+    });
+
+    testWidgets('keeps the plain empty status once the permission is held', (
+      tester,
+    ) async {
+      container.read(packagesProvider.notifier).value = [];
+      seedAccessControl(const AccessControlProps(enable: true));
+
+      await pumpAccessView(tester);
+
+      expect(find.text('No data'), findsOneWidget);
+      expect(find.text('App list permission required'), findsNothing);
+
+      await teardownView(tester);
+    });
+
+    testWidgets('reloads the app list once the permission is granted', (
+      tester,
+    ) async {
+      container.read(packagesProvider.notifier).value = [];
+      systemAction.installedAppsPermissionGranted = false;
+      systemAction.grantedPackages = _packages;
+      seedAccessControl(const AccessControlProps(enable: true));
+      await pumpAccessView(tester);
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Authorize'));
+      await tester.pumpAndSettle();
+
+      expect(systemAction.requestCount, 1);
+      expect(find.text('App list permission required'), findsNothing);
+      expect(find.text('Browser'), findsOneWidget);
+      expect(find.text('Chat'), findsOneWidget);
+
+      await teardownView(tester);
+    });
+
+    testWidgets('offers system settings when the permission stays denied', (
+      tester,
+    ) async {
+      container.read(packagesProvider.notifier).value = [];
+      systemAction.installedAppsPermissionGranted = false;
+      systemAction.grantOnRequest = false;
+      seedAccessControl(const AccessControlProps(enable: true));
+      await pumpAccessView(tester);
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Authorize'));
+      await tester.pumpAndSettle();
+
+      expect(find.widgetWithText(TextButton, 'Settings'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+      await tester.pumpAndSettle();
 
       await teardownView(tester);
     });

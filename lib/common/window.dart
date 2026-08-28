@@ -8,6 +8,7 @@ import 'package:window_manager/window_manager.dart';
 
 class Window implements WindowPort {
   static Window? _instance;
+  bool _supportsPosition = false;
 
   Window._internal();
 
@@ -27,6 +28,10 @@ class Window implements WindowPort {
       protocol.register('flclash');
     }
     await windowManager.ensureInitialized();
+    _supportsPosition = !system.isMacOS;
+    if (system.isLinux) {
+      _supportsPosition = await windowManager.isPositionSupported();
+    }
     final WindowOptions windowOptions = WindowOptions(
       size: props.size,
       minimumSize: const Size(380, 400),
@@ -35,26 +40,37 @@ class Window implements WindowPort {
       await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
     }
     await windowManager.setMaximizable(true);
-    await _windowPosition(props);
-    await windowManager.waitUntilReadyToShow(windowOptions, () async {
-      await windowManager.setPreventClose(true);
-    });
+    // On Linux the compositor only honors positioning after the window is shown;
+    // elsewhere position it pre-show to avoid a visible jump.
+    if (!system.isLinux) {
+      await _windowPosition(props);
+    }
+    await windowManager.waitUntilReadyToShow(windowOptions);
+    if (system.isLinux) {
+      await _windowPosition(props);
+    }
+    await windowManager.setPreventClose(true);
   }
 
   Future<void> _windowPosition(WindowProps props) async {
-    if (!system.isMacOS) {
-      final left = props.left ?? 0;
-      final top = props.top ?? 0;
-      final right = left + props.width;
-      final bottom = top + props.height;
-      if (left == 0 && top == 0) {
+    if (_supportsPosition) {
+      final left = props.left;
+      final top = props.top;
+      if (left == null || top == null) {
         await windowManager.setAlignment(Alignment.center);
       } else {
+        final size = props.size;
+        final right = left + size.width;
+        final bottom = top + size.height;
         final displays = await screenRetriever.getAllDisplays();
         final isPositionValid = displays.any((display) {
+          final visiblePosition = display.visiblePosition;
+          if (visiblePosition == null) {
+            return false;
+          }
           final displayBounds = Rect.fromLTWH(
-            display.visiblePosition!.dx,
-            display.visiblePosition!.dy,
+            visiblePosition.dx,
+            visiblePosition.dy,
             display.size.width,
             display.size.height,
           );
@@ -63,9 +79,39 @@ class Window implements WindowPort {
         });
         if (isPositionValid) {
           await windowManager.setPosition(Offset(left, top));
+        } else {
+          await windowManager.setAlignment(Alignment.center);
         }
       }
     }
+  }
+
+  @override
+  Future<WindowProps?> captureNormalGeometry(WindowProps current) async {
+    final states = await Future.wait<bool>([
+      windowManager.isMaximized(),
+      windowManager.isFullScreen(),
+      windowManager.isMinimized(),
+    ]);
+    if (states.any((state) => state)) {
+      return null;
+    }
+
+    final bounds = await windowManager.getBounds();
+    if (!bounds.width.isFinite ||
+        !bounds.height.isFinite ||
+        bounds.width <= 0 ||
+        bounds.height <= 0) {
+      return null;
+    }
+    final hasValidPosition =
+        bounds.left.isFinite && bounds.top.isFinite && _supportsPosition;
+    return current.copyWith(
+      width: bounds.width,
+      height: bounds.height,
+      left: hasValidPosition ? bounds.left : current.left,
+      top: hasValidPosition ? bounds.top : current.top,
+    );
   }
 
   @override

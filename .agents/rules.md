@@ -59,43 +59,67 @@ Generated directories are excluded from analysis:
 
 ## Comments
 
-Comments are opt-in and reserved for the few places that genuinely need one. Density is the point: every comment that
-restates the code devalues the comments that carry real information, until readers skim past all of them. A file with
-three comments that matter is more readable than one with thirty.
+Comments are part of the code and some of them are load-bearing. What this repository limits is the useless and the
+frequent. Every comment that restates the code devalues the ones carrying real information, until readers skim past all
+of them — a file with three comments that matter is more readable than one with thirty.
 
-### Writing Comments
+The two halves are enforced differently, because only one of them can be counted. Whether a comment is useless is a
+judgment, and it lives in the rules below and in review. Whether comments are too frequent is arithmetic, and
+`comment-density` measures it.
 
-- Never add a comment on your own initiative. This covers explanatory, narrative, TODO, section-divider, and
-  documentation comments, in Dart, Kotlin, Swift, Go, Rust, YAML, Gradle, and any other file you touch.
-- Never annotate line by line or statement by statement, and never restate in prose what the code already says. If a
-  block needs a comment per step, the block needs better names or a smaller decomposition instead.
-- When a change genuinely cannot be understood without a comment, do not write it silently. Explain what is unclear,
-  propose the exact comment text, and wait for the user to approve it before adding it.
+### What a Comment Must Earn
+
+- Write one when it carries something the code cannot: a non-obvious constraint, an upstream or platform behavior being
+  worked around, a reason the next reader would otherwise get wrong, a coupling to a value defined somewhere else.
+- Never restate what the code already says. If the comment and the line below it convey the same thing, the comment is
+  noise.
+- Never narrate. Not what this diff changed, not what the code used to be, not the order you did things in. Version
+  history belongs in git and change rationale belongs in the commit message.
+- Never annotate line by line or statement by statement. A block that seems to need a comment per step needs better
+  names or a smaller decomposition instead — reach for structure before prose.
+- Prefer encoding the intent in structure and naming. A named mixin, type, or method that makes the invariant hard to
+  break beats a paragraph asking the next reader not to break it.
 - Delete commented-out code, stale version notes, and comments that only restate the code, whenever you edit the file
   that contains them. This does not need approval.
-- These are not comments and must be preserved: analyzer and linter directives (`// ignore:`, `// ignore_for_file:`,
-  `// coverage:ignore`), license and copyright headers, code-generation markers, and comments inside vendored upstream
-  code such as `lib/widgets/open_container.dart`.
+- These are not comments and are exempt from every rule here, including the density count: analyzer and linter
+  directives (`// ignore:`, `// ignore_for_file:`, `// coverage:ignore`), license and copyright headers,
+  code-generation markers, and comments inside vendored upstream code such as `lib/widgets/open_container.dart`.
+
+### Density
+
+`tool/check_comment_density.sh` fails a file whose added lines are more than 10% standalone comment lines, ignoring
+diffs under 20 added lines so small edits are never caught. The number is calibrated on this repository's own history:
+healthy changes sit at or under 3.6%, while the core fix that prompted the gate ran 22.4%.
+
+It is a ceiling on frequency, not a target to fill. Do not read `core/`'s inherited mihomo density as a quota either —
+it is forked upstream code, not a house style.
+
+Three gates run the same script, and they do not have equal force. The `PostToolUse` hooks in `.claude/settings.json`
+and `.codex/config.toml` run after the tool and hand offending lines back as feedback; neither can undo the completed
+write. The `comment-density` pre-commit hook fails the commit, and it is the only hard gate that covers every tool.
+Behavior is pinned by `tool/check_comment_density_test.sh`, which CI runs directly.
+
+When a change genuinely warrants more, raise the ceiling for that run rather than working around it:
+`COMMENT_DENSITY_MAX=20 git commit`, or `SKIP=comment-density git commit` to step past it entirely.
 
 ### Where Knowledge Belongs
 
-Pick the destination by where the constraint would be violated, not by how important it feels.
+A comment is one of three destinations, and often the weakest. Pick by where the constraint would be violated, not by
+how important it feels.
 
 - **Assertable behavior goes in a test.** A test is the only form that cannot drift, because it fails when the behavior
   it describes is broken. Prefer it over both a comment and a document whenever the fact can be checked in code.
 - **Repository-wide defaults, ownership, and invariants go in `.agents/*.md` or a `.agents/skills/*/SKILL.md`.** They
   are violated from many files, so they must reach every future agent at session start. A comment in one file cannot do
   that.
-- **A fact that is true only at one call site, and is not visible from that call site, stays a comment there.** Its
-  value is being in the reader's line of sight at the moment of the edit. `lib/common/constant.dart` is the model case:
-  the delay-test concurrency cap is bound to `delayTestConcurrency` in `core/common.go`, and whoever changes that number must see the
-  constraint on the same screen.
+- **A fact that is true only at one call site, and is not visible from that call site, is the one thing a comment does
+  better than a test or a document.** Its value is being in the reader's line of sight at the moment of the edit.
+  `lib/common/constant.dart` carries one: the delay-test concurrency cap is bound to `delayTestConcurrency` in
+  `core/common.go`, and whoever changes that number must see the constraint on the same screen. This is the case a
+  comment is for; the bar is that no test and no `.agents/` entry could hold the fact instead.
 
 Both failure directions are real. Moving a local constraint into `.agents/` hides it from the person editing the line;
 leaving a repo-wide policy as a comment reaches only the reader of that one file.
-
-Before any of the three, prefer encoding the intent in structure and naming — a named mixin, type, or method that makes
-the invariant hard to break beats prose that asks the next reader not to break it.
 
 ## Core API Safety
 

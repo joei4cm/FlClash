@@ -164,6 +164,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "applicationDesc": MessageLookupByLibrary.simpleMessage(
       "Изменение настроек, связанных с приложением",
     ),
+    "authorize": MessageLookupByLibrary.simpleMessage("Разрешить"),
     "authorized": MessageLookupByLibrary.simpleMessage("Разрешено"),
     "auto": MessageLookupByLibrary.simpleMessage("Авто"),
     "autoCheckUpdate": MessageLookupByLibrary.simpleMessage(
@@ -246,6 +247,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Производительность",
     ),
     "changelogReverts": MessageLookupByLibrary.simpleMessage("Откаты"),
+    "checkCertificate": MessageLookupByLibrary.simpleMessage(
+      "Проверять TLS-сертификаты",
+    ),
+    "checkCertificateDesc": MessageLookupByLibrary.simpleMessage(
+      "Отклонять недоверенные сертификаты. Отключение подвергает подписки и резервные копии атаке «человек посередине»",
+    ),
     "checkUpdate": MessageLookupByLibrary.simpleMessage("Проверить обновления"),
     "checkUpdateError": MessageLookupByLibrary.simpleMessage(
       "Текущее приложение уже является последней версией",
@@ -540,6 +547,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Введите содержимое правила",
+    ),
+    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
+      "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
+    ),
+    "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
+      "Эта система не выдаёт список установленных приложений без разрешения. Предоставьте его, чтобы настроить прокси для отдельных приложений.",
+    ),
+    "installedAppsPermissionRequired": MessageLookupByLibrary.simpleMessage(
+      "Требуется разрешение на список приложений",
     ),
     "intelligentSelected": MessageLookupByLibrary.simpleMessage(
       "Интеллектуальный выбор",

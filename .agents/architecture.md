@@ -39,6 +39,20 @@ Key Go core files:
 - `core/lib.go`: CGO exports.
 - `core/server.go`: desktop socket/named-pipe client and framed message forwarding.
 
+## Listener Exposure
+
+`_makeRealProfileTask` in `lib/common/task.dart` writes `mixed-port`, `allow-lan`, and `external-controller` into every
+generated profile. With `allow-lan` off, mihomo's `genAddr` binds each listener to `127.0.0.1`; the external controller is
+`ExternalControllerStatus.close` by default and never binds anywhere but loopback.
+
+The loopback listener takes local connections without authentication on every platform, Android included. That is the
+design, not an oversight: the app reaches the network through its own mixed port, and credentials on that port would lock
+out both FlClash and every other local consumer, which is the reason a local proxy client exists. The boundary the binding
+does enforce is that traffic must originate on the device; it does not isolate programs already running there, so on
+Android any app holding `INTERNET` can use the proxy and learn the outbound IP. Reports treating that as a vulnerability
+(#1934) are answered by this paragraph. Do not add authentication, per-UID filtering, or a random local credential to this
+path without an explicit decision from the maintainer.
+
 ## Lifecycle Ownership And Convergence
 
 ### Shared Flutter Layer

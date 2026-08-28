@@ -1,11 +1,15 @@
 import 'dart:async';
 
+import 'package:fl_clash/common/app_ports.dart';
+import 'package:fl_clash/common/preferences.dart';
+import 'package:fl_clash/models/config.dart';
 import 'package:fl_clash/providers/action.dart';
 import 'package:fl_clash/providers/actions/system_exit.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TestSystemAction extends SystemAction {
   final List<String> calls = [];
@@ -43,7 +47,44 @@ class TestSystemAction extends SystemAction {
   Future<void> exitApplication() async => calls.add('exit');
 }
 
+class _PersistenceSystemAction extends SystemAction {
+  Future<void> persist() => savePreferences();
+}
+
+class _GeometryWindowPort implements WindowPort {
+  final WindowProps geometry;
+  final Error? error;
+
+  _GeometryWindowPort(this.geometry, {this.error});
+
+  @override
+  Future<WindowProps?> captureNormalGeometry(WindowProps current) async {
+    final failure = error;
+    if (failure != null) {
+      throw failure;
+    }
+    return geometry;
+  }
+
+  @override
+  Future<void> close() async {}
+
+  @override
+  void forceExit() {}
+
+  @override
+  Future<void> hide() async {}
+
+  @override
+  Future<bool> get isVisible async => true;
+
+  @override
+  Future<void> show() async {}
+}
+
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   test('coalesces repeated exit requests and runs cleanup once', () async {
     final closeCoreCompleter = Completer<void>();
     final calls = <String>[];
@@ -140,13 +181,13 @@ void main() {
       await notifier().handleExit();
 
       expect(action.calls, ['cleanup', 'window', 'core', 'exit']);
-      expect(action.cleanupNeedSave, [false]);
+      expect(action.cleanupNeedSave, [true]);
     });
 
-    test('forwards the save request to resource cleanup', () async {
-      await notifier().handleExit(true);
+    test('forwards an explicit save opt-out to resource cleanup', () async {
+      await notifier().handleExit(false);
 
-      expect(action.cleanupNeedSave, [true]);
+      expect(action.cleanupNeedSave, [false]);
     });
 
     test('concurrent exit requests share one shutdown', () async {
@@ -162,7 +203,7 @@ void main() {
       await Future.wait([first, second]);
 
       expect(action.calls, ['cleanup', 'window', 'core', 'exit']);
-      expect(action.cleanupNeedSave, [false]);
+      expect(action.cleanupNeedSave, [true]);
     });
 
     test('a later exit request never restarts a finished shutdown', () async {
@@ -202,6 +243,59 @@ void main() {
       expect(action.calls, ['cleanup', 'window', 'core', 'exit']);
     });
   });
+
+  test(
+    'saving preferences captures the latest normal window geometry',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      const geometry = WindowProps(width: 1180, height: 760, left: 72, top: 48);
+      windowPort = _GeometryWindowPort(geometry);
+      final action = _PersistenceSystemAction();
+      final container = ProviderContainer(
+        overrides: [systemActionProvider.overrideWith(() => action)],
+      );
+      globalState.container = container;
+      addTearDown(() {
+        windowPort = null;
+        container.dispose();
+      });
+
+      container.read(systemActionProvider.notifier);
+      await action.persist();
+
+      expect(container.read(windowSettingProvider), geometry);
+      expect((await preferences.getConfig())?.windowProps, geometry);
+    },
+  );
+
+  test(
+    'a geometry failure does not prevent saving the current config',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      const current = WindowProps(width: 900, height: 640, left: 24, top: 16);
+      windowPort = _GeometryWindowPort(
+        const WindowProps(),
+        error: StateError('window unavailable'),
+      );
+      final action = _PersistenceSystemAction();
+      final container = ProviderContainer(
+        overrides: [
+          windowSettingProvider.overrideWithBuild((_, _) => current),
+          systemActionProvider.overrideWith(() => action),
+        ],
+      );
+      globalState.container = container;
+      addTearDown(() {
+        windowPort = null;
+        container.dispose();
+      });
+
+      container.read(systemActionProvider.notifier);
+      await action.persist();
+
+      expect((await preferences.getConfig())?.windowProps, current);
+    },
+  );
 
   group('SystemAction setting toggles', () {
     late ProviderContainer container;
