@@ -83,14 +83,14 @@ class AndroidEnvironment {
         : (Platform.isLinux ? "linux-x86_64" : "windows-x86_64");
 
     final ndkPath = path.join(sdkPath, 'ndk', ndkVersion);
-    final toolchainPath = path.join(
+    final llvmPath = path.join(
       ndkPath,
       'toolchains',
       'llvm',
       'prebuilt',
       hostArch,
-      'bin',
     );
+    final toolchainPath = path.join(llvmPath, 'bin');
 
     final minSdkVersion = math.max(
       target.androidMinSdkVersion!,
@@ -154,6 +154,11 @@ class AndroidEnvironment {
       ranlibKey: ranlibValue,
       rustFlagsKey: rustFlagsValue,
       linkerKey: selfPath,
+      // Local addition: crates that run bindgen have to be pointed at the NDK's
+      // own libclang and sysroot, or they parse headers for the host instead.
+      'LIBCLANG_PATH': path.join(llvmPath, 'lib'),
+      'BINDGEN_EXTRA_CLANG_ARGS':
+          '$targetArg --sysroot=${path.join(llvmPath, 'sysroot')}',
       // Recognized by main() so we know when we're acting as a wrapper
       '_CARGOKIT_NDK_LINK_TARGET': targetArg,
       '_CARGOKIT_NDK_LINK_CLANG': ccValue,

@@ -24,9 +24,7 @@ void main() {
         });
       };
       try {
-        if (system.isDesktop) {
-          await RustLib.init();
-        }
+        await RustLib.init();
         final version = await system.init();
         final container = await bootstrap.init(version);
         HttpOverrides.global = FlClashHttpOverrides(container);

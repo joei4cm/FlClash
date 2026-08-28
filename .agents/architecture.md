@@ -16,7 +16,8 @@ Android lib mode:
 Desktop core mode:
 
 - Go core runs as a separate process with `CGO_ENABLED=0`.
-- `rust_api` provides the native local-IPC primitives: a Unix domain socket on macOS/Linux and a named pipe on Windows.
+- `rust_api`'s `ipc` module provides the native local-IPC primitives: a Unix domain socket on macOS/Linux and a named pipe
+  on Windows.
   Dart now owns the transport state, RPC correlation, process ownership, and lifecycle convergence above those primitives.
 - `lib/core/service.dart` (`CoreService`) is the composition root. It wires the IPC transport, launcher selection,
   lifecycle controller, RPC client, and crash-event bridge; it is no longer the whole desktop implementation by itself.
@@ -541,10 +542,47 @@ Architecture detection is automatic. The `--description` flag passed to `flutter
 
 - `setup`: build-time harness for Go core artifacts and the Windows Rust helper; no runtime Dart API.
 - `proxy`: system proxy configuration.
-- `rust_api`: runtime Flutter Rust Bridge FFI plugin built through Cargokit.
+- `rust_api`: runtime Flutter Rust Bridge FFI plugin built through Cargokit. See below.
 - `tray`: system tray for Linux, macOS and Windows. Written for FlClash; replaced the `tray_manager` fork.
 - `wifi_ssid`: Wi-Fi SSID detection.
 - `flutter_distributor`: app packaging/distribution.
+
+## rust_api Crate Layout
+
+`plugins/rust_api/rust/src/` separates the bridge boundary from the code behind it:
+
+- `api/` is the only input flutter_rust_bridge parses (`rust_input: crate::api`). Every function there is a thin
+  delegation, so the generated bindings stay identical on every platform.
+- `ipc/` implements the desktop socket server: `frame` (length-prefixed framing and the write backoff), `queue` (the
+  bounded send queue), `platform` (socket cleanup, Windows peer credentials and the non-blocking pipe reader), and
+  `server` (lifecycle, accept loop, and the `RUNNING`/`STATE` globals).
+- `script/` runs profile override scripts on QuickJS through `rquickjs`.
+
+What a platform does not use, it does not compile. `interprocess` is declared under
+`cfg(not(target_os = "android"))`, and `ipc/mod.rs` swaps in `ipc/unsupported.rs` there, because Android loads the Core
+in-process and never opens a socket. Adding a capability follows the same shape: implement it in its own module, gate the
+dependency by target, and keep the `api/` entry point unconditional so one set of bindings still serves every platform.
+
+`RustLib.init()` runs on every platform now, not only desktop — the script engine is shared.
+
+## Profile Script Engine
+
+`lib/common/javascript.dart` sends the profile as JSON to `evaluate_script`, which runs `main(config)` on QuickJS and
+returns the JSON the script produced. Nothing about the script runs in Dart.
+
+- QuickJS is compiled from source for the target being built, which is what removed the prebuilt `quickjs-c-bridge`
+  binaries: `flutter_js` shipped x64 Windows and desktop-only libraries, so Windows ARM64 could not start (#2361).
+- `rquickjs` carries pre-generated bindings for every target this project builds except the Android ones, so Android
+  builds enable its `bindgen` feature. That needs the NDK's own libclang and sysroot;
+  `cargokit/build_tool/lib/src/android_environment.dart` exports `LIBCLANG_PATH` and `BINDGEN_EXTRA_CLANG_ARGS` for it,
+  which is a local change to vendored Cargokit.
+- Evaluation is bounded: a 10-second interrupt deadline and a memory ceiling, because a script that never returns would
+  otherwise hold the profile forever. `console` is installed before the script runs, since scripts written for other
+  clients log as they work.
+- `rust/tests/fixtures/profile_script.js` is the compatibility regression: an overwrite written for the suite that
+  performs the transform real ones perform, so it exercises `Map`/`Set`, spread, destructuring, optional chaining,
+  nullish coalescing, `Object.fromEntries`, named capture groups and lookbehind in one pass. Keep it first-party and
+  free of external URLs — vendoring somebody's published script here carries their attribution and their links.
 
 ## Rust Helper Service
 
