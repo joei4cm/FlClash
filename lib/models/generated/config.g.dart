@@ -36,6 +36,12 @@ _AppSettingProps _$AppSettingPropsFromJson(Map<String, dynamic> json) =>
           RestoreStrategy.compatible,
       showTrayTitle: json['showTrayTitle'] as bool? ?? true,
       customUserAgent: json['customUserAgent'] as String? ?? '',
+      autoSelectStickyGeo: json['autoSelectStickyGeo'] as bool? ?? true,
+      autoSelectStickyGeoByGroup:
+          (json['autoSelectStickyGeoByGroup'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, e as String),
+          ) ??
+          const {},
     );
 
 Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
@@ -63,6 +69,8 @@ Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
       'restoreStrategy': _$RestoreStrategyEnumMap[instance.restoreStrategy]!,
       'showTrayTitle': instance.showTrayTitle,
       'customUserAgent': instance.customUserAgent,
+      'autoSelectStickyGeo': instance.autoSelectStickyGeo,
+      'autoSelectStickyGeoByGroup': instance.autoSelectStickyGeoByGroup,
     };
 
 const _$RestoreStrategyEnumMap = {
@@ -76,6 +84,7 @@ const _$DashboardWidgetEnumMap = {
   DashboardWidget.outboundMode: 'outboundMode',
   DashboardWidget.trafficUsage: 'trafficUsage',
   DashboardWidget.networkDetection: 'networkDetection',
+  DashboardWidget.serviceReachability: 'serviceReachability',
   DashboardWidget.tunButton: 'tunButton',
   DashboardWidget.vpnButton: 'vpnButton',
   DashboardWidget.systemProxyButton: 'systemProxyButton',

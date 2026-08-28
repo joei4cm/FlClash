@@ -252,6 +252,9 @@ enum DashboardWidget {
   outboundMode(GridItem(crossAxisCellCount: 4, child: OutboundMode())),
   trafficUsage(GridItem(crossAxisCellCount: 4, child: TrafficUsage())),
   networkDetection(GridItem(crossAxisCellCount: 4, child: NetworkDetection())),
+  serviceReachability(
+    GridItem(crossAxisCellCount: 8, child: ServiceReachability()),
+  ),
   tunButton(
     GridItem(crossAxisCellCount: 4, child: TUNButton()),
     platforms: desktopPlatforms,

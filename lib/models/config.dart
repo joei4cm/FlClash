@@ -42,6 +42,7 @@ const List<DashboardWidget> defaultDashboardWidgets = [
   DashboardWidget.tunButton,
   DashboardWidget.outboundMode,
   DashboardWidget.networkDetection,
+  DashboardWidget.serviceReachability,
   DashboardWidget.trafficUsage,
   DashboardWidget.intranetIp,
 ];
@@ -85,6 +86,8 @@ abstract class AppSettingProps with _$AppSettingProps {
     @Default(RestoreStrategy.compatible) RestoreStrategy restoreStrategy,
     @Default(true) bool showTrayTitle,
     @Default('') String customUserAgent,
+    @Default(true) bool autoSelectStickyGeo,
+    @Default({}) Map<String, String> autoSelectStickyGeoByGroup,
   }) = _AppSettingProps;
 
   factory AppSettingProps.fromJson(Map<String, Object?> json) =>

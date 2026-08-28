@@ -395,7 +395,6 @@ final class NavigationStateProvider
 
 String _$navigationStateHash() => r'd02e0af677f818cc77a06905c646fc346c50769f';
 
-
 @ProviderFor(dashboardState)
 final dashboardStateProvider = DashboardStateProvider._();
 
@@ -435,7 +434,7 @@ final class DashboardStateProvider
   }
 }
 
-String _$dashboardStateHash() => r'e8616e327c1b96658d917e4e4950f70ecb099d85';
+String _$dashboardStateHash() => r'33838f85f2b6a0ab601891aa2f26adc8870302b6';
 
 @ProviderFor(proxiesActionsState)
 final proxiesActionsStateProvider = ProxiesActionsStateProvider._();
@@ -524,7 +523,7 @@ final class ProfilesStateProvider
   }
 }
 
-String _$profilesStateHash() => r'8b07eeacb83b9002ba7e6283ff7a7f451a0845a6';
+String _$profilesStateHash() => r'6bcfd61de84c930251ade72b9fe804c4f5ac2be9';
 
 @ProviderFor(filterGroupsState)
 final filterGroupsStateProvider = FilterGroupsStateFamily._();
@@ -647,7 +646,7 @@ final class ProxiesListStateProvider
   }
 }
 
-String _$proxiesListStateHash() => r'4d83ff3e3d337c9a6eadddfa747c11939676b8bd';
+String _$proxiesListStateHash() => r'212d21f79e9c149076e13d1d19ccd83ccb4b471b';
 
 @ProviderFor(proxiesTabState)
 final proxiesTabStateProvider = ProxiesTabStateProvider._();
@@ -689,7 +688,7 @@ final class ProxiesTabStateProvider
   }
 }
 
-String _$proxiesTabStateHash() => r'b16734b2578c4e9a91880af8af41faa2e293b257';
+String _$proxiesTabStateHash() => r'e4eccd77c3848489c8ec620f4e515cec7cdd5a31';
 
 @ProviderFor(isStart)
 final isStartProvider = IsStartProvider._();
@@ -844,7 +843,7 @@ final class ProxyGroupSelectorStateProvider
 }
 
 String _$proxyGroupSelectorStateHash() =>
-    r'5f735dfbd74f553f02e6ce85781e022230d093fd';
+    r'ffb80cd120786ca37ef529d9c6f2ccd92a34ba41';
 
 final class ProxyGroupSelectorStateFamily extends $Family
     with $FunctionalFamilyOverride<ProxyGroupSelectorState, (String, String)> {
@@ -1422,7 +1421,6 @@ final class CurrentProfileProvider
 }
 
 String _$currentProfileHash() => r'55f3cb9570a0aa6b9e0b83a36693b69d52e753ab';
-
 
 @ProviderFor(realSelectedProxyStateMap)
 final realSelectedProxyStateMapProvider = RealSelectedProxyStateMapProvider._();

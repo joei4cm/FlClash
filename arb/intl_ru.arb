@@ -650,5 +650,84 @@
   "geoIdentityCopyTerminalProxyShort": "Скопировать HTTP(S)_PROXY для терминала",
   "geoIdentityOpenGeoMirrorShort": "Выравнивание отпечатка браузера",
   "geoIdentityShowAdvanced": "Показать дополнительно",
-  "geoIdentityHideAdvanced": "Скрыть дополнительно"
+  "geoIdentityHideAdvanced": "Скрыть дополнительно",
+  "serviceReachability": "Доступность сервисов",
+  "serviceProbeCategorySearch": "Поиск",
+  "serviceProbeCategorySocial": "Соцсети",
+  "serviceProbeCategoryAi": "ИИ",
+  "serviceProbeCategoryStreaming": "Стриминг",
+  "serviceProbeCategoryGeneral": "Общее",
+  "serviceProbeNeedStart": "Запустите VPN, чтобы проверить узел",
+  "serviceProbeNoProxy": "Узел не выбран",
+  "serviceProbeRunning": "Проверка сервисов…",
+  "serviceProbeTapToTest": "Нажмите обновление для теста",
+  "serviceProbeTesting": "Проверка",
+  "serviceProbeCurrentNode": "Текущий узел",
+  "serviceProbeDisclaimer": "Проверяет HTTP-доступность и задержку через текущий узел. Это не тест разблокировки стриминга.",
+  "enableAutoSelect": "Включить автовыбор",
+  "enableAutoSelectCreateTip": "Нет группы url-test/fallback. Создать «FlClash Auto»? Переключит overwrite на Custom и при пустых группах заменит их на Auto + PROXY (узлы сохраняются через include-all-proxies).",
+  "enableAutoSelectFailed": "Не удалось включить автовыбор",
+  "restoreAutoSelect": "Вернуть авто",
+  "groupTypeUrlTest": "URLTest",
+  "groupTypeFallback": "Fallback",
+  "serviceProbeSummary": "{success} доступно · {fail} ошибок",
+  "@serviceProbeSummary": {
+    "placeholders": {
+      "success": {
+        "type": "int"
+      },
+      "fail": {
+        "type": "int"
+      }
+    }
+  },
+  "enableAutoSelectRestored": "Автовыбор восстановлен для {group}",
+  "@enableAutoSelectRestored": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "enableAutoSelectCreated": "Создана группа {group}. При необходимости выберите её в Proxies.",
+  "@enableAutoSelectCreated": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupTitle": "Авто · {type}",
+  "@autoGroupTitle": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupCurrent": "Текущий узел: {node}",
+  "@autoGroupCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupOverride": "Ручной выбор: {node}",
+  "@autoGroupOverride": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "stickToRegion": "Закрепить регион",
+  "autoGroupStickyRegion": "Закреплённый регион: {region}",
+  "@autoGroupStickyRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  }
 }

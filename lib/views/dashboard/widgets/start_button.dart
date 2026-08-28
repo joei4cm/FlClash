@@ -4,7 +4,7 @@ import 'package:fl_clash/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-const _threeDigitHourThreshold = 100 * 60 * 60 * 1000;
+const _dayThresholdMs = Duration.millisecondsPerDay;
 const _widthAnimationDuration = Duration(milliseconds: 200);
 const _buttonHeight = 56.0;
 
@@ -14,27 +14,30 @@ TextStyle? _runTimeTextStyle(BuildContext context) {
   );
 }
 
-TextStyle? _hundredsTextStyle(BuildContext context) {
+TextStyle? _leadingTextStyle(BuildContext context) {
   return context.textTheme.titleMedium?.toSoftBold.copyWith(
     color: context.colorScheme.primary,
     fontWeight: FontWeight.w600,
   );
 }
 
-double _computeRunTimeTextWidth(
-  BuildContext context, {
-  required bool hasThreeDigitHours,
-}) {
-  final regularWidth = globalState.measure
-      .computeTextSize(Text('99:99:99', style: _runTimeTextStyle(context)))
+/// [Measure.computeTextSize] only reads [Text.data], so use plain [Text].
+double _measureRunTimeWidth(BuildContext context, {required bool hasDays}) {
+  final clockWidth = globalState.measure
+      .computeTextSize(
+        Text('23:59:59', style: _runTimeTextStyle(context)),
+      )
       .width;
-  if (!hasThreeDigitHours) {
-    return regularWidth + 16;
+  if (!hasDays) {
+    return clockWidth + 16;
   }
-  final hundredsWidth = globalState.measure
-      .computeTextSize(Text('9', style: _hundredsTextStyle(context)))
+  // Wide enough for multi-week uptimes such as `999d 23:59:59`.
+  final dayWidth = globalState.measure
+      .computeTextSize(
+        Text('999d ', style: _leadingTextStyle(context)),
+      )
       .width;
-  return hundredsWidth + regularWidth + 16;
+  return dayWidth + clockWidth + 16;
 }
 
 class RunTimeText extends StatelessWidget {
@@ -46,19 +49,30 @@ class RunTimeText extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = utils.getTimeText(timeStamp);
     final style = _runTimeTextStyle(context);
-    final textWidget = text.length < 9
-        ? Text(text, maxLines: 1, overflow: TextOverflow.visible, style: style)
-        : Text.rich(
-            TextSpan(
-              text: text.substring(0, 1),
-              style: _hundredsTextStyle(context),
-              children: [TextSpan(text: text.substring(1), style: style)],
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.visible,
+    final daySeparator = text.indexOf('d ');
+    if (daySeparator < 0) {
+      return Text(
+        text,
+        maxLines: 1,
+        overflow: TextOverflow.visible,
+        style: style,
+      );
+    }
+    return Text.rich(
+      TextSpan(
+        text: text.substring(0, daySeparator + 2),
+        style: _leadingTextStyle(context),
+        children: [
+          TextSpan(
+            text: text.substring(daySeparator + 2),
             style: style,
-          );
-    return textWidget;
+          ),
+        ],
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.visible,
+      style: style,
+    );
   }
 }
 
@@ -73,16 +87,16 @@ class _StartButtonState extends ConsumerState<StartButton>
     with SingleTickerProviderStateMixin {
   AnimationController? _controller;
   late Animation<double> _animation;
-  double? _twoDigitTextWidth;
-  double? _threeDigitTextWidth;
+  final ValueNotifier<int?> _displayRunTime = ValueNotifier<int?>(null);
+  double? _clockTextWidth;
+  double? _dayTextWidth;
   double? _suspendedTextWidth;
-  int? _displayRunTime;
 
   @override
   void initState() {
     super.initState();
     final isStart = ref.read(isStartProvider);
-    _displayRunTime = ref.read(runTimeProvider);
+    _displayRunTime.value = ref.read(runTimeProvider);
     _controller = AnimationController(
       vsync: this,
       value: isStart ? 1 : 0,
@@ -103,13 +117,14 @@ class _StartButtonState extends ConsumerState<StartButton>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _twoDigitTextWidth = null;
-    _threeDigitTextWidth = null;
+    _clockTextWidth = null;
+    _dayTextWidth = null;
     _suspendedTextWidth = null;
   }
 
   @override
   void dispose() {
+    _displayRunTime.dispose();
     _controller?.dispose();
     _controller = null;
     super.dispose();
@@ -121,13 +136,17 @@ class _StartButtonState extends ConsumerState<StartButton>
 
   void _updateDisplayRunTime(int? runTime) {
     if (!mounted ||
-        _displayRunTime == runTime ||
+        _displayRunTime.value == runTime ||
         (runTime == null && !(_controller?.isDismissed ?? true))) {
       return;
     }
-    setState(() {
-      _displayRunTime = runTime;
-    });
+    final wasMultiDay = (_displayRunTime.value ?? 0) >= _dayThresholdMs;
+    final isMultiDay = (runTime ?? 0) >= _dayThresholdMs;
+    _displayRunTime.value = runTime;
+    // Only rebuild the FAB chrome when the width template must change.
+    if (wasMultiDay != isMultiDay && mounted) {
+      setState(() {});
+    }
   }
 
   void updateController(bool isStart) {
@@ -153,18 +172,12 @@ class _StartButtonState extends ConsumerState<StartButton>
 
   double _getRunTimeTextWidth(
     BuildContext context, {
-    required bool hasThreeDigitHours,
+    required bool hasDays,
   }) {
-    if (hasThreeDigitHours) {
-      return _threeDigitTextWidth ??= _computeRunTimeTextWidth(
-        context,
-        hasThreeDigitHours: true,
-      );
+    if (hasDays) {
+      return _dayTextWidth ??= _measureRunTimeWidth(context, hasDays: true);
     }
-    return _twoDigitTextWidth ??= _computeRunTimeTextWidth(
-      context,
-      hasThreeDigitHours: false,
-    );
+    return _clockTextWidth ??= _measureRunTimeWidth(context, hasDays: false);
   }
 
   double _getSuspendedTextWidth(BuildContext context, String suspendedText) {
@@ -186,20 +199,20 @@ class _StartButtonState extends ConsumerState<StartButton>
       return Container();
     }
     final suspend = ref.watch(suspendProvider);
-    final hasThreeDigitHours =
-        (_displayRunTime ?? 0) >= _threeDigitHourThreshold;
+    final hasDays = (_displayRunTime.value ?? 0) >= _dayThresholdMs;
     final theme = Theme.of(context);
     final appLocalizations = context.appLocalizations;
     final textWidth = suspend
         ? _getSuspendedTextWidth(context, appLocalizations.suspended)
-        : _getRunTimeTextWidth(context, hasThreeDigitHours: hasThreeDigitHours);
+        : _getRunTimeTextWidth(context, hasDays: hasDays);
     return RepaintBoundary(
       child: Theme(
         data: theme.copyWith(
           floatingActionButtonTheme: theme.floatingActionButtonTheme.copyWith(
             sizeConstraints: const BoxConstraints(
               minWidth: 56,
-              maxWidth: 220,
+              // Room for `999d 23:59:59` plus Curves.easeOutBack overshoot.
+              maxWidth: 360,
               minHeight: _buttonHeight,
               maxHeight: _buttonHeight,
             ),
@@ -251,7 +264,12 @@ class _StartButtonState extends ConsumerState<StartButton>
                                 color: context.colorScheme.onPrimaryContainer,
                               ),
                         )
-                      : RunTimeText(timeStamp: _displayRunTime),
+                      : ValueListenableBuilder<int?>(
+                          valueListenable: _displayRunTime,
+                          builder: (_, runTime, _) {
+                            return RunTimeText(timeStamp: runTime);
+                          },
+                        ),
                 ),
               ),
             ],
