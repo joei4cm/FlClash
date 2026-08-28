@@ -650,5 +650,84 @@
   "geoIdentityCopyTerminalProxyShort": "ターミナル用 HTTP(S)_PROXY をコピー",
   "geoIdentityOpenGeoMirrorShort": "ブラウザ指紋の整合",
   "geoIdentityShowAdvanced": "詳細を表示",
-  "geoIdentityHideAdvanced": "詳細を隠す"
+  "geoIdentityHideAdvanced": "詳細を隠す",
+  "serviceReachability": "サービス到達性",
+  "serviceProbeCategorySearch": "検索",
+  "serviceProbeCategorySocial": "ソーシャル",
+  "serviceProbeCategoryAi": "AI",
+  "serviceProbeCategoryStreaming": "配信",
+  "serviceProbeCategoryGeneral": "一般",
+  "serviceProbeNeedStart": "起動後にノード品質をテストできます",
+  "serviceProbeNoProxy": "選択中のノードがありません",
+  "serviceProbeRunning": "サービスをテスト中…",
+  "serviceProbeTapToTest": "更新をタップしてテスト",
+  "serviceProbeTesting": "テスト中",
+  "serviceProbeCurrentNode": "現在のノード",
+  "serviceProbeDisclaimer": "現在のノード経由の HTTP 到達性と遅延の確認です。配信アンロックやアカウント地域の判定ではありません。",
+  "enableAutoSelect": "自動選択を有効化",
+  "enableAutoSelectCreateTip": "url-test/fallback グループがありません。「FlClash Auto」を作成しますか？上書きをカスタムに切り替え、空のカスタム戦略グループを Auto + PROXY で置き換えます（ノードは include-all-proxies で保持）。",
+  "enableAutoSelectFailed": "自動選択の有効化に失敗しました",
+  "restoreAutoSelect": "自動に戻す",
+  "groupTypeUrlTest": "URLTest",
+  "groupTypeFallback": "Fallback",
+  "serviceProbeSummary": "{success} 到達 · {fail} 失敗",
+  "@serviceProbeSummary": {
+    "placeholders": {
+      "success": {
+        "type": "int"
+      },
+      "fail": {
+        "type": "int"
+      }
+    }
+  },
+  "enableAutoSelectRestored": "{group} の自動選択を復元しました",
+  "@enableAutoSelectRestored": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "enableAutoSelectCreated": "自動グループ {group} を作成しました。必要ならプロキシで選択してください。",
+  "@enableAutoSelectCreated": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupTitle": "自動 · {type}",
+  "@autoGroupTitle": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupCurrent": "現在のノード：{node}",
+  "@autoGroupCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupOverride": "手動上書き：{node}",
+  "@autoGroupOverride": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "stickToRegion": "地域を固定",
+  "autoGroupStickyRegion": "固定地域：{region}",
+  "@autoGroupStickyRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  }
 }

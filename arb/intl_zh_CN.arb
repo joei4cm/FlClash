@@ -650,5 +650,84 @@
   "geoIdentityCopyTerminalProxyShort": "复制终端用的 HTTP(S)_PROXY",
   "geoIdentityOpenGeoMirrorShort": "浏览器指纹对齐",
   "geoIdentityShowAdvanced": "显示高级选项",
-  "geoIdentityHideAdvanced": "隐藏高级选项"
+  "geoIdentityHideAdvanced": "隐藏高级选项",
+  "serviceReachability": "服务可达性",
+  "serviceProbeCategorySearch": "搜索",
+  "serviceProbeCategorySocial": "社交",
+  "serviceProbeCategoryAi": "AI",
+  "serviceProbeCategoryStreaming": "流媒体",
+  "serviceProbeCategoryGeneral": "常用",
+  "serviceProbeNeedStart": "启动后即可测试节点质量",
+  "serviceProbeNoProxy": "暂无选中节点",
+  "serviceProbeRunning": "正在测试各类服务…",
+  "serviceProbeTapToTest": "点击刷新测试各类服务",
+  "serviceProbeTesting": "测试中",
+  "serviceProbeCurrentNode": "当前节点",
+  "serviceProbeDisclaimer": "通过当前节点检测各类服务的 HTTP 可达性与延迟，并非流媒体解锁或账号地区测试。",
+  "enableAutoSelect": "启用自动选优",
+  "enableAutoSelectCreateTip": "未发现 url-test/fallback 策略组。是否创建简单的 “FlClash Auto” 自动测速组？这会将配置覆写切换为自定义，并在自定义策略组为空时用 Auto + PROXY 替代（节点列表仍通过 include-all-proxies 保留）。",
+  "enableAutoSelectFailed": "启用自动选优失败",
+  "restoreAutoSelect": "恢复自动",
+  "groupTypeUrlTest": "自动测速",
+  "groupTypeFallback": "故障转移",
+  "serviceProbeSummary": "{success} 可达 · {fail} 失败",
+  "@serviceProbeSummary": {
+    "placeholders": {
+      "success": {
+        "type": "int"
+      },
+      "fail": {
+        "type": "int"
+      }
+    }
+  },
+  "enableAutoSelectRestored": "已恢复 {group} 的自动选优",
+  "@enableAutoSelectRestored": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "enableAutoSelectCreated": "已创建自动组 {group}。如需可在代理页选中它。",
+  "@enableAutoSelectCreated": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupTitle": "自动 · {type}",
+  "@autoGroupTitle": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupCurrent": "当前节点：{node}",
+  "@autoGroupCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupOverride": "手动覆盖：{node}",
+  "@autoGroupOverride": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "stickToRegion": "锁定地区",
+  "autoGroupStickyRegion": "锁定地区：{region}",
+  "@autoGroupStickyRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  }
 }
