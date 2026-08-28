@@ -1,10 +1,14 @@
+## v0.8.109
+
+- Fix Linux taskbar icon grouping on Ubuntu/Debian via `StartupWMClass`.
+- Add auto-select geo sticky policy so url-test/fallback can stay in a chosen region.
+- Sync production features onto main (service reachability, auto-select UX, multi-day uptime).
+
 ## v0.8.108
 
 - Fix VPN uptime display for multi-day sessions (no more `999:59:59` ceiling; show `Nd HH:MM:SS`).
 - Add dashboard service-reachability tile (search / social / AI / streaming probes through the current node).
 - Show url-test / fallback current node with restore-auto, plus enable-auto-select flow.
-- Fix Linux taskbar icon grouping on Ubuntu/Debian via `StartupWMClass`.
-- Add auto-select geo sticky policy so url-test/fallback can stay in a chosen region.
 
 ## v0.8.107
 
