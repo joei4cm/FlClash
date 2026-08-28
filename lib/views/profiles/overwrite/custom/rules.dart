@@ -6,9 +6,8 @@ import 'package:fl_clash/models/common.dart';
 import 'package:fl_clash/models/state.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smooth_sheets/smooth_sheets.dart';
 
 class CustomRulesView extends ConsumerStatefulWidget {
   final int profileId;
@@ -61,16 +60,15 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView> {
     );
   }
 
-  bool _handleCheckInvalid(
-    Rule rule,
-    Set<String> ruleTargets,
-    Set<String> subRules,
-  ) {
+  bool _handleCheckInvalid(Rule rule, RuleTargetsSelectorState targets) {
+    if (!targets.loaded) {
+      return false;
+    }
     final ruleTarget = rule.realTarget;
     if (rule.ruleAction == RuleAction.SUB_RULE) {
-      return !subRules.contains(ruleTarget);
+      return !targets.subRules.contains(ruleTarget);
     }
-    return !ruleTargets.contains(ruleTarget);
+    return !targets.ruleTargets.contains(ruleTarget);
   }
 
   @override
@@ -79,6 +77,7 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView> {
     final ruleTargets = ref.watch(
       customOverwriteDateProvider(_profileId).select(
         (state) => RuleTargetsSelectorState(
+          loaded: state.loaded,
           ruleTargets: state.ruleTargets,
           subRules: state.subRules,
         ),
@@ -96,11 +95,7 @@ class _CustomRulesViewState extends ConsumerState<CustomRulesView> {
           (context, ref, rule, index, isEditing, isSelected, onToggleSelected) {
             return RuleItem(
               checkInvalidHandler: (target) {
-                return _handleCheckInvalid(
-                  target,
-                  ruleTargets.ruleTargets,
-                  ruleTargets.subRules,
-                );
+                return _handleCheckInvalid(target, ruleTargets);
               },
               isEditing: isEditing,
               isSelected: isSelected,
@@ -129,7 +124,8 @@ class _AddOrEditRuleView extends ConsumerStatefulWidget {
 
 class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
   Widget _buildItem({
-    required Widget title,
+    required String title,
+    TextStyle? titleStyle,
     Widget? trailing,
     bool? invalid,
     final VoidCallback? onPressed,
@@ -138,6 +134,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
       invalid: invalid ?? false,
       onPressed: onPressed,
       title: title,
+      titleStyle: titleStyle,
       trailing: trailing,
     );
   }
@@ -170,7 +167,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
 
   Widget _buildTypeItem(RuleAction action) {
     return _buildItem(
-      title: Text(context.appLocalizations.proxyType),
+      title: context.appLocalizations.proxyType,
       onPressed: () {
         _handleSelectedType();
       },
@@ -193,7 +190,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
   Widget _buildContentItem(String? content) {
     final appLocalizations = context.appLocalizations;
     return _buildItem(
-      title: Text(appLocalizations.content),
+      title: appLocalizations.content,
       trailing: TextFormField(
         initialValue: content,
         keyboardType: TextInputType.name,
@@ -249,7 +246,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
   Widget _buildRuleProviderItem(String? ruleProvider) {
     final appLocalizations = context.appLocalizations;
     return _buildItem(
-      title: Text(appLocalizations.ruleSet),
+      title: appLocalizations.ruleSet,
       onPressed: _handleSelectedRuleProvider,
       trailing: Row(
         spacing: 4,
@@ -277,27 +274,18 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
         builder: (context) => Consumer(
           builder: (_, ref, _) {
             final profileId = ProfileIdProvider.of(context)!.profileId;
-            final proxiesAndGroups = ref.watch(
-              customOverwriteDateProvider(profileId).select((state) {
-                return ProxiesAndGroupsSelectorState(
-                  proxies: state.proxies,
-                  proxyGroups: state.proxyGroups,
-                );
-              }),
-            );
+            final overwrite = ref.watch(customOverwriteDateProvider(profileId));
             final groupTypes = {
-              for (final item in proxiesAndGroups.proxyGroups)
+              for (final item in overwrite.proxyGroups)
                 item.name: item.type.name,
             };
-            final proxyTypes = {
-              for (final item in proxiesAndGroups.proxies) item.name: item.type,
-            };
+            final proxyTypes = overwrite.proxyTypes;
             return OverwriteSelectionSheet<String>(
               title: context.appLocalizations.splitStrategy,
               sections: [
                 OverwriteSelectionSection(
                   label: context.appLocalizations.basicStrategy,
-                  items: RuleTarget.values.map((item) => item.name).toList(),
+                  items: RuleTarget.baseTargetNames,
                 ),
                 OverwriteSelectionSection(
                   label: context.appLocalizations.ruleTarget,
@@ -306,7 +294,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
                 ),
                 OverwriteSelectionSection(
                   label: context.appLocalizations.proxies,
-                  items: proxyTypes.keys.toList(),
+                  items: overwrite.proxyNames,
                   subtitleBuilder: (context, name) => proxyTypes[name] ?? '',
                 ),
               ],
@@ -339,7 +327,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
             : context.colorScheme.onSurfaceVariant;
         return _buildItem(
           invalid: invalid,
-          title: Text(appLocalizations.splitStrategy),
+          title: appLocalizations.splitStrategy,
           onPressed: _handleSelectedTarget,
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -417,7 +405,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
   Widget _buildSubRuleItem(String? subRule) {
     final appLocalizations = context.appLocalizations;
     return _buildItem(
-      title: Text(appLocalizations.subRule),
+      title: appLocalizations.subRule,
       onPressed: _handleSelectedSubRule,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -445,7 +433,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
   Widget _buildNoResolveItem(bool? noResolve) {
     final appLocalizations = context.appLocalizations;
     return _buildItem(
-      title: Text(appLocalizations.noResolveHostname),
+      title: appLocalizations.noResolveHostname,
       trailing: Switch(value: noResolve ?? false, onChanged: (_) {}),
     );
   }
@@ -453,7 +441,7 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
   Widget _buildSrcItem(bool? src) {
     final appLocalizations = context.appLocalizations;
     return _buildItem(
-      title: Text(appLocalizations.matchSourceIp),
+      title: appLocalizations.matchSourceIp,
       trailing: Switch(value: src ?? false, onChanged: (_) {}),
     );
   }
@@ -515,12 +503,8 @@ class _AddOrEditRuleViewState extends ConsumerState<_AddOrEditRuleView> {
               items: [
                 if (rule.id != -1)
                   _buildItem(
-                    title: Text(
-                      appLocalizations.delete,
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        color: context.colorScheme.error,
-                      ),
-                    ),
+                    title: appLocalizations.delete,
+                    titleStyle: TextStyle(color: context.colorScheme.error),
                     onPressed: () {
                       _handleDelete();
                     },

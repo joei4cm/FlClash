@@ -4,13 +4,14 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/inherited.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'card.dart';
 import 'input.dart';
 import 'open_container.dart';
 import 'scaffold.dart';
 import 'sheet.dart';
+
 part 'list_selected.dart';
 
 sealed class _ListItemAction {
@@ -463,11 +464,13 @@ class ListItem<T> extends StatelessWidget {
         final radioDelegate = radio as _RadioAction<T>;
         return _buildListTile(
           onTap: radioDelegate.onTap,
-          leading: Radio<T>(
-            visualDensity: VisualDensity.compact,
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            value: radioDelegate.value,
-            toggleable: true,
+          leading: ExcludeFocus(
+            child: Radio<T>(
+              visualDensity: VisualDensity.compact,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              value: radioDelegate.value,
+              toggleable: true,
+            ),
           ),
           trailing: trailing,
         );
@@ -501,7 +504,10 @@ class ListHeader extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        spacing: 36,
+        crossAxisAlignment: subTitle == null
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.start,
+        spacing: actions.isEmpty ? 0 : 12,
         children: [
           Expanded(
             child: Column(
@@ -509,6 +515,8 @@ class ListHeader extends StatelessWidget {
               children: [
                 Text(
                   title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: context.textTheme.labelLarge?.copyWith(
                     color: context.colorScheme.onSurfaceVariant.opacity80,
                     fontWeight: FontWeight.w600,
@@ -530,6 +538,46 @@ class ListHeader extends StatelessWidget {
             children: [...genActions(actions, space: space)],
           ),
         ],
+      ),
+    );
+  }
+}
+
+enum ListItemMetaChipTone { primary, secondary, tertiary }
+
+class ListItemMetaChip extends StatelessWidget {
+  final String label;
+  final ListItemMetaChipTone tone;
+
+  const ListItemMetaChip({super.key, required this.label, required this.tone});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final (backgroundColor, foregroundColor) = switch (tone) {
+      ListItemMetaChipTone.primary => (
+        colorScheme.primary,
+        colorScheme.onPrimary,
+      ),
+      ListItemMetaChipTone.secondary => (
+        colorScheme.secondary,
+        colorScheme.onSecondary,
+      ),
+      ListItemMetaChipTone.tertiary => (
+        colorScheme.tertiary,
+        colorScheme.onTertiary,
+      ),
+    };
+    return DecoratedBox(
+      decoration: ShapeDecoration(color: backgroundColor, shape: AppShape.sm),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        child: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: context.textTheme.labelSmall?.copyWith(color: foregroundColor),
+        ),
       ),
     );
   }
@@ -567,10 +615,10 @@ Widget generateSectionV2({
   final genItems = items
       .map<Widget>((item) {
         return ClipRSuperellipse(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: AppRadius.xs,
           child: CommonCard(
             type: CommonCardType.filled,
-            radius: 0,
+            radius: AppCorner.none,
             child: item,
           ),
         );
@@ -581,7 +629,7 @@ Widget generateSectionV2({
       if (items.isNotEmpty && title != null)
         ListHeader(title: title, actions: actions),
       ClipRSuperellipse(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: AppRadius.md,
         child: Column(children: [...genItems]),
       ),
     ],

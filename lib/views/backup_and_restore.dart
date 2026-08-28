@@ -17,7 +17,7 @@ import 'package:fl_clash/widgets/list.dart';
 import 'package:fl_clash/widgets/loading.dart';
 import 'package:fl_clash/widgets/scaffold.dart';
 import 'package:fl_clash/widgets/text.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -64,11 +64,9 @@ class _BackupAndRestoreState extends ConsumerState<BackupAndRestore>
         if (client == null) {
           return false;
         }
-        final path = await ref.read(backupActionProvider.notifier).backup();
-        if (path.isEmpty) {
-          return false;
-        }
-        return client.backup(path);
+        return ref
+            .read(backupActionProvider.notifier)
+            .consumeBackup(client.backup);
       },
       tag: LoadingTag.backup_restore,
       title: appLocalizations.backup,
@@ -118,13 +116,15 @@ class _BackupAndRestoreState extends ConsumerState<BackupAndRestore>
     final appLocalizations = context.appLocalizations;
     final res = await globalState.loadingRun<bool>(
       () async {
-        final path = await ref.read(backupActionProvider.notifier).backup();
-        if (path.isEmpty) {
-          return false;
-        }
-        final value = await picker.saveFileWithPath(getBackupFileName(), path);
-        if (value == null) return false;
-        return true;
+        return ref.read(backupActionProvider.notifier).consumeBackup((
+          path,
+        ) async {
+          final value = await picker.saveFileWithPath(
+            getBackupFileName(),
+            path,
+          );
+          return value != null;
+        });
       },
       title: appLocalizations.backup,
       tag: LoadingTag.backup_restore,
@@ -471,7 +471,6 @@ class _WebDAVFormDialogState extends ConsumerState<WebDAVFormDialog> {
               minLines: 1,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.link),
-                border: const OutlineInputBorder(),
                 labelText: appLocalizations.address,
                 helperText: appLocalizations.addressHelp,
               ),
@@ -487,7 +486,6 @@ class _WebDAVFormDialogState extends ConsumerState<WebDAVFormDialog> {
               inputFormatters: TextInputLimits.limit(TextInputLimits.userName),
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.account_circle),
-                border: const OutlineInputBorder(),
                 labelText: appLocalizations.account,
               ),
               validator: (String? value) {
@@ -508,7 +506,6 @@ class _WebDAVFormDialogState extends ConsumerState<WebDAVFormDialog> {
                   obscureText: obscure,
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.password),
-                    border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       tooltip: obscure
                           ? context.appLocalizations.showPassword

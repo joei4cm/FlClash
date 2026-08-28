@@ -1,13 +1,14 @@
 import 'package:fl_clash/common/app_ports.dart';
 import 'package:fl_clash/common/constant.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/database.dart';
 import 'package:fl_clash/providers/state.dart';
 import 'package:fl_clash/views/navigation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -379,6 +380,26 @@ void main() {
       container.read(accessControlStateProvider),
       const AccessControlProps(),
     );
+  });
+
+  test('shared state follows the locale whose messages are loaded', () async {
+    container.listen(sharedStateProvider, (_, _) {});
+    await AppLocalizations.load(const Locale('en'));
+    container.read(loadedLocaleProvider.notifier).value = const Locale('en');
+    final en = container.read(sharedStateProvider);
+
+    await AppLocalizations.load(const Locale('zh', 'CN'));
+    addTearDown(() => AppLocalizations.load(const Locale('en')));
+    expect(container.read(sharedStateProvider).stopText, en.stopText);
+
+    container.read(loadedLocaleProvider.notifier).value = const Locale(
+      'zh',
+      'CN',
+    );
+    final zh = container.read(sharedStateProvider);
+    expect(zh.stopText, isNot(en.stopText));
+    expect(zh.stopTip, isNot(en.stopTip));
+    expect(zh.startTip, isNot(en.startTip));
   });
 }
 

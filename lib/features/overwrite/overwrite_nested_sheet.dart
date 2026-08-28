@@ -1,35 +1,12 @@
 import 'dart:async';
+
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod/misc.dart' show Override;
-import 'package:smooth_sheets/smooth_sheets.dart';
 
 import 'overwrite_stage_flow.dart';
-
-Widget fadeAndSlideTransition(
-  BuildContext context,
-  Animation<double> animation,
-  Animation<double> secondaryAnimation,
-  Widget child,
-) {
-  return FadeTransition(
-    opacity: CurveTween(curve: Curves.easeInExpo).animate(animation),
-    child: FadeTransition(
-      opacity: Tween(begin: 1.0, end: 0.4)
-          .chain(CurveTween(curve: Curves.easeOutExpo))
-          .animate(secondaryAnimation),
-      child: const FadeForwardsPageTransitionsBuilder().buildTransitions(
-        ModalRoute.of(context) as PageRoute,
-        context,
-        animation,
-        secondaryAnimation,
-        child,
-      ),
-    ),
-  );
-}
 
 Future<void> showOverwriteNestedSheet<T>({
   required BuildContext context,
@@ -147,9 +124,6 @@ class _OverwriteNestedSheetState<T>
       },
     );
     final sheetProvider = SheetProvider.of(context);
-    final fillColor = sheetProvider?.type == SheetType.bottomSheet
-        ? context.colorScheme.surfaceContainerLow
-        : context.colorScheme.surface;
     return CommonPopScope(
       onPop: (_) async {
         unawaited(_handlePop());
@@ -159,41 +133,30 @@ class _OverwriteNestedSheetState<T>
         nestedNavigatorPop: ([data]) {
           Navigator.of(context).pop(data);
         },
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: GestureDetector(
-                onTap: () async {
-                  await _handleClose();
-                },
+        child: SizedBox(
+          width: sheetProvider.type == SheetType.sideSheet ? 400 : null,
+          height: double.infinity,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: GestureDetector(
+                  onTap: () async {
+                    await _handleClose();
+                  },
+                ),
               ),
-            ),
-            SizedBox(
-              width: sheetProvider.type == SheetType.sideSheet ? 400 : null,
-              child: SheetViewport(
-                child: PagedSheetRouteTheme(
-                  data: const PagedSheetRouteThemeData(
-                    transitionsBuilder: fadeAndSlideTransition,
-                    transitionDuration: Duration(milliseconds: 300),
-                  ),
-                  child: PagedSheet(
-                    decoration: MaterialSheetDecoration(
-                      animationDuration: Duration.zero,
-                      size: SheetSize.stretch,
-                      color: fillColor,
-                      borderRadius: sheetProvider.type == SheetType.bottomSheet
-                          ? const BorderRadius.vertical(
-                              top: Radius.circular(28),
-                            )
-                          : BorderRadius.zero,
-                      clipBehavior: Clip.antiAlias,
-                    ),
-                    navigator: nestedNavigator,
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    child: PagedSheet(child: nestedNavigator),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

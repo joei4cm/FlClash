@@ -4,9 +4,8 @@ import 'package:fl_clash/features/overwrite/overwrite.dart';
 import 'package:fl_clash/models/models.dart' hide FileInfo;
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smooth_sheets/smooth_sheets.dart';
 
 class NameListEditorLabels {
   final String title;
@@ -229,14 +228,14 @@ class _IncludeAllCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CommonCard(
-      radius: 20,
+      radius: AppCorner.xl,
       type: CommonCardType.filled,
       child: ListItem.toggle(
         minTileHeight: 54,
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(label),
+            Flexible(child: TooltipLabel(label)),
             CommonMinIconButtonTheme(
               child: IconButton(
                 tooltip: context.appLocalizations.tip,

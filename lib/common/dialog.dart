@@ -1,10 +1,11 @@
 import 'dart:async';
+
 import 'package:animations/animations.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Dialogs {
@@ -87,9 +88,10 @@ class Dialogs {
     return showCommonDialog<bool>(
       child: Builder(
         builder: (context) {
-          final appLocalizations = currentAppLocalizations;
+          final appLocalizations = context.appLocalizations;
           return CommonDialog(
-            padding: EdgeInsets.zero,
+            backgroundColor: context.colorScheme.surfaceContainerLow,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             title: appLocalizations.tip,
             actions: [
               TextButton(
@@ -99,20 +101,9 @@ class Dialogs {
                 child: Text(appLocalizations.confirm),
               ),
             ],
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              constraints: const BoxConstraints(maxHeight: 200),
-              child: ListView.separated(
-                itemBuilder: (_, index) {
-                  final message = messages[index];
-                  return ListItem(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    title: Text(message.label),
-                    subtitle: Text(message.message),
-                  );
-                },
-                itemCount: messages.length,
-                separatorBuilder: (_, _) => const Divider(height: 0),
+            child: generateSectionV3(
+              items: messages.map(
+                (message) => _UpdatingMessageItem(message: message),
               ),
             ),
           );
@@ -168,6 +159,29 @@ class Dialogs {
       return;
     }
     unawaited(launchUrl(Uri.parse(url)));
+  }
+}
+
+class _UpdatingMessageItem extends StatelessWidget {
+  final UpdatingMessage message;
+
+  const _UpdatingMessageItem({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return DecorationListItem(
+      minVerticalPadding: 12,
+      title: TooltipText(
+        text: Text(message.label, maxLines: 1, overflow: TextOverflow.ellipsis),
+      ),
+      subtitle: TooltipText(
+        text: Text(
+          message.message,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    );
   }
 }
 

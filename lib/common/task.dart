@@ -80,6 +80,23 @@ Future<List<Group>> buildGroups(ComputeGroupsState state) async {
   );
 }
 
+Future<ClashConfig> clashConfigTask(Map<String, dynamic> data) async {
+  return compute<Map<String, dynamic>, ClashConfig>(buildClashConfig, data);
+}
+
+@visibleForTesting
+ClashConfig buildClashConfig(Map<String, dynamic> configMap) {
+  final clashConfig = ClashConfig.fromJson(configMap);
+  final proxyTypeMap = <String, String>{};
+  for (final proxy in clashConfig.proxies) {
+    proxyTypeMap[proxy.name] = proxy.type;
+  }
+  for (final proxyGroup in clashConfig.proxyGroups) {
+    proxyTypeMap[proxyGroup.name] = proxyGroup.type.value;
+  }
+  return clashConfig.copyWith(proxyTypeMap: proxyTypeMap);
+}
+
 Future<({String yaml, String md5})> makeRealProfileTask(
   MakeRealProfileState data,
 ) async {
@@ -103,11 +120,29 @@ Future<({String yaml, String md5})> _makeRealProfileTask(
   String getProvidersFilePathInner(String type, String url) {
     return join(
       profilesPath,
-      'providers',
+      providersDirectoryName,
       profileId.toString(),
       type,
       url.toMd5(),
     );
+  }
+
+  void confineProviders(String section, String type) {
+    final providers = rawConfig[section];
+    if (providers is! Map) {
+      return;
+    }
+    for (final name in providers.keys) {
+      final provider = providers[name];
+      if (provider is! Map || provider['type'] == 'inline') {
+        continue;
+      }
+      final url = provider['url'];
+      provider['path'] = getProvidersFilePathInner(
+        type,
+        url is String && url.isNotEmpty ? url : '$section/$name',
+      );
+    }
   }
 
   rawConfig['external-controller'] = realPatchConfig.externalController.value;
@@ -152,36 +187,8 @@ Future<({String yaml, String md5})> _makeRealProfileTask(
   if (rawConfig['profile'] == null) {
     rawConfig['profile'] = {};
   }
-  if (rawConfig['proxy-providers'] != null) {
-    final proxyProviders = rawConfig['proxy-providers'] as Map;
-    for (final key in proxyProviders.keys) {
-      final proxyProvider = proxyProviders[key];
-      if (proxyProvider['type'] != 'http') {
-        continue;
-      }
-      if (proxyProvider['url'] != null) {
-        proxyProvider['path'] = getProvidersFilePathInner(
-          'proxies',
-          proxyProvider['url'],
-        );
-      }
-    }
-  }
-  if (rawConfig['rule-providers'] != null) {
-    final ruleProviders = rawConfig['rule-providers'] as Map;
-    for (final key in ruleProviders.keys) {
-      final ruleProvider = ruleProviders[key];
-      if (ruleProvider['type'] != 'http') {
-        continue;
-      }
-      if (ruleProvider['url'] != null) {
-        ruleProvider['path'] = getProvidersFilePathInner(
-          'rules',
-          ruleProvider['url'],
-        );
-      }
-    }
-  }
+  confineProviders('proxy-providers', proxiesProviderDirectoryName);
+  confineProviders('rule-providers', rulesProviderDirectoryName);
   rawConfig['profile']['store-selected'] = false;
   rawConfig['geox-url'] = realPatchConfig.geoXUrl.raw;
   rawConfig['global-ua'] = realPatchConfig.globalUa ?? defaultUA;
@@ -314,31 +321,30 @@ List<String> shakeOrphanFiles({
   void scanDirectory(
     Directory dir,
     Iterable<int> baseNames, {
-    bool skipProvidersFolder = false,
+    bool includeDirectories = false,
   }) {
     if (!dir.existsSync()) return;
     final entities = dir.listSync(recursive: false, followLinks: false);
 
     for (final entity in entities) {
-      if (entity is File) {
-        final id = basenameWithoutExtension(entity.path);
-        if (!baseNames.contains(int.tryParse(id))) {
-          targets.add(entity.path);
-        }
-      } else if (skipProvidersFolder && entity is Directory) {
-        if (basename(entity.path) == 'providers') {
-          continue;
-        }
+      final selected =
+          entity is File || (includeDirectories && entity is Directory);
+      if (!selected) {
+        continue;
+      }
+      final id = basenameWithoutExtension(entity.path);
+      if (!baseNames.contains(int.tryParse(id))) {
+        targets.add(entity.path);
       }
     }
   }
 
+  scanDirectory(Directory(profilesDirPath), profileIds);
   scanDirectory(
-    Directory(profilesDirPath),
+    Directory(providersDirPath),
     profileIds,
-    skipProvidersFolder: true,
+    includeDirectories: true,
   );
-  scanDirectory(Directory(providersDirPath), profileIds);
   scanDirectory(Directory(scriptsDirPath), scriptIds);
   return targets;
 }
@@ -395,7 +401,6 @@ Future<MigrationData> migrateLegacyConfig({
       configMap['appSetting'] as Map<String, dynamic>? ?? {};
   appSettingProps['restoreStrategy'] = appSettingProps['recoveryStrategy'];
   configMap['appSettingProps'] = appSettingProps;
-  configMap['proxiesStyleProps'] = configMap['proxiesStyle'];
   configMap['proxiesStyleProps'] = configMap['proxiesStyle'];
   List rawScripts = configMap['scripts'] as List<dynamic>? ?? [];
   if (rawScripts.isEmpty) {
@@ -526,15 +531,17 @@ Future<String> _backupTask<T>(
   args,
 ) async {
   BackgroundIsolateBinaryMessenger.ensureInitialized(args.token);
+  final tempPath = await appPath.tempPath;
+  final prefix = 'backup$uniqueId';
   return writeBackupArchive(
     configMap: args.configMap,
     fileNames: args.fileNames,
     databasePath: await appPath.databasePath,
     profilesDirPath: await appPath.profilesPath,
     scriptsDirPath: await appPath.scriptsDirPath,
-    zipFilePath: await appPath.tempFilePath,
-    tempDatabasePath: await appPath.tempFilePath,
-    tempConfigPath: await appPath.tempFilePath,
+    zipFilePath: join(tempPath, '$prefix.zip'),
+    tempDatabasePath: join(tempPath, '$prefix.db'),
+    tempConfigPath: join(tempPath, '$prefix.json'),
   );
 }
 

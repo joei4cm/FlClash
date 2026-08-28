@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:ffi/ffi.dart';
+import 'package:fl_clash/common/boot_record.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/common/system_dns.dart';
 import 'package:fl_clash/core/desktop/helper_client.dart';
@@ -65,6 +66,11 @@ class System {
     return await app?.didCrashOnPreviousExecution() ?? false;
   }
 
+  Future<AppExitInfo?> lastExitInfo() async {
+    if (!isAndroid) return null;
+    return app?.getLastExitInfo();
+  }
+
   /// Arguments for the `stat` call behind [checkIsAdmin].
   ///
   /// [corePath] is handed to `Process.run` as an argv entry, so it must stay
@@ -112,6 +118,47 @@ class System {
       );
     }
     return true;
+  }
+
+  static const _inheritedAclPermissions =
+      'list,search,add_file,add_subdirectory,delete,delete_child,'
+      'file_inherit,directory_inherit';
+
+  @visibleForTesting
+  static List<String> aclArguments(String homeDirPath, String userName) {
+    return [
+      '-R',
+      '+a',
+      'user:$userName allow $_inheritedAclPermissions',
+      homeDirPath,
+    ];
+  }
+
+  Future<void> grantHomeDirAccess(String homeDirPath) async {
+    if (!isMacOS) {
+      return;
+    }
+    final userName = Platform.environment['USER'];
+    if (userName == null || userName.isEmpty) {
+      return;
+    }
+    try {
+      final result = await runProcess(
+        'chmod',
+        aclArguments(homeDirPath, userName),
+      );
+      if (result.exitCode != 0) {
+        commonPrint.log(
+          'chmod +a exited with ${result.exitCode}: ${result.stderr.toString().trim()}',
+          logLevel: LogLevel.warning,
+        );
+      }
+    } catch (error) {
+      commonPrint.log(
+        'chmod +a failed: ${compactError(error)}',
+        logLevel: LogLevel.warning,
+      );
+    }
   }
 
   static String _shellEscape(String value) {

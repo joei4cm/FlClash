@@ -23,11 +23,11 @@ import 'package:fl_clash/views/proxies/tab.dart';
 import 'package:fl_clash/views/theme.dart';
 import 'package:fl_clash/views/views.dart';
 import 'package:fl_clash/widgets/inherited.dart';
+import 'package:fl_clash/widgets/paged_sheet.dart';
 import 'package:fl_clash/widgets/sheet.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:smooth_sheets/smooth_sheets.dart';
 
 import '../helpers/test_app.dart';
 import '../helpers/test_database_providers.dart';
@@ -432,7 +432,9 @@ void main() {
         ),
         customOverwriteDateProvider(profile.id).overrideWithValue(
           CustomOverwriteDate(
-            proxies: const [Proxy(name: 'DIRECT', type: 'Direct')],
+            loaded: true,
+            proxyNames: const ['DIRECT'],
+            proxyTypes: const {'DIRECT': 'Direct'},
             proxyGroups: proxyGroups,
             proxyProviders: const {'provider'},
             ruleTargets: {
@@ -500,7 +502,7 @@ void main() {
             .update((_) => const Size(500, 1000));
         await tester.tap(find.text('Add'));
         await tester.pumpAndSettle();
-        expect(find.byType(SheetViewport), findsOneWidget);
+        expect(find.byType(PagedSheet), findsOneWidget);
         globalState.navigatorKey.currentState!.pop();
         await tester.pumpAndSettle();
         container
@@ -520,7 +522,7 @@ void main() {
             .update((_) => const Size(500, 1000));
         await tester.tap(find.text('Add'));
         await tester.pumpAndSettle();
-        expect(find.byType(SheetViewport), findsOneWidget);
+        expect(find.byType(PagedSheet), findsOneWidget);
         globalState.navigatorKey.currentState!.pop();
         await tester.pumpAndSettle();
         container

@@ -151,8 +151,37 @@ void main() {
     });
 
     test('scales with width', () {
-      expect(getProfilesColumns(300), 1);
-      expect(getProfilesColumns(600), 2);
+      expect(getProfilesColumns(270), 1);
+      expect(getProfilesColumns(700), 2);
+      expect(getProfilesColumns(1300), 4);
+    });
+
+    test('spacing costs a column at the breakpoint', () {
+      expect(getProfilesColumns(540), 2);
+      expect(getProfilesColumns(540, spacing: 14), 1);
+    });
+
+    test('fits two padded cards near 600px', () {
+      expect(getProfilesColumns(568, spacing: 14), 2);
+    });
+
+    test('every card keeps at least the minimum width', () {
+      const spacing = 14.0;
+      for (var viewWidth = 200.0; viewWidth <= 4000; viewWidth += 1) {
+        final columns = getProfilesColumns(viewWidth, spacing: spacing);
+        if (columns == 1) continue;
+        final itemWidth = (viewWidth + spacing) / columns - spacing;
+        expect(
+          itemWidth,
+          greaterThanOrEqualTo(profileItemMinWidth),
+          reason: 'viewWidth $viewWidth gave $columns columns',
+        );
+      }
+    });
+
+    test('a larger minimum yields fewer columns', () {
+      expect(getProfilesColumns(1000, minItemWidth: 320), 3);
+      expect(getProfilesColumns(1000, minItemWidth: 480), 2);
     });
   });
 

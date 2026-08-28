@@ -1,6 +1,6 @@
 import 'package:emoji_regex/emoji_regex.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../state.dart';
 
@@ -28,6 +28,26 @@ class TooltipText extends StatelessWidget {
         }
         return text;
       },
+    );
+  }
+}
+
+class TooltipLabel extends StatelessWidget {
+  final String text;
+  final TextStyle? style;
+  final int maxLines;
+
+  const TooltipLabel(this.text, {super.key, this.style, this.maxLines = 2});
+
+  @override
+  Widget build(BuildContext context) {
+    return TooltipText(
+      text: Text(
+        text,
+        maxLines: maxLines,
+        overflow: TextOverflow.ellipsis,
+        style: DefaultTextStyle.of(context).style.merge(style),
+      ),
     );
   }
 }

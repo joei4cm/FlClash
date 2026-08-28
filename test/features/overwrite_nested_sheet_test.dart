@@ -5,7 +5,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -42,6 +42,16 @@ class _ProbeForm extends ConsumerWidget {
                 });
               },
               child: const Text('mutate'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  PagedSheetRoute(
+                    builder: (_) => const Center(child: Text('nested page')),
+                  ),
+                );
+              },
+              child: const Text('open nested'),
             ),
           ],
         ),
@@ -121,6 +131,25 @@ void main() {
 
     expect(harness.saveCalls, 0);
     expect(find.byType(OverwriteNestedSheet<ProxyGroup>), findsNothing);
+  });
+
+  testWidgets('system back pops a nested page before closing the sheet', (
+    tester,
+  ) async {
+    final harness = _NestedSheetHarness();
+    await harness.pump(tester);
+
+    await tester.ensureVisible(find.text('open nested'));
+    await tester.tap(find.text('open nested'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('nested page'), findsOneWidget);
+
+    await harness.closeBySystemBack(tester);
+
+    expect(find.text('nested page'), findsNothing);
+    expect(find.byType(OverwriteNestedSheet<ProxyGroup>), findsOneWidget);
+    expect(harness.saveCalls, 0);
   });
 
   testWidgets('closing with changes saves after confirmation', (tester) async {

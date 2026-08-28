@@ -1,7 +1,7 @@
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/widgets/sheet.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PageActivityScope extends InheritedWidget {
@@ -23,6 +23,33 @@ class PageActivityScope extends InheritedWidget {
   @override
   bool updateShouldNotify(PageActivityScope oldWidget) {
     return isActive != oldWidget.isActive;
+  }
+}
+
+const double _floatingActionButtonHeight = 56;
+
+class BottomInsetScope extends InheritedWidget {
+  static const double floatingActionButtonInset =
+      kFloatingActionButtonMargin + _floatingActionButtonHeight;
+
+  final double inset;
+
+  const BottomInsetScope({
+    super.key,
+    required this.inset,
+    required super.child,
+  });
+
+  static double of(BuildContext context) {
+    return context
+            .dependOnInheritedWidgetOfExactType<BottomInsetScope>()
+            ?.inset ??
+        0;
+  }
+
+  @override
+  bool updateShouldNotify(BottomInsetScope oldWidget) {
+    return inset != oldWidget.inset;
   }
 }
 

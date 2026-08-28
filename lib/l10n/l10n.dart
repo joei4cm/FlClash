@@ -59,6 +59,11 @@ class AppLocalizations {
     return Intl.message('Rule', name: 'rule', desc: '', args: []);
   }
 
+  /// `Rules`
+  String get rules {
+    return Intl.message('Rules', name: 'rules', desc: '', args: []);
+  }
+
   /// `Global`
   String get global {
     return Intl.message('Global', name: 'global', desc: '', args: []);
@@ -172,6 +177,36 @@ class AppLocalizations {
   /// `Download`
   String get download {
     return Intl.message('Download', name: 'download', desc: '', args: []);
+  }
+
+  /// `Used traffic`
+  String get usedTraffic {
+    return Intl.message(
+      'Used traffic',
+      name: 'usedTraffic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total traffic`
+  String get totalTraffic {
+    return Intl.message(
+      'Total traffic',
+      name: 'totalTraffic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expiration time`
+  String get expireTime {
+    return Intl.message(
+      'Expiration time',
+      name: 'expireTime',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `No profile, Please add a profile`
@@ -1589,11 +1624,11 @@ class AppLocalizations {
     );
   }
 
-  /// `Rule providers`
-  String get ruleProviders {
+  /// `Subscription info`
+  String get subscriptionInfo {
     return Intl.message(
-      'Rule providers',
-      name: 'ruleProviders',
+      'Subscription info',
+      name: 'subscriptionInfo',
       desc: '',
       args: [],
     );
@@ -2464,11 +2499,31 @@ class AppLocalizations {
     );
   }
 
-  /// `The app crashed during the previous run. To prevent repeated crashes, the current profile has been cleared and automatic configuration setup was skipped.`
-  String get crashDetectedTip {
+  /// `The app failed to finish launching twice in a row. To break the loop, the profile {name} has been deselected and automatic setup was skipped. You can select it again at any time.`
+  String crashDetectedTip(Object name) {
     return Intl.message(
-      'The app crashed during the previous run. To prevent repeated crashes, the current profile has been cleared and automatic configuration setup was skipped.',
+      'The app failed to finish launching twice in a row. To break the loop, the profile $name has been deselected and automatic setup was skipped. You can select it again at any time.',
       name: 'crashDetectedTip',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Launch did not finish`
+  String get launchInterrupted {
+    return Intl.message(
+      'Launch did not finish',
+      name: 'launchInterrupted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The app exited unexpectedly while it was starting up last time. Automatic setup was skipped for this launch; you can start it manually to retry.`
+  String get launchInterruptedTip {
+    return Intl.message(
+      'The app exited unexpectedly while it was starting up last time. Automatic setup was skipped for this launch; you can start it manually to retry.',
+      name: 'launchInterruptedTip',
       desc: '',
       args: [],
     );
@@ -4314,10 +4369,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Affected by the system, this status may not always be accurate.`
+  /// `Due to system limitations, battery optimization status cannot be accurately retrieved while running.`
   String get batteryOptimizationStatusTip {
     return Intl.message(
-      'Affected by the system, this status may not always be accurate.',
+      'Due to system limitations, battery optimization status cannot be accurately retrieved while running.',
       name: 'batteryOptimizationStatusTip',
       desc: '',
       args: [],
@@ -4524,6 +4579,30 @@ class AppLocalizations {
     return Intl.message(
       '$count entries',
       name: 'entriesCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count, plural, =1{1 proxy} other{{count} proxies}}`
+  String proxiesCount(num count) {
+    return Intl.plural(
+      count,
+      one: '1 proxy',
+      other: '$count proxies',
+      name: 'proxiesCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count, plural, =1{1 rule} other{{count} rules}}`
+  String rulesCount(num count) {
+    return Intl.plural(
+      count,
+      one: '1 rule',
+      other: '$count rules',
+      name: 'rulesCount',
       desc: '',
       args: [count],
     );

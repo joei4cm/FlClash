@@ -9,7 +9,7 @@ import 'package:fl_clash/database/database.dart' as db;
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
@@ -71,8 +71,8 @@ void main() {
       writeFile(join(profiles.path, '2.yaml'), 'drop');
       writeFile(join(scripts.path, '10.js'), 'keep');
       writeFile(join(scripts.path, '20.js'), 'drop');
-      writeFile(join(providers.path, '1'), 'keep');
-      writeFile(join(providers.path, '2'), 'drop');
+      writeFile(join(providers.path, '1', 'proxies', 'abc'), 'keep');
+      writeFile(join(providers.path, '2', 'proxies', 'abc'), 'drop');
 
       final orphans = shakeOrphanFiles(
         profileIds: [1],
@@ -83,6 +83,33 @@ void main() {
       );
 
       expect(orphans.map(basename), unorderedEquals(['2.yaml', '20.js', '2']));
+      expect(
+        orphans.singleWhere((path) => basename(path) == '2'),
+        join(providers.path, '2'),
+      );
+    });
+
+    test('reports the whole provider directory a dead profile left behind', () {
+      final providers = makeDir('providers');
+      writeFile(join(providers.path, '3', 'proxies', 'abc'), 'drop');
+      writeFile(join(providers.path, '3', 'rules', 'def'), 'drop');
+      writeFile(join(providers.path, 'stray'), 'drop');
+
+      final orphans = shakeOrphanFiles(
+        profileIds: const [],
+        scriptIds: const [],
+        profilesDirPath: join(root.path, 'missing'),
+        providersDirPath: providers.path,
+        scriptsDirPath: join(root.path, 'missing'),
+      );
+
+      expect(
+        orphans,
+        unorderedEquals([
+          join(providers.path, '3'),
+          join(providers.path, 'stray'),
+        ]),
+      );
     });
 
     test('treats an unparsable file name as an orphan', () {

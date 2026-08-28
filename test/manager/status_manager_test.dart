@@ -2,7 +2,7 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/manager/status_manager.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/app.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/test_app.dart';
@@ -391,7 +391,7 @@ void main() {
     );
 
     await tester.pump(const Duration(seconds: 3));
-    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump(const Duration(milliseconds: 500));
     expect(
       find.text('held while the finger stays down on the card'),
       findsNothing,
@@ -431,7 +431,7 @@ void main() {
     await gesture.up();
     await tester.pumpAndSettle();
     await tester.pump(const Duration(seconds: 3));
-    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump(const Duration(milliseconds: 500));
     expect(
       find.text('the newer message that would expire first'),
       findsNothing,

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
@@ -6,7 +7,8 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/profiles/overwrite/overwrite.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,16 +33,11 @@ class _ProfilesViewState extends ConsumerState<ProfilesView> {
   }
 
   void _handleShowAddExtendPage() {
-    showExtend(
-      globalState.navigatorKey.currentState!.context,
-      builder: (_) {
-        return AdaptiveSheetScaffold(
-          body: AddProfileView(
-            context: globalState.navigatorKey.currentState!.context,
-          ),
-          title: context.appLocalizations.addProfile,
-        );
-      },
+    final context = globalState.navigatorKey.currentState!.context;
+    showAdaptivePage(
+      context,
+      title: context.appLocalizations.addProfile,
+      bodyBuilder: (context) => AddProfileView(context: context),
     );
   }
 
@@ -60,7 +57,7 @@ class _ProfilesViewState extends ConsumerState<ProfilesView> {
         messages.add(
           UpdatingMessage(
             label: profile.realLabel,
-            message: networkErrorMessage(e, appLocalizations) ?? e.toString(),
+            message: userFacingErrorMessage(e, appLocalizations),
           ),
         );
       }
@@ -155,36 +152,31 @@ class _ProfilesGrid extends ConsumerWidget {
       builder: (_, constraints) {
         final columns = getProfilesColumns(
           constraints.maxWidth - _horizontalPadding * 2,
+          spacing: spacing,
+          minItemWidth: profileItemMinWidth.ap,
         );
-        return Align(
-          alignment: Alignment.topCenter,
-          child: SingleChildScrollView(
-            key: profilesStoreKey,
-            padding: const EdgeInsets.only(
-              left: _horizontalPadding,
-              right: _horizontalPadding,
-              top: 16,
-              bottom: 88,
-            ),
-            child: Grid(
-              mainAxisSpacing: spacing,
-              crossAxisSpacing: spacing,
-              crossAxisCount: columns,
-              children: [
-                for (final profile in profiles)
-                  GridItem(
-                    child: ProfileItem(
-                      profile: profile,
-                      groupValue: currentProfileId,
-                      onChanged: (profileId) {
-                        ref.read(currentProfileIdProvider.notifier).value =
-                            profileId;
-                      },
-                    ),
-                  ),
-              ],
-            ),
+        return MasonryGridView.count(
+          key: profilesStoreKey,
+          padding: EdgeInsets.only(
+            left: _horizontalPadding,
+            right: _horizontalPadding,
+            top: 16,
+            bottom: 16 + BottomInsetScope.of(context),
           ),
+          crossAxisCount: columns,
+          mainAxisSpacing: spacing,
+          crossAxisSpacing: spacing,
+          itemCount: profiles.length,
+          itemBuilder: (context, index) {
+            final profile = profiles[index];
+            return ProfileItem(
+              profile: profile,
+              groupValue: currentProfileId,
+              onChanged: (profileId) {
+                ref.read(currentProfileIdProvider.notifier).value = profileId;
+              },
+            );
+          },
         );
       },
     );
@@ -224,6 +216,34 @@ class ProfileItem extends ConsumerWidget {
     );
   }
 
+  void _handleShowSubscriptionInfo(BuildContext context) {
+    unawaited(
+      dialogs.showCommonDialog<void>(
+        context: context,
+        child: Builder(
+          builder: (context) {
+            return CommonDialog(
+              backgroundColor: context.colorScheme.surfaceContainerLow,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              title: context.appLocalizations.subscriptionInfo,
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(context.appLocalizations.confirm),
+                ),
+              ],
+              child: SubscriptionInfoDetailView(
+                subscriptionInfo: profile.subscriptionInfo!,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   Future updateProfile(WidgetRef ref) async {
     if (profile.type == ProfileType.file) return;
     await globalState.loadingRun(() async {
@@ -234,36 +254,33 @@ class ProfileItem extends ConsumerWidget {
   }
 
   void _handleShowEditExtendPage(BuildContext context) {
-    showExtend(
+    showAdaptivePage(
       context,
-      builder: (_) {
-        return AdaptiveSheetScaffold(
-          body: EditProfileView(profile: profile, context: context),
-          title: context.appLocalizations.edit,
-        );
-      },
+      title: context.appLocalizations.edit,
+      bodyBuilder: (context) =>
+          EditProfileView(profile: profile, context: context),
     );
   }
 
   List<Widget> _buildUrlProfileInfo(BuildContext context) {
     final subscriptionInfo = profile.subscriptionInfo;
     return [
-      const SizedBox(height: 8),
-      if (subscriptionInfo != null)
+      if (subscriptionInfo != null && subscriptionInfo.total > 0) ...[
         SubscriptionInfoView(subscriptionInfo: subscriptionInfo),
+        const SizedBox(height: 6),
+      ],
       LastUpdateTimeText(
         lastUpdateDate: profile.lastUpdateDate,
-        style: context.textTheme.labelMedium?.toLighter,
+        style: context.textTheme.bodySmall?.toLighter,
       ),
     ];
   }
 
   List<Widget> _buildFileProfileInfo(BuildContext context) {
     return [
-      const SizedBox(height: 8),
       LastUpdateTimeText(
         lastUpdateDate: profile.lastUpdateDate,
-        style: context.textTheme.labelMedium?.toLight,
+        style: context.textTheme.bodySmall?.toLighter,
       ),
     ];
   }
@@ -304,6 +321,9 @@ class ProfileItem extends ConsumerWidget {
   List<CommonPopupMenuItem> _menuItems(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
     final isUrl = profile.type == ProfileType.url;
+    final subscriptionInfo = profile.subscriptionInfo;
+    final hasSubscriptionInfo =
+        isUrl && subscriptionInfo != null && subscriptionInfo.total > 0;
     return [
       CommonPopupMenuItem(
         icon: Icons.edit_outlined,
@@ -319,6 +339,14 @@ class ProfileItem extends ConsumerWidget {
           _handlePreview(context);
         },
       ),
+      if (hasSubscriptionInfo)
+        CommonPopupMenuItem(
+          icon: Icons.data_usage,
+          label: appLocalizations.subscriptionInfo,
+          onPressed: () {
+            _handleShowSubscriptionInfo(context);
+          },
+        ),
       if (isUrl)
         CommonPopupMenuItem(
           icon: Icons.sync_alt_sharp,
@@ -370,14 +398,16 @@ class ProfileItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return CommonCard(
       enterActionsOnRight: true,
+      radius: AppCorner.xl,
       isSelected: profile.id == groupValue,
       onPressed: () {
         onChanged(profile.id);
       },
       child: ListItem(
         key: Key(profile.id.toString()),
-        horizontalTitleGap: 16,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        horizontalTitleGap: 8,
+        minVerticalPadding: 12,
+        padding: const EdgeInsets.only(left: 16, right: 6),
         trailing: SizedBox(
           height: 40,
           width: 40,
@@ -387,6 +417,7 @@ class ProfileItem extends ConsumerWidget {
                 isUpdatingProvider(profile.updatingKey),
               );
               return FadeThroughBox(
+                alignment: Alignment.center,
                 child: isUpdating
                     ? const Padding(
                         key: ValueKey('loading'),
@@ -399,6 +430,10 @@ class ProfileItem extends ConsumerWidget {
                             CommonPopupMenu(items: _menuItems(context, ref)),
                         targetBuilder: (open) {
                           return IconButton(
+                            style: IconButton.styleFrom(
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              visualDensity: VisualDensity.standard,
+                            ),
                             tooltip: context.appLocalizations.more,
                             onPressed: () {
                               open();
@@ -418,7 +453,7 @@ class ProfileItem extends ConsumerWidget {
             ProfileType.url => _buildUrlProfileInfo(context),
           },
         ),
-        tileTitleAlignment: ListTileTitleAlignment.titleHeight,
+        tileTitleAlignment: ListTileTitleAlignment.top,
       ),
     );
   }
@@ -432,26 +467,19 @@ class _ProfileCardTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            profile.realLabel,
-            style: context.textTheme.titleMedium,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: info,
-          ),
-        ],
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          profile.realLabel,
+          style: context.textTheme.titleMedium,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 6),
+        ...info,
+      ],
     );
   }
 }

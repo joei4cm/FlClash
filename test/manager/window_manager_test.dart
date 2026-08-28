@@ -5,7 +5,7 @@ import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/manager/window_manager.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -63,6 +63,9 @@ void main() {
               'height': bounds.height,
             };
           }
+          if (call.method == 'isMaximized' || call.method == 'isAlwaysOnTop') {
+            return false;
+          }
           return null;
         });
   });
@@ -99,6 +102,17 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(_RecordingSystemAction.calls, ['close']);
+  });
+
+  testWidgets('a terminate request is delegated to the system action', (
+    tester,
+  ) async {
+    final listener = await pumpWindowManager(tester);
+
+    listener.onWindowShouldTerminate();
+    await tester.pumpAndSettle();
+
+    expect(_RecordingSystemAction.calls, ['exit']);
   });
 
   testWidgets('moving the window records its new position', (tester) async {
@@ -176,13 +190,15 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: const MaterialApp(
-            home: WindowHeaderContainer(child: Text('body')),
+          child: const TestApp(
+            includeNavigatorKey: false,
+            child: WindowHeaderContainer(child: Text('body')),
           ),
         ),
       );
       await tester.pump();
 
+      expect(tester.takeException(), isNull);
       expect(find.text('body'), findsOneWidget);
     });
   });
