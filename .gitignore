@@ -69,6 +69,7 @@ docs/
 /env.json
 /core_sha256.json
 /plugins/rust_api/.claude/
+/issue-triage/
 devtools_options.yaml
 
 # FVM Version Cache

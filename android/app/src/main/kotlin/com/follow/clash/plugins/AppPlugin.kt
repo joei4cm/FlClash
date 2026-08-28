@@ -123,22 +123,16 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                 }
             }
 
-            "getPackages" -> {
-                scope.launch(Dispatchers.IO) {
-                    result.success(gson.toJson(packageResolver.installedPackages))
-                }
+            "getPackages" -> reply(result) {
+                gson.toJson(packageResolver.installedPackages)
             }
 
-            "getChinaPackageNames" -> {
-                scope.launch(Dispatchers.IO) {
-                    result.success(gson.toJson(packageResolver.getChinaPackageNames()))
-                }
+            "getChinaPackageNames" -> reply(result) {
+                gson.toJson(packageResolver.getChinaPackageNames())
             }
 
-            "isInstalledAppsPermissionGranted" -> {
-                scope.launch(Dispatchers.IO) {
-                    result.success(packageResolver.hasInstalledAppsPermission())
-                }
+            "isInstalledAppsPermissionGranted" -> reply(result) {
+                packageResolver.hasInstalledAppsPermission()
             }
 
             "requestInstalledAppsPermission" -> {
@@ -167,16 +161,12 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                 result.success(openAppSettings())
             }
 
-            "didCrashOnPreviousExecution" -> {
-                scope.launch(Dispatchers.IO) {
-                    result.success(GlobalState.didCrashOnPreviousExecution())
-                }
+            "didCrashOnPreviousExecution" -> reply(result) {
+                GlobalState.didCrashOnPreviousExecution()
             }
 
-            "getLastExitInfo" -> {
-                scope.launch(Dispatchers.IO) {
-                    result.success(GlobalState.lastExitInfo())
-                }
+            "getLastExitInfo" -> reply(result) {
+                GlobalState.lastExitInfo()
             }
 
             else -> {
@@ -185,15 +175,21 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         }
     }
 
-    private fun handleGetPackageIcon(call: MethodCall, result: Result) {
-        scope.launch {
-            val packageName = call.argument<String>("packageName")
-            if (packageName == null) {
-                result.success("")
-                return@launch
+    private fun handleGetPackageIcon(call: MethodCall, result: Result) = reply(result) {
+        val packageName = call.argument<String>("packageName") ?: return@reply ""
+        GlobalState.application.packageManager.getPackageIconPath(packageName)
+    }
+
+    // A throw inside the plugin scope has no handler and ends the process;
+    // the Dart caller gets a PlatformException to handle instead.
+    private fun reply(result: Result, block: suspend () -> Any?) {
+        scope.launch(Dispatchers.IO) {
+            try {
+                result.success(block())
+            } catch (error: Exception) {
+                GlobalState.log("Platform call failed: $error")
+                result.error("PLATFORM_ERROR", error.toString(), null)
             }
-            val path = GlobalState.application.packageManager.getPackageIconPath(packageName)
-            result.success(path)
         }
     }
 

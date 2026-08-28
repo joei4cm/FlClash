@@ -7,6 +7,7 @@ public class WifiSsidPlugin: NSObject, FlutterPlugin, CLLocationManagerDelegate 
 
     private let locationManager = CLLocationManager()
     private let wifiClient = CWWiFiClient.shared()
+    private let ssidQueue = DispatchQueue(label: "com.follow.clash.wifi_ssid")
     private var pendingPermissionResult: FlutterResult?
 
     private enum Method {
@@ -98,6 +99,18 @@ public class WifiSsidPlugin: NSObject, FlutterPlugin, CLLocationManagerDelegate 
     // MARK: - SSID
 
     private func getSsid(result: @escaping FlutterResult) {
-        result(wifiClient.interface()?.ssid())
+        // CoreWLAN reaches wifid over XPC, so a wedged daemon would hold the
+        // platform thread and freeze the window until it answers.
+        guard mapAuthStatus(locationManager.authorizationStatus) == .granted else {
+            result(nil)
+            return
+        }
+        let client = wifiClient
+        ssidQueue.async {
+            let ssid = client.interface()?.ssid()
+            DispatchQueue.main.async {
+                result(ssid)
+            }
+        }
     }
 }

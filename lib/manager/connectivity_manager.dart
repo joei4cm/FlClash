@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/providers/app.dart';
+import 'package:fl_clash/providers/config.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wifi_ssid/wifi_ssid.dart';
@@ -35,6 +36,7 @@ class _ConnectivityManagerState extends ConsumerState<ConnectivityManager> {
       widget.readSsid ?? WifiSsidManager.instance.getSsid;
 
   int _ssidRequestId = 0;
+  bool _onWifi = false;
 
   @override
   void initState() {
@@ -42,16 +44,27 @@ class _ConnectivityManagerState extends ConsumerState<ConnectivityManager> {
     final stream =
         widget.connectivityStream ?? Connectivity().onConnectivityChanged;
     subscription = stream.listen(_handleResults);
+    ref.listenManual(excludeSSIDsProvider.select((state) => state.isNotEmpty), (
+      previous,
+      next,
+    ) {
+      if (previous != next) {
+        unawaited(_updateSsid());
+      }
+    });
   }
 
   void _handleResults(List<ConnectivityResult> results) {
-    unawaited(_updateSsid(results.contains(ConnectivityResult.wifi)));
+    _onWifi = results.contains(ConnectivityResult.wifi);
+    unawaited(_updateSsid());
     widget.onConnectivityChanged?.call(results);
   }
 
-  Future<void> _updateSsid(bool onWifi) async {
+  Future<void> _updateSsid() async {
     final requestId = ++_ssidRequestId;
-    if (!onWifi) {
+    // The SSID costs a blocking platform call and a location permission on
+    // Android and macOS, and nothing reads it until a network is excluded.
+    if (!_onWifi || ref.read(excludeSSIDsProvider).isEmpty) {
       _publishSsid(requestId, null);
       return;
     }

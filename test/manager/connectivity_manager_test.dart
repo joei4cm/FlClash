@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fl_clash/manager/connectivity_manager.dart';
 import 'package:fl_clash/providers/app.dart';
+import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/state.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,10 +24,16 @@ void main() {
     container.dispose();
   });
 
+  Future<void> excludeNetworks(List<String> ssids) async {
+    container.read(excludeSSIDsProvider.notifier).value = ssids;
+    await Future<void>.value();
+  }
+
   Future<void> pumpManager(
     WidgetTester tester, {
     required SsidReader readSsid,
     void Function(List<ConnectivityResult>)? onConnectivityChanged,
+    List<String> excludeSSIDs = const ['Home'],
   }) async {
     await tester.pumpWidget(
       UncontrolledProviderScope(
@@ -39,6 +46,7 @@ void main() {
         ),
       ),
     );
+    await excludeNetworks(excludeSSIDs);
   }
 
   String? currentSsid() => container.read(currentSSIDProvider);
@@ -77,6 +85,68 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(reads, 0);
+  });
+
+  testWidgets('does not read the SSID while no network is excluded', (
+    tester,
+  ) async {
+    var reads = 0;
+    await pumpManager(
+      tester,
+      excludeSSIDs: const [],
+      readSsid: () async {
+        reads++;
+        return 'Home';
+      },
+    );
+
+    connectivity.add([ConnectivityResult.wifi]);
+    await tester.pumpAndSettle();
+
+    expect(reads, 0);
+    expect(currentSsid(), isNull);
+  });
+
+  testWidgets('reads the SSID as soon as the first network is excluded', (
+    tester,
+  ) async {
+    await pumpManager(
+      tester,
+      excludeSSIDs: const [],
+      readSsid: () async => 'Home',
+    );
+
+    connectivity.add([ConnectivityResult.wifi]);
+    await tester.pumpAndSettle();
+    expect(currentSsid(), isNull);
+
+    await excludeNetworks(const ['Office']);
+    await tester.pumpAndSettle();
+
+    expect(currentSsid(), 'Home');
+  });
+
+  testWidgets('drops the SSID when the last excluded network is removed', (
+    tester,
+  ) async {
+    var reads = 0;
+    await pumpManager(
+      tester,
+      readSsid: () async {
+        reads++;
+        return 'Home';
+      },
+    );
+
+    connectivity.add([ConnectivityResult.wifi]);
+    await tester.pumpAndSettle();
+    expect(currentSsid(), 'Home');
+
+    await excludeNetworks(const []);
+    await tester.pumpAndSettle();
+
+    expect(currentSsid(), isNull);
+    expect(reads, 1, reason: 'clearing the list must not re-read the SSID');
   });
 
   testWidgets('a failing native read does not escape as an unhandled error', (

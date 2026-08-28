@@ -29,7 +29,8 @@ object Core {
     fun startTun(
         fd: Int,
         protect: (Int) -> Boolean,
-        resolverProcess: (protocol: Int, source: InetSocketAddress, target: InetSocketAddress, uid: Int) -> String,
+        resolveUid: (protocol: Int, source: InetSocketAddress, target: InetSocketAddress) -> Int,
+        resolvePackage: (uid: Int) -> String,
         stack: String,
         address: String,
         dns: String,
@@ -39,19 +40,19 @@ object Core {
             object : TunInterface {
                 override fun protect(fd: Int): Boolean = protect(fd)
 
-                override fun resolverProcess(
+                override fun resolveUid(
                     protocol: Int,
                     source: String,
                     target: String,
-                    uid: Int,
-                ): String {
-                    return resolverProcess(
+                ): Int {
+                    return resolveUid(
                         protocol,
                         parseInetSocketAddress(source),
                         parseInetSocketAddress(target),
-                        uid,
                     )
                 }
+
+                override fun resolvePackage(uid: Int): String = resolvePackage(uid)
             },
             stack,
             address,

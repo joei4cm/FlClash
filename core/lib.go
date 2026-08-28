@@ -113,25 +113,31 @@ func (th *TunHandler) handleProtect(fd int) error {
 	return nil
 }
 
-func (th *TunHandler) handleResolveProcess(source, target net.Addr) string {
+func (th *TunHandler) handleResolveProcess(source, target net.Addr) (int, string) {
 	th.mu.RLock()
 	defer th.mu.RUnlock()
 
-	if th.listener == nil {
-		return ""
+	// A released callback is a null jobject, and JNI aborts on a call through one.
+	if th.listener == nil || th.callback == nil {
+		return -1, ""
 	}
 	var protocol int
-	uid := -1
 	switch source.Network() {
 	case "udp", "udp4", "udp6":
 		protocol = syscall.IPPROTO_UDP
 	case "tcp", "tcp4", "tcp6":
 		protocol = syscall.IPPROTO_TCP
 	}
+	var uid int
 	if sdkVersion.Load() < 29 {
 		uid = platform.QuerySocketUidFromProcFs(source, target)
+	} else {
+		uid = resolveUid(th.callback, protocol, source.String(), target.String())
 	}
-	return resolveProcess(th.callback, protocol, source.String(), target.String(), uid)
+	if uid < 0 {
+		return -1, ""
+	}
+	return uid, resolvePackage(th.callback, uid)
 }
 
 var (
@@ -166,7 +172,12 @@ func installHooks() {
 			if src == nil || dst == nil {
 				return "", process.ErrInvalidNetwork
 			}
-			return th.handleResolveProcess(src, dst), nil
+			// Everywhere else mihomo fills Uid from its own procfs lookup, the one Android took away.
+			uid, packageName := th.handleResolveProcess(src, dst)
+			if uid >= 0 {
+				metadata.Uid = uint32(uid)
+			}
+			return packageName, nil
 		}
 	})
 }

@@ -146,8 +146,13 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
   from a `pthread_key` destructor at thread death. Do not restore a detach-per-call: `protect` runs once per outbound
   socket and `onResult` once per event batch, and attach/detach takes ART's thread-list lock each time.
 - Every JNI call into Kotlin must be followed by `jni_clear_exception`. A pending exception left in place aborts the
-  process on the next JNI call on that thread, so a throw in `protect`/`resolverProcess`/`onResult` becomes a crash in
-  unrelated code.
+  process on the next JNI call on that thread, so a throw in `protect`/`resolveUid`/`resolvePackage`/`onResult` becomes a
+  crash in unrelated code. For the same reason every one of those wrappers checks its `tun_interface`/`invoke_interface`
+  for `nullptr` first: ART aborts on a call through a null object, and a callback released by `TunHandler.clear` while a
+  connection is still resolving is exactly that.
+- The Android bridge resolves an owner in two steps — `resolve_uid` then `resolve_package` — because mihomo fills
+  `metadata.Uid` from a procfs lookup that Android Q closed off. Collapsing them back into one call that returns only a
+  package name is what left every connection reporting uid 0, so `UID` rules matched nothing.
 - The desktop delivery path in `core/server.go` must not report failures through `logError`. A log event is published to
   the log subscriber, batched, and handed back to `send`, so a send failure reported that way feeds itself; use
   `logDeliveryError`, which writes to stderr and latches until a frame gets through or the next connection is installed.
@@ -249,6 +254,14 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
 - Every native `show` returns whether the tray now reflects the payload, and reports `false` instead of showing a broken
   icon. `Tray` caches the payload signature only on `true`, so a rejected `show` is retried by the next update rather
   than suppressed until restart. Any test that mocks the `tray` channel must return `true` from `show`.
+- Reading the Wi-Fi SSID is opt-in work, not ambient state. `ConnectivityManager` reads it only while `excludeSSIDs` is
+  non-empty, because that list is its only consumer through `suspendProvider`, and the read costs a blocking platform
+  call plus a location permission on Android and macOS. A second consumer must widen that gate, not drop it.
+- No `wifi_ssid` implementation may answer `getSsid` on the platform thread. Android resolves through a network callback
+  with a timeout, Linux through `g_task_run_in_thread`, and macOS through `ssidQueue` after checking the location
+  authorization, because CoreWLAN reaches `wifid` over XPC and a wedged daemon would freeze the window. Windows is the
+  outstanding exception: `WlanQueryInterface` still runs inline, since replying off-thread there needs a window-message
+  hop that the plugin API does not provide.
 - The delayed DNS re-check `NetworkObserveModule.onLosing` posts is deliberately left un-deduplicated. The runnable
   re-reads `networkInfos` and does nothing when `onLost` already dropped the network, `updateDns` returns early when the
   resolved list is unchanged, and `stop()` clears the handler queue, so a network that reports `onLosing` repeatedly
