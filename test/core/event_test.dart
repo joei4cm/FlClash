@@ -4,15 +4,30 @@ import 'package:fl_clash/models/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _RecordingListener with CoreEventListener {
-  _RecordingListener({this.onLoadedCallback});
+  _RecordingListener({this.onLoadedCallback, this.throwOnTraffic = false});
 
   final void Function()? onLoadedCallback;
+  final bool throwOnTraffic;
   final List<String> loaded = [];
+  final List<CoreEventType> received = [];
 
   @override
   void onLoaded(String providerName) {
     loaded.add(providerName);
     onLoadedCallback?.call();
+  }
+
+  @override
+  void onTraffic(Map<String, dynamic> snapshot) {
+    if (throwOnTraffic) {
+      throw StateError('boom');
+    }
+    received.add(CoreEventType.traffic);
+  }
+
+  @override
+  void onDelay(Delay delay) {
+    received.add(CoreEventType.delay);
   }
 }
 
@@ -50,4 +65,23 @@ void main() {
       expect(second.loaded, ['provider-a', 'provider-b']);
     },
   );
+
+  test('CoreEventManager keeps dispatching after a listener throws', () async {
+    final listener = _RecordingListener(throwOnTraffic: true);
+    coreEventManager.addListener(listener);
+    addTearDown(() => coreEventManager.removeListener(listener));
+
+    coreEventManager.sendEvent(
+      const CoreEvent(type: CoreEventType.traffic, data: {'up': 1, 'down': 2}),
+    );
+    coreEventManager.sendEvent(
+      const CoreEvent(
+        type: CoreEventType.delay,
+        data: {'url': 'https://example.com', 'name': 'proxy', 'value': 12},
+      ),
+    );
+
+    await pumpEventQueue();
+    expect(listener.received, [CoreEventType.delay]);
+  });
 }

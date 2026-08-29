@@ -63,6 +63,42 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
                 );
               },
             ),
+            CommonPopupMenuItem(
+              icon: Icons.auto_mode,
+              label: appLocalizations.enableAutoSelect,
+              onPressed: () async {
+                final groups = ref.read(groupsProvider);
+                final hasAuto = groups.any(
+                  (group) => group.type.isComputedSelected,
+                );
+                if (!hasAuto) {
+                  final confirmed = await dialogs.showMessage(
+                    title: appLocalizations.enableAutoSelect,
+                    message: TextSpan(
+                      text: appLocalizations.enableAutoSelectCreateTip,
+                    ),
+                  );
+                  if (confirmed != true) {
+                    return;
+                  }
+                }
+                final result = await enableAutoSelectWithContainer(ref);
+                final message = switch (result.message) {
+                  'no_profile' => appLocalizations.nullProfileDesc,
+                  'create_failed' => appLocalizations.enableAutoSelectFailed,
+                  _ when result.enabledExisting =>
+                    appLocalizations.enableAutoSelectRestored(
+                      result.groupName ?? '',
+                    ),
+                  _ when result.createdGroups =>
+                    appLocalizations.enableAutoSelectCreated(
+                      result.groupName ?? '',
+                    ),
+                  _ => appLocalizations.enableAutoSelectFailed,
+                };
+                dialogs.showNotifier(message);
+              },
+            ),
             if (_hasProviders)
               CommonPopupMenuItem(
                 icon: Icons.poll_outlined,

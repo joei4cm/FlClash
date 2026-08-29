@@ -37,6 +37,12 @@ _AppSettingProps _$AppSettingPropsFromJson(Map<String, dynamic> json) =>
       showTrayTitle: json['showTrayTitle'] as bool? ?? true,
       checkCertificate: json['checkCertificate'] as bool? ?? true,
       customUserAgent: json['customUserAgent'] as String? ?? '',
+      autoSelectStickyGeo: json['autoSelectStickyGeo'] as bool? ?? true,
+      autoSelectStickyGeoByGroup:
+          (json['autoSelectStickyGeoByGroup'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, e as String),
+          ) ??
+          const {},
     );
 
 Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
@@ -65,6 +71,8 @@ Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
       'showTrayTitle': instance.showTrayTitle,
       'checkCertificate': instance.checkCertificate,
       'customUserAgent': instance.customUserAgent,
+      'autoSelectStickyGeo': instance.autoSelectStickyGeo,
+      'autoSelectStickyGeoByGroup': instance.autoSelectStickyGeoByGroup,
     };
 
 const _$RestoreStrategyEnumMap = {
@@ -78,6 +86,7 @@ const _$DashboardWidgetEnumMap = {
   DashboardWidget.outboundMode: 'outboundMode',
   DashboardWidget.trafficUsage: 'trafficUsage',
   DashboardWidget.networkDetection: 'networkDetection',
+  DashboardWidget.serviceReachability: 'serviceReachability',
   DashboardWidget.tunButton: 'tunButton',
   DashboardWidget.vpnButton: 'vpnButton',
   DashboardWidget.systemProxyButton: 'systemProxyButton',
@@ -351,6 +360,16 @@ _Config _$ConfigFromJson(Map<String, dynamic> json) => _Config(
           ?.map((e) => e as String)
           .toList() ??
       const [],
+  tailscaleProps: json['tailscaleProps'] == null
+      ? defaultTailscaleProps
+      : TailscaleProps.safeFromJson(
+          json['tailscaleProps'] as Map<String, Object?>?,
+        ),
+  geoIdentityProps: json['geoIdentityProps'] == null
+      ? defaultGeoIdentityProps
+      : GeoIdentityProps.safeFromJson(
+          json['geoIdentityProps'] as Map<String, Object?>?,
+        ),
 );
 
 Map<String, dynamic> _$ConfigToJson(_Config instance) => <String, dynamic>{
@@ -366,4 +385,6 @@ Map<String, dynamic> _$ConfigToJson(_Config instance) => <String, dynamic>{
   'windowProps': instance.windowProps,
   'patchClashConfig': instance.patchClashConfig,
   'excludeSSIDs': instance.excludeSSIDs,
+  'tailscaleProps': instance.tailscaleProps,
+  'geoIdentityProps': instance.geoIdentityProps,
 };

@@ -19,6 +19,23 @@ class ProfilesAction extends _$ProfilesAction {
     }
   }
 
+  /// Clears a manual override so url-test / fallback can pick the node.
+  void clearCurrentSelectedMap(String groupName) {
+    final currentProfile = ref.read(currentProfileProvider);
+    if (currentProfile == null) {
+      return;
+    }
+    final previous = currentProfile.selectedMap[groupName];
+    if (previous == null || previous.isEmpty) {
+      return;
+    }
+    final selectedMap = Map<String, String>.from(currentProfile.selectedMap)
+      ..[groupName] = '';
+    ref
+        .read(profilesProvider.notifier)
+        .put(currentProfile.copyWith(selectedMap: selectedMap));
+  }
+
   Future<void> deleteProfile(int id) async {
     await ref.read(profilesProvider.notifier).del(id);
     await clearEffect(id);

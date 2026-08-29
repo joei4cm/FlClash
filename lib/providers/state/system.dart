@@ -122,6 +122,24 @@ HotKeyAction getHotKeyAction(Ref ref, HotAction hotAction) {
 }
 
 @riverpod
+({bool tunReady, bool autoSetSystemDns}) autoSetSystemDnsState(Ref ref) {
+  final isStart = ref.watch(runTimeProvider.select((state) => state != null));
+  final tunEnable = ref.watch(
+    patchClashConfigProvider.select((state) => state.tun.enable),
+  );
+  final authorizationState = ref.watch(authorizedTunEnableProvider);
+  final autoSetSystemDns = ref.watch(
+    networkSettingProvider.select((state) => state.autoSetSystemDns),
+  );
+  final effectiveTunEnable =
+      tunEnable && authorizationState == TunAuthorizationState.authorized;
+  return (
+    tunReady: isStart ? effectiveTunEnable : false,
+    autoSetSystemDns: autoSetSystemDns,
+  );
+}
+
+@riverpod
 bool shouldPatchSystemDns(Ref ref) {
   final autoSetSystemDns = ref.watch(
     networkSettingProvider.select((state) => state.autoSetSystemDns),

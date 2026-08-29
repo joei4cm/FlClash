@@ -349,6 +349,55 @@ final class CheckIpProvider
 
 String _$checkIpHash() => r'0e28032041d80297dcd12e8d659dbac741874073';
 
+@ProviderFor(autoSetSystemDnsState)
+final autoSetSystemDnsStateProvider = AutoSetSystemDnsStateProvider._();
+
+final class AutoSetSystemDnsStateProvider
+    extends
+        $FunctionalProvider<
+          ({bool autoSetSystemDns, bool tunReady}),
+          ({bool autoSetSystemDns, bool tunReady}),
+          ({bool autoSetSystemDns, bool tunReady})
+        >
+    with $Provider<({bool autoSetSystemDns, bool tunReady})> {
+  AutoSetSystemDnsStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'autoSetSystemDnsStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$autoSetSystemDnsStateHash();
+
+  @$internal
+  @override
+  $ProviderElement<({bool autoSetSystemDns, bool tunReady})> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  ({bool autoSetSystemDns, bool tunReady}) create(Ref ref) {
+    return autoSetSystemDnsState(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(({bool autoSetSystemDns, bool tunReady}) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride:
+          $SyncValueProvider<({bool autoSetSystemDns, bool tunReady})>(value),
+    );
+  }
+}
+
+String _$autoSetSystemDnsStateHash() =>
+    r'946d2425782cbfaed5e98ee4b2bfdbe6979db178';
+
 @ProviderFor(shouldPatchSystemDns)
 final shouldPatchSystemDnsProvider = ShouldPatchSystemDnsProvider._();
 

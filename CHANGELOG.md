@@ -1,5 +1,41 @@
 # Changelog
 
+## v0.8.110 (2026-08-29)
+
+Production sync: rebase the fork onto `upstream/dev`'s architecture (`material_ui`, QuickJS-based scripting,
+core rewrite, platform fixes) while retaining the fork's features on top:
+
+- Tailscale integration (proxies/rules/fake-IP injection, settings UI).
+- Geo identity verification (timezone-aligned identity check).
+- Auto-select geo sticky policy so url-test/fallback groups can stay in a chosen region.
+- Dashboard service-reachability tile (search / social / AI / streaming probes through the current node).
+- Core traffic/connections push path for lower-latency stats.
+- Linux taskbar icon grouping fix on Ubuntu/Debian (`StartupWMClass`).
+- Windows installer icon path fix (`setup_icon_file`).
+
+## v0.8.109
+
+- Fix Linux taskbar icon grouping on Ubuntu/Debian via `StartupWMClass`.
+- Add auto-select geo sticky policy so url-test/fallback can stay in a chosen region.
+- Sync production features onto main (service reachability, auto-select UX, multi-day uptime).
+
+## v0.8.108
+
+- Fix VPN uptime display for multi-day sessions (no more `999:59:59` ceiling; show `Nd HH:MM:SS`).
+- Add dashboard service-reachability tile (search / social / AI / streaming probes through the current node).
+- Show url-test / fallback current node with restore-auto, plus enable-auto-select flow.
+
+## v0.8.107
+
+- Integrate upstream/dev: package icon loading + connections ActivePolling, Windows group delay/RPC fix, commented-policy cleanup.
+- Rebase fork onto upstream/main with performance push path, Tailscale outbounds/bypass, and Geo identity.
+
+## v0.8.106
+
+- Port fork main features onto upstream/dev: performance push path, Tailscale outbounds/bypass, and Geo identity.
+- Add fork-friendly release.yaml workflow.
+- Include delay-test and CoreEventManager dispatch robustness.
+
 ## v0.8.96 (2026-08-17)
 
 **Bug Fixes**

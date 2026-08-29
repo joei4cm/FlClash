@@ -42,6 +42,7 @@ const List<DashboardWidget> defaultDashboardWidgets = [
   DashboardWidget.tunButton,
   DashboardWidget.outboundMode,
   DashboardWidget.networkDetection,
+  DashboardWidget.serviceReachability,
   DashboardWidget.trafficUsage,
   DashboardWidget.intranetIp,
 ];
@@ -87,6 +88,8 @@ abstract class AppSettingProps with _$AppSettingProps {
     @Default(true) bool showTrayTitle,
     @Default(true) bool checkCertificate,
     @Default('') String customUserAgent,
+    @Default(true) bool autoSelectStickyGeo,
+    @Default({}) Map<String, String> autoSelectStickyGeoByGroup,
   }) = _AppSettingProps;
 
   factory AppSettingProps.fromJson(Map<String, Object?> json) =>
@@ -249,6 +252,12 @@ abstract class Config with _$Config {
     @Default(defaultWindowProps) WindowProps windowProps,
     @Default(defaultClashConfig) PatchClashConfig patchClashConfig,
     @Default([]) List<String> excludeSSIDs,
+    @JsonKey(fromJson: TailscaleProps.safeFromJson)
+    @Default(defaultTailscaleProps)
+    TailscaleProps tailscaleProps,
+    @JsonKey(fromJson: GeoIdentityProps.safeFromJson)
+    @Default(defaultGeoIdentityProps)
+    GeoIdentityProps geoIdentityProps,
   }) = _Config;
 
   factory Config.fromJson(Map<String, Object?> json) => _$ConfigFromJson(json);

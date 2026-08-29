@@ -20,63 +20,87 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ja';
 
-  static String m0(name) =>
+  static String m0(node) => "現在のノード：${node}";
+
+  static String m1(node) => "手動上書き：${node}";
+
+  static String m2(region) => "固定地域：${region}";
+
+  static String m3(type) => "自動 · ${type}";
+
+  static String m4(name) =>
       "アプリの起動が 2 回連続で完了しませんでした。繰り返しを断ち切るため、プロファイル ${name} の選択を解除し、設定の自動セットアップをスキップしました。いつでも選択し直せます。";
 
-  static String m1(count) => "${count}日前";
+  static String m5(count) => "${count}日前";
 
-  static String m2(label) => "選択された${label}を削除してもよろしいですか？";
+  static String m6(label) => "選択された${label}を削除してもよろしいですか？";
 
-  static String m3(label) => "現在の${label}を削除してもよろしいですか？";
+  static String m7(label) => "現在の${label}を削除してもよろしいですか？";
 
-  static String m4(label) => "${label}詳細";
+  static String m8(label) => "${label}詳細";
 
-  static String m5(label) => "${label}は空欄にできません";
+  static String m9(label) => "${label}は空欄にできません";
 
-  static String m6(count) => "${count} エントリ";
+  static String m10(group) => "自動グループ ${group} を作成しました。必要ならプロキシで選択してください。";
 
-  static String m7(label) => "現在の${label}は既に存在しています";
+  static String m11(group) => "${group} の自動選択を復元しました";
 
-  static String m8(name) => "${name} はすでに最新です";
+  static String m12(count) => "${count} エントリ";
 
-  static String m9(name) => "${name} 更新済み";
+  static String m13(label) => "現在の${label}は既に存在しています";
 
-  static String m10(count) => "${count}時間前";
+  static String m14(timezone) => "${timezone} に戻す";
 
-  static String m11(count) => "${count} 時間";
+  static String m15(detail) => "OS タイムゾーンを合わせられませんでした（${detail}）";
 
-  static String m12(target) => "${target} は無効なポリシーです";
+  static String m16(timezone) => "OS タイムゾーンを ${timezone} に復元しました";
 
-  static String m13(proxyName) => "${proxyName} は無効なプロキシです";
+  static String m17(name) => "${name} はすでに最新です";
 
-  static String m14(providerName) => "${providerName} は無効なプロキシプロバイダーです";
+  static String m18(name) => "${name} 更新済み";
 
-  static String m15(subRule) => "${subRule} は無効なSUB_RULEです";
+  static String m19(count) => "${count}時間前";
 
-  static String m16(appName) =>
+  static String m20(count) => "${count} 時間";
+
+  static String m21(target) => "${target} は無効なポリシーです";
+
+  static String m22(proxyName) => "${proxyName} は無効なプロキシです";
+
+  static String m23(providerName) => "${providerName} は無効なプロキシプロバイダーです";
+
+  static String m24(subRule) => "${subRule} は無効なSUB_RULEです";
+
+  static String m25(appName) =>
       "1. システム設定 > プライバシーとセキュリティ を開く\n2. 位置情報サービス を選択\n3. 右側のリストで ${appName} を見つけてチェックする\n\n設定が完了したらアプリに戻ると通常どおり使用できます。ご協力ありがとうございます。";
 
-  static String m17(count) => "${count}分前";
+  static String m26(count) => "${count}分前";
 
-  static String m18(count) => "${count}ヶ月前";
+  static String m27(count) => "${count}ヶ月前";
 
-  static String m19(label) => "まだ${label}はありません";
+  static String m28(label) => "まだ${label}はありません";
 
-  static String m20(label) => "${label}は数字でなければなりません";
+  static String m29(label) => "${label}は数字でなければなりません";
 
-  static String m21(label) => "${label} は 1024 から 49151 の間でなければなりません";
+  static String m30(label) => "${label} は 1024 から 49151 の間でなければなりません";
 
-  static String m22(count) => "${count} プロキシ";
+  static String m31(count) => "${count} プロキシ";
 
-  static String m23(count) => "${count} ルール";
+  static String m32(count) => "${count} ルール";
 
-  static String m24(count) => "${count} 秒";
+  static String m33(count) => "${count} 秒";
 
-  static String m25(count) => "${count} 項目が選択されています";
+  static String m34(count) => "${count} 項目が選択されています";
 
-  static String m26(label) => "${label}はURLである必要があります";
+  static String m35(success, fail) => "${success} 到達 · ${fail} 失敗";
 
-  static String m27(count) => "${count}年前";
+  static String m36(count) => "ルーティング先 ${count} 件";
+
+  static String m37(count) => "${count} 個のノードが有効です。ノード横のピンで接続をテストできます。";
+
+  static String m38(label) => "${label}はURLである必要があります";
+
+  static String m39(count) => "${count}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -109,6 +133,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "addProxyProviders": MessageLookupByLibrary.simpleMessage("プロキシプロバイダーを追加"),
     "addRule": MessageLookupByLibrary.simpleMessage("ルールを追加"),
     "addSsid": MessageLookupByLibrary.simpleMessage("SSIDを追加"),
+    "addTailscaleNode": MessageLookupByLibrary.simpleMessage(
+      "Tailscale ノードを追加",
+    ),
     "addWidget": MessageLookupByLibrary.simpleMessage("ウィジェットを追加"),
     "addedRules": MessageLookupByLibrary.simpleMessage("追加ルール"),
     "additionalParameters": MessageLookupByLibrary.simpleMessage("追加パラメータ"),
@@ -143,6 +170,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "autoCloseConnectionsDesc": MessageLookupByLibrary.simpleMessage(
       "ノード変更後に接続を自動閉じる",
     ),
+    "autoGroupCurrent": m0,
+    "autoGroupOverride": m1,
+    "autoGroupStickyRegion": m2,
+    "autoGroupTitle": m3,
     "autoLaunch": MessageLookupByLibrary.simpleMessage("自動起動"),
     "autoLaunchDesc": MessageLookupByLibrary.simpleMessage("システムの自動起動に従う"),
     "autoRun": MessageLookupByLibrary.simpleMessage("自動実行"),
@@ -240,7 +271,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "coreStatus": MessageLookupByLibrary.simpleMessage("コアステータス"),
     "country": MessageLookupByLibrary.simpleMessage("国"),
     "crashDetected": MessageLookupByLibrary.simpleMessage("クラッシュを検出しました"),
-    "crashDetectedTip": m0,
+    "crashDetectedTip": m4,
     "crashTest": MessageLookupByLibrary.simpleMessage("クラッシュテスト"),
     "crashlytics": MessageLookupByLibrary.simpleMessage("クラッシュ分析"),
     "crashlyticsTip": MessageLookupByLibrary.simpleMessage(
@@ -263,7 +294,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "databaseWriteFailedTip": MessageLookupByLibrary.simpleMessage(
       "変更の保存に失敗したため、元に戻しました",
     ),
-    "daysAgo": m1,
+    "daysAgo": m5,
     "defaultNameserver": MessageLookupByLibrary.simpleMessage("デフォルトネームサーバー"),
     "defaultNameserverDesc": MessageLookupByLibrary.simpleMessage(
       "DNSサーバーの解決用",
@@ -272,15 +303,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "delay": MessageLookupByLibrary.simpleMessage("遅延"),
     "delayTest": MessageLookupByLibrary.simpleMessage("遅延テスト"),
     "delete": MessageLookupByLibrary.simpleMessage("削除"),
-    "deleteMultipTip": m2,
-    "deleteTip": m3,
+    "deleteMultipTip": m6,
+    "deleteTip": m7,
     "desc": MessageLookupByLibrary.simpleMessage(
       "ClashMetaベースのマルチプラットフォームプロキシクライアント。シンプルで使いやすく、オープンソースで広告なし。",
     ),
     "destination": MessageLookupByLibrary.simpleMessage("宛先"),
     "destinationGeoIP": MessageLookupByLibrary.simpleMessage("宛先地理情報"),
     "destinationIPASN": MessageLookupByLibrary.simpleMessage("宛先IP ASN"),
-    "details": m4,
+    "details": m8,
     "detectionTip": MessageLookupByLibrary.simpleMessage("サードパーティAPIに依存（参考値）"),
     "developerMode": MessageLookupByLibrary.simpleMessage("デベロッパーモード"),
     "developerModeEnableTip": MessageLookupByLibrary.simpleMessage(
@@ -306,10 +337,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "editProxyGroup": MessageLookupByLibrary.simpleMessage("プロキシグループを編集"),
     "editRule": MessageLookupByLibrary.simpleMessage("ルールを編集"),
     "editSsid": MessageLookupByLibrary.simpleMessage("SSIDを編集"),
-    "emptyTip": m5,
+    "editTailscaleNode": MessageLookupByLibrary.simpleMessage(
+      "Tailscale ノードを編集",
+    ),
+    "emptyTip": m9,
     "en": MessageLookupByLibrary.simpleMessage("英語"),
+    "enableAutoSelect": MessageLookupByLibrary.simpleMessage("自動選択を有効化"),
+    "enableAutoSelectCreateTip": MessageLookupByLibrary.simpleMessage(
+      "url-test/fallback グループがありません。「FlClash Auto」を作成しますか？上書きをカスタムに切り替え、空のカスタム戦略グループを Auto + PROXY で置き換えます（ノードは include-all-proxies で保持）。",
+    ),
+    "enableAutoSelectCreated": m10,
+    "enableAutoSelectFailed": MessageLookupByLibrary.simpleMessage(
+      "自動選択の有効化に失敗しました",
+    ),
+    "enableAutoSelectRestored": m11,
     "entries": MessageLookupByLibrary.simpleMessage(" エントリ"),
-    "entriesCount": m6,
+    "entriesCount": m12,
     "exclude": MessageLookupByLibrary.simpleMessage("最近のタスクから非表示"),
     "excludeDesc": MessageLookupByLibrary.simpleMessage(
       "アプリがバックグラウンド時に最近のタスクから非表示",
@@ -320,7 +363,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "除外した SSID の Wi-Fi に接続すると、アプリの動作状態が自動的に切り替わります。",
     ),
     "excludeType": MessageLookupByLibrary.simpleMessage("除外タイプ"),
-    "existsTip": m7,
+    "existsTip": m13,
     "exit": MessageLookupByLibrary.simpleMessage("終了"),
     "expand": MessageLookupByLibrary.simpleMessage("標準"),
     "expectedStatus": MessageLookupByLibrary.simpleMessage("期待されるステータス"),
@@ -340,6 +383,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fallback": MessageLookupByLibrary.simpleMessage("フォールバック"),
     "fallbackDesc": MessageLookupByLibrary.simpleMessage("通常はオフショアDNSを使用"),
     "fallbackFilter": MessageLookupByLibrary.simpleMessage("フォールバックフィルター"),
+    "features": MessageLookupByLibrary.simpleMessage("機能"),
     "fidelityScheme": MessageLookupByLibrary.simpleMessage("ハイファイデリティー"),
     "file": MessageLookupByLibrary.simpleMessage("ファイル"),
     "fileDesc": MessageLookupByLibrary.simpleMessage("プロファイルを直接アップロード"),
@@ -361,10 +405,101 @@ class MessageLookup extends MessageLookupByLibrary {
     "geoAutoUpdateIntervalTip": MessageLookupByLibrary.simpleMessage(
       "自動更新間隔は0より大きくなければなりません",
     ),
+    "geoIdentity": MessageLookupByLibrary.simpleMessage("地理アイデンティティ"),
+    "geoIdentityCheckCancelled": MessageLookupByLibrary.simpleMessage(
+      "ネットワークチェックがキャンセルされました",
+    ),
+    "geoIdentityCheckFailed": MessageLookupByLibrary.simpleMessage(
+      "ネットワークチェックに失敗",
+    ),
+    "geoIdentityCopyTerminalProxy": MessageLookupByLibrary.simpleMessage(
+      "ターミナル用プロキシ環境変数をコピー",
+    ),
+    "geoIdentityCopyTerminalProxyShort": MessageLookupByLibrary.simpleMessage(
+      "ターミナル用 HTTP(S)_PROXY をコピー",
+    ),
+    "geoIdentityDesc": MessageLookupByLibrary.simpleMessage("スイッチ一つで米国出口を潜伏"),
+    "geoIdentityHideAdvanced": MessageLookupByLibrary.simpleMessage("詳細を隠す"),
+    "geoIdentityHonestyLine": MessageLookupByLibrary.simpleMessage(
+      "出口 IP とプローブ言語を対象にします。ブラウザのフォント/位置情報は GeoMirror が必要で、Claude Code は一致する OS タイムゾーン（および TUN またはプロキシ設定）が必要です。",
+    ),
+    "geoIdentityNeedStart": MessageLookupByLibrary.simpleMessage(
+      "ネットワーク環境を検証する前に FlClash を開始してください。",
+    ),
+    "geoIdentityNetworkBad": MessageLookupByLibrary.simpleMessage(
+      "出口が US ではありません。US ノードを選んでから再確認してください",
+    ),
+    "geoIdentityNetworkExposed": MessageLookupByLibrary.simpleMessage(
+      "ネットワークはまだ露出している可能性",
+    ),
+    "geoIdentityNetworkGood": MessageLookupByLibrary.simpleMessage(
+      "ネットワークは利用可能な状態です",
+    ),
+    "geoIdentityOffStatus": MessageLookupByLibrary.simpleMessage(
+      "地理アイデンティティ保護はオフです",
+    ),
+    "geoIdentityOpenGeoMirror": MessageLookupByLibrary.simpleMessage(
+      "GeoMirror（GitHub）",
+    ),
+    "geoIdentityOpenGeoMirrorShort": MessageLookupByLibrary.simpleMessage(
+      "ブラウザ指紋の整合",
+    ),
+    "geoIdentityPendingCheck": MessageLookupByLibrary.simpleMessage(
+      "保護はオンです。ネットワーク確認待ちです",
+    ),
+    "geoIdentityProtectEnable": MessageLookupByLibrary.simpleMessage(
+      "地理アイデンティティ保護を有効化",
+    ),
+    "geoIdentityProtectToggleDesc": MessageLookupByLibrary.simpleMessage(
+      "通信を取り込み、可能ならデスクトップのタイムゾーンを合わせ、出口を確認します",
+    ),
+    "geoIdentityPurposeBody": MessageLookupByLibrary.simpleMessage(
+      "オンにすると FlClash が通信を取り込み、AI 向けに US 出口かどうかを確認します。ブラウザ指紋は GeoMirror が別途必要な場合があります。",
+    ),
+    "geoIdentityRecheck": MessageLookupByLibrary.simpleMessage("再チェック"),
+    "geoIdentityRestoreOsTimezone": MessageLookupByLibrary.simpleMessage(
+      "以前の OS タイムゾーンを復元",
+    ),
+    "geoIdentityRestoreOsTimezoneDesc": m14,
+    "geoIdentitySetupDoneNeedUsNode": MessageLookupByLibrary.simpleMessage(
+      "設定は適用されましたが、出口はまだ US 保護ではありません。US ノードを選んで再確認してください。",
+    ),
+    "geoIdentitySetupDoneProtected": MessageLookupByLibrary.simpleMessage(
+      "セットアップ完了 — ネットワークは米国保護に見えます。",
+    ),
+    "geoIdentitySetupRunning": MessageLookupByLibrary.simpleMessage(
+      "初心者セットアップを適用中…",
+    ),
+    "geoIdentitySetupStarting": MessageLookupByLibrary.simpleMessage(
+      "FlClash を開始中…",
+    ),
+    "geoIdentitySetupTimezone": MessageLookupByLibrary.simpleMessage(
+      "OS タイムゾーンを合わせています…",
+    ),
+    "geoIdentitySetupVerifying": MessageLookupByLibrary.simpleMessage(
+      "ネットワーク環境を検証中…",
+    ),
+    "geoIdentityShowAdvanced": MessageLookupByLibrary.simpleMessage("詳細を表示"),
+    "geoIdentityTimezone": MessageLookupByLibrary.simpleMessage("システムタイムゾーン"),
+    "geoIdentityTimezoneAlignFailed": m15,
+    "geoIdentityTimezoneAndroidTip": MessageLookupByLibrary.simpleMessage(
+      "Android は root なしではシステムタイムゾーンを変更できません。設定 → システム → 日付と時刻で、出口に合う米国ゾーンを選んでください。",
+    ),
+    "geoIdentityTimezoneMissing": MessageLookupByLibrary.simpleMessage(
+      "出口タイムゾーンがまだありません。先にネットワーク環境を検証してください。",
+    ),
+    "geoIdentityTimezoneNothingToRestore": MessageLookupByLibrary.simpleMessage(
+      "復元できる以前の OS タイムゾーンがありません。",
+    ),
+    "geoIdentityTimezoneRestored": m16,
+    "geoIdentityTurningOff": MessageLookupByLibrary.simpleMessage("オフにしています…"),
+    "geoIdentityUsAcceptLanguage": MessageLookupByLibrary.simpleMessage(
+      "米国 Accept-Language で探査",
+    ),
     "geoOptions": MessageLookupByLibrary.simpleMessage("Geoオプション"),
     "geoResources": MessageLookupByLibrary.simpleMessage("Geoリソース"),
-    "geoSkipped": m8,
-    "geoUpdated": m9,
+    "geoSkipped": m17,
+    "geoUpdated": m18,
     "geodataLoader": MessageLookupByLibrary.simpleMessage("Geo低メモリモード"),
     "geodataLoaderDesc": MessageLookupByLibrary.simpleMessage(
       "有効化するとGeo低メモリローダーを使用",
@@ -374,10 +509,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "go": MessageLookupByLibrary.simpleMessage("移動"),
     "goDownload": MessageLookupByLibrary.simpleMessage("ダウンロードへ"),
     "goToConfigureScript": MessageLookupByLibrary.simpleMessage("スクリプト設定に移動"),
+    "groupTypeFallback": MessageLookupByLibrary.simpleMessage("Fallback"),
+    "groupTypeUrlTest": MessageLookupByLibrary.simpleMessage("URLTest"),
     "hasCacheChange": MessageLookupByLibrary.simpleMessage("変更をキャッシュしますか？"),
     "helperCorruptTip": MessageLookupByLibrary.simpleMessage(
       "Helper サービスが利用できないため、TUN モードを有効にできません。再インストールしてください。",
     ),
+    "hideAdvanced": MessageLookupByLibrary.simpleMessage("詳細設定を隠す"),
     "hideFromList": MessageLookupByLibrary.simpleMessage("リストから隠す"),
     "hidePassword": MessageLookupByLibrary.simpleMessage("パスワードを非表示"),
     "host": MessageLookupByLibrary.simpleMessage("ホスト"),
@@ -388,8 +526,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "キーボードでアプリを制御",
     ),
     "hours": MessageLookupByLibrary.simpleMessage("時間"),
-    "hoursAgo": m10,
-    "hoursCount": m11,
+    "hoursAgo": m19,
+    "hoursCount": m20,
     "icon": MessageLookupByLibrary.simpleMessage("アイコン"),
     "iconRecords": MessageLookupByLibrary.simpleMessage("アイコン履歴"),
     "iconStyle": MessageLookupByLibrary.simpleMessage("アイコンスタイル"),
@@ -431,10 +569,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "interval": MessageLookupByLibrary.simpleMessage("インターバル"),
     "intranetIP": MessageLookupByLibrary.simpleMessage("イントラネットIP"),
     "invalidBackupFile": MessageLookupByLibrary.simpleMessage("無効なバックアップファイル"),
-    "invalidPolicy": m12,
-    "invalidProxy": m13,
-    "invalidProxyProvider": m14,
-    "invalidSubRule": m15,
+    "invalidPolicy": m21,
+    "invalidProxy": m22,
+    "invalidProxyProvider": m23,
+    "invalidSubRule": m24,
     "ipcidr": MessageLookupByLibrary.simpleMessage("IPCIDR"),
     "ipv6Desc": MessageLookupByLibrary.simpleMessage("有効化するとIPv6トラフィックを受信可能"),
     "ipv6InboundDesc": MessageLookupByLibrary.simpleMessage("IPv6インバウンドを許可"),
@@ -463,7 +601,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "locationPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "システムの要件により、Wi-Fi 名を取得するには位置情報の権限を許可する必要があります。",
     ),
-    "locationPermissionGuide": m16,
+    "locationPermissionGuide": m25,
     "locationPermissionRequired": MessageLookupByLibrary.simpleMessage(
       "位置情報の権限が必要です",
     ),
@@ -489,11 +627,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "minimizeOnExitDesc": MessageLookupByLibrary.simpleMessage(
       "システムの終了イベントを変更",
     ),
-    "minutesAgo": m17,
+    "minutesAgo": m26,
     "mixedPort": MessageLookupByLibrary.simpleMessage("混合ポート"),
     "mode": MessageLookupByLibrary.simpleMessage("モード"),
     "monochromeScheme": MessageLookupByLibrary.simpleMessage("モノクローム"),
-    "monthsAgo": m18,
+    "monthsAgo": m27,
     "more": MessageLookupByLibrary.simpleMessage("詳細"),
     "name": MessageLookupByLibrary.simpleMessage("名前"),
     "nameserver": MessageLookupByLibrary.simpleMessage("ネームサーバー"),
@@ -528,8 +666,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "nullProfileDesc": MessageLookupByLibrary.simpleMessage(
       "プロファイルがありません。追加してください",
     ),
-    "nullTip": m19,
-    "numberTip": m20,
+    "nullTip": m28,
+    "numberTip": m29,
     "onDemand": MessageLookupByLibrary.simpleMessage("オンデマンド"),
     "onDemandDesc": MessageLookupByLibrary.simpleMessage(
       "特定のシーンでのアプリの動作状態を設定します",
@@ -574,7 +712,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "port": MessageLookupByLibrary.simpleMessage("ポート"),
     "portConflictTip": MessageLookupByLibrary.simpleMessage("別のポートを入力してください"),
-    "portTip": m21,
+    "portTip": m30,
     "preferH3Desc": MessageLookupByLibrary.simpleMessage("DOHのHTTP/3を優先使用"),
     "prerequisites": MessageLookupByLibrary.simpleMessage("前提条件"),
     "pressKeyboard": MessageLookupByLibrary.simpleMessage("キーボードを押してください"),
@@ -603,7 +741,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "project": MessageLookupByLibrary.simpleMessage("プロジェクト"),
     "providers": MessageLookupByLibrary.simpleMessage("プロバイダー"),
     "proxies": MessageLookupByLibrary.simpleMessage("プロキシ"),
-    "proxiesCount": m22,
+    "proxiesCount": m31,
     "proxiesEmpty": MessageLookupByLibrary.simpleMessage("プロキシが空です"),
     "proxyChains": MessageLookupByLibrary.simpleMessage("プロキシチェーン"),
     "proxyDetectedAbnormal": MessageLookupByLibrary.simpleMessage(
@@ -668,6 +806,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "restartCoreTip": MessageLookupByLibrary.simpleMessage("コアを再起動してもよろしいですか？"),
     "restore": MessageLookupByLibrary.simpleMessage("復元"),
     "restoreAllData": MessageLookupByLibrary.simpleMessage("すべてのデータを復元する"),
+    "restoreAutoSelect": MessageLookupByLibrary.simpleMessage("自動に戻す"),
     "restoreException": MessageLookupByLibrary.simpleMessage("復元例外"),
     "restoreFromFileDesc": MessageLookupByLibrary.simpleMessage(
       "ファイルを介してデータを復元する",
@@ -785,7 +924,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ruleSet": MessageLookupByLibrary.simpleMessage("ルールセット"),
     "ruleTarget": MessageLookupByLibrary.simpleMessage("ルール対象"),
     "rules": MessageLookupByLibrary.simpleMessage("ルール"),
-    "rulesCount": m23,
+    "rulesCount": m32,
     "save": MessageLookupByLibrary.simpleMessage("保存"),
     "saveChanges": MessageLookupByLibrary.simpleMessage("変更を保存しますか？"),
     "script": MessageLookupByLibrary.simpleMessage("スクリプト"),
@@ -795,7 +934,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "scrollToSelected": MessageLookupByLibrary.simpleMessage("選択項目へスクロール"),
     "search": MessageLookupByLibrary.simpleMessage("検索"),
     "seconds": MessageLookupByLibrary.simpleMessage("秒"),
-    "secondsCount": m24,
+    "secondsCount": m33,
     "selectAll": MessageLookupByLibrary.simpleMessage("すべて選択"),
     "selectProxies": MessageLookupByLibrary.simpleMessage("プロキシを選択"),
     "selectProxyProviders": MessageLookupByLibrary.simpleMessage(
@@ -807,9 +946,32 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "selectSubRule": MessageLookupByLibrary.simpleMessage("サブルールを選択してください"),
     "selected": MessageLookupByLibrary.simpleMessage("選択済み"),
-    "selectedCountTitle": m25,
+    "selectedCountTitle": m34,
+    "serviceProbeCategoryAi": MessageLookupByLibrary.simpleMessage("AI"),
+    "serviceProbeCategoryGeneral": MessageLookupByLibrary.simpleMessage("一般"),
+    "serviceProbeCategorySearch": MessageLookupByLibrary.simpleMessage("検索"),
+    "serviceProbeCategorySocial": MessageLookupByLibrary.simpleMessage("ソーシャル"),
+    "serviceProbeCategoryStreaming": MessageLookupByLibrary.simpleMessage("配信"),
+    "serviceProbeCurrentNode": MessageLookupByLibrary.simpleMessage("現在のノード"),
+    "serviceProbeDisclaimer": MessageLookupByLibrary.simpleMessage(
+      "現在のノード経由の HTTP 到達性と遅延の確認です。配信アンロックやアカウント地域の判定ではありません。",
+    ),
+    "serviceProbeNeedStart": MessageLookupByLibrary.simpleMessage(
+      "起動後にノード品質をテストできます",
+    ),
+    "serviceProbeNoProxy": MessageLookupByLibrary.simpleMessage(
+      "選択中のノードがありません",
+    ),
+    "serviceProbeRunning": MessageLookupByLibrary.simpleMessage("サービスをテスト中…"),
+    "serviceProbeSummary": m35,
+    "serviceProbeTapToTest": MessageLookupByLibrary.simpleMessage(
+      "更新をタップしてテスト",
+    ),
+    "serviceProbeTesting": MessageLookupByLibrary.simpleMessage("テスト中"),
+    "serviceReachability": MessageLookupByLibrary.simpleMessage("サービス到達性"),
     "settings": MessageLookupByLibrary.simpleMessage("設定"),
     "show": MessageLookupByLibrary.simpleMessage("表示"),
+    "showAdvanced": MessageLookupByLibrary.simpleMessage("詳細設定を表示"),
     "showLess": MessageLookupByLibrary.simpleMessage("折りたたむ"),
     "showMore": MessageLookupByLibrary.simpleMessage("展開する"),
     "showPassword": MessageLookupByLibrary.simpleMessage("パスワードを表示"),
@@ -838,6 +1000,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "startVpn": MessageLookupByLibrary.simpleMessage("VPNを開始中..."),
     "status": MessageLookupByLibrary.simpleMessage("ステータス"),
     "statusDesc": MessageLookupByLibrary.simpleMessage("無効時はシステムDNSを使用"),
+    "stickToRegion": MessageLookupByLibrary.simpleMessage("地域を固定"),
     "stop": MessageLookupByLibrary.simpleMessage("停止"),
     "stopVpn": MessageLookupByLibrary.simpleMessage("VPNを停止中..."),
     "style": MessageLookupByLibrary.simpleMessage("スタイル"),
@@ -857,6 +1020,137 @@ class MessageLookup extends MessageLookupByLibrary {
     "tab": MessageLookupByLibrary.simpleMessage("タブ"),
     "tabAnimation": MessageLookupByLibrary.simpleMessage("タブアニメーション"),
     "tabAnimationDesc": MessageLookupByLibrary.simpleMessage("モバイル表示でのみ有効"),
+    "tailscale": MessageLookupByLibrary.simpleMessage("Tailscale"),
+    "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("ルートを受け入れる"),
+    "tailscaleAndroidStep1": MessageLookupByLibrary.simpleMessage(
+      "Tailscale 管理コンソール（設定 → Keys）で認証キーを取得します。",
+    ),
+    "tailscaleAndroidStep2": MessageLookupByLibrary.simpleMessage(
+      "ノードを追加し、認証キーを貼り付け、ルーティング先に自宅デバイスの IP または MagicDNS 名を入れます。",
+    ),
+    "tailscaleAndroidStep3": MessageLookupByLibrary.simpleMessage(
+      "「Tailscale を有効化」をオンにします。Tailscale アプリも入れている場合以外は「直結に保つ」はオフのままで構いません。",
+    ),
+    "tailscaleAndroidStep4": MessageLookupByLibrary.simpleMessage(
+      "FlClash VPN を開始し、ノード横のピンボタンで接続を確認します。",
+    ),
+    "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("認証キー"),
+    "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
+      "Tailscale 管理コンソール → 設定 → Keys から取得します。ノードの認証に必要です。",
+    ),
+    "tailscaleBypass": MessageLookupByLibrary.simpleMessage(
+      "Tailscale のトラフィックを直結に保つ",
+    ),
+    "tailscaleBypassAndroidHint": MessageLookupByLibrary.simpleMessage(
+      "Android では通常オフのまま。この端末にも Tailscale アプリがある場合だけオンにしてください。",
+    ),
+    "tailscaleBypassNudge": MessageLookupByLibrary.simpleMessage(
+      "この端末では Tailscale も動いている可能性があります — 「Tailscale 通信を直通」をオンにして Fake IP / 制御面の不具合を避けてください。",
+    ),
+    "tailscaleBypassRecommended": MessageLookupByLibrary.simpleMessage(
+      "Tailscale アプリ/サービスが入っているデスクトップでは推奨。DIRECT ルールと Fake IP Filter を自動管理します。",
+    ),
+    "tailscaleControlUrl": MessageLookupByLibrary.simpleMessage("コントロール URL"),
+    "tailscaleControlUrlHint": MessageLookupByLibrary.simpleMessage(
+      "任意。Headscale などの自己ホスト型コントロールサーバー用です。",
+    ),
+    "tailscaleDesc": MessageLookupByLibrary.simpleMessage(
+      "Tailscale アウトバウンドノードを管理",
+    ),
+    "tailscaleDesktopStep1": MessageLookupByLibrary.simpleMessage(
+      "この PC で Tailscale アプリ/サービスも動かす場合は「Tailscale のトラフィックを直結に保つ」をオンにします。",
+    ),
+    "tailscaleDesktopStep2": MessageLookupByLibrary.simpleMessage(
+      "任意: 認証キー付きの内蔵 Tailscale ノードを追加し、選択した通信を FlClash から tailnet 経由にします。",
+    ),
+    "tailscaleDesktopStep3": MessageLookupByLibrary.simpleMessage(
+      "ルーティング先に宛先（自宅 IP / MagicDNS）を入れ、「Tailscale を有効化」をオンにします。",
+    ),
+    "tailscaleDesktopStep4": MessageLookupByLibrary.simpleMessage(
+      "FlClash を開始し、ノード横のピンボタンで接続が安定しているか確認します。",
+    ),
+    "tailscaleEmptyTip": MessageLookupByLibrary.simpleMessage(
+      "Tailscale ノードがありません。追加すると、トラフィックを tailnet 経由で転送できます。",
+    ),
+    "tailscaleEnable": MessageLookupByLibrary.simpleMessage("Tailscale を有効化"),
+    "tailscaleEnableBypassAction": MessageLookupByLibrary.simpleMessage(
+      "有効にする",
+    ),
+    "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
+      "Tailscale ノードをアウトバウンドとして注入します。オフにすると Tailscale はトラフィックを処理しなくなりますが、通常のトラフィックには影響しません。",
+    ),
+    "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage("エフェメラル"),
+    "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("出口ノード"),
+    "tailscaleExitNodeAllowLanAccess": MessageLookupByLibrary.simpleMessage(
+      "出口ノード経由の LAN アクセスを許可",
+    ),
+    "tailscaleExitNodeHint": MessageLookupByLibrary.simpleMessage(
+      "任意。すべてのトラフィックを転送する tailnet 出口ノードの IP または名前です。",
+    ),
+    "tailscaleGuideTitle": MessageLookupByLibrary.simpleMessage(
+      "Tailscale の仕組み",
+    ),
+    "tailscaleHostname": MessageLookupByLibrary.simpleMessage("ホスト名"),
+    "tailscaleHostnameHint": MessageLookupByLibrary.simpleMessage(
+      "任意。tailnet に表示されるデバイス名です。",
+    ),
+    "tailscaleNameExistsTip": MessageLookupByLibrary.simpleMessage(
+      "同じ名前のノードが既に存在します",
+    ),
+    "tailscaleNameHelper": MessageLookupByLibrary.simpleMessage(
+      "プロキシ一覧の出站名です。名前を変えると選択や遅延テストの対応も変わります。",
+    ),
+    "tailscaleNoRoutes": MessageLookupByLibrary.simpleMessage("ルーティング先なし"),
+    "tailscaleNodesTitle": MessageLookupByLibrary.simpleMessage("ノード"),
+    "tailscaleNotTested": MessageLookupByLibrary.simpleMessage("未テスト"),
+    "tailscaleRoutes": MessageLookupByLibrary.simpleMessage("ルーティング先"),
+    "tailscaleRoutesCount": m36,
+    "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
+      "このノード経由で送るドメインまたは IP（1 行に 1 つ、例: 自宅 PC の Tailscale IP や MagicDNS 名）。",
+    ),
+    "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
+      "VPN は FlClash だけにしてください。Tailscale アプリの VPN と同時には使えません（Android は VPN を 1 つだけ許可）。下で内蔵 Tailscale ノードを追加し、自宅デバイスをルーティング先に入れてください。",
+    ),
+    "tailscaleScenarioAndroidTitle": MessageLookupByLibrary.simpleMessage(
+      "Android クライアント設定",
+    ),
+    "tailscaleScenarioDesktopBody": MessageLookupByLibrary.simpleMessage(
+      "FlClash と正式な Tailscale アプリを同時に使えます。「Tailscale のトラフィックを直結に保つ」をオンにして、FlClash が制御プレーンや fake-IP DNS を横取りしないようにします。",
+    ),
+    "tailscaleScenarioDesktopTitle": MessageLookupByLibrary.simpleMessage(
+      "デスクトップ / ホスト設定",
+    ),
+    "tailscaleShowSetupGuide": MessageLookupByLibrary.simpleMessage(
+      "セットアップガイド",
+    ),
+    "tailscaleStateDir": MessageLookupByLibrary.simpleMessage("状態ディレクトリ"),
+    "tailscaleStateDirHint": MessageLookupByLibrary.simpleMessage(
+      "任意。Tailscale の状態を保存するディレクトリです。",
+    ),
+    "tailscaleStatusDisabled": MessageLookupByLibrary.simpleMessage(
+      "Tailscale はオフです — ノードは実行中の設定に注入されません。",
+    ),
+    "tailscaleStatusNeedRoutes": MessageLookupByLibrary.simpleMessage(
+      "ノードは追加済みですがルート先がありません — ルートを追加するまで自動一致しません（または手動でノードを選択）。",
+    ),
+    "tailscaleStatusNeedStart": MessageLookupByLibrary.simpleMessage(
+      "ノードの準備ができました。FlClash VPN を開始してからピンでテストしてください。",
+    ),
+    "tailscaleStatusNoNodes": MessageLookupByLibrary.simpleMessage(
+      "有効ですが、ノードがありません。まずノードを追加してください。",
+    ),
+    "tailscaleStatusReady": m37,
+    "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
+      "テストする前に「Tailscale を有効化」をオンにしてください。",
+    ),
+    "tailscaleTestNeedStart": MessageLookupByLibrary.simpleMessage(
+      "接続をテストする前に FlClash VPN を開始してください。",
+    ),
+    "tailscaleTestNode": MessageLookupByLibrary.simpleMessage("接続をテスト"),
+    "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
+      "ノード横のピンボタンで、Tailscale アウトバウンドが発信できるか確認できます。遅延が表示されれば接続は正常です。Timeout の場合は認証キー、「有効化」、FlClash VPN の起動を確認してください。",
+    ),
+    "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP リレー"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("タップして許可"),
     "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP並列処理"),
     "tcpConcurrentDesc": MessageLookupByLibrary.simpleMessage("TCP並列処理を許可"),
@@ -898,7 +1192,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage("URL経由でプロファイルを取得"),
-    "urlTip": m26,
+    "urlTip": m38,
     "useHosts": MessageLookupByLibrary.simpleMessage("ホストを使用"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("システムホストを使用"),
     "usedTraffic": MessageLookupByLibrary.simpleMessage("使用済み通信量"),
@@ -915,7 +1209,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnTip": MessageLookupByLibrary.simpleMessage("変更はVPN再起動後に有効"),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV設定"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("ホワイトリストモード"),
-    "yearsAgo": m27,
+    "yearsAgo": m39,
     "zh_CN": MessageLookupByLibrary.simpleMessage("簡体字中国語"),
   };
 }

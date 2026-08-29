@@ -532,11 +532,8 @@ abstract class PatchClashConfig with _$PatchClashConfig {
     @Default(false) @JsonKey(name: 'allow-lan') bool allowLan,
     @Default(LogLevel.error) @JsonKey(name: 'log-level') LogLevel logLevel,
     @Default(false) bool ipv6,
-    @Default(FindProcessMode.always)
-    @JsonKey(
-      name: 'find-process-mode',
-      unknownEnumValue: FindProcessMode.always,
-    )
+    @Default(FindProcessMode.off)
+    @JsonKey(name: 'find-process-mode', unknownEnumValue: FindProcessMode.off)
     FindProcessMode findProcessMode,
     @Default(defaultKeepAliveInterval)
     @JsonKey(name: 'keep-alive-interval')

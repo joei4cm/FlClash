@@ -177,7 +177,16 @@ enum ResultType {
   error,
 }
 
-enum CoreEventType { log, delay, request, loaded, crash, geoUpdate }
+enum CoreEventType {
+  log,
+  delay,
+  request,
+  loaded,
+  crash,
+  geoUpdate,
+  traffic,
+  connections,
+}
 
 enum InvokeMessageType { protect, process }
 
@@ -273,6 +282,7 @@ enum FunctionTag {
   removeProxy,
   suspend,
   coreErrorNotifier,
+  accessQuery,
 }
 
 enum DashboardWidget {
@@ -281,6 +291,7 @@ enum DashboardWidget {
   outboundMode,
   trafficUsage,
   networkDetection,
+  serviceReachability,
   tunButton(platforms: desktopPlatforms),
   vpnButton(platforms: [SupportPlatform.Android]),
   systemProxyButton(platforms: desktopPlatforms),

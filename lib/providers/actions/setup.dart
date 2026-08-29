@@ -63,6 +63,8 @@ class SetupAction extends _$SetupAction {
 
     _startTime ??= DateTime.now();
     _refreshRunningState();
+    // One-shot pull for immediate UI before the first push event.
+    unawaited(ref.read(commonActionProvider.notifier).updateTraffic());
     _runtimeTimer = Timer.periodic(
       const Duration(seconds: 1),
       (_) => _refreshRunningState(),
@@ -71,7 +73,8 @@ class SetupAction extends _$SetupAction {
 
   void _refreshRunningState() {
     _updateRunTime();
-    unawaited(ref.read(commonActionProvider.notifier).updateTraffic());
+    // Traffic counters are pushed from core while the listener is running
+    // (PERF-11). Keep runtime ticks only here.
   }
 
   void _updateRunTime() {
@@ -314,6 +317,10 @@ class SetupAction extends _$SetupAction {
     final overrideDns = ref.read(overrideDnsProvider);
     final appendSystemDns = networkSetting.appendSystemDns;
     final routeMode = networkSetting.routeMode;
+    final tailscaleProps = ref.read(tailscaleSettingProvider);
+    final tailscaleProxies = tailscaleProps.activeProxies;
+    final tailscaleRules = tailscaleProps.buildInjectedRules();
+    final tailscaleFakeIpFilters = tailscaleProps.buildFakeIpFilters();
     final configMap = await _core.getConfig(profileId);
     String? scriptContent;
     final List<Rule> addedRules = [];
@@ -347,6 +354,9 @@ class SetupAction extends _$SetupAction {
         appendSystemDns: appendSystemDns,
         addedRules: addedRules,
         defaultUA: defaultUA,
+        tailscaleProxies: tailscaleProxies,
+        tailscaleRules: tailscaleRules,
+        tailscaleFakeIpFilters: tailscaleFakeIpFilters,
       ),
     );
     return res;

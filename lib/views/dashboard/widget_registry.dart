@@ -24,6 +24,10 @@ extension DashboardWidgetView on DashboardWidget {
       crossAxisCellCount: 4,
       child: NetworkDetection(),
     ),
+    DashboardWidget.serviceReachability => const GridItem(
+      crossAxisCellCount: 8,
+      child: ServiceReachability(),
+    ),
     DashboardWidget.tunButton => const GridItem(
       crossAxisCellCount: 4,
       child: TUNButton(),

@@ -53,16 +53,35 @@ void main() {
       expect(getTimeText(125000), '00:02:05');
     });
 
-    test('formats hours', () {
+    test('formats hours under one day', () {
       expect(getTimeText(3661000), '01:01:01');
+      expect(getTimeText(23 * 3600 * 1000), '23:00:00');
     });
 
-    test('formats three digit hours', () {
-      expect(getTimeText(100 * 3600 * 1000), '100:00:00');
-    });
-
-    test('caps at 999:59:59', () {
-      expect(getTimeText(1000 * 3600 * 1000), '999:59:59');
+    test('formats multi-day uptime without a 99/999 hour ceiling', () {
+      expect(
+        getTimeText(const Duration(days: 1).inMilliseconds),
+        '1d 00:00:00',
+      );
+      expect(
+        getTimeText(
+          const Duration(
+            days: 5,
+            hours: 12,
+            minutes: 3,
+            seconds: 4,
+          ).inMilliseconds,
+        ),
+        '5d 12:03:04',
+      );
+      expect(
+        getTimeText(const Duration(days: 42).inMilliseconds),
+        '42d 00:00:00',
+      );
+      expect(
+        getTimeText(const Duration(days: 400, hours: 2).inMilliseconds),
+        '400d 02:00:00',
+      );
     });
   });
 
