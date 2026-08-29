@@ -18,6 +18,7 @@ class StrategyLanesView extends ConsumerStatefulWidget {
 
 class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
   bool _busy = false;
+  bool _pendingApply = false;
 
   String _laneLabel(AppLocalizations l10n, StrategyLaneId id) {
     return switch (id) {
@@ -69,17 +70,25 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
 
   Future<void> _applyProfile() async {
     if (_busy) {
+      _pendingApply = true;
       return;
     }
     setState(() => _busy = true);
     try {
-      await ref
-          .read(setupActionProvider.notifier)
-          .applyProfile(silence: true, force: true);
-      ref.read(proxiesActionProvider.notifier).updateGroupsDebounce();
-      if (mounted) {
-        context.showNotifier(context.appLocalizations.strategyLanesApplied);
-      }
+      do {
+        _pendingApply = false;
+        final ok = await ref
+            .read(setupActionProvider.notifier)
+            .applyProfile(silence: true, force: true);
+        ref.read(proxiesActionProvider.notifier).updateGroupsDebounce();
+        if (!mounted) {
+          return;
+        }
+        if (ok) {
+          context.showNotifier(context.appLocalizations.strategyLanesApplied);
+        }
+        // On failure, setup already showed an error notifier via safeRun.
+      } while (_pendingApply && mounted);
     } catch (error) {
       if (mounted) {
         context.showNotifier(
@@ -90,6 +99,8 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
     } finally {
       if (mounted) {
         setState(() => _busy = false);
+      } else {
+        _busy = false;
       }
     }
   }
@@ -106,7 +117,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
       'direct',
       'reject',
       for (final group in groups) 'group:${group.name}',
-      for (final proxy in proxies.take(80)) 'proxy:${proxy.name}',
+      for (final proxy in proxies) 'proxy:${proxy.name}',
     ];
     final current = row.policy.encode();
     final selected = await dialogs.showCommonDialog<String>(
@@ -144,6 +155,17 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
     ref.read(proxiesActionProvider.notifier).updateGroupsDebounce();
   }
 
+  List<ProxyGroup> _groupsForUi({
+    required ClashConfig clashConfig,
+    required OverwriteType overwriteType,
+    required List<ProxyGroup> customGroups,
+  }) {
+    if (overwriteType == OverwriteType.custom && customGroups.isNotEmpty) {
+      return customGroups;
+    }
+    return clashConfig.proxyGroups;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.appLocalizations;
@@ -155,6 +177,15 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
     final selectedMap = ref.watch(
       currentProfileProvider.select((state) => state?.selectedMap ?? {}),
     );
+    final overwriteType = ref.watch(
+      currentProfileProvider.select(
+        (state) => state?.overwriteType ?? OverwriteType.standard,
+      ),
+    );
+    final customGroups = profileId == null
+        ? const <ProxyGroup>[]
+        : (ref.watch(proxyGroupsProvider(profileId)).value ??
+              const <ProxyGroup>[]);
 
     final clashAsync = profileId == null
         ? null
@@ -183,13 +214,18 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
                 ],
               ),
               data: (clashConfig) {
+                final uiGroups = _groupsForUi(
+                  clashConfig: clashConfig,
+                  overwriteType: overwriteType,
+                  customGroups: customGroups,
+                );
                 final rules = clashConfig.rules
                     .map((item) => item.rawValue)
                     .toList();
                 final rows = buildStrategyLaneRows(
                   profileId: profileId!,
                   policies: policies,
-                  proxyGroups: clashConfig.proxyGroups,
+                  proxyGroups: uiGroups,
                   rules: rules,
                 );
                 final claimed = claimedStrategyGroupNames(rows);
@@ -197,12 +233,13 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
                   groups: runtimeGroups.isNotEmpty
                       ? runtimeGroups
                       : [
-                          for (final group in clashConfig.proxyGroups)
+                          for (final group in uiGroups)
                             Group(
                               name: group.name,
                               type: group.type,
                               all: [
-                                for (final name in group.proxies ?? const <String>[])
+                                for (final name
+                                    in group.proxies ?? const <String>[])
                                   Proxy(name: name, type: 'ss'),
                               ],
                             ),
@@ -226,7 +263,10 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
                   ),
                   if (_busy)
                     const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: LinearProgressIndicator(),
                     ),
                   ...generateSection(
@@ -256,7 +296,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
                               ? null
                               : () => _pickPolicy(
                                   row: row,
-                                  groups: clashConfig.proxyGroups,
+                                  groups: uiGroups,
                                   proxies: leafProxies,
                                 ),
                         ),

@@ -162,7 +162,6 @@ const strategyLanePresets = <StrategyLanePreset>[
       'anthropic.com',
       'claude.ai',
       'gemini.google.com',
-      'googleapis.com',
       'cursor.sh',
       'cursor.com',
     ],
@@ -338,8 +337,22 @@ StrategyLaneDiscovery discoverStrategyLane({
         parsed.ruleAction == RuleAction.DOMAIN_KEYWORD) {
       final content = (parsed.content ?? '').toLowerCase();
       if (preset.domainSuffixes.any(
-        (item) => content == item.toLowerCase() || content.endsWith(item),
+        (item) => _domainMatches(content, item.toLowerCase()),
       )) {
+        return StrategyLaneDiscovery(
+          groupName: target,
+          source: StrategyLaneDiscoverySource.rules,
+        );
+      }
+    }
+    if (parsed.ruleAction == RuleAction.RULE_SET) {
+      final provider = (parsed.ruleProvider ?? parsed.content ?? '')
+          .toLowerCase();
+      if (provider.isNotEmpty &&
+          (_matchHint(provider, preset.groupNameHints) ||
+              preset.geositeCodes.any(
+                (code) => provider.contains(code.toLowerCase()),
+              ))) {
         return StrategyLaneDiscovery(
           groupName: target,
           source: StrategyLaneDiscoverySource.rules,
@@ -349,8 +362,7 @@ StrategyLaneDiscovery discoverStrategyLane({
   }
 
   for (final group in proxyGroups) {
-    final kind = _matchHint(group.name, preset.groupNameHints);
-    if (kind) {
+    if (_matchHint(group.name, preset.groupNameHints)) {
       return StrategyLaneDiscovery(
         groupName: group.name,
         source: StrategyLaneDiscoverySource.groupName,
@@ -360,13 +372,47 @@ StrategyLaneDiscovery discoverStrategyLane({
   return const StrategyLaneDiscovery();
 }
 
+bool _domainMatches(String content, String suffix) {
+  if (content == suffix) {
+    return true;
+  }
+  // Require a label boundary so evilnetflix.com does not match netflix.com.
+  return content.endsWith('.$suffix');
+}
+
 bool _matchHint(String name, List<String> hints) {
   final normalized = name.trim().toLowerCase();
   if (normalized.isEmpty) {
     return false;
   }
   for (final hint in hints) {
-    if (normalized.contains(hint.toLowerCase())) {
+    final needle = hint.toLowerCase();
+    if (needle.isEmpty) {
+      continue;
+    }
+    // Short hints are easy false positives via substring (ai in Mainland).
+    if (needle.length <= 3) {
+      if (_hasToken(normalized, needle)) {
+        return true;
+      }
+      continue;
+    }
+    if (normalized.contains(needle)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool _hasToken(String haystack, String token) {
+  if (haystack == token) {
+    return true;
+  }
+  final parts = haystack
+      .split(RegExp(r'[^a-z0-9\u4e00-\u9fff]+'))
+      .where((part) => part.isNotEmpty);
+  for (final part in parts) {
+    if (part == token) {
       return true;
     }
   }
@@ -460,12 +506,15 @@ Map<String, dynamic> buildStrategyLaneProxyGroup({
 }
 
 /// Build inject payload for all non-follow policies of [profileId].
+///
+/// Skips policies that would produce unloadable config (missing group/proxy).
 StrategyLaneInjection buildStrategyLaneInjection({
   required int profileId,
   required Map<String, String> policies,
   required List<ProxyGroup> proxyGroups,
   required List<String> rules,
   required String testUrl,
+  Set<String>? availableProxyNames,
   bool enable = true,
 }) {
   if (!enable) {
@@ -473,7 +522,12 @@ StrategyLaneInjection buildStrategyLaneInjection({
   }
   final groups = <Map<String, dynamic>>[];
   final injectedRules = <String>[];
-  final existingNames = proxyGroups.map((item) => item.name).toSet();
+  final existingNames = {
+    ...proxyGroups.map((item) => item.name),
+    'DIRECT',
+    'REJECT',
+  };
+  final proxyNames = availableProxyNames ?? const <String>{};
 
   for (final preset in strategyLanePresets) {
     final policy = StrategyLanePolicy.parse(
@@ -495,17 +549,21 @@ StrategyLaneInjection buildStrategyLaneInjection({
         buildStrategyLaneAutoGroup(laneId: preset.id, testUrl: testUrl),
       );
     } else if (policy.kind == StrategyLanePolicyKind.proxy) {
+      final proxyName = policy.target;
+      if (proxyName == null ||
+          proxyName.isEmpty ||
+          (proxyNames.isNotEmpty && !proxyNames.contains(proxyName))) {
+        continue;
+      }
       groups.add(
         buildStrategyLaneProxyGroup(
           laneId: preset.id,
-          proxyName: policy.target!,
+          proxyName: proxyName,
         ),
       );
     } else if (policy.kind == StrategyLanePolicyKind.group) {
-      if (!existingNames.contains(target) &&
-          target != 'DIRECT' &&
-          target != 'REJECT') {
-        // Unknown group — still emit rules so user sees failures clearly.
+      if (!existingNames.contains(target)) {
+        continue;
       }
     }
     injectedRules.addAll(

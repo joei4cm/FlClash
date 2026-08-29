@@ -1,6 +1,6 @@
 part of '../action.dart';
 
-enum _SetupTaskResult { completed, handoffToCoreRestart }
+enum _SetupTaskResult { completed, failed, handoffToCoreRestart }
 
 class _RunRequest {
   final bool running;
@@ -254,7 +254,7 @@ class SetupAction extends _$SetupAction {
     });
   }
 
-  Future<void> applyProfile({
+  Future<bool> applyProfile({
     bool silence = false,
     bool force = false,
     Future<void> Function()? preloadInvoke,
@@ -266,7 +266,7 @@ class SetupAction extends _$SetupAction {
     );
   }
 
-  Future<void> _runSetup({
+  Future<bool> _runSetup({
     bool silence = false,
     bool force = false,
     Future<void> Function()? preloadInvoke,
@@ -282,11 +282,12 @@ class SetupAction extends _$SetupAction {
         },
       );
     });
-    if (result != _SetupTaskResult.handoffToCoreRestart) {
-      return;
+    if (result == _SetupTaskResult.handoffToCoreRestart) {
+      // Release the current serial task before restartCore reapplies the profile.
+      await _restartCoreAfterAuthorization();
+      return true;
     }
-    // Release the current serial task before restartCore reapplies the profile.
-    await _restartCoreAfterAuthorization();
+    return result == _SetupTaskResult.completed;
   }
 
   Future<void> _restartCoreAfterAuthorization() async {
@@ -345,15 +346,29 @@ class SetupAction extends _$SetupAction {
     final clashConfig = await clashConfigTask(
       Map<String, dynamic>.from(rawConfig),
     );
-    final subscriptionRules = clashConfig.rules
-        .map((item) => item.rawValue)
-        .toList();
+    // Custom overwrite replaces proxy-groups when non-empty; validate inject
+    // targets against the groups that will actually be in the final config.
+    final groupsForStrategy =
+        setupState.overwriteType == OverwriteType.custom &&
+            proxyGroups.isNotEmpty
+        ? proxyGroups
+        : clashConfig.proxyGroups;
+    final subscriptionRules = [
+      if (setupState.overwriteType == OverwriteType.custom && rules.isNotEmpty)
+        ...rules.map((item) => item.rawValue)
+      else
+        ...clashConfig.rules.map((item) => item.rawValue),
+    ];
     final strategyInjection = buildStrategyLaneInjection(
       profileId: profileId,
       policies: appSetting.strategyLanePolicies,
-      proxyGroups: clashConfig.proxyGroups,
+      proxyGroups: groupsForStrategy,
       rules: subscriptionRules,
       testUrl: appSetting.testUrl,
+      availableProxyNames: {
+        ...clashConfig.proxies.map((item) => item.name),
+        for (final group in groupsForStrategy) ...?group.proxies,
+      },
     );
     final directory = await appPath.profilesPath;
     final res = makeRealProfileTask(
@@ -496,7 +511,7 @@ class SetupAction extends _$SetupAction {
       final sharedState = ref.read(sharedStateProvider);
       await preferences.saveShareState(sharedState);
     }
-    await globalState.loadingRun(
+    final setupOk = await globalState.loadingRun<bool>(
       () async {
         final configFilePath = await appPath.configFilePath;
         await File(configFilePath).safeWriteAsString(yamlString);
@@ -514,10 +529,13 @@ class SetupAction extends _$SetupAction {
         globalState.lastConfigMd5 = yamlMd5;
         ref.read(checkIpNumProvider.notifier).add();
         await onUpdated?.call();
+        return true;
       },
       silence: true,
       tag: !silence ? LoadingTag.proxies : null,
     );
-    return _SetupTaskResult.completed;
+    return setupOk == true
+        ? _SetupTaskResult.completed
+        : _SetupTaskResult.failed;
   }
 }
