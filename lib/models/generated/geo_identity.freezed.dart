@@ -19,7 +19,8 @@ mixin _$GeoIdentityProps {
 /// Accept-Language on network probes and surface capture-mode guidance.
  bool get enable;/// Send `Accept-Language: en-US,en;q=0.9` on FuckClaude network probes so
 /// the server-side estimate is not polluted by a Chinese Accept-Language.
- bool get useUsAcceptLanguage;/// Previous OS timezone id saved before an align action (for Restore).
+ bool get useUsAcceptLanguage;/// How protect should enable traffic capture when turned on.
+ GeoIdentityCaptureMode get captureMode;/// Previous OS timezone id saved before an align action (for Restore).
  String? get previousOsTimezone;/// Last OS timezone FlClash successfully applied.
  String? get appliedOsTimezone;
 /// Create a copy of GeoIdentityProps
@@ -34,16 +35,16 @@ $GeoIdentityPropsCopyWith<GeoIdentityProps> get copyWith => _$GeoIdentityPropsCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GeoIdentityProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.useUsAcceptLanguage, useUsAcceptLanguage) || other.useUsAcceptLanguage == useUsAcceptLanguage)&&(identical(other.previousOsTimezone, previousOsTimezone) || other.previousOsTimezone == previousOsTimezone)&&(identical(other.appliedOsTimezone, appliedOsTimezone) || other.appliedOsTimezone == appliedOsTimezone));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GeoIdentityProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.useUsAcceptLanguage, useUsAcceptLanguage) || other.useUsAcceptLanguage == useUsAcceptLanguage)&&(identical(other.captureMode, captureMode) || other.captureMode == captureMode)&&(identical(other.previousOsTimezone, previousOsTimezone) || other.previousOsTimezone == previousOsTimezone)&&(identical(other.appliedOsTimezone, appliedOsTimezone) || other.appliedOsTimezone == appliedOsTimezone));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,enable,useUsAcceptLanguage,previousOsTimezone,appliedOsTimezone);
+int get hashCode => Object.hash(runtimeType,enable,useUsAcceptLanguage,captureMode,previousOsTimezone,appliedOsTimezone);
 
 @override
 String toString() {
-  return 'GeoIdentityProps(enable: $enable, useUsAcceptLanguage: $useUsAcceptLanguage, previousOsTimezone: $previousOsTimezone, appliedOsTimezone: $appliedOsTimezone)';
+  return 'GeoIdentityProps(enable: $enable, useUsAcceptLanguage: $useUsAcceptLanguage, captureMode: $captureMode, previousOsTimezone: $previousOsTimezone, appliedOsTimezone: $appliedOsTimezone)';
 }
 
 
@@ -54,7 +55,7 @@ abstract mixin class $GeoIdentityPropsCopyWith<$Res>  {
   factory $GeoIdentityPropsCopyWith(GeoIdentityProps value, $Res Function(GeoIdentityProps) _then) = _$GeoIdentityPropsCopyWithImpl;
 @useResult
 $Res call({
- bool enable, bool useUsAcceptLanguage, String? previousOsTimezone, String? appliedOsTimezone
+ bool enable, bool useUsAcceptLanguage, GeoIdentityCaptureMode captureMode, String? previousOsTimezone, String? appliedOsTimezone
 });
 
 
@@ -71,11 +72,12 @@ class _$GeoIdentityPropsCopyWithImpl<$Res>
 
 /// Create a copy of GeoIdentityProps
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? enable = null,Object? useUsAcceptLanguage = null,Object? previousOsTimezone = freezed,Object? appliedOsTimezone = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? enable = null,Object? useUsAcceptLanguage = null,Object? captureMode = null,Object? previousOsTimezone = freezed,Object? appliedOsTimezone = freezed,}) {
   return _then(_self.copyWith(
 enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
 as bool,useUsAcceptLanguage: null == useUsAcceptLanguage ? _self.useUsAcceptLanguage : useUsAcceptLanguage // ignore: cast_nullable_to_non_nullable
-as bool,previousOsTimezone: freezed == previousOsTimezone ? _self.previousOsTimezone : previousOsTimezone // ignore: cast_nullable_to_non_nullable
+as bool,captureMode: null == captureMode ? _self.captureMode : captureMode // ignore: cast_nullable_to_non_nullable
+as GeoIdentityCaptureMode,previousOsTimezone: freezed == previousOsTimezone ? _self.previousOsTimezone : previousOsTimezone // ignore: cast_nullable_to_non_nullable
 as String?,appliedOsTimezone: freezed == appliedOsTimezone ? _self.appliedOsTimezone : appliedOsTimezone // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -162,10 +164,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  bool useUsAcceptLanguage,  String? previousOsTimezone,  String? appliedOsTimezone)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  bool useUsAcceptLanguage,  GeoIdentityCaptureMode captureMode,  String? previousOsTimezone,  String? appliedOsTimezone)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GeoIdentityProps() when $default != null:
-return $default(_that.enable,_that.useUsAcceptLanguage,_that.previousOsTimezone,_that.appliedOsTimezone);case _:
+return $default(_that.enable,_that.useUsAcceptLanguage,_that.captureMode,_that.previousOsTimezone,_that.appliedOsTimezone);case _:
   return orElse();
 
 }
@@ -183,10 +185,10 @@ return $default(_that.enable,_that.useUsAcceptLanguage,_that.previousOsTimezone,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  bool useUsAcceptLanguage,  String? previousOsTimezone,  String? appliedOsTimezone)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  bool useUsAcceptLanguage,  GeoIdentityCaptureMode captureMode,  String? previousOsTimezone,  String? appliedOsTimezone)  $default,) {final _that = this;
 switch (_that) {
 case _GeoIdentityProps():
-return $default(_that.enable,_that.useUsAcceptLanguage,_that.previousOsTimezone,_that.appliedOsTimezone);case _:
+return $default(_that.enable,_that.useUsAcceptLanguage,_that.captureMode,_that.previousOsTimezone,_that.appliedOsTimezone);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -203,10 +205,10 @@ return $default(_that.enable,_that.useUsAcceptLanguage,_that.previousOsTimezone,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  bool useUsAcceptLanguage,  String? previousOsTimezone,  String? appliedOsTimezone)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  bool useUsAcceptLanguage,  GeoIdentityCaptureMode captureMode,  String? previousOsTimezone,  String? appliedOsTimezone)?  $default,) {final _that = this;
 switch (_that) {
 case _GeoIdentityProps() when $default != null:
-return $default(_that.enable,_that.useUsAcceptLanguage,_that.previousOsTimezone,_that.appliedOsTimezone);case _:
+return $default(_that.enable,_that.useUsAcceptLanguage,_that.captureMode,_that.previousOsTimezone,_that.appliedOsTimezone);case _:
   return null;
 
 }
@@ -218,7 +220,7 @@ return $default(_that.enable,_that.useUsAcceptLanguage,_that.previousOsTimezone,
 @JsonSerializable()
 
 class _GeoIdentityProps implements GeoIdentityProps {
-  const _GeoIdentityProps({this.enable = false, this.useUsAcceptLanguage = true, this.previousOsTimezone, this.appliedOsTimezone});
+  const _GeoIdentityProps({this.enable = false, this.useUsAcceptLanguage = true, this.captureMode = GeoIdentityCaptureMode.auto, this.previousOsTimezone, this.appliedOsTimezone});
   factory _GeoIdentityProps.fromJson(Map<String, dynamic> json) => _$GeoIdentityPropsFromJson(json);
 
 /// When true, FlClash treats geo identity as an active concern: prefer a US
@@ -227,6 +229,8 @@ class _GeoIdentityProps implements GeoIdentityProps {
 /// Send `Accept-Language: en-US,en;q=0.9` on FuckClaude network probes so
 /// the server-side estimate is not polluted by a Chinese Accept-Language.
 @override@JsonKey() final  bool useUsAcceptLanguage;
+/// How protect should enable traffic capture when turned on.
+@override@JsonKey() final  GeoIdentityCaptureMode captureMode;
 /// Previous OS timezone id saved before an align action (for Restore).
 @override final  String? previousOsTimezone;
 /// Last OS timezone FlClash successfully applied.
@@ -245,16 +249,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GeoIdentityProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.useUsAcceptLanguage, useUsAcceptLanguage) || other.useUsAcceptLanguage == useUsAcceptLanguage)&&(identical(other.previousOsTimezone, previousOsTimezone) || other.previousOsTimezone == previousOsTimezone)&&(identical(other.appliedOsTimezone, appliedOsTimezone) || other.appliedOsTimezone == appliedOsTimezone));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GeoIdentityProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.useUsAcceptLanguage, useUsAcceptLanguage) || other.useUsAcceptLanguage == useUsAcceptLanguage)&&(identical(other.captureMode, captureMode) || other.captureMode == captureMode)&&(identical(other.previousOsTimezone, previousOsTimezone) || other.previousOsTimezone == previousOsTimezone)&&(identical(other.appliedOsTimezone, appliedOsTimezone) || other.appliedOsTimezone == appliedOsTimezone));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,enable,useUsAcceptLanguage,previousOsTimezone,appliedOsTimezone);
+int get hashCode => Object.hash(runtimeType,enable,useUsAcceptLanguage,captureMode,previousOsTimezone,appliedOsTimezone);
 
 @override
 String toString() {
-  return 'GeoIdentityProps(enable: $enable, useUsAcceptLanguage: $useUsAcceptLanguage, previousOsTimezone: $previousOsTimezone, appliedOsTimezone: $appliedOsTimezone)';
+  return 'GeoIdentityProps(enable: $enable, useUsAcceptLanguage: $useUsAcceptLanguage, captureMode: $captureMode, previousOsTimezone: $previousOsTimezone, appliedOsTimezone: $appliedOsTimezone)';
 }
 
 
@@ -265,7 +269,7 @@ abstract mixin class _$GeoIdentityPropsCopyWith<$Res> implements $GeoIdentityPro
   factory _$GeoIdentityPropsCopyWith(_GeoIdentityProps value, $Res Function(_GeoIdentityProps) _then) = __$GeoIdentityPropsCopyWithImpl;
 @override @useResult
 $Res call({
- bool enable, bool useUsAcceptLanguage, String? previousOsTimezone, String? appliedOsTimezone
+ bool enable, bool useUsAcceptLanguage, GeoIdentityCaptureMode captureMode, String? previousOsTimezone, String? appliedOsTimezone
 });
 
 
@@ -282,11 +286,12 @@ class __$GeoIdentityPropsCopyWithImpl<$Res>
 
 /// Create a copy of GeoIdentityProps
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? enable = null,Object? useUsAcceptLanguage = null,Object? previousOsTimezone = freezed,Object? appliedOsTimezone = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? enable = null,Object? useUsAcceptLanguage = null,Object? captureMode = null,Object? previousOsTimezone = freezed,Object? appliedOsTimezone = freezed,}) {
   return _then(_GeoIdentityProps(
 enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
 as bool,useUsAcceptLanguage: null == useUsAcceptLanguage ? _self.useUsAcceptLanguage : useUsAcceptLanguage // ignore: cast_nullable_to_non_nullable
-as bool,previousOsTimezone: freezed == previousOsTimezone ? _self.previousOsTimezone : previousOsTimezone // ignore: cast_nullable_to_non_nullable
+as bool,captureMode: null == captureMode ? _self.captureMode : captureMode // ignore: cast_nullable_to_non_nullable
+as GeoIdentityCaptureMode,previousOsTimezone: freezed == previousOsTimezone ? _self.previousOsTimezone : previousOsTimezone // ignore: cast_nullable_to_non_nullable
 as String?,appliedOsTimezone: freezed == appliedOsTimezone ? _self.appliedOsTimezone : appliedOsTimezone // ignore: cast_nullable_to_non_nullable
 as String?,
   ));

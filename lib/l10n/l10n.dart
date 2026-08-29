@@ -5593,6 +5593,56 @@ class AppLocalizations {
     );
   }
 
+  /// `Traffic capture mode`
+  String get geoIdentityCaptureMode {
+    return Intl.message(
+      'Traffic capture mode',
+      name: 'geoIdentityCaptureMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auto — keep current settings; enable TUN only if needed`
+  String get geoIdentityCaptureModeAuto {
+    return Intl.message(
+      'Auto — keep current settings; enable TUN only if needed',
+      name: 'geoIdentityCaptureModeAuto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TUN / virtual NIC only`
+  String get geoIdentityCaptureModeTun {
+    return Intl.message(
+      'TUN / virtual NIC only',
+      name: 'geoIdentityCaptureModeTun',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System proxy only`
+  String get geoIdentityCaptureModeSystemProxy {
+    return Intl.message(
+      'System proxy only',
+      name: 'geoIdentityCaptureModeSystemProxy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System proxy + TUN`
+  String get geoIdentityCaptureModeBoth {
+    return Intl.message(
+      'System proxy + TUN',
+      name: 'geoIdentityCaptureModeBoth',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Probe with US Accept-Language`
   String get geoIdentityUsAcceptLanguage {
     return Intl.message(

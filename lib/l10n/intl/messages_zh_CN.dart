@@ -366,6 +366,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "自动更新间隔必须大于0",
     ),
     "geoIdentity": MessageLookupByLibrary.simpleMessage("地理身份"),
+    "geoIdentityCaptureMode": MessageLookupByLibrary.simpleMessage("流量接管方式"),
+    "geoIdentityCaptureModeAuto": MessageLookupByLibrary.simpleMessage(
+      "自动 — 不改当前配置；若未接管则默认开 TUN",
+    ),
+    "geoIdentityCaptureModeBoth": MessageLookupByLibrary.simpleMessage(
+      "系统代理 + 虚拟网卡",
+    ),
+    "geoIdentityCaptureModeSystemProxy": MessageLookupByLibrary.simpleMessage(
+      "仅系统代理",
+    ),
+    "geoIdentityCaptureModeTun": MessageLookupByLibrary.simpleMessage(
+      "仅虚拟网卡（TUN）",
+    ),
     "geoIdentityCheckCancelled": MessageLookupByLibrary.simpleMessage(
       "网络检测已取消",
     ),

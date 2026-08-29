@@ -735,7 +735,7 @@ final class GeoIdentitySettingProvider
 }
 
 String _$geoIdentitySettingHash() =>
-    r'f33c24840a0569d1d06f3deda136aea3aab0c600';
+    r'0c37d8a568fbfea7fd6cc02ebed0d22ef04b9e24';
 
 abstract class _$GeoIdentitySetting extends $Notifier<GeoIdentityProps> {
   GeoIdentityProps build();

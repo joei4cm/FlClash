@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -260,24 +261,27 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       geoNotifier.setEnable(true);
       geoNotifier.setUseUsAcceptLanguage(true);
 
-      if (system.isDesktop) {
-        final network = ref.read(networkSettingProvider);
-        if (!network.systemProxy) {
-          ref
-              .read(networkSettingProvider.notifier)
-              .update((state) => state.copyWith(systemProxy: true));
-        }
-        if (!ref.read(patchClashConfigProvider).tun.enable) {
-          ref
-              .read(patchClashConfigProvider.notifier)
-              .update((state) => state.copyWith.tun(enable: true));
-        }
-      } else if (system.isAndroid) {
-        if (!ref.read(vpnSettingProvider).enable) {
-          ref
-              .read(vpnSettingProvider.notifier)
-              .update((state) => state.copyWith(enable: true));
-        }
+      final capture = resolveGeoIdentityCaptureActions(
+        mode: ref.read(geoIdentitySettingProvider).captureMode,
+        isDesktop: system.isDesktop,
+        currentSystemProxy: ref.read(networkSettingProvider).systemProxy,
+        currentTunEnable: ref.read(patchClashConfigProvider).tun.enable,
+        currentVpnEnable: ref.read(vpnSettingProvider).enable,
+      );
+      if (capture.setSystemProxy == true) {
+        ref
+            .read(networkSettingProvider.notifier)
+            .update((state) => state.copyWith(systemProxy: true));
+      }
+      if (capture.setTunEnable == true) {
+        ref
+            .read(patchClashConfigProvider.notifier)
+            .update((state) => state.copyWith.tun(enable: true));
+      }
+      if (capture.setVpnEnable == true) {
+        ref
+            .read(vpnSettingProvider.notifier)
+            .update((state) => state.copyWith(enable: true));
       }
 
       if (!ref.read(isStartProvider)) {
@@ -549,6 +553,19 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     );
   }
 
+  String _captureModeLabel(
+    AppLocalizations l10n,
+    GeoIdentityCaptureMode mode,
+  ) {
+    return switch (mode) {
+      GeoIdentityCaptureMode.auto => l10n.geoIdentityCaptureModeAuto,
+      GeoIdentityCaptureMode.tun => l10n.geoIdentityCaptureModeTun,
+      GeoIdentityCaptureMode.systemProxy =>
+        l10n.geoIdentityCaptureModeSystemProxy,
+      GeoIdentityCaptureMode.both => l10n.geoIdentityCaptureModeBoth,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.appLocalizations;
@@ -573,6 +590,32 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
             subtitle: Text(l10n.geoIdentityProtectToggleDesc),
             value: enabled,
             onChanged: _busy ? null : _handleToggle,
+          ),
+          ListItem.options(
+            leading: const Icon(Icons.tune_outlined),
+            title: Text(l10n.geoIdentityCaptureMode),
+            subtitle: Text(
+              _captureModeLabel(
+                l10n,
+                ref.watch(
+                  geoIdentitySettingProvider.select((s) => s.captureMode),
+                ),
+              ),
+            ),
+            dialogTitle: l10n.geoIdentityCaptureMode,
+            options: GeoIdentityCaptureMode.values,
+            value: ref.watch(
+              geoIdentitySettingProvider.select((s) => s.captureMode),
+            ),
+            textBuilder: (mode) => _captureModeLabel(l10n, mode),
+            onChanged: (mode) {
+              if (_busy || mode == null) {
+                return;
+              }
+              ref
+                  .read(geoIdentitySettingProvider.notifier)
+                  .setCaptureMode(mode);
+            },
           ),
           _buildStatusBanner(context),
           Padding(
