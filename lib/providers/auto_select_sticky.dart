@@ -7,12 +7,22 @@ import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Applies geo-sticky policy for url-test / fallback groups.
+/// Geo-aware recovery for url-test / fallback groups.
 ///
-/// When enabled, auto groups prefer staying in the configured region while at
-/// least one alive node in that region remains available.
+/// Flutter does **not** own continuous selection. Core url-test/fallback keeps
+/// picking. This policy only nudges when the current node is unhealthy and a
+/// known-healthy node exists in the preferred region — without writing
+/// `selectedMap` (which would lock auto mode) and without closing all
+/// connections (which felt like random disconnects).
 class AutoSelectSticky {
   AutoSelectSticky._();
+
+  static final Map<String, DateTime> _lastSwitchAtByGroup = {};
+
+  static Duration cooldown = const Duration(seconds: 60);
+
+  /// Test-only.
+  static void debugResetCooldown() => _lastSwitchAtByGroup.clear();
 
   static Future<void> enforce(Ref ref, List<Group> groups) async {
     final appSetting = ref.read(appSettingProvider);
@@ -28,77 +38,62 @@ class AutoSelectSticky {
     final testUrl = appSetting.testUrl;
     final delayMap = ref.read(delayDataSourceProvider);
     final stickyByGroup = appSetting.autoSelectStickyGeoByGroup;
+    final now = DateTime.now();
 
     for (final group in groups) {
       if (!group.type.isComputedSelected) {
         continue;
       }
-      final override = selectedMap[group.name];
-      if (override != null && override.isNotEmpty) {
+      final preferredGeo = resolvePreferredStickyGeo(
+        configuredGeo: stickyByGroup[group.name],
+        geoIdentityEnabled: geoIdentityEnabled,
+      );
+      if (preferredGeo == null) {
         continue;
       }
 
-      final currentName = group.getCurrentSelectedName(
-        selectedMap[group.name] ?? '',
-      );
+      final override = selectedMap[group.name];
+      final currentName = group.getCurrentSelectedName(override ?? '');
       if (currentName.isEmpty) {
         continue;
       }
 
-      final stickyGeo = resolveAutoSelectStickyGeo(
-        configuredGeo: stickyByGroup[group.name],
-        geoIdentityEnabled: geoIdentityEnabled,
-        proxyName: currentName,
+      final currentHealthy = isProxyDelayHealthy(
+        delayMap[testUrl]?[currentName],
       );
-      if (stickyGeo == 'ANY') {
-        continue;
-      }
-
-      final currentGeo = inferProxyGeoRegion(currentName);
-      if (currentGeo == stickyGeo) {
-        continue;
-      }
-
-      final replacement = _pickBestInGeo(
-        group: group,
-        stickyGeo: stickyGeo,
+      final bestInGeo = pickBestHealthyProxyInGeo(
+        proxyNames: group.all.map((proxy) => proxy.name),
+        preferredGeo: preferredGeo,
         testUrl: testUrl,
         delayMap: delayMap,
       );
-      if (replacement == null || replacement == currentName) {
+
+      final decision = decideAutoSelectSwitch(
+        currentName: currentName,
+        userOverride: override,
+        preferredGeo: preferredGeo,
+        currentHealthy: currentHealthy,
+        bestHealthyInPreferredGeo: bestInGeo,
+        now: now,
+        lastSwitchAt: _lastSwitchAtByGroup[group.name],
+        cooldown: cooldown,
+      );
+      if (decision == null) {
         continue;
       }
 
-      await ref
+      final switched = await ref
           .read(proxiesActionProvider.notifier)
-          .changeProxy(groupName: group.name, proxyName: replacement);
-    }
-  }
-
-  static String? _pickBestInGeo({
-    required Group group,
-    required String stickyGeo,
-    required String testUrl,
-    required Map<String, Map<String, int?>> delayMap,
-  }) {
-    String? bestName;
-    int? bestDelay;
-    String? fallbackName;
-    for (final proxy in group.all) {
-      if (inferProxyGeoRegion(proxy.name) != stickyGeo) {
-        continue;
-      }
-      fallbackName ??= proxy.name;
-      final delay = delayMap[testUrl]?[proxy.name];
-      if (delay == null || delay <= 0) {
-        continue;
-      }
-      if (bestDelay == null || delay < bestDelay) {
-        bestDelay = delay;
-        bestName = proxy.name;
+          .changeProxy(
+            groupName: group.name,
+            proxyName: decision.proxyName,
+            persistOverride: false,
+            closeConnections: false,
+          );
+      if (switched) {
+        _lastSwitchAtByGroup[group.name] = now;
       }
     }
-    return bestName ?? fallbackName;
   }
 
   static void setStickyGeoForGroup(
@@ -129,5 +124,6 @@ class AutoSelectSticky {
         ..remove(groupName);
       return state.copyWith(autoSelectStickyGeoByGroup: next);
     });
+    _lastSwitchAtByGroup.remove(groupName);
   }
 }

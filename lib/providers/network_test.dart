@@ -189,15 +189,24 @@ Future<AutoSelectResult> enableAutoSelectWithContainer(WidgetRef ref) async {
     orElse: () => null,
   );
   if (existingAuto != null) {
-    ref
-        .read(profilesActionProvider.notifier)
-        .clearCurrentSelectedMap(existingAuto.name);
+    final autoGroups = groups
+        .where((group) => group.type.isComputedSelected)
+        .toList();
+    for (final group in autoGroups) {
+      ref
+          .read(profilesActionProvider.notifier)
+          .clearCurrentSelectedMap(group.name);
+      await ref
+          .read(proxiesActionProvider.notifier)
+          .changeProxy(
+            groupName: group.name,
+            proxyName: '',
+            closeConnections: false,
+          );
+    }
     ref
         .read(proxiesActionProvider.notifier)
         .updateCurrentGroupName(existingAuto.name);
-    await ref
-        .read(proxiesActionProvider.notifier)
-        .changeProxy(groupName: existingAuto.name, proxyName: '');
     ref.read(proxiesActionProvider.notifier).updateGroupsDebounce();
     return AutoSelectResult(
       enabledExisting: true,

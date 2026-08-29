@@ -1,7 +1,7 @@
 /// Heuristic geo/region tags inferred from proxy or group names.
 ///
-/// Used by auto-select sticky policy to keep url-test/fallback picks within
-/// the same region while nodes remain available.
+/// Used by auto-select sticky policy to prefer a region when the current
+/// url-test/fallback node becomes unhealthy.
 String? inferProxyGeoRegion(String name) {
   final normalized = name.trim().toUpperCase();
   if (normalized.isEmpty) {
@@ -65,16 +65,111 @@ bool _nameContainsGeoToken(String normalized, String token) {
   return normalized.contains(upperToken);
 }
 
-String resolveAutoSelectStickyGeo({
+/// Preferred sticky region for policy / UI.
+///
+/// Returns `null` when Flutter should not override core url-test/fallback.
+String? resolvePreferredStickyGeo({
   required String? configuredGeo,
   required bool geoIdentityEnabled,
-  required String proxyName,
 }) {
-  if (configuredGeo != null && configuredGeo.isNotEmpty) {
+  if (configuredGeo != null &&
+      configuredGeo.isNotEmpty &&
+      configuredGeo != 'ANY') {
     return configuredGeo;
   }
   if (geoIdentityEnabled) {
     return 'US';
   }
-  return inferProxyGeoRegion(proxyName) ?? 'ANY';
+  return null;
+}
+
+/// Display helper for sticky banners / Stick-to-region action.
+String resolveAutoSelectStickyGeo({
+  required String? configuredGeo,
+  required bool geoIdentityEnabled,
+  required String proxyName,
+}) {
+  return resolvePreferredStickyGeo(
+        configuredGeo: configuredGeo,
+        geoIdentityEnabled: geoIdentityEnabled,
+      ) ??
+      inferProxyGeoRegion(proxyName) ??
+      'ANY';
+}
+
+/// Whether a delay sample means the node is usable right now.
+bool isProxyDelayHealthy(int? delay) => delay != null && delay > 0;
+
+/// Pure auto-select decision used by [AutoSelectSticky].
+///
+/// Policy:
+/// - never fight an explicit user override (`selectedMap`)
+/// - never switch a healthy current node (no flapping / connection drops)
+/// - when current is unhealthy, prefer a known-healthy node in [preferredGeo]
+/// - never fall back to untested nodes
+class AutoSelectDecision {
+  const AutoSelectDecision({required this.proxyName, required this.reason});
+
+  final String proxyName;
+  final String reason;
+}
+
+AutoSelectDecision? decideAutoSelectSwitch({
+  required String currentName,
+  required String? userOverride,
+  required String? preferredGeo,
+  required bool currentHealthy,
+  required String? bestHealthyInPreferredGeo,
+  required DateTime now,
+  DateTime? lastSwitchAt,
+  Duration cooldown = const Duration(seconds: 60),
+}) {
+  if (userOverride != null && userOverride.isNotEmpty) {
+    return null;
+  }
+  if (preferredGeo == null || preferredGeo.isEmpty || preferredGeo == 'ANY') {
+    return null;
+  }
+  if (lastSwitchAt != null && now.difference(lastSwitchAt) < cooldown) {
+    return null;
+  }
+  if (currentName.isEmpty) {
+    return null;
+  }
+  // Healthy current node always wins — even if it is outside the preferred geo.
+  if (currentHealthy) {
+    return null;
+  }
+  final candidate = bestHealthyInPreferredGeo;
+  if (candidate == null || candidate.isEmpty || candidate == currentName) {
+    return null;
+  }
+  return AutoSelectDecision(
+    proxyName: candidate,
+    reason: 'current_unhealthy_prefer_$preferredGeo',
+  );
+}
+
+String? pickBestHealthyProxyInGeo({
+  required Iterable<String> proxyNames,
+  required String preferredGeo,
+  required String testUrl,
+  required Map<String, Map<String, int?>> delayMap,
+}) {
+  String? bestName;
+  int? bestDelay;
+  for (final name in proxyNames) {
+    if (inferProxyGeoRegion(name) != preferredGeo) {
+      continue;
+    }
+    final delay = delayMap[testUrl]?[name];
+    if (!isProxyDelayHealthy(delay)) {
+      continue;
+    }
+    if (bestDelay == null || delay! < bestDelay) {
+      bestDelay = delay;
+      bestName = name;
+    }
+  }
+  return bestName;
 }

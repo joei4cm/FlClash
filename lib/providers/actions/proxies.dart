@@ -125,15 +125,19 @@ class ProxiesAction extends _$ProxiesAction {
     ref.read(delayDataSourceProvider.notifier).setDelay(delay);
   }
 
-  Future<void> changeProxy({
+  Future<bool> changeProxy({
     required String groupName,
     required String proxyName,
+    bool persistOverride = true,
+    bool? closeConnections,
   }) async {
     final profilesAction = ref.read(profilesActionProvider.notifier);
     final rollbackName =
         _pendingSelectedRollback.remove(groupName) ??
         _currentSelectedName(groupName);
-    profilesAction.updateCurrentSelectedMap(groupName, proxyName);
+    if (persistOverride) {
+      profilesAction.updateCurrentSelectedMap(groupName, proxyName);
+    }
     try {
       await _core.changeProxy(
         ChangeProxyParams(groupName: groupName, proxyName: proxyName),
@@ -143,15 +147,19 @@ class ProxiesAction extends _$ProxiesAction {
         'changeProxy($groupName -> $proxyName) failed: $error',
         logLevel: coreFailureLogLevel(error),
       );
-      profilesAction.updateCurrentSelectedMap(groupName, rollbackName);
+      if (persistOverride) {
+        profilesAction.updateCurrentSelectedMap(groupName, rollbackName);
+      }
       dialogs.showNotifier(
         currentAppLocalizations.changeProxyFailedTip,
         level: MessageLevel.error,
       );
-      return;
+      return false;
     }
+    final shouldClose =
+        closeConnections ?? ref.read(appSettingProvider).closeConnections;
     try {
-      if (ref.read(appSettingProvider).closeConnections) {
+      if (shouldClose) {
         await _core.closeConnections();
       } else {
         await _core.resetConnections();
@@ -163,6 +171,7 @@ class ProxiesAction extends _$ProxiesAction {
       );
     }
     ref.read(checkIpNumProvider.notifier).add();
+    return true;
   }
 
   Future<String> updateProvider(
