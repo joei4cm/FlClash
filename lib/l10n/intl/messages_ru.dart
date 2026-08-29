@@ -523,6 +523,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "Интервал автообновления должен быть больше 0",
     ),
     "geoIdentity": MessageLookupByLibrary.simpleMessage("Геоидентичность"),
+    "geoIdentityCaptureMode": MessageLookupByLibrary.simpleMessage(
+      "Режим перехвата трафика",
+    ),
+    "geoIdentityCaptureModeAuto": MessageLookupByLibrary.simpleMessage(
+      "Авто — не менять текущие настройки; если нет перехвата, включить только TUN",
+    ),
+    "geoIdentityCaptureModeBoth": MessageLookupByLibrary.simpleMessage(
+      "Системный прокси + TUN",
+    ),
+    "geoIdentityCaptureModeSystemProxy": MessageLookupByLibrary.simpleMessage(
+      "Только системный прокси",
+    ),
+    "geoIdentityCaptureModeTun": MessageLookupByLibrary.simpleMessage(
+      "Только TUN / виртуальный NIC",
+    ),
     "geoIdentityCheckCancelled": MessageLookupByLibrary.simpleMessage(
       "Проверка сети отменена",
     ),

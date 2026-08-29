@@ -179,6 +179,10 @@ class GeoIdentitySetting extends _$GeoIdentitySetting
     update((state) => state.copyWith(useUsAcceptLanguage: useUsAcceptLanguage));
   }
 
+  void setCaptureMode(GeoIdentityCaptureMode captureMode) {
+    update((state) => state.copyWith(captureMode: captureMode));
+  }
+
   void setTimezoneHistory({
     String? previousOsTimezone,
     String? appliedOsTimezone,

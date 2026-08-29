@@ -97,7 +97,71 @@ void main() {
     const props = GeoIdentityProps();
     expect(props.enable, isFalse);
     expect(props.useUsAcceptLanguage, isTrue);
+    expect(props.captureMode, GeoIdentityCaptureMode.auto);
     expect(props.previousOsTimezone, isNull);
     expect(props.appliedOsTimezone, isNull);
+  });
+
+  group('resolveGeoIdentityCaptureActions', () {
+    test('auto leaves existing desktop capture alone', () {
+      final actions = resolveGeoIdentityCaptureActions(
+        mode: GeoIdentityCaptureMode.auto,
+        isDesktop: true,
+        currentSystemProxy: true,
+        currentTunEnable: false,
+        currentVpnEnable: false,
+      );
+      expect(actions.setSystemProxy, isNull);
+      expect(actions.setTunEnable, isNull);
+      expect(actions.setVpnEnable, isNull);
+    });
+
+    test('auto enables TUN only when desktop has no capture', () {
+      final actions = resolveGeoIdentityCaptureActions(
+        mode: GeoIdentityCaptureMode.auto,
+        isDesktop: true,
+        currentSystemProxy: false,
+        currentTunEnable: false,
+        currentVpnEnable: false,
+      );
+      expect(actions.setSystemProxy, isNull);
+      expect(actions.setTunEnable, isTrue);
+    });
+
+    test('tun mode does not force system proxy', () {
+      final actions = resolveGeoIdentityCaptureActions(
+        mode: GeoIdentityCaptureMode.tun,
+        isDesktop: true,
+        currentSystemProxy: false,
+        currentTunEnable: false,
+        currentVpnEnable: false,
+      );
+      expect(actions.setSystemProxy, isNull);
+      expect(actions.setTunEnable, isTrue);
+    });
+
+    test('systemProxy mode does not force TUN', () {
+      final actions = resolveGeoIdentityCaptureActions(
+        mode: GeoIdentityCaptureMode.systemProxy,
+        isDesktop: true,
+        currentSystemProxy: false,
+        currentTunEnable: false,
+        currentVpnEnable: false,
+      );
+      expect(actions.setSystemProxy, isTrue);
+      expect(actions.setTunEnable, isNull);
+    });
+
+    test('both enables missing desktop capture toggles', () {
+      final actions = resolveGeoIdentityCaptureActions(
+        mode: GeoIdentityCaptureMode.both,
+        isDesktop: true,
+        currentSystemProxy: false,
+        currentTunEnable: true,
+        currentVpnEnable: false,
+      );
+      expect(actions.setSystemProxy, isTrue);
+      expect(actions.setTunEnable, isNull);
+    });
   });
 }

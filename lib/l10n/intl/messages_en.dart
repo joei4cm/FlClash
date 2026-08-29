@@ -504,6 +504,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "Auto update interval must be greater than 0",
     ),
     "geoIdentity": MessageLookupByLibrary.simpleMessage("Geo identity"),
+    "geoIdentityCaptureMode": MessageLookupByLibrary.simpleMessage(
+      "Traffic capture mode",
+    ),
+    "geoIdentityCaptureModeAuto": MessageLookupByLibrary.simpleMessage(
+      "Auto — keep current settings; enable TUN only if needed",
+    ),
+    "geoIdentityCaptureModeBoth": MessageLookupByLibrary.simpleMessage(
+      "System proxy + TUN",
+    ),
+    "geoIdentityCaptureModeSystemProxy": MessageLookupByLibrary.simpleMessage(
+      "System proxy only",
+    ),
+    "geoIdentityCaptureModeTun": MessageLookupByLibrary.simpleMessage(
+      "TUN / virtual NIC only",
+    ),
     "geoIdentityCheckCancelled": MessageLookupByLibrary.simpleMessage(
       "Network check was cancelled",
     ),

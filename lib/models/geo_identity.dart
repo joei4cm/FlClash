@@ -5,6 +5,68 @@ part 'generated/geo_identity.g.dart';
 
 const defaultGeoIdentityProps = GeoIdentityProps();
 
+/// How Geo Identity should take over traffic when protect is turned on.
+///
+/// - [auto]: leave the user's current system-proxy / TUN / VPN settings alone;
+///   if nothing is capturing yet, enable TUN (desktop) or VPN (Android) only.
+/// - [tun]: ensure TUN (desktop) / VPN (Android) is on; do not force system proxy.
+/// - [systemProxy]: ensure system proxy is on (desktop); do not force TUN.
+/// - [both]: ensure both system proxy and TUN/VPN are on (legacy behavior).
+enum GeoIdentityCaptureMode { auto, tun, systemProxy, both }
+
+/// Desired capture toggles when enabling geo-identity protect.
+///
+/// `null` means leave the current user setting unchanged.
+class GeoIdentityCaptureActions {
+  const GeoIdentityCaptureActions({
+    this.setSystemProxy,
+    this.setTunEnable,
+    this.setVpnEnable,
+  });
+
+  final bool? setSystemProxy;
+  final bool? setTunEnable;
+  final bool? setVpnEnable;
+}
+
+/// Resolve which capture toggles to flip for [mode] given current settings.
+GeoIdentityCaptureActions resolveGeoIdentityCaptureActions({
+  required GeoIdentityCaptureMode mode,
+  required bool isDesktop,
+  required bool currentSystemProxy,
+  required bool currentTunEnable,
+  required bool currentVpnEnable,
+}) {
+  if (!isDesktop) {
+    final needsVpn = switch (mode) {
+      GeoIdentityCaptureMode.auto => !currentVpnEnable,
+      GeoIdentityCaptureMode.tun ||
+      GeoIdentityCaptureMode.systemProxy ||
+      GeoIdentityCaptureMode.both => !currentVpnEnable,
+    };
+    return GeoIdentityCaptureActions(
+      setVpnEnable: needsVpn ? true : null,
+    );
+  }
+
+  return switch (mode) {
+    GeoIdentityCaptureMode.auto =>
+      (!currentSystemProxy && !currentTunEnable)
+          ? const GeoIdentityCaptureActions(setTunEnable: true)
+          : const GeoIdentityCaptureActions(),
+    GeoIdentityCaptureMode.tun => GeoIdentityCaptureActions(
+      setTunEnable: currentTunEnable ? null : true,
+    ),
+    GeoIdentityCaptureMode.systemProxy => GeoIdentityCaptureActions(
+      setSystemProxy: currentSystemProxy ? null : true,
+    ),
+    GeoIdentityCaptureMode.both => GeoIdentityCaptureActions(
+      setSystemProxy: currentSystemProxy ? null : true,
+      setTunEnable: currentTunEnable ? null : true,
+    ),
+  };
+}
+
 /// Opt-in geo-identity protection for US AI exit consistency.
 ///
 /// FlClash can verify and steer the **network exit**. Browser/OS fingerprints
@@ -20,6 +82,9 @@ abstract class GeoIdentityProps with _$GeoIdentityProps {
     /// Send `Accept-Language: en-US,en;q=0.9` on FuckClaude network probes so
     /// the server-side estimate is not polluted by a Chinese Accept-Language.
     @Default(true) bool useUsAcceptLanguage,
+
+    /// How protect should enable traffic capture when turned on.
+    @Default(GeoIdentityCaptureMode.auto) GeoIdentityCaptureMode captureMode,
 
     /// Previous OS timezone id saved before an align action (for Restore).
     String? previousOsTimezone,

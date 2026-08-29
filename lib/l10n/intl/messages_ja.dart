@@ -406,6 +406,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "自動更新間隔は0より大きくなければなりません",
     ),
     "geoIdentity": MessageLookupByLibrary.simpleMessage("地理アイデンティティ"),
+    "geoIdentityCaptureMode": MessageLookupByLibrary.simpleMessage(
+      "トラフィック取り込み方式",
+    ),
+    "geoIdentityCaptureModeAuto": MessageLookupByLibrary.simpleMessage(
+      "自動 — 現在の設定を維持；未取り込みなら TUN のみ有効化",
+    ),
+    "geoIdentityCaptureModeBoth": MessageLookupByLibrary.simpleMessage(
+      "システムプロキシ + TUN",
+    ),
+    "geoIdentityCaptureModeSystemProxy": MessageLookupByLibrary.simpleMessage(
+      "システムプロキシのみ",
+    ),
+    "geoIdentityCaptureModeTun": MessageLookupByLibrary.simpleMessage(
+      "TUN / 仮想 NIC のみ",
+    ),
     "geoIdentityCheckCancelled": MessageLookupByLibrary.simpleMessage(
       "ネットワークチェックがキャンセルされました",
     ),
