@@ -68,7 +68,7 @@ class AutoSelectSticky {
         delayMap: delayMap,
       );
 
-      final decision = decideAutoSelectSwitch(
+      final AutoSelectDecision? decision = decideAutoSelectSwitch(
         currentName: currentName,
         userOverride: override,
         preferredGeo: preferredGeo,
