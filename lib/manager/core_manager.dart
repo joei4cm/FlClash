@@ -117,6 +117,10 @@ class _CoreContainerState extends ConsumerState<CoreManager>
       return;
     }
     ref.read(coreStatusProvider.notifier).value = CoreStatus.disconnected;
+    // Keep Flutter run-state honest: a crashed core is not "still connected".
+    if (ref.read(isStartProvider)) {
+      unawaited(ref.read(setupActionProvider.notifier).setRunning(false));
+    }
     if (WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
       context.showNotifier(message, level: MessageLevel.error);
     }

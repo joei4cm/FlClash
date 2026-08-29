@@ -171,6 +171,28 @@ void main() {
       verifyNever(core.closeConnections);
     });
 
+    test('policy switch skips selectedMap persist and connection close', () async {
+      final container = buildContainer(profile: _selectedProfile('HK-01'));
+      container.read(appSettingProvider.notifier).value = const AppSettingProps(
+        closeConnections: true,
+      );
+
+      final ok = await actionOf(container).changeProxy(
+        groupName: 'Proxy',
+        proxyName: 'US-01',
+        persistOverride: false,
+        closeConnections: false,
+      );
+
+      expect(ok, isTrue);
+      expect(
+        container.read(currentProfileProvider)?.selectedMap['Proxy'],
+        'HK-01',
+      );
+      verify(core.resetConnections).called(1);
+      verifyNever(core.closeConnections);
+    });
+
     test('still bumps the ip check when the connection reset throws', () async {
       when(core.closeConnections).thenThrow(
         const CoreMethodException(
