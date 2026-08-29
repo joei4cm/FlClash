@@ -32,7 +32,7 @@ pub fn cleanup_socket(path: &str) -> io::Result<()> {
 /// can prove it, empty where it cannot.
 #[cfg(windows)]
 pub fn connected_payload(stream: &interprocess::local_socket::Stream) -> io::Result<Vec<u8>> {
-    use interprocess::local_socket::traits::Stream as _;
+    use interprocess::local_socket::traits::StreamCommon as _;
 
     let credentials = stream.peer_creds()?;
     let process_id = credentials.pid().ok_or_else(|| {
