@@ -57,13 +57,14 @@ class TestSetupAction extends SetupAction {
   void resetCoreTraffic() => trafficResets++;
 
   @override
-  Future<void> applyProfile({
+  Future<bool> applyProfile({
     bool silence = false,
     bool force = false,
     Future<void> Function()? preloadInvoke,
   }) async {
     applyProfileCalls++;
     await preloadInvoke?.call();
+    return true;
   }
 }
 

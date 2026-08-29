@@ -728,7 +728,7 @@ class _TestSetupAction extends SetupAction {
   }
 
   @override
-  Future<void> applyProfile({
+  Future<bool> applyProfile({
     bool silence = false,
     bool force = false,
     Future<void> Function()? preloadInvoke,
@@ -738,6 +738,7 @@ class _TestSetupAction extends SetupAction {
       firstApplyStarted?.complete();
       await firstApplyCompleter?.future;
     }
+    return true;
   }
 }
 
@@ -810,13 +811,14 @@ class _InitializingSetupAction extends _RaceSetupAction {
   }
 
   @override
-  Future<void> applyProfile({
+  Future<bool> applyProfile({
     bool silence = false,
     bool force = false,
     Future<void> Function()? preloadInvoke,
   }) async {
     await _initializationCompleter.future;
     await preloadInvoke?.call();
+    return true;
   }
 }
 

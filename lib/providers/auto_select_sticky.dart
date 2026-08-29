@@ -44,6 +44,10 @@ class AutoSelectSticky {
       if (!group.type.isComputedSelected) {
         continue;
       }
+      // Strategy-lane managed url-test groups should keep include-all behavior.
+      if (group.name.startsWith('FlClash-')) {
+        continue;
+      }
       final preferredGeo = resolvePreferredStickyGeo(
         configuredGeo: stickyByGroup[group.name],
         geoIdentityEnabled: geoIdentityEnabled,

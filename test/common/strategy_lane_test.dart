@@ -116,9 +116,51 @@ void main() {
         proxyGroups: const [],
         rules: const [],
         testUrl: 'https://www.gstatic.com/generate_204',
+        availableProxyNames: const {'TG-01'},
       );
       expect(injection.groups.single['type'], 'select');
       expect(injection.groups.single['proxies'], ['TG-01', 'DIRECT', 'REJECT']);
+    });
+
+    test('skips missing group targets instead of emitting broken rules', () {
+      final key = strategyLanePolicyKey(1, StrategyLaneId.streaming);
+      final injection = buildStrategyLaneInjection(
+        profileId: 1,
+        policies: {key: 'group:Missing'},
+        proxyGroups: const [],
+        rules: const [],
+        testUrl: 'https://www.gstatic.com/generate_204',
+      );
+      expect(injection.isEmpty, isTrue);
+    });
+
+    test('skips missing proxy targets', () {
+      final key = strategyLanePolicyKey(1, StrategyLaneId.messaging);
+      final injection = buildStrategyLaneInjection(
+        profileId: 1,
+        policies: {key: 'proxy:TG-01'},
+        proxyGroups: const [],
+        rules: const [],
+        testUrl: 'https://www.gstatic.com/generate_204',
+        availableProxyNames: const {'US-01'},
+      );
+      expect(injection.isEmpty, isTrue);
+    });
+  });
+
+  group('match helpers', () {
+    test('does not treat Mainland as AI', () {
+      expect(classifyStrategyLaneName('Mainland'), StrategyLaneKind.other);
+      expect(classifyStrategyLaneName('OpenAI'), StrategyLaneKind.ai);
+    });
+
+    test('domain discovery requires label boundary', () {
+      final discovery = discoverStrategyLane(
+        preset: strategyLanePresetById(StrategyLaneId.streaming)!,
+        proxyGroups: const [],
+        rules: const ['DOMAIN-SUFFIX,evilnetflix.com,Bad', 'MATCH,PROXY'],
+      );
+      expect(discovery.hasGroup, isFalse);
     });
   });
 
@@ -185,6 +227,7 @@ void main() {
       expect(classifyStrategyLaneName('Netflix'), StrategyLaneKind.streaming);
       expect(classifyStrategyLaneName('OpenAI'), StrategyLaneKind.ai);
       expect(classifyStrategyLaneName('Random-HK'), StrategyLaneKind.other);
+      expect(classifyStrategyLaneName('Mainland'), StrategyLaneKind.other);
     });
   });
 }
