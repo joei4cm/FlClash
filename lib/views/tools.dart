@@ -12,6 +12,7 @@ import 'package:fl_clash/views/config/config.dart';
 import 'package:fl_clash/views/hotkey.dart';
 import 'package:fl_clash/views/tailscale.dart';
 import 'package:fl_clash/views/geo_identity.dart';
+import 'package:fl_clash/views/strategy_lanes.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,7 +71,11 @@ class _ToolViewState extends ConsumerState<ToolsView> {
   List<Widget> _getFeatureList() {
     return generateSection(
       title: context.appLocalizations.features,
-      items: [const _TailscaleItem(), const _GeoIdentityItem()],
+      items: [
+        const _TailscaleItem(),
+        const _GeoIdentityItem(),
+        const _StrategyLanesItem(),
+      ],
     );
   }
 
@@ -288,6 +293,20 @@ class _GeoIdentityItem extends StatelessWidget {
       title: Text(context.appLocalizations.geoIdentity),
       subtitle: Text(context.appLocalizations.geoIdentityDesc),
       widget: const GeoIdentityView(),
+    );
+  }
+}
+
+class _StrategyLanesItem extends StatelessWidget {
+  const _StrategyLanesItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListItem.open(
+      leading: const Icon(Icons.account_tree_outlined),
+      title: Text(context.appLocalizations.strategyLanes),
+      subtitle: Text(context.appLocalizations.strategyLanesDesc),
+      widget: const StrategyLanesView(),
     );
   }
 }

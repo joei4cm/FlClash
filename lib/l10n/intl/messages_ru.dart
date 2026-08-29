@@ -103,14 +103,16 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m35(success, fail) => "${success} доступно · ${fail} ошибок";
 
-  static String m36(count) => "Маршрутов: ${count}";
+  static String m36(node) => "Сейчас: ${node}";
 
-  static String m37(count) =>
+  static String m37(count) => "Маршрутов: ${count}";
+
+  static String m38(count) =>
       "Активных узлов: ${count}. Нажмите ping у узла, чтобы проверить связь.";
 
-  static String m38(label) => "${label} должен быть URL";
+  static String m39(label) => "${label} должен быть URL";
 
-  static String m39(count) =>
+  static String m40(count) =>
       "${Intl.plural(count, one: '${count} год назад', few: '${count} года назад', many: '${count} лет назад', other: '${count} года назад')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -1304,6 +1306,55 @@ class MessageLookup extends MessageLookupByLibrary {
     "stickToRegion": MessageLookupByLibrary.simpleMessage("Закрепить регион"),
     "stop": MessageLookupByLibrary.simpleMessage("Стоп"),
     "stopVpn": MessageLookupByLibrary.simpleMessage("Остановка VPN..."),
+    "strategyLaneCurrent": m36,
+    "strategyLaneFollowSubscription": MessageLookupByLibrary.simpleMessage(
+      "Следовать подписке",
+    ),
+    "strategyLaneFollowing": MessageLookupByLibrary.simpleMessage(
+      "Следует подписке",
+    ),
+    "strategyLaneKindAi": MessageLookupByLibrary.simpleMessage("ИИ"),
+    "strategyLaneKindGaming": MessageLookupByLibrary.simpleMessage("Игры"),
+    "strategyLaneKindMessaging": MessageLookupByLibrary.simpleMessage(
+      "Мессенджеры",
+    ),
+    "strategyLaneKindOther": MessageLookupByLibrary.simpleMessage(
+      "Другие стратегии",
+    ),
+    "strategyLaneKindProxy": MessageLookupByLibrary.simpleMessage(
+      "Прокси / выбор",
+    ),
+    "strategyLaneKindSearch": MessageLookupByLibrary.simpleMessage("Поиск"),
+    "strategyLaneKindSocial": MessageLookupByLibrary.simpleMessage("Соцсети"),
+    "strategyLaneKindStreaming": MessageLookupByLibrary.simpleMessage(
+      "Стриминг",
+    ),
+    "strategyLaneOverridden": MessageLookupByLibrary.simpleMessage(
+      "Переопределено",
+    ),
+    "strategyLaneTypeLoadBalance": MessageLookupByLibrary.simpleMessage(
+      "Балансировка",
+    ),
+    "strategyLaneTypeRelay": MessageLookupByLibrary.simpleMessage("Реле"),
+    "strategyLaneTypeSelector": MessageLookupByLibrary.simpleMessage(
+      "Ручной выбор",
+    ),
+    "strategyLanes": MessageLookupByLibrary.simpleMessage("Стратегии"),
+    "strategyLanesDesc": MessageLookupByLibrary.simpleMessage(
+      "Показать группы подписки и переопределить их выходы",
+    ),
+    "strategyLanesEmpty": MessageLookupByLibrary.simpleMessage(
+      "Стратегические группы не найдены",
+    ),
+    "strategyLanesEmptyDesc": MessageLookupByLibrary.simpleMessage(
+      "В профиле пока нет выбираемых групп. Используйте подписку с правилами или включите автовыбор.",
+    ),
+    "strategyLanesNeedStart": MessageLookupByLibrary.simpleMessage(
+      "Запустите FlClash, чтобы загрузить стратегические группы текущего профиля.",
+    ),
+    "strategyLanesTip": MessageLookupByLibrary.simpleMessage(
+      "Группы из подписки по предполагаемому назначению. Выберите выход для переопределения или следуйте подписке.",
+    ),
     "style": MessageLookupByLibrary.simpleMessage("Стиль"),
     "subRule": MessageLookupByLibrary.simpleMessage("Подправило"),
     "subRuleEmpty": MessageLookupByLibrary.simpleMessage("Подправило пусто"),
@@ -1425,7 +1476,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleRoutes": MessageLookupByLibrary.simpleMessage(
       "Пункты назначения маршрута",
     ),
-    "tailscaleRoutesCount": m36,
+    "tailscaleRoutesCount": m37,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "Домены или IP, направляемые через этот узел, по одному в строке (например, Tailscale IP или имя MagicDNS вашего домашнего ПК).",
     ),
@@ -1462,7 +1513,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleStatusNoNodes": MessageLookupByLibrary.simpleMessage(
       "Включено, но узлов ещё нет. Добавьте узел, чтобы начать.",
     ),
-    "tailscaleStatusReady": m37,
+    "tailscaleStatusReady": m38,
     "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
       "Перед проверкой включите Tailscale.",
     ),
@@ -1535,7 +1586,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "urlDesc": MessageLookupByLibrary.simpleMessage(
       "Получить профиль через URL",
     ),
-    "urlTip": m38,
+    "urlTip": m39,
     "useHosts": MessageLookupByLibrary.simpleMessage("Использовать hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Использовать системные hosts",
@@ -1562,7 +1613,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "whitelistMode": MessageLookupByLibrary.simpleMessage(
       "Режим белого списка",
     ),
-    "yearsAgo": m39,
+    "yearsAgo": m40,
     "zh_CN": MessageLookupByLibrary.simpleMessage("Упрощенный китайский"),
   };
 }

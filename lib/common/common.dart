@@ -43,6 +43,7 @@ export 'scroll.dart';
 export 'service_probe.dart';
 export 'shape.dart';
 export 'snowflake.dart';
+export 'strategy_lane.dart';
 export 'string.dart';
 export 'system.dart';
 export 'task.dart';

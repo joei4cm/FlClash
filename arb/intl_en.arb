@@ -773,5 +773,33 @@
         "type": "String"
       }
     }
-  }
+  },
+  "strategyLanes": "Strategy lanes",
+  "strategyLanesDesc": "See subscription strategy groups and override their outlets",
+  "strategyLanesTip": "Groups from your subscription, grouped by likely purpose. Pick an outlet to override, or follow the subscription.",
+  "strategyLanesNeedStart": "Start FlClash to load strategy groups from the current profile.",
+  "strategyLanesEmpty": "No strategy groups found",
+  "strategyLanesEmptyDesc": "This profile has no selectable proxy groups yet. Use a subscription with rules, or enable auto-select.",
+  "strategyLaneFollowSubscription": "Follow subscription",
+  "strategyLaneFollowing": "Following subscription",
+  "strategyLaneOverridden": "Overridden",
+  "strategyLaneCurrent": "Current: {node}",
+  "@strategyLaneCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneKindStreaming": "Streaming",
+  "strategyLaneKindAi": "AI",
+  "strategyLaneKindSocial": "Social",
+  "strategyLaneKindSearch": "Search",
+  "strategyLaneKindMessaging": "Messaging",
+  "strategyLaneKindGaming": "Gaming",
+  "strategyLaneKindProxy": "Proxy / select",
+  "strategyLaneKindOther": "Other strategies",
+  "strategyLaneTypeSelector": "Manual select",
+  "strategyLaneTypeLoadBalance": "Load balance",
+  "strategyLaneTypeRelay": "Relay"
 }

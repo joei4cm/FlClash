@@ -104,14 +104,16 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m35(success, fail) => "${success} reachable · ${fail} failed";
 
-  static String m36(count) => "${count} route(s)";
+  static String m36(node) => "Current: ${node}";
 
-  static String m37(count) =>
+  static String m37(count) => "${count} route(s)";
+
+  static String m38(count) =>
       "${count} node(s) active. Tap ping on a node to test connectivity.";
 
-  static String m38(label) => "${label} must be a url";
+  static String m39(label) => "${label} must be a url";
 
-  static String m39(count) =>
+  static String m40(count) =>
       "${Intl.plural(count, one: '1 year ago', other: '${count} years ago')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -1241,6 +1243,55 @@ class MessageLookup extends MessageLookupByLibrary {
     "stickToRegion": MessageLookupByLibrary.simpleMessage("Stick to region"),
     "stop": MessageLookupByLibrary.simpleMessage("Stop"),
     "stopVpn": MessageLookupByLibrary.simpleMessage("Stopping VPN..."),
+    "strategyLaneCurrent": m36,
+    "strategyLaneFollowSubscription": MessageLookupByLibrary.simpleMessage(
+      "Follow subscription",
+    ),
+    "strategyLaneFollowing": MessageLookupByLibrary.simpleMessage(
+      "Following subscription",
+    ),
+    "strategyLaneKindAi": MessageLookupByLibrary.simpleMessage("AI"),
+    "strategyLaneKindGaming": MessageLookupByLibrary.simpleMessage("Gaming"),
+    "strategyLaneKindMessaging": MessageLookupByLibrary.simpleMessage(
+      "Messaging",
+    ),
+    "strategyLaneKindOther": MessageLookupByLibrary.simpleMessage(
+      "Other strategies",
+    ),
+    "strategyLaneKindProxy": MessageLookupByLibrary.simpleMessage(
+      "Proxy / select",
+    ),
+    "strategyLaneKindSearch": MessageLookupByLibrary.simpleMessage("Search"),
+    "strategyLaneKindSocial": MessageLookupByLibrary.simpleMessage("Social"),
+    "strategyLaneKindStreaming": MessageLookupByLibrary.simpleMessage(
+      "Streaming",
+    ),
+    "strategyLaneOverridden": MessageLookupByLibrary.simpleMessage(
+      "Overridden",
+    ),
+    "strategyLaneTypeLoadBalance": MessageLookupByLibrary.simpleMessage(
+      "Load balance",
+    ),
+    "strategyLaneTypeRelay": MessageLookupByLibrary.simpleMessage("Relay"),
+    "strategyLaneTypeSelector": MessageLookupByLibrary.simpleMessage(
+      "Manual select",
+    ),
+    "strategyLanes": MessageLookupByLibrary.simpleMessage("Strategy lanes"),
+    "strategyLanesDesc": MessageLookupByLibrary.simpleMessage(
+      "See subscription strategy groups and override their outlets",
+    ),
+    "strategyLanesEmpty": MessageLookupByLibrary.simpleMessage(
+      "No strategy groups found",
+    ),
+    "strategyLanesEmptyDesc": MessageLookupByLibrary.simpleMessage(
+      "This profile has no selectable proxy groups yet. Use a subscription with rules, or enable auto-select.",
+    ),
+    "strategyLanesNeedStart": MessageLookupByLibrary.simpleMessage(
+      "Start FlClash to load strategy groups from the current profile.",
+    ),
+    "strategyLanesTip": MessageLookupByLibrary.simpleMessage(
+      "Groups from your subscription, grouped by likely purpose. Pick an outlet to override, or follow the subscription.",
+    ),
     "style": MessageLookupByLibrary.simpleMessage("Style"),
     "subRule": MessageLookupByLibrary.simpleMessage("Sub rule"),
     "subRuleEmpty": MessageLookupByLibrary.simpleMessage("Sub rule is empty"),
@@ -1354,7 +1405,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleRoutes": MessageLookupByLibrary.simpleMessage(
       "Route destinations",
     ),
-    "tailscaleRoutesCount": m36,
+    "tailscaleRoutesCount": m37,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "Domains or IPs sent through this node, one per line (e.g. your home PC\'s Tailscale IP or MagicDNS name).",
     ),
@@ -1391,7 +1442,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleStatusNoNodes": MessageLookupByLibrary.simpleMessage(
       "Enabled, but no nodes yet. Add a node to get started.",
     ),
-    "tailscaleStatusReady": m37,
+    "tailscaleStatusReady": m38,
     "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
       "Turn on Enable Tailscale before testing.",
     ),
@@ -1456,7 +1507,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "urlDesc": MessageLookupByLibrary.simpleMessage(
       "Obtain profile through URL",
     ),
-    "urlTip": m38,
+    "urlTip": m39,
     "useHosts": MessageLookupByLibrary.simpleMessage("Use hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("Use system hosts"),
     "usedTraffic": MessageLookupByLibrary.simpleMessage("Used traffic"),
@@ -1477,7 +1528,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "WebDAV configuration",
     ),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("Whitelist mode"),
-    "yearsAgo": m39,
+    "yearsAgo": m40,
     "zh_CN": MessageLookupByLibrary.simpleMessage("Simplified Chinese"),
   };
 }

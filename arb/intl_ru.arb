@@ -773,5 +773,33 @@
         "type": "String"
       }
     }
-  }
+  },
+  "strategyLanes": "Стратегии",
+  "strategyLanesDesc": "Показать группы подписки и переопределить их выходы",
+  "strategyLanesTip": "Группы из подписки по предполагаемому назначению. Выберите выход для переопределения или следуйте подписке.",
+  "strategyLanesNeedStart": "Запустите FlClash, чтобы загрузить стратегические группы текущего профиля.",
+  "strategyLanesEmpty": "Стратегические группы не найдены",
+  "strategyLanesEmptyDesc": "В профиле пока нет выбираемых групп. Используйте подписку с правилами или включите автовыбор.",
+  "strategyLaneFollowSubscription": "Следовать подписке",
+  "strategyLaneFollowing": "Следует подписке",
+  "strategyLaneOverridden": "Переопределено",
+  "strategyLaneCurrent": "Сейчас: {node}",
+  "@strategyLaneCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneKindStreaming": "Стриминг",
+  "strategyLaneKindAi": "ИИ",
+  "strategyLaneKindSocial": "Соцсети",
+  "strategyLaneKindSearch": "Поиск",
+  "strategyLaneKindMessaging": "Мессенджеры",
+  "strategyLaneKindGaming": "Игры",
+  "strategyLaneKindProxy": "Прокси / выбор",
+  "strategyLaneKindOther": "Другие стратегии",
+  "strategyLaneTypeSelector": "Ручной выбор",
+  "strategyLaneTypeLoadBalance": "Балансировка",
+  "strategyLaneTypeRelay": "Реле"
 }

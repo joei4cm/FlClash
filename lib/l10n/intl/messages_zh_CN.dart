@@ -94,13 +94,15 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m35(success, fail) => "${success} 可达 · ${fail} 失败";
 
-  static String m36(count) => "${count} 个路由目标";
+  static String m36(node) => "当前：${node}";
 
-  static String m37(count) => "已有 ${count} 个节点。点击节点旁的测速按钮检查连通性。";
+  static String m37(count) => "${count} 个路由目标";
 
-  static String m38(label) => "${label}必须为URL";
+  static String m38(count) => "已有 ${count} 个节点。点击节点旁的测速按钮检查连通性。";
 
-  static String m39(count) => "${count} 年前";
+  static String m39(label) => "${label}必须为URL";
+
+  static String m40(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -898,6 +900,37 @@ class MessageLookup extends MessageLookupByLibrary {
     "stickToRegion": MessageLookupByLibrary.simpleMessage("锁定地区"),
     "stop": MessageLookupByLibrary.simpleMessage("暂停"),
     "stopVpn": MessageLookupByLibrary.simpleMessage("正在停止VPN..."),
+    "strategyLaneCurrent": m36,
+    "strategyLaneFollowSubscription": MessageLookupByLibrary.simpleMessage(
+      "跟随订阅",
+    ),
+    "strategyLaneFollowing": MessageLookupByLibrary.simpleMessage("跟随订阅"),
+    "strategyLaneKindAi": MessageLookupByLibrary.simpleMessage("AI"),
+    "strategyLaneKindGaming": MessageLookupByLibrary.simpleMessage("游戏"),
+    "strategyLaneKindMessaging": MessageLookupByLibrary.simpleMessage("即时通讯"),
+    "strategyLaneKindOther": MessageLookupByLibrary.simpleMessage("其他策略"),
+    "strategyLaneKindProxy": MessageLookupByLibrary.simpleMessage("代理 / 选择"),
+    "strategyLaneKindSearch": MessageLookupByLibrary.simpleMessage("搜索"),
+    "strategyLaneKindSocial": MessageLookupByLibrary.simpleMessage("社交"),
+    "strategyLaneKindStreaming": MessageLookupByLibrary.simpleMessage("流媒体"),
+    "strategyLaneOverridden": MessageLookupByLibrary.simpleMessage("已覆写"),
+    "strategyLaneTypeLoadBalance": MessageLookupByLibrary.simpleMessage("负载均衡"),
+    "strategyLaneTypeRelay": MessageLookupByLibrary.simpleMessage("中继"),
+    "strategyLaneTypeSelector": MessageLookupByLibrary.simpleMessage("手动选择"),
+    "strategyLanes": MessageLookupByLibrary.simpleMessage("策略分流"),
+    "strategyLanesDesc": MessageLookupByLibrary.simpleMessage(
+      "查看订阅策略组，并为各业务选择或覆写出口",
+    ),
+    "strategyLanesEmpty": MessageLookupByLibrary.simpleMessage("未找到策略组"),
+    "strategyLanesEmptyDesc": MessageLookupByLibrary.simpleMessage(
+      "当前配置尚无可选策略组。可使用带规则的订阅，或启用自动选优。",
+    ),
+    "strategyLanesNeedStart": MessageLookupByLibrary.simpleMessage(
+      "请先启动 FlClash，以加载当前配置中的策略组。",
+    ),
+    "strategyLanesTip": MessageLookupByLibrary.simpleMessage(
+      "来自当前订阅的策略组，按可能用途归类。选择出口即覆写；也可跟随订阅。",
+    ),
     "style": MessageLookupByLibrary.simpleMessage("风格"),
     "subRule": MessageLookupByLibrary.simpleMessage("子规则"),
     "subRuleEmpty": MessageLookupByLibrary.simpleMessage("子规则为空"),
@@ -991,7 +1024,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleNodesTitle": MessageLookupByLibrary.simpleMessage("节点"),
     "tailscaleNotTested": MessageLookupByLibrary.simpleMessage("未测试"),
     "tailscaleRoutes": MessageLookupByLibrary.simpleMessage("路由目标"),
-    "tailscaleRoutesCount": m36,
+    "tailscaleRoutesCount": m37,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "经由该节点转发的域名或 IP，每行一个（例如你家用电脑的 Tailscale IP 或 MagicDNS 名称）。",
     ),
@@ -1024,7 +1057,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleStatusNoNodes": MessageLookupByLibrary.simpleMessage(
       "已启用，但还没有节点。请先添加一个节点。",
     ),
-    "tailscaleStatusReady": m37,
+    "tailscaleStatusReady": m38,
     "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
       "请先打开“启用 Tailscale”再测试。",
     ),
@@ -1075,7 +1108,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "upload": MessageLookupByLibrary.simpleMessage("上传"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage("通过URL获取配置文件"),
-    "urlTip": m38,
+    "urlTip": m39,
     "useHosts": MessageLookupByLibrary.simpleMessage("使用Hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("使用系统Hosts"),
     "usedTraffic": MessageLookupByLibrary.simpleMessage("已用流量"),
@@ -1092,7 +1125,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnTip": MessageLookupByLibrary.simpleMessage("重启VPN后改变生效"),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV配置"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("白名单模式"),
-    "yearsAgo": m39,
+    "yearsAgo": m40,
     "zh_CN": MessageLookupByLibrary.simpleMessage("中文简体"),
   };
 }
