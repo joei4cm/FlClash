@@ -321,6 +321,7 @@ class SetupAction extends _$SetupAction {
     final tailscaleProxies = tailscaleProps.activeProxies;
     final tailscaleRules = tailscaleProps.buildInjectedRules();
     final tailscaleFakeIpFilters = tailscaleProps.buildFakeIpFilters();
+    final appSetting = ref.read(appSettingProvider);
     final configMap = await _core.getConfig(profileId);
     String? scriptContent;
     final List<Rule> addedRules = [];
@@ -341,6 +342,19 @@ class SetupAction extends _$SetupAction {
     if (scriptContent?.isNotEmpty == true) {
       rawConfig = await handleEvaluate(scriptContent!, rawConfig);
     }
+    final clashConfig = await clashConfigTask(
+      Map<String, dynamic>.from(rawConfig),
+    );
+    final subscriptionRules = clashConfig.rules
+        .map((item) => item.rawValue)
+        .toList();
+    final strategyInjection = buildStrategyLaneInjection(
+      profileId: profileId,
+      policies: appSetting.strategyLanePolicies,
+      proxyGroups: clashConfig.proxyGroups,
+      rules: subscriptionRules,
+      testUrl: appSetting.testUrl,
+    );
     final directory = await appPath.profilesPath;
     final res = makeRealProfileTask(
       MakeRealProfileState(
@@ -357,6 +371,8 @@ class SetupAction extends _$SetupAction {
         tailscaleProxies: tailscaleProxies,
         tailscaleRules: tailscaleRules,
         tailscaleFakeIpFilters: tailscaleFakeIpFilters,
+        strategyLaneGroups: strategyInjection.groups,
+        strategyLaneRules: strategyInjection.rules,
       ),
     );
     return res;

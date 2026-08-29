@@ -294,14 +294,22 @@ Future<({String yaml, String md5})> _makeRealProfileTask(
     rawConfig['proxy-groups'] = data.proxyGroups;
   }
 
-  // Tailscale rules are injected at the very top so they take priority over the
-  // imported provider profile, without the user editing rules per profile.
-  if (data.tailscaleRules.isNotEmpty) {
-    rules = [...data.tailscaleRules, ...rules];
+  // Tailscale + strategy-lane rules are injected at the top so they take
+  // priority over the imported provider profile without per-profile edits.
+  final prefixRules = <String>[
+    ...data.tailscaleRules,
+    ...data.strategyLaneRules,
+  ];
+  if (prefixRules.isNotEmpty) {
+    rules = [...prefixRules, ...rules];
   }
   rawConfig['rules'] = rules;
-  final mergedConfig = data.tailscaleProxies.mergeInto(
+  var mergedConfig = data.tailscaleProxies.mergeInto(
     Map<String, dynamic>.from(rawConfig),
+  );
+  mergedConfig = mergeStrategyLaneGroupsInto(
+    mergedConfig,
+    data.strategyLaneGroups,
   );
   final yaml = await _encodeYaml(Map<String, dynamic>.from(mergedConfig));
   return (yaml: yaml, md5: yaml.toMd5());

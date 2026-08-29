@@ -43,6 +43,11 @@ _AppSettingProps _$AppSettingPropsFromJson(Map<String, dynamic> json) =>
             (k, e) => MapEntry(k, e as String),
           ) ??
           const {},
+      strategyLanePolicies:
+          (json['strategyLanePolicies'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, e as String),
+          ) ??
+          const {},
     );
 
 Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
@@ -73,6 +78,7 @@ Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
       'customUserAgent': instance.customUserAgent,
       'autoSelectStickyGeo': instance.autoSelectStickyGeo,
       'autoSelectStickyGeoByGroup': instance.autoSelectStickyGeoByGroup,
+      'strategyLanePolicies': instance.strategyLanePolicies,
     };
 
 const _$RestoreStrategyEnumMap = {

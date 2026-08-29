@@ -106,14 +106,22 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m36(node) => "Current: ${node}";
 
-  static String m37(count) => "${count} route(s)";
+  static String m37(target) => "Effective target: ${target}";
 
-  static String m38(count) =>
+  static String m38(group) => "Follow subscription (${group})";
+
+  static String m39(group) => "Group: ${group}";
+
+  static String m40(node) => "Node: ${node}";
+
+  static String m41(count) => "${count} route(s)";
+
+  static String m42(count) =>
       "${count} node(s) active. Tap ping on a node to test connectivity.";
 
-  static String m39(label) => "${label} must be a url";
+  static String m43(label) => "${label} must be a url";
 
-  static String m40(count) =>
+  static String m44(count) =>
       "${Intl.plural(count, one: '1 year ago', other: '${count} years ago')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -1244,9 +1252,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "stop": MessageLookupByLibrary.simpleMessage("Stop"),
     "stopVpn": MessageLookupByLibrary.simpleMessage("Stopping VPN..."),
     "strategyLaneCurrent": m36,
+    "strategyLaneEffective": m37,
     "strategyLaneFollowSubscription": MessageLookupByLibrary.simpleMessage(
       "Follow subscription",
     ),
+    "strategyLaneFollowWithGroup": m38,
     "strategyLaneFollowing": MessageLookupByLibrary.simpleMessage(
       "Following subscription",
     ),
@@ -1269,6 +1279,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "strategyLaneOverridden": MessageLookupByLibrary.simpleMessage(
       "Overridden",
     ),
+    "strategyLanePolicyAuto": MessageLookupByLibrary.simpleMessage(
+      "FlClash auto-select",
+    ),
+    "strategyLanePolicyGroup": m39,
+    "strategyLanePolicyProxy": m40,
     "strategyLaneTypeLoadBalance": MessageLookupByLibrary.simpleMessage(
       "Load balance",
     ),
@@ -1276,21 +1291,39 @@ class MessageLookup extends MessageLookupByLibrary {
     "strategyLaneTypeSelector": MessageLookupByLibrary.simpleMessage(
       "Manual select",
     ),
+    "strategyLaneUncovered": MessageLookupByLibrary.simpleMessage(
+      "Subscription has no dedicated strategy — traffic uses the default / MATCH path",
+    ),
     "strategyLanes": MessageLookupByLibrary.simpleMessage("Strategy lanes"),
+    "strategyLanesApplied": MessageLookupByLibrary.simpleMessage(
+      "Strategy lanes applied",
+    ),
+    "strategyLanesBusinessTitle": MessageLookupByLibrary.simpleMessage(
+      "Common services",
+    ),
     "strategyLanesDesc": MessageLookupByLibrary.simpleMessage(
-      "See subscription strategy groups and override their outlets",
+      "Map common services to subscription strategies or override them",
     ),
     "strategyLanesEmpty": MessageLookupByLibrary.simpleMessage(
       "No strategy groups found",
     ),
     "strategyLanesEmptyDesc": MessageLookupByLibrary.simpleMessage(
-      "This profile has no selectable proxy groups yet. Use a subscription with rules, or enable auto-select.",
+      "This profile has no selectable proxy groups yet. Use a subscription with rules, or pick Auto for a business lane below.",
+    ),
+    "strategyLanesExtraTitle": MessageLookupByLibrary.simpleMessage(
+      "Other subscription groups",
+    ),
+    "strategyLanesLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "Could not load profile strategies",
+    ),
+    "strategyLanesNeedProfile": MessageLookupByLibrary.simpleMessage(
+      "Select a profile first.",
     ),
     "strategyLanesNeedStart": MessageLookupByLibrary.simpleMessage(
       "Start FlClash to load strategy groups from the current profile.",
     ),
     "strategyLanesTip": MessageLookupByLibrary.simpleMessage(
-      "Groups from your subscription, grouped by likely purpose. Pick an outlet to override, or follow the subscription.",
+      "Each row is a common traffic type. Follow the subscription when it already has a strategy, or override with auto-select / a group / a node.",
     ),
     "style": MessageLookupByLibrary.simpleMessage("Style"),
     "subRule": MessageLookupByLibrary.simpleMessage("Sub rule"),
@@ -1405,7 +1438,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleRoutes": MessageLookupByLibrary.simpleMessage(
       "Route destinations",
     ),
-    "tailscaleRoutesCount": m37,
+    "tailscaleRoutesCount": m41,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "Domains or IPs sent through this node, one per line (e.g. your home PC\'s Tailscale IP or MagicDNS name).",
     ),
@@ -1442,7 +1475,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleStatusNoNodes": MessageLookupByLibrary.simpleMessage(
       "Enabled, but no nodes yet. Add a node to get started.",
     ),
-    "tailscaleStatusReady": m38,
+    "tailscaleStatusReady": m42,
     "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
       "Turn on Enable Tailscale before testing.",
     ),
@@ -1507,7 +1540,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "urlDesc": MessageLookupByLibrary.simpleMessage(
       "Obtain profile through URL",
     ),
-    "urlTip": m39,
+    "urlTip": m43,
     "useHosts": MessageLookupByLibrary.simpleMessage("Use hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("Use system hosts"),
     "usedTraffic": MessageLookupByLibrary.simpleMessage("Used traffic"),
@@ -1528,7 +1561,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "WebDAV configuration",
     ),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("Whitelist mode"),
-    "yearsAgo": m40,
+    "yearsAgo": m44,
     "zh_CN": MessageLookupByLibrary.simpleMessage("Simplified Chinese"),
   };
 }

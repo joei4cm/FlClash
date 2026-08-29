@@ -6153,20 +6153,20 @@ class AppLocalizations {
     );
   }
 
-  /// `See subscription strategy groups and override their outlets`
+  /// `Map common services to subscription strategies or override them`
   String get strategyLanesDesc {
     return Intl.message(
-      'See subscription strategy groups and override their outlets',
+      'Map common services to subscription strategies or override them',
       name: 'strategyLanesDesc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Groups from your subscription, grouped by likely purpose. Pick an outlet to override, or follow the subscription.`
+  /// `Each row is a common traffic type. Follow the subscription when it already has a strategy, or override with auto-select / a group / a node.`
   String get strategyLanesTip {
     return Intl.message(
-      'Groups from your subscription, grouped by likely purpose. Pick an outlet to override, or follow the subscription.',
+      'Each row is a common traffic type. Follow the subscription when it already has a strategy, or override with auto-select / a group / a node.',
       name: 'strategyLanesTip',
       desc: '',
       args: [],
@@ -6183,6 +6183,26 @@ class AppLocalizations {
     );
   }
 
+  /// `Select a profile first.`
+  String get strategyLanesNeedProfile {
+    return Intl.message(
+      'Select a profile first.',
+      name: 'strategyLanesNeedProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not load profile strategies`
+  String get strategyLanesLoadFailed {
+    return Intl.message(
+      'Could not load profile strategies',
+      name: 'strategyLanesLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `No strategy groups found`
   String get strategyLanesEmpty {
     return Intl.message(
@@ -6193,11 +6213,41 @@ class AppLocalizations {
     );
   }
 
-  /// `This profile has no selectable proxy groups yet. Use a subscription with rules, or enable auto-select.`
+  /// `This profile has no selectable proxy groups yet. Use a subscription with rules, or pick Auto for a business lane below.`
   String get strategyLanesEmptyDesc {
     return Intl.message(
-      'This profile has no selectable proxy groups yet. Use a subscription with rules, or enable auto-select.',
+      'This profile has no selectable proxy groups yet. Use a subscription with rules, or pick Auto for a business lane below.',
       name: 'strategyLanesEmptyDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Common services`
+  String get strategyLanesBusinessTitle {
+    return Intl.message(
+      'Common services',
+      name: 'strategyLanesBusinessTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Other subscription groups`
+  String get strategyLanesExtraTitle {
+    return Intl.message(
+      'Other subscription groups',
+      name: 'strategyLanesExtraTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Strategy lanes applied`
+  String get strategyLanesApplied {
+    return Intl.message(
+      'Strategy lanes applied',
+      name: 'strategyLanesApplied',
       desc: '',
       args: [],
     );
@@ -6210,6 +6260,16 @@ class AppLocalizations {
       name: 'strategyLaneFollowSubscription',
       desc: '',
       args: [],
+    );
+  }
+
+  /// `Follow subscription ({group})`
+  String strategyLaneFollowWithGroup(String group) {
+    return Intl.message(
+      'Follow subscription ($group)',
+      name: 'strategyLaneFollowWithGroup',
+      desc: '',
+      args: [group],
     );
   }
 
@@ -6233,11 +6293,61 @@ class AppLocalizations {
     );
   }
 
+  /// `Subscription has no dedicated strategy — traffic uses the default / MATCH path`
+  String get strategyLaneUncovered {
+    return Intl.message(
+      'Subscription has no dedicated strategy — traffic uses the default / MATCH path',
+      name: 'strategyLaneUncovered',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Current: {node}`
   String strategyLaneCurrent(String node) {
     return Intl.message(
       'Current: $node',
       name: 'strategyLaneCurrent',
+      desc: '',
+      args: [node],
+    );
+  }
+
+  /// `Effective target: {target}`
+  String strategyLaneEffective(String target) {
+    return Intl.message(
+      'Effective target: $target',
+      name: 'strategyLaneEffective',
+      desc: '',
+      args: [target],
+    );
+  }
+
+  /// `FlClash auto-select`
+  String get strategyLanePolicyAuto {
+    return Intl.message(
+      'FlClash auto-select',
+      name: 'strategyLanePolicyAuto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Group: {group}`
+  String strategyLanePolicyGroup(String group) {
+    return Intl.message(
+      'Group: $group',
+      name: 'strategyLanePolicyGroup',
+      desc: '',
+      args: [group],
+    );
+  }
+
+  /// `Node: {node}`
+  String strategyLanePolicyProxy(String node) {
+    return Intl.message(
+      'Node: $node',
+      name: 'strategyLanePolicyProxy',
       desc: '',
       args: [node],
     );

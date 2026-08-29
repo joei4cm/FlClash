@@ -90,6 +90,8 @@ abstract class AppSettingProps with _$AppSettingProps {
     @Default('') String customUserAgent,
     @Default(true) bool autoSelectStickyGeo,
     @Default({}) Map<String, String> autoSelectStickyGeoByGroup,
+    /// Per-profile strategy-lane policies. Keys: `$profileId::$laneId`.
+    @Default({}) Map<String, String> strategyLanePolicies,
   }) = _AppSettingProps;
 
   factory AppSettingProps.fromJson(Map<String, Object?> json) =>

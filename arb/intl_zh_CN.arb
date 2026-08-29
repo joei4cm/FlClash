@@ -775,16 +775,55 @@
     }
   },
   "strategyLanes": "策略分流",
-  "strategyLanesDesc": "查看订阅策略组，并为各业务选择或覆写出口",
-  "strategyLanesTip": "来自当前订阅的策略组，按可能用途归类。选择出口即覆写；也可跟随订阅。",
+  "strategyLanesDesc": "把常用业务映射到订阅策略，或用 UI 覆写出口",
+  "strategyLanesTip": "每一行是一类常见流量。订阅已有策略时可跟随；也可以改成自动测速、指定策略组或节点。",
   "strategyLanesNeedStart": "请先启动 FlClash，以加载当前配置中的策略组。",
+  "strategyLanesNeedProfile": "请先选择一个配置。",
+  "strategyLanesLoadFailed": "无法加载配置中的策略",
   "strategyLanesEmpty": "未找到策略组",
-  "strategyLanesEmptyDesc": "当前配置尚无可选策略组。可使用带规则的订阅，或启用自动选优。",
+  "strategyLanesEmptyDesc": "当前配置尚无可选策略组。可使用带规则的订阅，或在下方业务行选择自动测速。",
+  "strategyLanesBusinessTitle": "常用业务",
+  "strategyLanesExtraTitle": "订阅中的其他策略组",
+  "strategyLanesApplied": "策略分流已应用",
   "strategyLaneFollowSubscription": "跟随订阅",
+  "strategyLaneFollowWithGroup": "跟随订阅（{group}）",
+  "@strategyLaneFollowWithGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
   "strategyLaneFollowing": "跟随订阅",
   "strategyLaneOverridden": "已覆写",
+  "strategyLaneUncovered": "订阅未覆盖该业务 — 流量走默认 / MATCH",
   "strategyLaneCurrent": "当前：{node}",
   "@strategyLaneCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneEffective": "实际目标：{target}",
+  "@strategyLaneEffective": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanePolicyAuto": "FlClash 自动测速",
+  "strategyLanePolicyGroup": "策略组：{group}",
+  "@strategyLanePolicyGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanePolicyProxy": "节点：{node}",
+  "@strategyLanePolicyProxy": {
     "placeholders": {
       "node": {
         "type": "String"

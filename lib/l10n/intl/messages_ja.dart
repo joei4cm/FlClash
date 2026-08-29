@@ -96,13 +96,21 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m36(node) => "現在：${node}";
 
-  static String m37(count) => "ルーティング先 ${count} 件";
+  static String m37(target) => "実効ターゲット：${target}";
 
-  static String m38(count) => "${count} 個のノードが有効です。ノード横のピンで接続をテストできます。";
+  static String m38(group) => "購読に従う（${group}）";
 
-  static String m39(label) => "${label}はURLである必要があります";
+  static String m39(group) => "グループ：${group}";
 
-  static String m40(count) => "${count}年前";
+  static String m40(node) => "ノード：${node}";
+
+  static String m41(count) => "ルーティング先 ${count} 件";
+
+  static String m42(count) => "${count} 個のノードが有効です。ノード横のピンで接続をテストできます。";
+
+  static String m43(label) => "${label}はURLである必要があります";
+
+  static String m44(count) => "${count}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1021,9 +1029,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "stop": MessageLookupByLibrary.simpleMessage("停止"),
     "stopVpn": MessageLookupByLibrary.simpleMessage("VPNを停止中..."),
     "strategyLaneCurrent": m36,
+    "strategyLaneEffective": m37,
     "strategyLaneFollowSubscription": MessageLookupByLibrary.simpleMessage(
       "購読に従う",
     ),
+    "strategyLaneFollowWithGroup": m38,
     "strategyLaneFollowing": MessageLookupByLibrary.simpleMessage("購読に従う"),
     "strategyLaneKindAi": MessageLookupByLibrary.simpleMessage("AI"),
     "strategyLaneKindGaming": MessageLookupByLibrary.simpleMessage("ゲーム"),
@@ -1036,22 +1046,45 @@ class MessageLookup extends MessageLookupByLibrary {
       "ストリーミング",
     ),
     "strategyLaneOverridden": MessageLookupByLibrary.simpleMessage("上書き中"),
+    "strategyLanePolicyAuto": MessageLookupByLibrary.simpleMessage(
+      "FlClash 自動選択",
+    ),
+    "strategyLanePolicyGroup": m39,
+    "strategyLanePolicyProxy": m40,
     "strategyLaneTypeLoadBalance": MessageLookupByLibrary.simpleMessage("負荷分散"),
     "strategyLaneTypeRelay": MessageLookupByLibrary.simpleMessage("リレー"),
     "strategyLaneTypeSelector": MessageLookupByLibrary.simpleMessage("手動選択"),
+    "strategyLaneUncovered": MessageLookupByLibrary.simpleMessage(
+      "購読に専用戦略がありません — デフォルト / MATCH を使用",
+    ),
     "strategyLanes": MessageLookupByLibrary.simpleMessage("戦略レーン"),
+    "strategyLanesApplied": MessageLookupByLibrary.simpleMessage(
+      "戦略レーンを適用しました",
+    ),
+    "strategyLanesBusinessTitle": MessageLookupByLibrary.simpleMessage(
+      "よく使うサービス",
+    ),
     "strategyLanesDesc": MessageLookupByLibrary.simpleMessage(
-      "購読の戦略グループを確認し、出口を上書きできます",
+      "よく使う通信を購読の戦略に割り当て、または上書きします",
     ),
     "strategyLanesEmpty": MessageLookupByLibrary.simpleMessage("戦略グループがありません"),
     "strategyLanesEmptyDesc": MessageLookupByLibrary.simpleMessage(
-      "選択可能なプロキシグループがありません。ルール付き購読を使うか、自動選択を有効にしてください。",
+      "選択可能なプロキシグループがありません。ルール付き購読を使うか、下の業務行で自動選択を選んでください。",
+    ),
+    "strategyLanesExtraTitle": MessageLookupByLibrary.simpleMessage(
+      "その他の購読グループ",
+    ),
+    "strategyLanesLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "プロファイルの戦略を読み込めませんでした",
+    ),
+    "strategyLanesNeedProfile": MessageLookupByLibrary.simpleMessage(
+      "先にプロファイルを選択してください。",
     ),
     "strategyLanesNeedStart": MessageLookupByLibrary.simpleMessage(
       "戦略グループを読み込むには、先に FlClash を起動してください。",
     ),
     "strategyLanesTip": MessageLookupByLibrary.simpleMessage(
-      "購読の戦略グループを用途ごとに表示します。出口を選ぶと上書き、購読に従うこともできます。",
+      "各行はよくある通信種別です。購読に戦略があればそれに従い、なければ自動選択・グループ・ノードで上書きできます。",
     ),
     "style": MessageLookupByLibrary.simpleMessage("スタイル"),
     "subRule": MessageLookupByLibrary.simpleMessage("サブルール"),
@@ -1154,7 +1187,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleNodesTitle": MessageLookupByLibrary.simpleMessage("ノード"),
     "tailscaleNotTested": MessageLookupByLibrary.simpleMessage("未テスト"),
     "tailscaleRoutes": MessageLookupByLibrary.simpleMessage("ルーティング先"),
-    "tailscaleRoutesCount": m37,
+    "tailscaleRoutesCount": m41,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "このノード経由で送るドメインまたは IP（1 行に 1 つ、例: 自宅 PC の Tailscale IP や MagicDNS 名）。",
     ),
@@ -1189,7 +1222,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleStatusNoNodes": MessageLookupByLibrary.simpleMessage(
       "有効ですが、ノードがありません。まずノードを追加してください。",
     ),
-    "tailscaleStatusReady": m38,
+    "tailscaleStatusReady": m42,
     "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
       "テストする前に「Tailscale を有効化」をオンにしてください。",
     ),
@@ -1242,7 +1275,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage("URL経由でプロファイルを取得"),
-    "urlTip": m39,
+    "urlTip": m43,
     "useHosts": MessageLookupByLibrary.simpleMessage("ホストを使用"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("システムホストを使用"),
     "usedTraffic": MessageLookupByLibrary.simpleMessage("使用済み通信量"),
@@ -1259,7 +1292,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnTip": MessageLookupByLibrary.simpleMessage("変更はVPN再起動後に有効"),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV設定"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("ホワイトリストモード"),
-    "yearsAgo": m40,
+    "yearsAgo": m44,
     "zh_CN": MessageLookupByLibrary.simpleMessage("簡体字中国語"),
   };
 }
