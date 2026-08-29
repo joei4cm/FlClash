@@ -775,16 +775,55 @@
     }
   },
   "strategyLanes": "戦略レーン",
-  "strategyLanesDesc": "購読の戦略グループを確認し、出口を上書きできます",
-  "strategyLanesTip": "購読の戦略グループを用途ごとに表示します。出口を選ぶと上書き、購読に従うこともできます。",
+  "strategyLanesDesc": "よく使う通信を購読の戦略に割り当て、または上書きします",
+  "strategyLanesTip": "各行はよくある通信種別です。購読に戦略があればそれに従い、なければ自動選択・グループ・ノードで上書きできます。",
   "strategyLanesNeedStart": "戦略グループを読み込むには、先に FlClash を起動してください。",
+  "strategyLanesNeedProfile": "先にプロファイルを選択してください。",
+  "strategyLanesLoadFailed": "プロファイルの戦略を読み込めませんでした",
   "strategyLanesEmpty": "戦略グループがありません",
-  "strategyLanesEmptyDesc": "選択可能なプロキシグループがありません。ルール付き購読を使うか、自動選択を有効にしてください。",
+  "strategyLanesEmptyDesc": "選択可能なプロキシグループがありません。ルール付き購読を使うか、下の業務行で自動選択を選んでください。",
+  "strategyLanesBusinessTitle": "よく使うサービス",
+  "strategyLanesExtraTitle": "その他の購読グループ",
+  "strategyLanesApplied": "戦略レーンを適用しました",
   "strategyLaneFollowSubscription": "購読に従う",
+  "strategyLaneFollowWithGroup": "購読に従う（{group}）",
+  "@strategyLaneFollowWithGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
   "strategyLaneFollowing": "購読に従う",
   "strategyLaneOverridden": "上書き中",
+  "strategyLaneUncovered": "購読に専用戦略がありません — デフォルト / MATCH を使用",
   "strategyLaneCurrent": "現在：{node}",
   "@strategyLaneCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneEffective": "実効ターゲット：{target}",
+  "@strategyLaneEffective": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanePolicyAuto": "FlClash 自動選択",
+  "strategyLanePolicyGroup": "グループ：{group}",
+  "@strategyLanePolicyGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanePolicyProxy": "ノード：{node}",
+  "@strategyLanePolicyProxy": {
     "placeholders": {
       "node": {
         "type": "String"

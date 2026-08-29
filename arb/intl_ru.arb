@@ -775,16 +775,55 @@
     }
   },
   "strategyLanes": "Стратегии",
-  "strategyLanesDesc": "Показать группы подписки и переопределить их выходы",
-  "strategyLanesTip": "Группы из подписки по предполагаемому назначению. Выберите выход для переопределения или следуйте подписке.",
+  "strategyLanesDesc": "Назначить сервисы стратегиям подписки или переопределить их",
+  "strategyLanesTip": "Каждая строка — типичный тип трафика. Следуйте подписке, если у неё уже есть стратегия, или переопределите автовыбором / группой / узлом.",
   "strategyLanesNeedStart": "Запустите FlClash, чтобы загрузить стратегические группы текущего профиля.",
+  "strategyLanesNeedProfile": "Сначала выберите профиль.",
+  "strategyLanesLoadFailed": "Не удалось загрузить стратегии профиля",
   "strategyLanesEmpty": "Стратегические группы не найдены",
-  "strategyLanesEmptyDesc": "В профиле пока нет выбираемых групп. Используйте подписку с правилами или включите автовыбор.",
+  "strategyLanesEmptyDesc": "В профиле пока нет выбираемых групп. Используйте подписку с правилами или выберите автовыбор для сервиса ниже.",
+  "strategyLanesBusinessTitle": "Частые сервисы",
+  "strategyLanesExtraTitle": "Другие группы подписки",
+  "strategyLanesApplied": "Стратегии применены",
   "strategyLaneFollowSubscription": "Следовать подписке",
+  "strategyLaneFollowWithGroup": "Следовать подписке ({group})",
+  "@strategyLaneFollowWithGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
   "strategyLaneFollowing": "Следует подписке",
   "strategyLaneOverridden": "Переопределено",
+  "strategyLaneUncovered": "В подписке нет отдельной стратегии — трафик идёт по умолчанию / MATCH",
   "strategyLaneCurrent": "Сейчас: {node}",
   "@strategyLaneCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneEffective": "Фактическая цель: {target}",
+  "@strategyLaneEffective": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanePolicyAuto": "Автовыбор FlClash",
+  "strategyLanePolicyGroup": "Группа: {group}",
+  "@strategyLanePolicyGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanePolicyProxy": "Узел: {node}",
+  "@strategyLanePolicyProxy": {
     "placeholders": {
       "node": {
         "type": "String"

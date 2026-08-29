@@ -775,16 +775,55 @@
     }
   },
   "strategyLanes": "Strategy lanes",
-  "strategyLanesDesc": "See subscription strategy groups and override their outlets",
-  "strategyLanesTip": "Groups from your subscription, grouped by likely purpose. Pick an outlet to override, or follow the subscription.",
+  "strategyLanesDesc": "Map common services to subscription strategies or override them",
+  "strategyLanesTip": "Each row is a common traffic type. Follow the subscription when it already has a strategy, or override with auto-select / a group / a node.",
   "strategyLanesNeedStart": "Start FlClash to load strategy groups from the current profile.",
+  "strategyLanesNeedProfile": "Select a profile first.",
+  "strategyLanesLoadFailed": "Could not load profile strategies",
   "strategyLanesEmpty": "No strategy groups found",
-  "strategyLanesEmptyDesc": "This profile has no selectable proxy groups yet. Use a subscription with rules, or enable auto-select.",
+  "strategyLanesEmptyDesc": "This profile has no selectable proxy groups yet. Use a subscription with rules, or pick Auto for a business lane below.",
+  "strategyLanesBusinessTitle": "Common services",
+  "strategyLanesExtraTitle": "Other subscription groups",
+  "strategyLanesApplied": "Strategy lanes applied",
   "strategyLaneFollowSubscription": "Follow subscription",
+  "strategyLaneFollowWithGroup": "Follow subscription ({group})",
+  "@strategyLaneFollowWithGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
   "strategyLaneFollowing": "Following subscription",
   "strategyLaneOverridden": "Overridden",
+  "strategyLaneUncovered": "Subscription has no dedicated strategy — traffic uses the default / MATCH path",
   "strategyLaneCurrent": "Current: {node}",
   "@strategyLaneCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneEffective": "Effective target: {target}",
+  "@strategyLaneEffective": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanePolicyAuto": "FlClash auto-select",
+  "strategyLanePolicyGroup": "Group: {group}",
+  "@strategyLanePolicyGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanePolicyProxy": "Node: {node}",
+  "@strategyLanePolicyProxy": {
     "placeholders": {
       "node": {
         "type": "String"

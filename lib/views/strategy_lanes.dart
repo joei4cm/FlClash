@@ -1,133 +1,303 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/auto_select_sticky.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Surfaces subscription strategy groups so users can pick or override outlets.
-class StrategyLanesView extends ConsumerWidget {
+/// Business → strategy UI: show subscription routing and let users override it.
+class StrategyLanesView extends ConsumerStatefulWidget {
   const StrategyLanesView({super.key});
 
-  String _kindLabel(AppLocalizations l10n, StrategyLaneKind kind) {
-    return switch (kind) {
-      StrategyLaneKind.streaming => l10n.strategyLaneKindStreaming,
-      StrategyLaneKind.ai => l10n.strategyLaneKindAi,
-      StrategyLaneKind.social => l10n.strategyLaneKindSocial,
-      StrategyLaneKind.search => l10n.strategyLaneKindSearch,
-      StrategyLaneKind.messaging => l10n.strategyLaneKindMessaging,
-      StrategyLaneKind.gaming => l10n.strategyLaneKindGaming,
-      StrategyLaneKind.proxy => l10n.strategyLaneKindProxy,
-      StrategyLaneKind.other => l10n.strategyLaneKindOther,
+  @override
+  ConsumerState<StrategyLanesView> createState() => _StrategyLanesViewState();
+}
+
+class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
+  bool _busy = false;
+
+  String _laneLabel(AppLocalizations l10n, StrategyLaneId id) {
+    return switch (id) {
+      StrategyLaneId.streaming => l10n.strategyLaneKindStreaming,
+      StrategyLaneId.ai => l10n.strategyLaneKindAi,
+      StrategyLaneId.messaging => l10n.strategyLaneKindMessaging,
+      StrategyLaneId.social => l10n.strategyLaneKindSocial,
+      StrategyLaneId.search => l10n.strategyLaneKindSearch,
+      StrategyLaneId.gaming => l10n.strategyLaneKindGaming,
     };
   }
 
-  String _typeLabel(AppLocalizations l10n, GroupType type) {
-    return switch (type) {
-      GroupType.URLTest => l10n.groupTypeUrlTest,
-      GroupType.Fallback => l10n.groupTypeFallback,
-      GroupType.Selector => l10n.strategyLaneTypeSelector,
-      GroupType.LoadBalance => l10n.strategyLaneTypeLoadBalance,
-      GroupType.Relay => l10n.strategyLaneTypeRelay,
+  String _policyLabel(
+    AppLocalizations l10n,
+    StrategyLanePolicy policy,
+    StrategyLaneDiscovery discovery,
+  ) {
+    return switch (policy.kind) {
+      StrategyLanePolicyKind.follow => discovery.hasGroup
+          ? l10n.strategyLaneFollowWithGroup(discovery.groupName!)
+          : l10n.strategyLaneFollowSubscription,
+      StrategyLanePolicyKind.auto => l10n.strategyLanePolicyAuto,
+      StrategyLanePolicyKind.direct => 'DIRECT',
+      StrategyLanePolicyKind.reject => 'REJECT',
+      StrategyLanePolicyKind.group =>
+        l10n.strategyLanePolicyGroup(policy.target ?? ''),
+      StrategyLanePolicyKind.proxy =>
+        l10n.strategyLanePolicyProxy(policy.target ?? ''),
     };
   }
 
-  Future<void> _followSubscription(WidgetRef ref, StrategyLane lane) async {
-    AutoSelectSticky.clearStickyGeoForGroup(ref, lane.groupName);
+  Future<void> _setPolicy(StrategyLaneId laneId, StrategyLanePolicy policy) async {
+    final profileId = ref.read(currentProfileIdProvider);
+    if (profileId == null) {
+      return;
+    }
+    final key = strategyLanePolicyKey(profileId, laneId);
+    ref.read(appSettingProvider.notifier).update((state) {
+      final next = Map<String, String>.from(state.strategyLanePolicies);
+      if (policy.isFollow) {
+        next.remove(key);
+      } else {
+        next[key] = policy.encode();
+      }
+      return state.copyWith(strategyLanePolicies: next);
+    });
+    await _applyProfile();
+  }
+
+  Future<void> _applyProfile() async {
+    if (_busy) {
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      await ref
+          .read(setupActionProvider.notifier)
+          .applyProfile(silence: true, force: true);
+      ref.read(proxiesActionProvider.notifier).updateGroupsDebounce();
+      if (mounted) {
+        context.showNotifier(context.appLocalizations.strategyLanesApplied);
+      }
+    } catch (error) {
+      if (mounted) {
+        context.showNotifier(
+          error.toString(),
+          level: MessageLevel.error,
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _busy = false);
+      }
+    }
+  }
+
+  Future<void> _pickPolicy({
+    required StrategyLaneRow row,
+    required List<ProxyGroup> groups,
+    required List<Proxy> proxies,
+  }) async {
+    final l10n = context.appLocalizations;
+    final options = <String>[
+      'follow',
+      'auto',
+      'direct',
+      'reject',
+      for (final group in groups) 'group:${group.name}',
+      for (final proxy in proxies.take(80)) 'proxy:${proxy.name}',
+    ];
+    final current = row.policy.encode();
+    final selected = await dialogs.showCommonDialog<String>(
+      child: OptionsDialog<String>(
+        title: _laneLabel(l10n, row.id),
+        options: options,
+        value: options.contains(current) ? current : 'follow',
+        textBuilder: (value) {
+          final policy = StrategyLanePolicy.parse(value);
+          return _policyLabel(l10n, policy, row.discovery);
+        },
+      ),
+    );
+    if (selected == null || !mounted) {
+      return;
+    }
+    await _setPolicy(row.id, StrategyLanePolicy.parse(selected));
+  }
+
+  Future<void> _followExtra(StrategyExtraGroup group) async {
+    AutoSelectSticky.clearStickyGeoForGroup(ref, group.groupName);
     ref
         .read(profilesActionProvider.notifier)
-        .clearCurrentSelectedMap(lane.groupName);
+        .clearCurrentSelectedMap(group.groupName);
     await ref
         .read(proxiesActionProvider.notifier)
-        .changeProxy(groupName: lane.groupName, proxyName: '');
+        .changeProxy(groupName: group.groupName, proxyName: '');
     ref.read(proxiesActionProvider.notifier).updateGroupsDebounce();
   }
 
-  Future<void> _selectOutlet(
-    WidgetRef ref,
-    StrategyLane lane,
-    String outlet,
-  ) async {
+  Future<void> _selectExtraOutlet(StrategyExtraGroup group, String outlet) async {
     await ref
         .read(proxiesActionProvider.notifier)
-        .changeProxy(groupName: lane.groupName, proxyName: outlet);
+        .changeProxy(groupName: group.groupName, proxyName: outlet);
     ref.read(proxiesActionProvider.notifier).updateGroupsDebounce();
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = context.appLocalizations;
-    final isStart = ref.watch(isStartProvider);
-    final groups = ref.watch(currentGroupsStateProvider).value;
+    final profileId = ref.watch(currentProfileIdProvider);
+    final policies = ref.watch(
+      appSettingProvider.select((state) => state.strategyLanePolicies),
+    );
+    final runtimeGroups = ref.watch(currentGroupsStateProvider).value;
     final selectedMap = ref.watch(
       currentProfileProvider.select((state) => state?.selectedMap ?? {}),
     );
-    final lanes = buildStrategyLanes(
-      groups: groups,
-      selectedMap: selectedMap,
-    );
-    final byKind = groupStrategyLanesByKind(lanes);
 
-    final items = <Widget>[
-      Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-        child: Text(
-          l10n.strategyLanesTip,
-          style: context.textTheme.bodyMedium?.copyWith(
-            color: context.colorScheme.onSurfaceVariant,
-          ),
-        ),
-      ),
-      if (!isStart)
-        ListItem(
-          leading: const Icon(Icons.play_circle_outline),
-          title: Text(l10n.strategyLanesNeedStart),
-        )
-      else if (lanes.isEmpty)
-        ListItem(
-          leading: const Icon(Icons.account_tree_outlined),
-          title: Text(l10n.strategyLanesEmpty),
-          subtitle: Text(l10n.strategyLanesEmptyDesc),
-        )
-      else
-        for (final kind in StrategyLaneKind.values)
-          if (byKind[kind] case final kindLanes?)
-            ...generateSection(
-              title: _kindLabel(l10n, kind),
-              items: [
-                for (final lane in kindLanes)
-                  _StrategyLaneItem(
-                    lane: lane,
-                    typeLabel: _typeLabel(l10n, lane.groupType),
-                    followLabel: l10n.strategyLaneFollowSubscription,
-                    currentLabel: l10n.strategyLaneCurrent(lane.currentOutlet),
-                    overrideLabel: lane.hasOverride
-                        ? l10n.strategyLaneOverridden
-                        : l10n.strategyLaneFollowing,
-                    onFollow: () => _followSubscription(ref, lane),
-                    onSelect: (outlet) => _selectOutlet(ref, lane, outlet),
-                  ),
-              ],
-            ),
-    ];
+    final clashAsync = profileId == null
+        ? null
+        : ref.watch(clashConfigProvider(profileId));
 
     return CommonScaffold(
       title: l10n.strategyLanes,
-      body: ListView.builder(
-        itemCount: items.length,
-        itemBuilder: (_, index) => items[index],
-        padding: const EdgeInsets.only(bottom: 20),
-      ),
+      body: clashAsync == null
+          ? ListView(
+              children: [
+                ListItem(
+                  leading: const Icon(Icons.info_outline),
+                  title: Text(l10n.strategyLanesNeedProfile),
+                ),
+              ],
+            )
+          : clashAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, _) => ListView(
+                children: [
+                  ListItem(
+                    leading: const Icon(Icons.error_outline),
+                    title: Text(l10n.strategyLanesLoadFailed),
+                    subtitle: Text(error.toString()),
+                  ),
+                ],
+              ),
+              data: (clashConfig) {
+                final rules = clashConfig.rules
+                    .map((item) => item.rawValue)
+                    .toList();
+                final rows = buildStrategyLaneRows(
+                  profileId: profileId!,
+                  policies: policies,
+                  proxyGroups: clashConfig.proxyGroups,
+                  rules: rules,
+                );
+                final claimed = claimedStrategyGroupNames(rows);
+                final extras = buildStrategyExtraGroups(
+                  groups: runtimeGroups.isNotEmpty
+                      ? runtimeGroups
+                      : [
+                          for (final group in clashConfig.proxyGroups)
+                            Group(
+                              name: group.name,
+                              type: group.type,
+                              all: [
+                                for (final name in group.proxies ?? const <String>[])
+                                  Proxy(name: name, type: 'ss'),
+                              ],
+                            ),
+                        ],
+                  selectedMap: selectedMap,
+                  claimedGroupNames: claimed,
+                );
+                final leafProxies = clashConfig.proxies
+                    .where((item) => item.name.isNotEmpty)
+                    .toList();
+
+                final items = <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                    child: Text(
+                      l10n.strategyLanesTip,
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: context.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                  if (_busy)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: LinearProgressIndicator(),
+                    ),
+                  ...generateSection(
+                    title: l10n.strategyLanesBusinessTitle,
+                    items: [
+                      for (final row in rows)
+                        ListItem(
+                          leading: Icon(
+                            row.policy.isFollow
+                                ? Icons.account_tree_outlined
+                                : Icons.tune,
+                          ),
+                          title: Text(_laneLabel(l10n, row.id)),
+                          subtitle: Text(
+                            [
+                              _policyLabel(l10n, row.policy, row.discovery),
+                              if (row.effectiveTarget != null)
+                                l10n.strategyLaneEffective(
+                                  row.effectiveTarget!,
+                                ),
+                              if (row.policy.isFollow && !row.discovery.hasGroup)
+                                l10n.strategyLaneUncovered,
+                            ].join('\n'),
+                          ),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: _busy
+                              ? null
+                              : () => _pickPolicy(
+                                  row: row,
+                                  groups: clashConfig.proxyGroups,
+                                  proxies: leafProxies,
+                                ),
+                        ),
+                    ],
+                  ),
+                  if (extras.isNotEmpty)
+                    ...generateSection(
+                      title: l10n.strategyLanesExtraTitle,
+                      items: [
+                        for (final group in extras)
+                          _ExtraGroupItem(
+                            group: group,
+                            followLabel: l10n.strategyLaneFollowSubscription,
+                            currentLabel: l10n.strategyLaneCurrent(
+                              group.currentOutlet,
+                            ),
+                            overrideLabel: group.hasOverride
+                                ? l10n.strategyLaneOverridden
+                                : l10n.strategyLaneFollowing,
+                            onFollow: () => _followExtra(group),
+                            onSelect: (outlet) =>
+                                _selectExtraOutlet(group, outlet),
+                          ),
+                      ],
+                    ),
+                ];
+
+                return ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (_, index) => items[index],
+                  padding: const EdgeInsets.only(bottom: 20),
+                );
+              },
+            ),
     );
   }
 }
 
-class _StrategyLaneItem extends StatelessWidget {
-  const _StrategyLaneItem({
-    required this.lane,
-    required this.typeLabel,
+class _ExtraGroupItem extends StatelessWidget {
+  const _ExtraGroupItem({
+    required this.group,
     required this.followLabel,
     required this.currentLabel,
     required this.overrideLabel,
@@ -137,8 +307,7 @@ class _StrategyLaneItem extends StatelessWidget {
 
   static const _followSentinel = '__flclash_follow_subscription__';
 
-  final StrategyLane lane;
-  final String typeLabel;
+  final StrategyExtraGroup group;
   final String followLabel;
   final String currentLabel;
   final String overrideLabel;
@@ -148,27 +317,27 @@ class _StrategyLaneItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final outlets = <String>[
-      if (lane.overrideOutlet != null &&
-          !lane.outlets.contains(lane.overrideOutlet))
-        lane.overrideOutlet!,
-      ...lane.outlets,
+      if (group.overrideOutlet != null &&
+          !group.outlets.contains(group.overrideOutlet))
+        group.overrideOutlet!,
+      ...group.outlets,
     ];
     final options = <String>[_followSentinel, ...outlets];
-    final selected = lane.hasOverride
-        ? (lane.overrideOutlet ?? _followSentinel)
+    final selected = group.hasOverride
+        ? (group.overrideOutlet ?? _followSentinel)
         : _followSentinel;
 
     return ListItem(
       leading: Icon(
-        lane.hasOverride ? Icons.tune : Icons.account_tree_outlined,
+        group.hasOverride ? Icons.tune : Icons.account_tree_outlined,
       ),
-      title: Text(lane.groupName),
-      subtitle: Text('$typeLabel · $overrideLabel\n$currentLabel'),
+      title: Text(group.groupName),
+      subtitle: Text('$overrideLabel\n$currentLabel'),
       trailing: const Icon(Icons.chevron_right),
       onTap: () async {
         final value = await dialogs.showCommonDialog<String>(
           child: OptionsDialog<String>(
-            title: lane.groupName,
+            title: group.groupName,
             options: options,
             value: selected,
             textBuilder: (option) =>
