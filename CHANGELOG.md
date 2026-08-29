@@ -12,6 +12,8 @@ core rewrite, platform fixes) while retaining the fork's features on top:
 - Core traffic/connections push path for lower-latency stats.
 - Linux taskbar icon grouping fix on Ubuntu/Debian (`StartupWMClass`).
 - Windows installer icon path fix (`setup_icon_file`).
+- Geo identity traffic capture mode (auto / TUN / system proxy / both).
+- Refactor auto-select sticky: only recover unhealthy nodes, never lock `selectedMap` or close all connections; clear overrides on all auto groups; sync run-state on core crash.
 
 ## v0.8.109
 
