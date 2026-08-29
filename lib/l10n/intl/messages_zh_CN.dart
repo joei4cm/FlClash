@@ -957,6 +957,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "strategyLanesNeedStart": MessageLookupByLibrary.simpleMessage(
       "请先启动 FlClash，以加载当前配置中的策略组。",
     ),
+    "strategyLanesPartialApplied": MessageLookupByLibrary.simpleMessage(
+      "已应用，但部分覆写被跳过（策略组或节点不存在）",
+    ),
     "strategyLanesTip": MessageLookupByLibrary.simpleMessage(
       "每一行是一类常见流量。订阅已有策略时可跟随；也可以改成自动测速、指定策略组或节点。",
     ),

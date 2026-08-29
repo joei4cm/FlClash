@@ -6253,6 +6253,16 @@ class AppLocalizations {
     );
   }
 
+  /// `Applied, but some overrides were skipped (missing group or node)`
+  String get strategyLanesPartialApplied {
+    return Intl.message(
+      'Applied, but some overrides were skipped (missing group or node)',
+      name: 'strategyLanesPartialApplied',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Follow subscription`
   String get strategyLaneFollowSubscription {
     return Intl.message(

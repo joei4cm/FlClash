@@ -1083,6 +1083,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "strategyLanesNeedStart": MessageLookupByLibrary.simpleMessage(
       "戦略グループを読み込むには、先に FlClash を起動してください。",
     ),
+    "strategyLanesPartialApplied": MessageLookupByLibrary.simpleMessage(
+      "適用しましたが、一部の上書きはスキップされました（グループまたはノードがありません）",
+    ),
     "strategyLanesTip": MessageLookupByLibrary.simpleMessage(
       "各行はよくある通信種別です。購読に戦略があればそれに従い、なければ自動選択・グループ・ノードで上書きできます。",
     ),
