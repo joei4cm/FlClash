@@ -77,6 +77,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
     try {
       do {
         _pendingApply = false;
+        final preview = _previewInjection();
         final ok = await ref
             .read(setupActionProvider.notifier)
             .applyProfile(silence: true, force: true);
@@ -84,10 +85,18 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
         if (!mounted) {
           return;
         }
-        if (ok) {
+        if (!ok) {
+          // Setup already showed an error notifier via safeRun.
+          continue;
+        }
+        if (preview.hasSkipped) {
+          context.showNotifier(
+            context.appLocalizations.strategyLanesPartialApplied,
+            level: MessageLevel.warning,
+          );
+        } else {
           context.showNotifier(context.appLocalizations.strategyLanesApplied);
         }
-        // On failure, setup already showed an error notifier via safeRun.
       } while (_pendingApply && mounted);
     } catch (error) {
       if (mounted) {
@@ -103,6 +112,43 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
         _busy = false;
       }
     }
+  }
+
+  StrategyLaneInjection _previewInjection() {
+    final profileId = ref.read(currentProfileIdProvider);
+    if (profileId == null) {
+      return const StrategyLaneInjection();
+    }
+    final policies = ref.read(appSettingProvider).strategyLanePolicies;
+    final testUrl = ref.read(appSettingProvider).testUrl;
+    final overwriteType =
+        ref.read(currentProfileProvider)?.overwriteType ??
+        OverwriteType.standard;
+    final clash = ref.read(clashConfigProvider(profileId)).value;
+    if (clash == null) {
+      return const StrategyLaneInjection();
+    }
+    final customGroups =
+        ref.read(proxyGroupsProvider(profileId)).value ?? const <ProxyGroup>[];
+    final customRules =
+        ref.read(profileCustomRulesProvider(profileId)).value ??
+        const <Rule>[];
+    final inputs = resolveStrategyLaneConfigInputs(
+      overwriteType: overwriteType,
+      subscriptionGroups: clash.proxyGroups,
+      subscriptionRules: clash.rules,
+      subscriptionProxies: clash.proxies,
+      customGroups: customGroups,
+      customRules: customRules,
+    );
+    return buildStrategyLaneInjection(
+      profileId: profileId,
+      policies: policies,
+      proxyGroups: inputs.groups,
+      rules: inputs.rules,
+      testUrl: testUrl,
+      availableProxyNames: inputs.proxyNames,
+    );
   }
 
   Future<void> _pickPolicy({
@@ -148,22 +194,14 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
     ref.read(proxiesActionProvider.notifier).updateGroupsDebounce();
   }
 
-  Future<void> _selectExtraOutlet(StrategyExtraGroup group, String outlet) async {
+  Future<void> _selectExtraOutlet(
+    StrategyExtraGroup group,
+    String outlet,
+  ) async {
     await ref
         .read(proxiesActionProvider.notifier)
         .changeProxy(groupName: group.groupName, proxyName: outlet);
     ref.read(proxiesActionProvider.notifier).updateGroupsDebounce();
-  }
-
-  List<ProxyGroup> _groupsForUi({
-    required ClashConfig clashConfig,
-    required OverwriteType overwriteType,
-    required List<ProxyGroup> customGroups,
-  }) {
-    if (overwriteType == OverwriteType.custom && customGroups.isNotEmpty) {
-      return customGroups;
-    }
-    return clashConfig.proxyGroups;
   }
 
   @override
@@ -186,6 +224,10 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
         ? const <ProxyGroup>[]
         : (ref.watch(proxyGroupsProvider(profileId)).value ??
               const <ProxyGroup>[]);
+    final customRules = profileId == null
+        ? const <Rule>[]
+        : (ref.watch(profileCustomRulesProvider(profileId)).value ??
+              const <Rule>[]);
 
     final clashAsync = profileId == null
         ? null
@@ -214,26 +256,26 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
                 ],
               ),
               data: (clashConfig) {
-                final uiGroups = _groupsForUi(
-                  clashConfig: clashConfig,
+                final inputs = resolveStrategyLaneConfigInputs(
                   overwriteType: overwriteType,
+                  subscriptionGroups: clashConfig.proxyGroups,
+                  subscriptionRules: clashConfig.rules,
+                  subscriptionProxies: clashConfig.proxies,
                   customGroups: customGroups,
+                  customRules: customRules,
                 );
-                final rules = clashConfig.rules
-                    .map((item) => item.rawValue)
-                    .toList();
                 final rows = buildStrategyLaneRows(
                   profileId: profileId!,
                   policies: policies,
-                  proxyGroups: uiGroups,
-                  rules: rules,
+                  proxyGroups: inputs.groups,
+                  rules: inputs.rules,
                 );
                 final claimed = claimedStrategyGroupNames(rows);
                 final extras = buildStrategyExtraGroups(
                   groups: runtimeGroups.isNotEmpty
                       ? runtimeGroups
                       : [
-                          for (final group in uiGroups)
+                          for (final group in inputs.groups)
                             Group(
                               name: group.name,
                               type: group.type,
@@ -296,7 +338,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
                               ? null
                               : () => _pickPolicy(
                                   row: row,
-                                  groups: uiGroups,
+                                  groups: inputs.groups,
                                   proxies: leafProxies,
                                 ),
                         ),

@@ -346,29 +346,21 @@ class SetupAction extends _$SetupAction {
     final clashConfig = await clashConfigTask(
       Map<String, dynamic>.from(rawConfig),
     );
-    // Custom overwrite replaces proxy-groups when non-empty; validate inject
-    // targets against the groups that will actually be in the final config.
-    final groupsForStrategy =
-        setupState.overwriteType == OverwriteType.custom &&
-            proxyGroups.isNotEmpty
-        ? proxyGroups
-        : clashConfig.proxyGroups;
-    final subscriptionRules = [
-      if (setupState.overwriteType == OverwriteType.custom && rules.isNotEmpty)
-        ...rules.map((item) => item.rawValue)
-      else
-        ...clashConfig.rules.map((item) => item.rawValue),
-    ];
+    final strategyInputs = resolveStrategyLaneConfigInputs(
+      overwriteType: setupState.overwriteType,
+      subscriptionGroups: clashConfig.proxyGroups,
+      subscriptionRules: clashConfig.rules,
+      subscriptionProxies: clashConfig.proxies,
+      customGroups: proxyGroups,
+      customRules: rules,
+    );
     final strategyInjection = buildStrategyLaneInjection(
       profileId: profileId,
       policies: appSetting.strategyLanePolicies,
-      proxyGroups: groupsForStrategy,
-      rules: subscriptionRules,
+      proxyGroups: strategyInputs.groups,
+      rules: strategyInputs.rules,
       testUrl: appSetting.testUrl,
-      availableProxyNames: {
-        ...clashConfig.proxies.map((item) => item.name),
-        for (final group in groupsForStrategy) ...?group.proxies,
-      },
+      availableProxyNames: strategyInputs.proxyNames,
     );
     final directory = await appPath.profilesPath;
     final res = makeRealProfileTask(

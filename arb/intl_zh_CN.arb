@@ -785,6 +785,7 @@
   "strategyLanesBusinessTitle": "常用业务",
   "strategyLanesExtraTitle": "订阅中的其他策略组",
   "strategyLanesApplied": "策略分流已应用",
+  "strategyLanesPartialApplied": "已应用，但部分覆写被跳过（策略组或节点不存在）",
   "strategyLaneFollowSubscription": "跟随订阅",
   "strategyLaneFollowWithGroup": "跟随订阅（{group}）",
   "@strategyLaneFollowWithGroup": {

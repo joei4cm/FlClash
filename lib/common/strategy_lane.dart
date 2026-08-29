@@ -286,12 +286,19 @@ class StrategyLaneInjection {
   const StrategyLaneInjection({
     this.groups = const [],
     this.rules = const [],
+    this.skippedLanes = const [],
   });
 
   final List<Map<String, dynamic>> groups;
   final List<String> rules;
 
-  bool get isEmpty => groups.isEmpty && rules.isEmpty;
+  /// Non-follow policies that were not injected (missing group/proxy, etc.).
+  final List<StrategyLaneId> skippedLanes;
+
+  bool get isEmpty =>
+      groups.isEmpty && rules.isEmpty && skippedLanes.isEmpty;
+
+  bool get hasSkipped => skippedLanes.isNotEmpty;
 }
 
 /// UI row for one business lane.
@@ -390,8 +397,8 @@ bool _matchHint(String name, List<String> hints) {
     if (needle.isEmpty) {
       continue;
     }
-    // Short hints are easy false positives via substring (ai in Mainland).
-    if (needle.length <= 3) {
+    // ASCII words use token boundaries so Mainstream ≠ streaming(stream).
+    if (_isAsciiWord(needle)) {
       if (_hasToken(normalized, needle)) {
         return true;
       }
@@ -403,6 +410,8 @@ bool _matchHint(String name, List<String> hints) {
   }
   return false;
 }
+
+bool _isAsciiWord(String value) => RegExp(r'^[a-z0-9]+$').hasMatch(value);
 
 bool _hasToken(String haystack, String token) {
   if (haystack == token) {
@@ -522,12 +531,12 @@ StrategyLaneInjection buildStrategyLaneInjection({
   }
   final groups = <Map<String, dynamic>>[];
   final injectedRules = <String>[];
+  final skippedLanes = <StrategyLaneId>[];
   final existingNames = {
     ...proxyGroups.map((item) => item.name),
     'DIRECT',
     'REJECT',
   };
-  final proxyNames = availableProxyNames ?? const <String>{};
 
   for (final preset in strategyLanePresets) {
     final policy = StrategyLanePolicy.parse(
@@ -542,6 +551,7 @@ StrategyLaneInjection buildStrategyLaneInjection({
       laneId: preset.id,
     );
     if (target == null || target.isEmpty) {
+      skippedLanes.add(preset.id);
       continue;
     }
     if (policy.kind == StrategyLanePolicyKind.auto) {
@@ -550,9 +560,12 @@ StrategyLaneInjection buildStrategyLaneInjection({
       );
     } else if (policy.kind == StrategyLanePolicyKind.proxy) {
       final proxyName = policy.target;
+      // Always require an explicit allow-list; empty/null cannot verify nodes.
       if (proxyName == null ||
           proxyName.isEmpty ||
-          (proxyNames.isNotEmpty && !proxyNames.contains(proxyName))) {
+          availableProxyNames == null ||
+          !availableProxyNames.contains(proxyName)) {
+        skippedLanes.add(preset.id);
         continue;
       }
       groups.add(
@@ -563,6 +576,7 @@ StrategyLaneInjection buildStrategyLaneInjection({
       );
     } else if (policy.kind == StrategyLanePolicyKind.group) {
       if (!existingNames.contains(target)) {
+        skippedLanes.add(preset.id);
         continue;
       }
     }
@@ -570,7 +584,42 @@ StrategyLaneInjection buildStrategyLaneInjection({
       buildStrategyLaneRulesForTarget(preset: preset, target: target),
     );
   }
-  return StrategyLaneInjection(groups: groups, rules: injectedRules);
+  return StrategyLaneInjection(
+    groups: groups,
+    rules: injectedRules,
+    skippedLanes: skippedLanes,
+  );
+}
+
+/// Effective groups/rules/proxies for strategy-lane discovery + inject.
+///
+/// Mirrors `getProfile` so the UI and apply path stay aligned under custom
+/// overwrite.
+({List<ProxyGroup> groups, List<String> rules, Set<String> proxyNames})
+resolveStrategyLaneConfigInputs({
+  required OverwriteType overwriteType,
+  required List<ProxyGroup> subscriptionGroups,
+  required List<Rule> subscriptionRules,
+  required List<Proxy> subscriptionProxies,
+  required List<ProxyGroup> customGroups,
+  required List<Rule> customRules,
+}) {
+  final useCustomGroups =
+      overwriteType == OverwriteType.custom && customGroups.isNotEmpty;
+  final useCustomRules =
+      overwriteType == OverwriteType.custom && customRules.isNotEmpty;
+  final groups = useCustomGroups ? customGroups : subscriptionGroups;
+  final rules = useCustomRules
+      ? customRules.map((item) => item.rawValue).toList(growable: false)
+      : subscriptionRules.map((item) => item.rawValue).toList(growable: false);
+  return (
+    groups: groups,
+    rules: rules,
+    proxyNames: {
+      ...subscriptionProxies.map((item) => item.name),
+      for (final group in groups) ...?group.proxies,
+    },
+  );
 }
 
 /// Merge injected strategy-lane groups into a raw clash config map.

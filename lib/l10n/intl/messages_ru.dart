@@ -1385,6 +1385,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "strategyLanesNeedStart": MessageLookupByLibrary.simpleMessage(
       "Запустите FlClash, чтобы загрузить стратегические группы текущего профиля.",
     ),
+    "strategyLanesPartialApplied": MessageLookupByLibrary.simpleMessage(
+      "Применено, но часть переопределений пропущена (нет группы или узла)",
+    ),
     "strategyLanesTip": MessageLookupByLibrary.simpleMessage(
       "Каждая строка — типичный тип трафика. Следуйте подписке, если у неё уже есть стратегия, или переопределите автовыбором / группой / узлом.",
     ),

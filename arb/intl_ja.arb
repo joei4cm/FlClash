@@ -785,6 +785,7 @@
   "strategyLanesBusinessTitle": "よく使うサービス",
   "strategyLanesExtraTitle": "その他の購読グループ",
   "strategyLanesApplied": "戦略レーンを適用しました",
+  "strategyLanesPartialApplied": "適用しましたが、一部の上書きはスキップされました（グループまたはノードがありません）",
   "strategyLaneFollowSubscription": "購読に従う",
   "strategyLaneFollowWithGroup": "購読に従う（{group}）",
   "@strategyLaneFollowWithGroup": {

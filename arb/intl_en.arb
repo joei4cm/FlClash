@@ -785,6 +785,7 @@
   "strategyLanesBusinessTitle": "Common services",
   "strategyLanesExtraTitle": "Other subscription groups",
   "strategyLanesApplied": "Strategy lanes applied",
+  "strategyLanesPartialApplied": "Applied, but some overrides were skipped (missing group or node)",
   "strategyLaneFollowSubscription": "Follow subscription",
   "strategyLaneFollowWithGroup": "Follow subscription ({group})",
   "@strategyLaneFollowWithGroup": {

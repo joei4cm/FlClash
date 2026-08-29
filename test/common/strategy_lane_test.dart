@@ -131,7 +131,9 @@ void main() {
         rules: const [],
         testUrl: 'https://www.gstatic.com/generate_204',
       );
-      expect(injection.isEmpty, isTrue);
+      expect(injection.groups, isEmpty);
+      expect(injection.rules, isEmpty);
+      expect(injection.skippedLanes, [StrategyLaneId.streaming]);
     });
 
     test('skips missing proxy targets', () {
@@ -144,7 +146,22 @@ void main() {
         testUrl: 'https://www.gstatic.com/generate_204',
         availableProxyNames: const {'US-01'},
       );
-      expect(injection.isEmpty, isTrue);
+      expect(injection.groups, isEmpty);
+      expect(injection.rules, isEmpty);
+      expect(injection.skippedLanes, [StrategyLaneId.messaging]);
+    });
+
+    test('skips proxy policies when allow-list is missing', () {
+      final key = strategyLanePolicyKey(1, StrategyLaneId.messaging);
+      final injection = buildStrategyLaneInjection(
+        profileId: 1,
+        policies: {key: 'proxy:TG-01'},
+        proxyGroups: const [],
+        rules: const [],
+        testUrl: 'https://www.gstatic.com/generate_204',
+      );
+      expect(injection.skippedLanes, [StrategyLaneId.messaging]);
+      expect(injection.groups, isEmpty);
     });
   });
 
@@ -152,6 +169,14 @@ void main() {
     test('does not treat Mainland as AI', () {
       expect(classifyStrategyLaneName('Mainland'), StrategyLaneKind.other);
       expect(classifyStrategyLaneName('OpenAI'), StrategyLaneKind.ai);
+    });
+
+    test('does not treat Mainstream as streaming', () {
+      expect(classifyStrategyLaneName('Mainstream'), StrategyLaneKind.other);
+      expect(
+        classifyStrategyLaneName('Netflix-Streaming'),
+        StrategyLaneKind.streaming,
+      );
     });
 
     test('domain discovery requires label boundary', () {

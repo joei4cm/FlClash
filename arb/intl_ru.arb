@@ -785,6 +785,7 @@
   "strategyLanesBusinessTitle": "Частые сервисы",
   "strategyLanesExtraTitle": "Другие группы подписки",
   "strategyLanesApplied": "Стратегии применены",
+  "strategyLanesPartialApplied": "Применено, но часть переопределений пропущена (нет группы или узла)",
   "strategyLaneFollowSubscription": "Следовать подписке",
   "strategyLaneFollowWithGroup": "Следовать подписке ({group})",
   "@strategyLaneFollowWithGroup": {

@@ -1322,6 +1322,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "strategyLanesNeedStart": MessageLookupByLibrary.simpleMessage(
       "Start FlClash to load strategy groups from the current profile.",
     ),
+    "strategyLanesPartialApplied": MessageLookupByLibrary.simpleMessage(
+      "Applied, but some overrides were skipped (missing group or node)",
+    ),
     "strategyLanesTip": MessageLookupByLibrary.simpleMessage(
       "Each row is a common traffic type. Follow the subscription when it already has a strategy, or override with auto-select / a group / a node.",
     ),
