@@ -773,5 +773,33 @@
         "type": "String"
       }
     }
-  }
+  },
+  "strategyLanes": "策略分流",
+  "strategyLanesDesc": "查看订阅策略组，并为各业务选择或覆写出口",
+  "strategyLanesTip": "来自当前订阅的策略组，按可能用途归类。选择出口即覆写；也可跟随订阅。",
+  "strategyLanesNeedStart": "请先启动 FlClash，以加载当前配置中的策略组。",
+  "strategyLanesEmpty": "未找到策略组",
+  "strategyLanesEmptyDesc": "当前配置尚无可选策略组。可使用带规则的订阅，或启用自动选优。",
+  "strategyLaneFollowSubscription": "跟随订阅",
+  "strategyLaneFollowing": "跟随订阅",
+  "strategyLaneOverridden": "已覆写",
+  "strategyLaneCurrent": "当前：{node}",
+  "@strategyLaneCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneKindStreaming": "流媒体",
+  "strategyLaneKindAi": "AI",
+  "strategyLaneKindSocial": "社交",
+  "strategyLaneKindSearch": "搜索",
+  "strategyLaneKindMessaging": "即时通讯",
+  "strategyLaneKindGaming": "游戏",
+  "strategyLaneKindProxy": "代理 / 选择",
+  "strategyLaneKindOther": "其他策略",
+  "strategyLaneTypeSelector": "手动选择",
+  "strategyLaneTypeLoadBalance": "负载均衡",
+  "strategyLaneTypeRelay": "中继"
 }

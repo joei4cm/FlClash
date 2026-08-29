@@ -773,5 +773,33 @@
         "type": "String"
       }
     }
-  }
+  },
+  "strategyLanes": "戦略レーン",
+  "strategyLanesDesc": "購読の戦略グループを確認し、出口を上書きできます",
+  "strategyLanesTip": "購読の戦略グループを用途ごとに表示します。出口を選ぶと上書き、購読に従うこともできます。",
+  "strategyLanesNeedStart": "戦略グループを読み込むには、先に FlClash を起動してください。",
+  "strategyLanesEmpty": "戦略グループがありません",
+  "strategyLanesEmptyDesc": "選択可能なプロキシグループがありません。ルール付き購読を使うか、自動選択を有効にしてください。",
+  "strategyLaneFollowSubscription": "購読に従う",
+  "strategyLaneFollowing": "購読に従う",
+  "strategyLaneOverridden": "上書き中",
+  "strategyLaneCurrent": "現在：{node}",
+  "@strategyLaneCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneKindStreaming": "ストリーミング",
+  "strategyLaneKindAi": "AI",
+  "strategyLaneKindSocial": "ソーシャル",
+  "strategyLaneKindSearch": "検索",
+  "strategyLaneKindMessaging": "メッセージ",
+  "strategyLaneKindGaming": "ゲーム",
+  "strategyLaneKindProxy": "プロキシ / 選択",
+  "strategyLaneKindOther": "その他の戦略",
+  "strategyLaneTypeSelector": "手動選択",
+  "strategyLaneTypeLoadBalance": "負荷分散",
+  "strategyLaneTypeRelay": "リレー"
 }

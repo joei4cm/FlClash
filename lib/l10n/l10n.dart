@@ -6142,6 +6142,211 @@ class AppLocalizations {
       args: [region],
     );
   }
+
+  /// `Strategy lanes`
+  String get strategyLanes {
+    return Intl.message(
+      'Strategy lanes',
+      name: 'strategyLanes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See subscription strategy groups and override their outlets`
+  String get strategyLanesDesc {
+    return Intl.message(
+      'See subscription strategy groups and override their outlets',
+      name: 'strategyLanesDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Groups from your subscription, grouped by likely purpose. Pick an outlet to override, or follow the subscription.`
+  String get strategyLanesTip {
+    return Intl.message(
+      'Groups from your subscription, grouped by likely purpose. Pick an outlet to override, or follow the subscription.',
+      name: 'strategyLanesTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start FlClash to load strategy groups from the current profile.`
+  String get strategyLanesNeedStart {
+    return Intl.message(
+      'Start FlClash to load strategy groups from the current profile.',
+      name: 'strategyLanesNeedStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No strategy groups found`
+  String get strategyLanesEmpty {
+    return Intl.message(
+      'No strategy groups found',
+      name: 'strategyLanesEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This profile has no selectable proxy groups yet. Use a subscription with rules, or enable auto-select.`
+  String get strategyLanesEmptyDesc {
+    return Intl.message(
+      'This profile has no selectable proxy groups yet. Use a subscription with rules, or enable auto-select.',
+      name: 'strategyLanesEmptyDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Follow subscription`
+  String get strategyLaneFollowSubscription {
+    return Intl.message(
+      'Follow subscription',
+      name: 'strategyLaneFollowSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Following subscription`
+  String get strategyLaneFollowing {
+    return Intl.message(
+      'Following subscription',
+      name: 'strategyLaneFollowing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Overridden`
+  String get strategyLaneOverridden {
+    return Intl.message(
+      'Overridden',
+      name: 'strategyLaneOverridden',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current: {node}`
+  String strategyLaneCurrent(String node) {
+    return Intl.message(
+      'Current: $node',
+      name: 'strategyLaneCurrent',
+      desc: '',
+      args: [node],
+    );
+  }
+
+  /// `Streaming`
+  String get strategyLaneKindStreaming {
+    return Intl.message(
+      'Streaming',
+      name: 'strategyLaneKindStreaming',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AI`
+  String get strategyLaneKindAi {
+    return Intl.message('AI', name: 'strategyLaneKindAi', desc: '', args: []);
+  }
+
+  /// `Social`
+  String get strategyLaneKindSocial {
+    return Intl.message(
+      'Social',
+      name: 'strategyLaneKindSocial',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search`
+  String get strategyLaneKindSearch {
+    return Intl.message(
+      'Search',
+      name: 'strategyLaneKindSearch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Messaging`
+  String get strategyLaneKindMessaging {
+    return Intl.message(
+      'Messaging',
+      name: 'strategyLaneKindMessaging',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gaming`
+  String get strategyLaneKindGaming {
+    return Intl.message(
+      'Gaming',
+      name: 'strategyLaneKindGaming',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Proxy / select`
+  String get strategyLaneKindProxy {
+    return Intl.message(
+      'Proxy / select',
+      name: 'strategyLaneKindProxy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Other strategies`
+  String get strategyLaneKindOther {
+    return Intl.message(
+      'Other strategies',
+      name: 'strategyLaneKindOther',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manual select`
+  String get strategyLaneTypeSelector {
+    return Intl.message(
+      'Manual select',
+      name: 'strategyLaneTypeSelector',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Load balance`
+  String get strategyLaneTypeLoadBalance {
+    return Intl.message(
+      'Load balance',
+      name: 'strategyLaneTypeLoadBalance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Relay`
+  String get strategyLaneTypeRelay {
+    return Intl.message(
+      'Relay',
+      name: 'strategyLaneTypeRelay',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
