@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.8.111 (2026-08-29)
+
+- Add Strategy Lanes: map common services (streaming / AI / messaging / social /
+  search / gaming) onto subscription strategies, or override with auto-select,
+  a group, a node, DIRECT, or REJECT.
+- Inject lane groups/rules on profile apply without requiring Custom overwrite
+  (Tailscale-style), with discovery from GEOSITE / DOMAIN / RULE-SET and group
+  names.
+- Harden apply: honest success/partial toasts, skip unloadable targets, trailing
+  re-apply, safer name/domain matching, custom-overwrite alignment, and exclude
+  FlClash-* groups from geo sticky.
+
 ## v0.8.110 (2026-08-29)
 
 Production sync: rebase the fork onto `upstream/dev`'s architecture (`material_ui`, QuickJS-based scripting,
