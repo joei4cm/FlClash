@@ -180,8 +180,8 @@ class AutoSelectResult {
   });
 }
 
-/// Enables Clash url-test/fallback auto selection, or creates a simple
-/// overwrite url-test group when none exists.
+/// Restores existing url-test/fallback selection, or creates a simple
+/// overwrite url-test group when the subscription has none (fallback only).
 Future<AutoSelectResult> enableAutoSelectWithContainer(WidgetRef ref) async {
   final groups = ref.read(groupsProvider);
   final existingAuto = groups.cast<Group?>().firstWhere(

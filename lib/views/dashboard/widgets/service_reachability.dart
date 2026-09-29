@@ -1,12 +1,11 @@
 import 'dart:async';
 
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ServiceReachability extends ConsumerStatefulWidget {
   const ServiceReachability({super.key});
@@ -240,37 +239,6 @@ class ServiceReachabilitySheet extends ConsumerWidget {
     return '${value}ms';
   }
 
-  Future<void> _handleEnableAuto(BuildContext context, WidgetRef ref) async {
-    final l10n = context.appLocalizations;
-    final groups = ref.read(groupsProvider);
-    final hasAuto = groups.any((group) => group.type.isComputedSelected);
-    if (!hasAuto) {
-      final confirmed = await dialogs.showMessage(
-        title: l10n.enableAutoSelect,
-        message: TextSpan(text: l10n.enableAutoSelectCreateTip),
-      );
-      if (confirmed != true) {
-        return;
-      }
-    }
-    final result = await enableAutoSelectWithContainer(ref);
-    if (!context.mounted) {
-      return;
-    }
-    final message = switch (result.message) {
-      'no_profile' => l10n.nullProfileDesc,
-      'create_failed' => l10n.enableAutoSelectFailed,
-      _ when result.enabledExisting => l10n.enableAutoSelectRestored(
-        result.groupName ?? '',
-      ),
-      _ when result.createdGroups => l10n.enableAutoSelectCreated(
-        result.groupName ?? '',
-      ),
-      _ => l10n.enableAutoSelectFailed,
-    };
-    dialogs.showNotifier(message);
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.appLocalizations;
@@ -310,12 +278,6 @@ class ServiceReachabilitySheet extends ConsumerWidget {
         Text(
           l10n.serviceProbeDisclaimer,
           style: context.textTheme.bodySmall?.toLighter,
-        ),
-        const SizedBox(height: 12),
-        FilledButton.tonalIcon(
-          onPressed: () => _handleEnableAuto(context, ref),
-          icon: const Icon(Icons.auto_mode),
-          label: Text(l10n.enableAutoSelect),
         ),
         const SizedBox(height: 16),
         for (final category in ServiceProbeCategory.values) ...[

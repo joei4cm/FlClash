@@ -708,9 +708,9 @@
   "serviceProbeTesting": "Проверка",
   "serviceProbeCurrentNode": "Текущий узел",
   "serviceProbeDisclaimer": "Проверяет HTTP-доступность и задержку через текущий узел. Это не тест разблокировки стриминга.",
-  "enableAutoSelect": "Включить автовыбор",
-  "enableAutoSelectCreateTip": "Нет группы url-test/fallback. Создать «FlClash Auto»? Переключит overwrite на Custom и при пустых группах заменит их на Auto + PROXY (узлы сохраняются через include-all-proxies).",
-  "enableAutoSelectFailed": "Не удалось включить автовыбор",
+  "enableAutoSelect": "Создать запасную автогруппу",
+  "enableAutoSelectCreateTip": "В большинстве подписок уже есть url-test/fallback. Здесь не найдено — создать простую запасную группу «FlClash Auto»? Переключит overwrite на Custom; пустые группы станут Auto + PROXY (узлы сохраняются через include-all-proxies).",
+  "enableAutoSelectFailed": "Не удалось создать запасную автогруппу",
   "restoreAutoSelect": "Вернуть авто",
   "groupTypeUrlTest": "URLTest",
   "groupTypeFallback": "Fallback",
@@ -733,7 +733,7 @@
       }
     }
   },
-  "enableAutoSelectCreated": "Создана группа {group}. При необходимости выберите её в Proxies.",
+  "enableAutoSelectCreated": "Создана запасная автогруппа {group}. При необходимости выберите её в Proxies.",
   "@enableAutoSelectCreated": {
     "placeholders": {
       "group": {

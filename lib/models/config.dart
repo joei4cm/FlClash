@@ -88,7 +88,7 @@ abstract class AppSettingProps with _$AppSettingProps {
     @Default(true) bool showTrayTitle,
     @Default(true) bool checkCertificate,
     @Default('') String customUserAgent,
-    @Default(true) bool autoSelectStickyGeo,
+    @Default(false) bool autoSelectStickyGeo,
     @Default({}) Map<String, String> autoSelectStickyGeoByGroup,
     /// Per-profile strategy-lane policies. Keys: `$profileId::$laneId`.
     @Default({}) Map<String, String> strategyLanePolicies,

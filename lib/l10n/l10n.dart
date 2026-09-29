@@ -6003,30 +6003,30 @@ class AppLocalizations {
     );
   }
 
-  /// `Enable auto select`
+  /// `Create fallback auto group`
   String get enableAutoSelect {
     return Intl.message(
-      'Enable auto select',
+      'Create fallback auto group',
       name: 'enableAutoSelect',
       desc: '',
       args: [],
     );
   }
 
-  /// `No url-test/fallback group found. Create a simple “FlClash Auto” url-test group? This switches the profile overwrite to Custom and replaces empty custom strategy groups with Auto + PROXY (subscription nodes are kept via include-all-proxies).`
+  /// `Most subscriptions already include url-test/fallback. None was found here—create a simple “FlClash Auto” fallback group? This switches overwrite to Custom; empty custom strategy groups become Auto + PROXY (nodes stay via include-all-proxies).`
   String get enableAutoSelectCreateTip {
     return Intl.message(
-      'No url-test/fallback group found. Create a simple “FlClash Auto” url-test group? This switches the profile overwrite to Custom and replaces empty custom strategy groups with Auto + PROXY (subscription nodes are kept via include-all-proxies).',
+      'Most subscriptions already include url-test/fallback. None was found here—create a simple “FlClash Auto” fallback group? This switches overwrite to Custom; empty custom strategy groups become Auto + PROXY (nodes stay via include-all-proxies).',
       name: 'enableAutoSelectCreateTip',
       desc: '',
       args: [],
     );
   }
 
-  /// `Failed to enable auto select`
+  /// `Failed to create fallback auto group`
   String get enableAutoSelectFailed {
     return Intl.message(
-      'Failed to enable auto select',
+      'Failed to create fallback auto group',
       name: 'enableAutoSelectFailed',
       desc: '',
       args: [],
@@ -6083,10 +6083,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Created auto group {group}. Select it under Proxies if needed.`
+  /// `Created fallback auto group {group}. Select it under Proxies if needed.`
   String enableAutoSelectCreated(String group) {
     return Intl.message(
-      'Created auto group $group. Select it under Proxies if needed.',
+      'Created fallback auto group $group. Select it under Proxies if needed.',
       name: 'enableAutoSelectCreated',
       desc: '',
       args: [group],

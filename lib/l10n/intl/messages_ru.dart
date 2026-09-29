@@ -44,7 +44,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m9(label) => "${label} не может быть пустым";
 
   static String m10(group) =>
-      "Создана группа ${group}. При необходимости выберите её в Proxies.";
+      "Создана запасная автогруппа ${group}. При необходимости выберите её в Proxies.";
 
   static String m11(group) => "Автовыбор восстановлен для ${group}";
 
@@ -454,14 +454,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "emptyTip": m9,
     "en": MessageLookupByLibrary.simpleMessage("Английский"),
     "enableAutoSelect": MessageLookupByLibrary.simpleMessage(
-      "Включить автовыбор",
+      "Создать запасную автогруппу",
     ),
     "enableAutoSelectCreateTip": MessageLookupByLibrary.simpleMessage(
-      "Нет группы url-test/fallback. Создать «FlClash Auto»? Переключит overwrite на Custom и при пустых группах заменит их на Auto + PROXY (узлы сохраняются через include-all-proxies).",
+      "В большинстве подписок уже есть url-test/fallback. Здесь не найдено — создать простую запасную группу «FlClash Auto»? Переключит overwrite на Custom; пустые группы станут Auto + PROXY (узлы сохраняются через include-all-proxies).",
     ),
     "enableAutoSelectCreated": m10,
     "enableAutoSelectFailed": MessageLookupByLibrary.simpleMessage(
-      "Не удалось включить автовыбор",
+      "Не удалось создать запасную автогруппу",
     ),
     "enableAutoSelectRestored": m11,
     "entries": MessageLookupByLibrary.simpleMessage(" записей"),
