@@ -7,7 +7,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
   dynamic_color
   file_selector_windows
-  hotkey_manager_windows
   proxy
   screen_retriever_windows
   tray
@@ -18,8 +17,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
   jni
-  rust_api
-  setup
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

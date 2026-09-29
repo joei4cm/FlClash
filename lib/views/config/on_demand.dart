@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/common/permission.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/providers/providers.dart';
-import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/profiles/overwrite/custom/widgets.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
@@ -27,12 +25,6 @@ class _OnDemandViewState extends ConsumerState<OnDemandView>
     with UniqueKeyStateMixin {
   static const _authorizeButtonPadding = 12.0;
   static const _minAuthorizeButtonWidth = 80.0;
-  static const _inlineActionMaxWidthFactor = 0.4;
-  static const _descMaxLines = 4;
-
-  /// Matches the horizontal content padding, so a stacked action keeps the same
-  /// gap to the card edge as the text does.
-  static const _prerequisiteVerticalPadding = 16.0;
 
   bool get _isAndroid => widget.isAndroid ?? system.isAndroid;
 
@@ -192,23 +184,6 @@ class _OnDemandViewState extends ConsumerState<OnDemandView>
     ref.read(itemsProvider(key).notifier).value = {};
   }
 
-  double _authorizeButtonWidth() {
-    final appLocalizations = context.appLocalizations;
-    final style = context.textTheme.labelLarge;
-    final labelWidth =
-        [appLocalizations.tapToAuthorize, appLocalizations.authorized]
-            .map(
-              (label) => globalState.measure
-                  .computeTextSize(Text(label, style: style))
-                  .width,
-            )
-            .reduce(math.max);
-    return math.max(
-      _minAuthorizeButtonWidth,
-      labelWidth + _authorizeButtonPadding * 2,
-    );
-  }
-
   Widget _buildAuthorizeButton({
     required bool authorized,
     required VoidCallback onPressed,
@@ -254,44 +229,21 @@ class _OnDemandViewState extends ConsumerState<OnDemandView>
     required Widget action,
   }) {
     return DecorationListItem(
-      minVerticalPadding: _prerequisiteVerticalPadding,
-      title: LayoutBuilder(
-        builder: (context, constraints) {
-          final texts = Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TooltipLabel(title),
-              Text(
-                desc,
-                maxLines: _descMaxLines,
-                overflow: TextOverflow.ellipsis,
-                style: context.textTheme.bodyMedium?.copyWith(
-                  color: context.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          );
-          final isInline =
-              _authorizeButtonWidth() <=
-              constraints.maxWidth * _inlineActionMaxWidthFactor;
-          if (isInline) {
-            return Row(
-              spacing: 16,
-              children: [
-                Expanded(child: texts),
-                action,
-              ],
-            );
-          }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            spacing: 8,
-            children: [
-              texts,
-              Align(alignment: Alignment.centerRight, child: action),
-            ],
-          );
-        },
+      minVerticalPadding: 0,
+      title: Padding(
+        padding: const EdgeInsets.only(top: 12),
+        child: TooltipLabel(title),
+      ),
+      subtitle: Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 8,
+          children: [
+            Text(desc),
+            Align(alignment: Alignment.centerRight, child: action),
+          ],
+        ),
       ),
     );
   }
@@ -399,7 +351,10 @@ class _OnDemandViewState extends ConsumerState<OnDemandView>
         sliver: SliverToBoxAdapter(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 48),
-            child: NullStatus(label: context.appLocalizations.ssidsEmpty),
+            child: NullStatus(
+              label: context.appLocalizations.ssidsEmpty,
+              illustration: NullStatusIllustration.wifi,
+            ),
           ),
         ),
       );

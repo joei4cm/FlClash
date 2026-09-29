@@ -198,7 +198,7 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('a structured failure is left to the Core log path', (
+  testWidgets('a manual update failure is surfaced as an error', (
     tester,
   ) async {
     final coreInterface = _MockCoreHandlerInterface();
@@ -210,8 +210,8 @@ void main() {
     action.handleCoreUpdate('MMDB', false, false, 'download failed');
     await tester.pump();
 
-    expect(find.text('download failed'), findsNothing);
-    expect(find.byIcon(Icons.error_outline), findsNothing);
+    expect(find.text('download failed'), findsOneWidget);
+    expect(find.byIcon(Icons.error_outline), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox.shrink());
   });

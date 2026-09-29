@@ -20,7 +20,7 @@ import 'package:fl_clash/views/navigation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_color_utilities/palettes/core_palette.dart';
+import 'package:material_color_utilities/palettes/tonal_palette.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class Bootstrap {
@@ -48,11 +48,10 @@ class Bootstrap {
   }
 
   Future<DynamicColorSeeds> _initDynamicColor() async {
-    // ignore: deprecated_member_use
-    CorePalette? corePalette;
+    TonalPalette? primaryPalette;
     Color? accentColor;
     try {
-      corePalette = await DynamicColorPlugin.getCorePalette();
+      primaryPalette = await _getSystemPrimaryPalette();
     } catch (error) {
       commonPrint.log(
         'Failed to get core palette: $error',
@@ -68,9 +67,21 @@ class Bootstrap {
       );
     }
     return (
-      lightSeed: corePalette?.toColorScheme().primary,
-      darkSeed: corePalette?.toColorScheme(brightness: Brightness.dark).primary,
+      lightSeed: primaryPalette != null ? Color(primaryPalette.get(40)) : null,
+      darkSeed: primaryPalette != null ? Color(primaryPalette.get(80)) : null,
       accentColor: accentColor ?? const Color(defaultPrimaryColor),
+    );
+  }
+
+  Future<TonalPalette?> _getSystemPrimaryPalette() async {
+    final raw = await DynamicColorPlugin.channel.invokeMethod<List<dynamic>>(
+      DynamicColorPlugin.methodName,
+    );
+    if (raw == null || raw.length < TonalPalette.commonSize) {
+      return null;
+    }
+    return TonalPalette.fromList(
+      raw.sublist(0, TonalPalette.commonSize).cast<int>(),
     );
   }
 
@@ -92,8 +103,8 @@ class Bootstrap {
       brightness: WidgetsBinding.instance.platformDispatcher.platformBrightness,
       version: version,
       viewSize: Size.zero,
-      requests: FixedList(maxLength),
-      logs: FixedList(maxLength),
+      requests: FixedList(maxRequestsLength),
+      logs: FixedList(maxLogsLength),
       traffics: FixedList(trafficSampleLength),
       totalTraffic: const Traffic(),
       systemUiOverlayStyle: const SystemUiOverlayStyle(),

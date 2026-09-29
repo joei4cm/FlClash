@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/core/desktop/model.dart';
 import 'package:fl_clash/core/interface.dart';
@@ -254,6 +253,30 @@ void main() {
     );
 
     test(
+      'a rejected setup while running reports restartCore as unsuccessful',
+      () async {
+        final container = ProviderContainer(
+          overrides: [
+            coreActionProvider.overrideWith(_TestCoreAction.new),
+            setupActionProvider.overrideWith(_TestSetupAction.new),
+          ],
+        );
+        addTearDown(container.dispose);
+        container.read(runTimeProvider.notifier).value = 0;
+        final coreAction =
+            container.read(coreActionProvider.notifier) as _TestCoreAction;
+        final setupAction =
+            container.read(setupActionProvider.notifier) as _TestSetupAction;
+        setupAction.setRunningResult = false;
+
+        final applied = await coreAction.restartCore();
+
+        expect(applied, isFalse);
+        expect(setupAction.setRunningCount, 1);
+      },
+    );
+
+    test(
       'coalesces concurrent restart requests into one lifecycle restart',
       () async {
         final container = ProviderContainer(
@@ -339,11 +362,106 @@ void main() {
       expect(coreAction.lifecycleRestartCount, 2);
       expect(container.read(coreStatusProvider), CoreStatus.connected);
     });
+
+    test(
+      'startCore leaves status and initCore to the superseding operation',
+      () async {
+        final container = ProviderContainer(
+          overrides: [coreActionProvider.overrideWith(_TestCoreAction.new)],
+        );
+        addTearDown(container.dispose);
+        final coreAction =
+            container.read(coreActionProvider.notifier) as _TestCoreAction;
+        coreAction.startResult = const CoreLifecycleResult(
+          revision: 1,
+          outcome: CoreLifecycleOutcome.superseded,
+        );
+
+        await coreAction.startCore();
+
+        expect(coreAction.initCoreCount, 0);
+        expect(container.read(coreStatusProvider), CoreStatus.connecting);
+      },
+    );
+
+    test('startCore treats a coalesced outcome as applied', () async {
+      final container = ProviderContainer(
+        overrides: [coreActionProvider.overrideWith(_TestCoreAction.new)],
+      );
+      addTearDown(container.dispose);
+      final coreAction =
+          container.read(coreActionProvider.notifier) as _TestCoreAction;
+      coreAction.startResult = const CoreLifecycleResult(
+        revision: 1,
+        outcome: CoreLifecycleOutcome.coalesced,
+      );
+
+      await coreAction.startCore();
+
+      expect(coreAction.initCoreCount, 1);
+      expect(container.read(coreStatusProvider), CoreStatus.connected);
+    });
+
+    test(
+      'restartCore leaves status and initCore to the superseding operation',
+      () async {
+        final container = ProviderContainer(
+          overrides: [
+            coreActionProvider.overrideWith(_TestCoreAction.new),
+            setupActionProvider.overrideWith(_TestSetupAction.new),
+          ],
+        );
+        addTearDown(container.dispose);
+        final coreAction =
+            container.read(coreActionProvider.notifier) as _TestCoreAction;
+        final setupAction =
+            container.read(setupActionProvider.notifier) as _TestSetupAction;
+        coreAction.restartCompleter = Completer<CoreLifecycleResult>()
+          ..complete(
+            const CoreLifecycleResult(
+              revision: 1,
+              outcome: CoreLifecycleOutcome.superseded,
+            ),
+          );
+
+        final applied = await coreAction.restartCore();
+
+        expect(applied, isFalse);
+        expect(coreAction.initCoreCount, 0);
+        expect(container.read(coreStatusProvider), CoreStatus.connecting);
+        expect(setupAction.setRunningCount, 0);
+        expect(setupAction.applyProfileCount, 0);
+      },
+    );
+
+    test('restartCore treats a coalesced outcome as applied', () async {
+      final container = ProviderContainer(
+        overrides: [
+          coreActionProvider.overrideWith(_TestCoreAction.new),
+          setupActionProvider.overrideWith(_TestSetupAction.new),
+        ],
+      );
+      addTearDown(container.dispose);
+      final coreAction =
+          container.read(coreActionProvider.notifier) as _TestCoreAction;
+      coreAction.restartCompleter = Completer<CoreLifecycleResult>()
+        ..complete(
+          const CoreLifecycleResult(
+            revision: 1,
+            outcome: CoreLifecycleOutcome.coalesced,
+          ),
+        );
+
+      await coreAction.restartCore();
+
+      expect(coreAction.initCoreCount, 1);
+      expect(container.read(coreStatusProvider), CoreStatus.connected);
+    });
   });
 
   group('SetupAction', () {
     group('rapid status changes', () {
-      test('updates runtime while core start is pending', () async {
+      test('updates runtime and traffic while core start is pending', () async {
         final startCompleter = Completer<bool>();
         final container = ProviderContainer(
           overrides: [
@@ -364,8 +482,7 @@ void main() {
         await Future<void>.delayed(const Duration(milliseconds: 1100));
 
         expect(container.read(runTimeProvider), greaterThan(initialRunTime));
-        // PERF-11: traffic is push-based; only a one-shot pull runs at start.
-        expect(commonAction.updateTrafficCount, greaterThanOrEqualTo(1));
+        expect(commonAction.updateTrafficCount, greaterThanOrEqualTo(2));
 
         startCompleter.complete(true);
         await startFuture;
@@ -561,6 +678,38 @@ void main() {
       },
     );
 
+    test(
+      'a config Core rejects on the handoff path reports failure, not success',
+      () async {
+        late _AuthorizationSetupAction setupAction;
+        late _RestartRecordingCoreAction coreAction;
+        final container = ProviderContainer(
+          overrides: [
+            currentProfileProvider.overrideWithValue(null),
+            setupActionProvider.overrideWith(() {
+              setupAction = _AuthorizationSetupAction([AuthorizeCode.success]);
+              return setupAction;
+            }),
+            coreActionProvider.overrideWith(() {
+              coreAction = _RestartRecordingCoreAction()..restartResult = false;
+              return coreAction;
+            }),
+          ],
+        );
+        addTearDown(container.dispose);
+        container
+            .read(patchClashConfigProvider.notifier)
+            .update((state) => state.copyWith.tun(enable: true));
+        container.read(setupActionProvider);
+        container.read(coreActionProvider);
+
+        final succeeded = await setupAction.applyProfile(force: true);
+
+        expect(coreAction.restartCount, 1);
+        expect(succeeded, isFalse);
+      },
+    );
+
     test('reopens authorization and propagates a failed restart', () async {
       late _AuthorizationSetupAction setupAction;
       final container = ProviderContainer(
@@ -642,72 +791,24 @@ void main() {
       expect(container.read(shouldPatchSystemDnsProvider), isFalse);
     });
   });
-
-  group('CommonAction traffic helpers', () {
-    test('applyTrafficPush honors onlyStatisticsProxy', () {
-      final container = ProviderContainer(
-        overrides: [
-          appSettingProvider.overrideWithBuild(
-            (_, _) => const AppSettingProps(onlyStatisticsProxy: true),
-          ),
-        ],
-      );
-      addTearDown(container.dispose);
-
-      container.read(commonActionProvider.notifier).applyTrafficPush({
-        'up': 1,
-        'down': 2,
-        'totalUp': 10,
-        'totalDown': 20,
-        'proxyUp': 3,
-        'proxyDown': 4,
-        'proxyTotalUp': 30,
-        'proxyTotalDown': 40,
-      });
-
-      expect(
-        container.read(totalTrafficProvider),
-        const Traffic(up: 30, down: 40),
-      );
-      expect(
-        container.read(trafficsProvider).list.safeLast(const Traffic()),
-        const Traffic(up: 3, down: 4),
-      );
-    });
-
-    test('applyTrafficPush uses all-traffic when proxy-only is off', () {
-      final container = ProviderContainer();
-      addTearDown(container.dispose);
-
-      container.read(commonActionProvider.notifier).applyTrafficPush({
-        'up': 1,
-        'down': 2,
-        'totalUp': 10,
-        'totalDown': 20,
-        'proxyUp': 3,
-        'proxyDown': 4,
-        'proxyTotalUp': 30,
-        'proxyTotalDown': 40,
-      });
-
-      expect(
-        container.read(totalTrafficProvider),
-        const Traffic(up: 10, down: 20),
-      );
-      expect(
-        container.read(trafficsProvider).list.safeLast(const Traffic()),
-        const Traffic(up: 1, down: 2),
-      );
-    });
-  });
 }
 
 class _TestCoreAction extends CoreAction {
   int lifecycleRestartCount = 0;
+  int initCoreCount = 0;
   Completer<CoreLifecycleResult>? restartCompleter;
+  Completer<CoreLifecycleResult>? startCompleter;
+  CoreLifecycleResult startResult = _restartResult;
 
   @override
-  Future<void> initCore() async {}
+  Future<void> initCore() async {
+    initCoreCount++;
+  }
+
+  @override
+  Future<CoreLifecycleResult> startLifecycle() {
+    return startCompleter?.future ?? Future.value(startResult);
+  }
 
   @override
   Future<CoreLifecycleResult> restartLifecycle() {
@@ -719,12 +820,14 @@ class _TestCoreAction extends CoreAction {
 class _TestSetupAction extends SetupAction {
   int setRunningCount = 0;
   int applyProfileCount = 0;
+  bool setRunningResult = true;
   Completer<void>? firstApplyStarted;
   Completer<void>? firstApplyCompleter;
 
   @override
-  Future<void> setRunning(bool running, {bool initialize = false}) async {
+  Future<bool> setRunning(bool running, {bool initialize = false}) async {
     setRunningCount++;
+    return setRunningResult;
   }
 
   @override
@@ -749,16 +852,18 @@ const _restartResult = CoreLifecycleResult(
 
 class _RestartRecordingCoreAction extends CoreAction {
   int restartCount = 0;
+  bool restartResult = true;
 
   @override
-  Future<void> restartCore() async {
+  Future<bool> restartCore() async {
     restartCount++;
+    return restartResult;
   }
 }
 
 class _FailingRestartCoreAction extends CoreAction {
   @override
-  Future<void> restartCore() async {
+  Future<bool> restartCore() async {
     throw _restartFailure;
   }
 }

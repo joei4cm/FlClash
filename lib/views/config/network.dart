@@ -5,7 +5,6 @@ import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 typedef _VpnUpdate<T> = VpnProps Function(VpnProps state, T value);
 
@@ -109,9 +108,14 @@ class VpnSystemProxyItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
+    final authenticationEnable = ref.watch(
+      networkSettingProvider.select((state) => state.authentication.enable),
+    );
     return _vpnToggle(
       title: (l) => l.systemProxy,
-      subtitle: (l) => l.systemProxyDesc,
+      subtitle: (l) => authenticationEnable
+          ? l.authenticationSystemProxyDesc
+          : l.systemProxyDesc,
       select: (state) => state.systemProxy,
       update: (state, value) => state.copyWith(systemProxy: value),
     );
@@ -187,6 +191,55 @@ class TunStackItem extends ConsumerWidget {
   }
 }
 
+class InterfaceNameModeItem extends ConsumerWidget {
+  const InterfaceNameModeItem({super.key});
+
+  @override
+  Widget build(BuildContext context, ref) {
+    final appLocalizations = context.appLocalizations;
+    return ConfigOptionsItem<InterfaceNameMode>(
+      title: (l) => l.interfaceNameMode,
+      options: InterfaceNameMode.values,
+      textBuilder: (mode) => switch (mode) {
+        InterfaceNameMode.clear => appLocalizations.interfaceNameModeClear,
+        InterfaceNameMode.follow => appLocalizations.interfaceNameModeFollow,
+        InterfaceNameMode.custom => appLocalizations.interfaceNameModeCustom,
+      },
+      selector: patchClashConfigProvider.select(
+        (state) => state.interfaceNameMode,
+      ),
+      onChanged: _tunWriter(
+        (state, value) => state.copyWith(interfaceNameMode: value),
+      ),
+    );
+  }
+}
+
+class InterfaceNameItem extends ConsumerWidget {
+  const InterfaceNameItem({super.key});
+
+  @override
+  Widget build(BuildContext context, ref) {
+    final isCustom = ref.watch(
+      patchClashConfigProvider.select(
+        (state) => state.interfaceNameMode == InterfaceNameMode.custom,
+      ),
+    );
+    if (!isCustom) {
+      return Container();
+    }
+    return ConfigTextItem(
+      title: (l) => l.interfaceName,
+      subtitle: (l) => l.interfaceNameDesc,
+      maxLength: TextInputLimits.name,
+      selector: patchClashConfigProvider.select((state) => state.interfaceName),
+      onChanged: _tunWriter(
+        (state, value) => state.copyWith(interfaceName: value.trim()),
+      ),
+    );
+  }
+}
+
 class RouteModeItem extends ConsumerWidget {
   const RouteModeItem({super.key});
 
@@ -195,7 +248,7 @@ class RouteModeItem extends ConsumerWidget {
     return ConfigOptionsItem<RouteMode>(
       title: (l) => l.routeMode,
       options: RouteMode.values,
-      textBuilder: (mode) => Intl.message('routeMode_${mode.name}'),
+      textBuilder: (mode) => mode.label,
       selector: networkSettingProvider.select((state) => state.routeMode),
       onChanged: _networkWriter(
         (state, value) => state.copyWith(routeMode: value),
@@ -249,6 +302,25 @@ class RouteAddressItem extends ConsumerWidget {
   }
 }
 
+List<Widget> networkOptionsItems({
+  required bool isDesktop,
+  required bool isMacOS,
+}) {
+  return [
+    if (isDesktop) const TUNItem(),
+    if (isMacOS) const AutoSetSystemDnsItem(),
+    const TunStackItem(),
+    // mihomo's DefaultSocketHook ignores interface-name on Android
+    // (core/lib.go installHooks, vendored dialer.go), so these rows only
+    // apply on desktop.
+    if (isDesktop) ...[
+      const InterfaceNameModeItem(),
+      const InterfaceNameItem(),
+    ],
+    if (!isDesktop) ...[const RouteModeItem(), const RouteAddressItem()],
+  ];
+}
+
 class NetworkListView extends StatelessWidget {
   const NetworkListView({super.key});
 
@@ -275,15 +347,10 @@ class NetworkListView extends StatelessWidget {
         ),
       ...generateSection(
         title: appLocalizations.options,
-        items: [
-          if (system.isDesktop) const TUNItem(),
-          if (system.isMacOS) const AutoSetSystemDnsItem(),
-          const TunStackItem(),
-          if (!system.isDesktop) ...[
-            const RouteModeItem(),
-            const RouteAddressItem(),
-          ],
-        ],
+        items: networkOptionsItems(
+          isDesktop: system.isDesktop,
+          isMacOS: system.isMacOS,
+        ),
       ),
     ]);
   }

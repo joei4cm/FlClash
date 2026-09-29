@@ -134,7 +134,7 @@ echo
 committed=0
 restore() {
   ((committed)) && return 0
-  git checkout -- pubspec.yaml changelog.json 2>/dev/null || true
+  git checkout -- pubspec.yaml changelog.json CHANGELOG.md 2>/dev/null || true
 }
 trap restore EXIT
 

@@ -6,7 +6,6 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 typedef OnSelected = void Function(int index);
 
@@ -97,7 +96,7 @@ class _HomeShell extends ConsumerWidget {
                     for (final item in navigationItems)
                       NavigationDestination(
                         icon: item.icon,
-                        label: Intl.message(item.label.name),
+                        label: item.label.label,
                       ),
                   ],
                   onDestinationSelected: (index) {

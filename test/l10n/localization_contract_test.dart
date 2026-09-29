@@ -46,10 +46,7 @@ void main() {
         final arguments = List<dynamic>.filled(argumentCount, 2);
         late final dynamic translated;
         try {
-          final message = messages[key]!;
-          translated = message is String
-              ? message
-              : Function.apply(message as Function, arguments);
+          translated = Function.apply(messages[key]! as Function, arguments);
         } on NoSuchMethodError catch (error) {
           fail('$locale.$key has mismatched placeholder metadata: $error');
         }

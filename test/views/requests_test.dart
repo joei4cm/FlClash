@@ -122,6 +122,67 @@ void main() {
     await teardownView(tester);
   });
 
+  testWidgets('dragging the list floats the start time next to the scrollbar', (
+    tester,
+  ) async {
+    final requests = List.generate(
+      200,
+      (i) => TrackerInfo(
+        id: '$i',
+        start: DateTime.utc(2026, 1, 1, 0, 0, i),
+        metadata: Metadata(
+          network: 'tcp',
+          host: 'host-$i.test',
+          destinationIP: '1.1.1.1',
+          destinationPort: '443',
+          process: 'curl',
+        ),
+        chains: const ['Proxy'],
+        rule: 'DOMAIN',
+        rulePayload: 'host-$i.test',
+      ),
+    );
+    seedRequests(requests);
+
+    await pumpRequests(tester);
+
+    const hintKey = ValueKey('scrollbarHintPill');
+    expect(find.byKey(hintKey), findsNothing);
+
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byType(Scrollable).first),
+    );
+    await gesture.moveBy(const Offset(0, 300));
+    await tester.pump();
+
+    expect(find.byKey(hintKey), findsOneWidget);
+    final label = tester.widget<Text>(
+      find.descendant(of: find.byKey(hintKey), matching: find.byType(Text)),
+    );
+    expect(label.data, requests.last.start.showFull);
+    // The hint is pinned to the thumb: at the newest end the thumb center
+    // rests 24px (half the 48px minimum thumb) below the track's top edge.
+    expect(
+      tester.getCenter(find.byKey(hintKey)).dy,
+      closeTo(tester.getRect(find.byType(Scrollable).first).top + 24, 6),
+    );
+
+    await gesture.up();
+    // The pill outlives the gesture briefly so transient scroll ends do not
+    // blink it. No pumpAndSettle here: the fling's ballistic keeps frames
+    // scheduled for seconds of fake time, which would elapse straight past
+    // the hide window.
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.byKey(hintKey), findsOneWidget);
+    for (var i = 0; i < 20 && find.byKey(hintKey).evaluate().isNotEmpty; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(find.byKey(hintKey), findsNothing);
+    await tester.pumpAndSettle();
+
+    await teardownView(tester);
+  });
+
   testWidgets('the scroll-to-end button toggles its icon', (tester) async {
     seedRequests([_tracker(id: 'a', host: 'alpha.test')]);
 

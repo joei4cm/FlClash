@@ -55,6 +55,57 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('selecting MATCH target shows the label but stores MATCH', (
+    tester,
+  ) async {
+    Rule? result;
+    await tester.pumpWidget(
+      TestApp(
+        wrapInProviderScope: true,
+        overrides: [
+          viewSizeProvider.overrideWithBuild((_, _) => const Size(1200, 800)),
+        ],
+        child: Builder(
+          builder: (context) {
+            return FilledButton(
+              onPressed: () async {
+                result = await showDialog<Rule>(
+                  context: context,
+                  builder: (_) => const AddOrEditRuleDialog(),
+                );
+              },
+              child: const Text('open'),
+            );
+          },
+        ),
+      ),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    final l10n = AppLocalizations.current;
+
+    await tester.enterText(find.byType(TextFormField), 'example.com');
+    await tester.tap(find.byType(DropdownMenu));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.matchTarget).last);
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<EditableText>(find.byType(EditableText).last)
+          .controller
+          .text,
+      l10n.matchTarget,
+    );
+
+    await tester.tap(find.text(l10n.confirm));
+    await tester.pumpAndSettle();
+
+    expect(result, isNotNull);
+    expect(result!.ruleTarget, 'MATCH');
+
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('edit rule keeps the id and prefills the fields', (tester) async {
     Rule? result;
     const rule = Rule(

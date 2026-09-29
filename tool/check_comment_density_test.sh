@@ -115,11 +115,29 @@ expect_under 'go pointer dereferences are not comments' "$repo/deref.go" \
 expect_under 'a generated file is skipped' "$repo/model.g.dart" "$(dense 20 4)"
 expect_under 'generated plugin bindings are skipped' \
   "$repo/plugins/rust_api/lib/src/rust/frb_generated.io.dart" "$(dense 20 4)"
+expect_under 'the intl_utils localization class is skipped' "$repo/lib/l10n/l10n.dart" "$(dense 20 4)"
 expect_under 'a vendored upstream file is skipped' "$repo/Clash.Meta/hub.go" "$(dense 20 4)"
 expect_under 'a markdown file is skipped' "$repo/notes.md" "$(dense 20 4)"
 
 expect_over 'a dense change to a tracked file' "$repo/tracked.dart" "$(dense 8 24)"
 git -C "$repo" checkout --quiet -- tracked.dart
+
+mkdir -p "$repo/lib/nested"
+printf '%s\n' "$(dense 8 24)" >"$repo/lib/nested/hooked.dart"
+git -C "$repo" add lib/nested/hooked.dart
+git -C "$repo" commit --quiet -m 'seed a dense tracked file'
+printf 'final addition = 1;\n' >>"$repo/lib/nested/hooked.dart"
+set +e
+(cd "$repo" && GIT_DIR="$repo/.git" bash "$checker" lib/nested/hooked.dart) \
+  >"$temp_dir/out" 2>"$temp_dir/err"
+status=$?
+set -e
+if [ "$status" -ne 0 ] || [ -s "$temp_dir/err" ]; then
+  echo "FAIL: the GIT_DIR a hook exports should not widen the diff to the whole file, got $status" >&2
+  cat "$temp_dir/err" >&2
+  failures=$((failures + 1))
+fi
+git -C "$repo" checkout --quiet -- lib/nested/hooked.dart
 
 printf '%s\n' "$(dense 8 24)" >"$repo/argv.dart"
 run_argv "$repo/argv.dart"

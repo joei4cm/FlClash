@@ -221,6 +221,7 @@ class AddDialog extends StatefulWidget {
   final Field valueField;
   final int? keyMaxLength;
   final int? valueMaxLength;
+  final String? valueHelperText;
 
   const AddDialog({
     super.key,
@@ -229,6 +230,7 @@ class AddDialog extends StatefulWidget {
     required this.valueField,
     this.keyMaxLength,
     this.valueMaxLength,
+    this.valueHelperText,
   });
 
   @override
@@ -293,6 +295,7 @@ class _AddDialogState extends State<AddDialog> {
                     ? null
                     : TextInputLimits.limit(widget.keyMaxLength!),
                 controller: _keyController,
+                textInputAction: TextInputAction.next,
                 decoration: InputDecoration(labelText: keyField!.label),
                 validator: (String? value) {
                   String? res;
@@ -316,7 +319,10 @@ class _AddDialogState extends State<AddDialog> {
                   : TextInputLimits.limit(widget.valueMaxLength!),
               keyboardType: TextInputType.text,
               controller: _valueController,
-              decoration: InputDecoration(labelText: valueField.label),
+              decoration: InputDecoration(
+                labelText: valueField.label,
+                helperText: widget.valueHelperText,
+              ),
               onFieldSubmitted: (_) {
                 _submit();
               },

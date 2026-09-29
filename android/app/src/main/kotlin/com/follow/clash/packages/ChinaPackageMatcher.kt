@@ -1,9 +1,6 @@
 package com.follow.clash.packages
 
 /**
- * Decides whether a package name or a fully qualified class name looks like it
- * belongs to a domestic app or SDK.
- *
  * The prefixes in [CHINA_PACKAGE_REGEX] are matched *without* a trailing dot
  * boundary, and that is deliberate: `com.qihoo` has to reach `com.qihoo360.*`
  * and `com.ali` has to reach `com.aliyun.*` and `com.alimama.*`. Requiring a
@@ -15,17 +12,12 @@ package com.follow.clash.packages
  */
 internal object ChinaPackageMatcher {
 
-    /**
-     * Whether [packageName] is never treated as domestic, no matter which
-     * classes or SDKs it ships.
-     */
     fun isSkipped(packageName: String): Boolean = SKIPPED_PREFIXES.any {
         packageName == it || packageName.startsWith("$it.")
     }
 
     fun matchesKnownPrefix(name: String): Boolean = name.matches(CHINA_PACKAGE_REGEX)
 
-    /** Normalizes a dex type descriptor such as `Lcom/tencent/Foo$Bar;`. */
     fun classNameOf(descriptor: String): String = descriptor
         .removeSurrounding("L", ";")
         .replace('/', '.')

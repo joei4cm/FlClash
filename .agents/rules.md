@@ -87,7 +87,7 @@ judgment, and it lives in the rules below and in review. Whether comments are to
 
 ### Density
 
-`tool/check_comment_density.sh` fails a file whose added lines are more than 10% standalone comment lines, ignoring
+`tool/check_comment_density.sh` fails a file whose added lines are more than 5% standalone comment lines, ignoring
 diffs under 20 added lines so small edits are never caught. The number is calibrated on this repository's own history:
 healthy changes sit at or under 3.6%, while the core fix that prompted the gate ran 22.4%.
 
@@ -130,6 +130,10 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
   themselves introduced — and say which of the two it is in the commit message.
 - Do not expose direct filesystem deletion APIs through Core or helper IPC; use
   a scope-specific cleanup API instead.
+- The desktop IPC socket in `plugins/rust_api` admits a Unix peer only when its effective uid is the app's own or root:
+  the socket lives in `/tmp`, and the Core connects as root whenever it runs setuid for TUN or under the Linux Helper.
+  A launch mode that runs the Core as any other user has to widen `authorize_peer` in `ipc/platform.rs`, and Windows
+  keeps its identity check on the Dart side, which compares the named-pipe peer PID with the Core it launched.
 - Keep the shared `CoreMethodCall`/`CoreMethodResponse` JSON envelope structurally identical across Dart, Go, JNI, and
   desktop IPC. Do not double-encode `arguments`, `result`, or event batches.
 - `core/message.go` carries three event queues, and the split is load-bearing: state (loaded, geo-update), delay, and
@@ -158,8 +162,17 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
   `logDeliveryError`, which writes to stderr and latches until a frame gets through or the next connection is installed.
   A write that fails without putting a byte on the wire — host backpressure hitting `ipcWriteTimeout`, or a payload above
   `maxIPCFrameSize` — drops that one frame and keeps the connection: the stream is still framed correctly, and tearing it
-  down here ends the read loop, and with it the Core process. Only a half-written frame desynchronizes the stream, and
-  that is the one case `send` closes on.
+  down here ends the read loop, and with it the Core process. A half-written frame whose write merely timed out is
+  resumed for as long as the stall lasts: Windows Modern Standby suspends the app while the Helper's Core keeps running,
+  so the host can stop draining for hours and still come back, and go-winio reports the expiry as its own `ErrTimeout`
+  rather than `os.ErrDeadlineExceeded`, which is why `send` checks `Timeout()`. The wait has no cap on purpose, and
+  `send` holds `writeMu` throughout, so every other frame — method responses and the single batcher goroutine behind
+  the event queues — waits behind the stalled one. Memory is bounded by the queues; what gives is delivery: the state
+  queue fills and `enqueueState` starts dropping, which is the case the `UpdatingAction` sweep above exists for. Nothing
+  on the Dart side restarts the Core over a stall: `CoreRpcClient` times each pending request out on its own and hands
+  the caller `null` (a `no_response` exception for message methods), and the sweep clears core-scope updating state
+  minutes later. Only a half-written frame that fails outright desynchronizes the stream, and that is the one case
+  `send` closes on.
 - Core method handlers in `core/hub.go` are synchronous. Anything that must not block the dispatcher is spawned by
   `safeGo`/`safeGoDetached` in `core/method.go`, which recover; a bare `go` in a handler puts a panic outside every
   recovery and kills the process, which on Android is the whole application. The `//export` entry points in
@@ -207,7 +220,7 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
 - Package `init` in the Android library runs while the `.so` is being loaded, so a panic there takes the application
   down before it can report anything. `platform/limit.go` arms an fd-pressure probe and degrades to never blocking when
   it cannot; keep that shape for anything else `init` sets up that correctness does not depend on.
-- Every `android && cgo` file in `core/` is compiled only by the NDK-backed CI step in the `test` job. Keep the build
+- Every `android && cgo` file in `core/` is compiled only by the NDK-backed CI step in the `go` job. Keep the build
   constraints as `android && cgo` / `!(android && cgo)`: a bare `cgo` constraint makes `go build ./...` fail in `core/`
   on any developer machine, because the files it pulls in need the NDK.
 
@@ -257,6 +270,10 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
 - Reading the Wi-Fi SSID is opt-in work, not ambient state. `ConnectivityManager` reads it only while `excludeSSIDs` is
   non-empty, because that list is its only consumer through `suspendProvider`, and the read costs a blocking platform
   call plus a location permission on Android and macOS. A second consumer must widen that gate, not drop it.
+- On Android the `wifi_ssid` permission is only `granted` once `ACCESS_BACKGROUND_LOCATION` is held too (Q+). Fine
+  location alone reads the SSID in the foreground but returns `UNKNOWN_SSID` once the app is backgrounded, which is
+  where on-demand spends most of its time. `getSsid` itself only needs fine location, so the split stays inside the
+  plugin.
 - No `wifi_ssid` implementation may answer `getSsid` on the platform thread. Android resolves through a network callback
   with a timeout, Linux through `g_task_run_in_thread`, and macOS through `ssidQueue` after checking the location
   authorization, because CoreWLAN reaches `wifid` over XPC and a wedged daemon would freeze the window. Windows is the

@@ -13,14 +13,6 @@ class SystemAction extends _$SystemAction {
     if (ref.read(isMobileViewProvider)) {
       await Future.delayed(commonDuration);
     }
-    if (ref.read(packagesProvider).isEmpty) {
-      ref.read(packagesProvider.notifier).value =
-          await app?.getPackages() ?? [];
-    }
-    return ref.read(packagesProvider);
-  }
-
-  Future<List<Package>> refreshPackages() async {
     ref.read(packagesProvider.notifier).value = await app?.getPackages() ?? [];
     return ref.read(packagesProvider);
   }
@@ -127,12 +119,7 @@ class SystemAction extends _$SystemAction {
   }
 
   Future<void> updateVisible() async {
-    final visible = await windowPort?.isVisible;
-    if (visible != null && !visible) {
-      unawaited(windowPort?.show());
-    } else {
-      unawaited(windowPort?.hide());
-    }
+    await windowPort?.toggle();
   }
 
   void updateTun() {

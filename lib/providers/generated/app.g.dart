@@ -93,7 +93,7 @@ final class LogsProvider extends $NotifierProvider<Logs, FixedList<Log>> {
   }
 }
 
-String _$logsHash() => r'c23da391e9662e863990fc68039fbaf126f85b83';
+String _$logsHash() => r'aefb14ef2c0a3c7a4e27f2ac4188a5b2943e60b5';
 
 abstract class _$Logs extends $Notifier<FixedList<Log>> {
   FixedList<Log> build();
@@ -145,7 +145,7 @@ final class RequestsProvider
   }
 }
 
-String _$requestsHash() => r'281a3333f8eca333d513e09b34cf5e568c44e07b';
+String _$requestsHash() => r'ceb041f2418513a5307b64bc9b5b58cae41e6eec';
 
 abstract class _$Requests extends $Notifier<FixedList<TrackerInfo>> {
   FixedList<TrackerInfo> build();
@@ -472,59 +472,6 @@ abstract class _$LoadedLocale extends $Notifier<Locale?> {
             as $ClassProviderElement<
               AnyNotifier<Locale?, Locale?>,
               Locale?,
-              Object?,
-              Object?
-            >;
-    return element.handleCreate(ref, build);
-  }
-}
-
-@ProviderFor(ConnectionsSnapshot)
-final connectionsSnapshotProvider = ConnectionsSnapshotProvider._();
-
-final class ConnectionsSnapshotProvider
-    extends $NotifierProvider<ConnectionsSnapshot, List<TrackerInfo>> {
-  ConnectionsSnapshotProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'connectionsSnapshotProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$connectionsSnapshotHash();
-
-  @$internal
-  @override
-  ConnectionsSnapshot create() => ConnectionsSnapshot();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<TrackerInfo> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<List<TrackerInfo>>(value),
-    );
-  }
-}
-
-String _$connectionsSnapshotHash() =>
-    r'4ffa6dea2505521a9a428002f5f6fbcb9a417bc7';
-
-abstract class _$ConnectionsSnapshot extends $Notifier<List<TrackerInfo>> {
-  List<TrackerInfo> build();
-  @$mustCallSuper
-  @override
-  WhenComplete runBuild() {
-    final ref = this.ref as $Ref<List<TrackerInfo>, List<TrackerInfo>>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<List<TrackerInfo>, List<TrackerInfo>>,
-              List<TrackerInfo>,
               Object?,
               Object?
             >;
@@ -1553,7 +1500,7 @@ final class LoadingProvider extends $NotifierProvider<Loading, bool> {
   }
 }
 
-String _$loadingHash() => r'f4c58da7e5869c3e114b76439f3169b31d2e5b71';
+String _$loadingHash() => r'0e92aaf1ff26aeba3fb3dc196bbf2ab0a061b720';
 
 final class LoadingFamily extends $Family
     with $ClassFamilyOverride<Loading, bool, bool, bool, LoadingTag> {
@@ -1809,7 +1756,7 @@ final class UpdatingKeysProvider
   }
 }
 
-String _$updatingKeysHash() => r'dc2dac955ca8831cd8de337cf2ae0bb4e7bc6335';
+String _$updatingKeysHash() => r'db5de1510c55c26685ac3055f199535e7eba42c3';
 
 abstract class _$UpdatingKeys extends $Notifier<Set<String>> {
   Set<String> build();

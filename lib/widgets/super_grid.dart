@@ -39,7 +39,6 @@ class SuperGridState extends State<SuperGrid> with TickerProviderStateMixin {
   static const _shakeDuration = Duration(milliseconds: 480);
   static const _reorderCurve = Cubic(0.22, 0.72, 0.24, 1.08);
 
-  /// How long a pointer has to rest over an item before it makes room.
   static const _hoverDelay = Duration(milliseconds: 120);
 
   /// Matches the default CommonCard shape, so the lift's shadow traces the card
@@ -56,7 +55,6 @@ class SuperGridState extends State<SuperGrid> with TickerProviderStateMixin {
   int get length => _childrenNotifier.value.length;
   int get crossCount => widget.crossAxisCount;
 
-  /// Original index of the item occupying each visual slot.
   List<int> _tempIndexList = [];
 
   /// One stable key per slot, so item elements survive a reorder.
@@ -215,8 +213,6 @@ class SuperGridState extends State<SuperGrid> with TickerProviderStateMixin {
     _targetIndex = -1;
   }
 
-  /// Snapshots where every item currently sits, or returns false when the tree
-  /// is not laid out yet.
   bool _captureLayout() {
     final renderObject = context.findRenderObject();
     if (renderObject is! RenderBox || !renderObject.hasSize) {
@@ -243,8 +239,6 @@ class SuperGridState extends State<SuperGrid> with TickerProviderStateMixin {
     return true;
   }
 
-  /// Animates every item to the slot it would occupy if [_tempIndexList] were
-  /// committed.
   Future<bool> _transform() async {
     if (_sizes.length != length ||
         _offsets.length != length ||
@@ -384,7 +378,6 @@ class SuperGridState extends State<SuperGrid> with TickerProviderStateMixin {
     _hoverTimer = Timer(_hoverDelay, () => _handleHover(index));
   }
 
-  /// Makes room for the dragged item at the slot currently held by [index].
   Future<void> _handleHover(int index) async {
     if (!mounted || !_isDragging) {
       return;
@@ -440,7 +433,6 @@ class SuperGridState extends State<SuperGrid> with TickerProviderStateMixin {
     _resetDragState();
   }
 
-  /// Paints the lift: a shadow tracing the card's shape plus a small scale.
   /// [t] is 1 while the item is held and eases to 0 as it settles, so the drag
   /// feedback and the landing widget are one surface at two depths.
   Widget _buildLiftedSurface(Widget child, double t) {

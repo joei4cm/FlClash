@@ -37,6 +37,9 @@ class GeoResourceAction extends _$GeoResourceAction {
         .stop(geoResource.updatingKey, current);
   }
 
+  /// Completes once the Core has accepted the update, not once it finishes.
+  /// Completion arrives as a geo-update event through [handleCoreUpdate];
+  /// callers that need it watch [isUpdatingProvider] for the key to clear.
   Future<void> updateGeoResource(GeoResource geoResource) async {
     _manualUpdates.add(geoResource);
     final operation = _startUpdating(geoResource);
@@ -60,12 +63,16 @@ class GeoResourceAction extends _$GeoResourceAction {
   ) {
     final geoResource = GeoResource.fromJson(geoType.toLowerCase());
     final shouldNotify = !updating && _manualUpdates.remove(geoResource);
-    if (shouldNotify && (error == null || error.isEmpty)) {
-      final l10n = currentAppLocalizations;
-      final message = skipped
-          ? l10n.geoSkipped(geoResource.name)
-          : l10n.geoUpdated(geoResource.name);
-      dialogs.showNotifier(message);
+    if (shouldNotify) {
+      if (error == null || error.isEmpty) {
+        final l10n = currentAppLocalizations;
+        final message = skipped
+            ? l10n.geoSkipped(geoResource.name)
+            : l10n.geoUpdated(geoResource.name);
+        dialogs.showNotifier(message);
+      } else {
+        dialogs.showNotifier(error, level: MessageLevel.error);
+      }
     }
     if (updating) {
       _startUpdating(geoResource);

@@ -84,13 +84,11 @@ class GitException implements Exception {
   String toString() => message;
 }
 
-/// The only part of the generator that shells out to git.
 class Git {
   Git({this.workingDirectory});
 
   final String? workingDirectory;
 
-  /// Version tags reachable from [revision], newest first.
   List<VersionTag> versionTags({String revision = 'HEAD'}) {
     final output = _run(['tag', '--merged', revision]);
     final tags = output
@@ -117,15 +115,11 @@ class Git {
   bool tagIsReachable(String name, {String revision = 'HEAD'}) =>
       _run(['tag', '--merged', revision, '--list', name]).trim().isNotEmpty;
 
-  /// `YYYY-MM-DD` of the commit a tag points at.
   String tagDate(String name) =>
       _run(['log', '-1', '--format=%cs', name]).trim();
 
   String head() => _run(['rev-parse', 'HEAD']).trim();
 
-  /// Commits in `from..to`, newest first, merges excluded.
-  ///
-  /// A null [from] walks back to the root commit.
   List<RawCommit> commits({String? from, required String to}) {
     final range = from == null ? to : '$from..$to';
     final output = _run([

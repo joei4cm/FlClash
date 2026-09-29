@@ -12,9 +12,6 @@ const TIMEOUT: Duration = Duration::from_secs(10);
 // a config, which is megabytes at worst.
 const MEMORY_LIMIT: usize = 256 * 1024 * 1024;
 
-/// Evaluates `script` and calls its `main(config)` with the profile parsed from
-/// `config`, returning the result as JSON. A script that returns nothing leaves
-/// the profile as it was.
 pub fn evaluate(script: &str, config: &str) -> Result<String, String> {
     evaluate_within(script, config, TIMEOUT)
 }
@@ -31,15 +28,30 @@ fn evaluate_within(script: &str, config: &str, timeout: Duration) -> Result<Stri
         ctx.eval::<Value, _>(script.as_bytes())
             .catch(&ctx)
             .map_err(describe)?;
+        // Evaluated as an expression rather than read off `globals()` because a
+        // top-level `const main = ...` is a global lexical binding, not a
+        // property of globalThis.
         let entry: Function = ctx
-            .globals()
-            .get(ENTRY)
+            .eval(ENTRY.as_bytes())
             .map_err(|_| format!("script does not define {ENTRY}()"))?;
         let parsed: Value = ctx
             .json_parse(config)
             .catch(&ctx)
             .map_err(|_| "profile is not valid JSON".to_owned())?;
         let result: Value = entry.call((parsed,)).catch(&ctx).map_err(describe)?;
+        let result = match result.as_promise() {
+            Some(promise) => promise.finish::<Value>().catch(&ctx).map_err(|error| {
+                match error {
+                    // `finish` drains the job queue and gives up once it is empty,
+                    // which only happens for a promise waiting on a timer or I/O.
+                    rquickjs::CaughtError::Error(rquickjs::Error::WouldBlock) => {
+                        format!("{ENTRY}() returned a Promise that did not settle")
+                    }
+                    other => describe(other),
+                }
+            })?,
+            None => result,
+        };
         if result.is_undefined() || result.is_null() {
             return Ok(config.to_owned());
         }
@@ -86,10 +98,54 @@ mod tests {
     }
 
     #[test]
+    fn accepts_a_lexically_declared_arrow_function_entry() {
+        let result = run(
+            "const main = (config) => { return config; }",
+            json!({ "mode": "rule" }),
+        )
+        .unwrap();
+
+        assert_eq!(result, json!({ "mode": "rule" }));
+    }
+
+    #[test]
     fn keeps_the_profile_when_main_returns_nothing() {
         let result = run("function main(config) {}", json!({ "mode": "rule" })).unwrap();
 
         assert_eq!(result, json!({ "mode": "rule" }));
+    }
+
+    #[test]
+    fn resolves_a_promise_main_returns() {
+        let result = run(
+            "async function main(config) { config.mode = 'global'; return config }",
+            json!({ "mode": "rule" }),
+        )
+        .unwrap();
+
+        assert_eq!(result, json!({ "mode": "global" }));
+    }
+
+    #[test]
+    fn reports_the_rejection_of_a_promise_main_returns() {
+        let error = run(
+            "async function main() { throw new Error('bad profile') }",
+            json!({}),
+        )
+        .unwrap_err();
+
+        assert!(error.contains("bad profile"), "{error}");
+    }
+
+    #[test]
+    fn reports_a_promise_that_never_settles() {
+        let error = run(
+            "function main() { return new Promise(() => {}) }",
+            json!({}),
+        )
+        .unwrap_err();
+
+        assert!(error.contains("did not settle"), "{error}");
     }
 
     #[test]

@@ -10,11 +10,15 @@ import 'package:rust_api/rust_api.dart';
 import 'application.dart';
 import 'bootstrap.dart';
 import 'common/common.dart';
+import 'common/window.dart';
 
-void main() {
+void main(List<String> args) {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      if (Platform.isLinux) {
+        linkManager.seedInitialLink(args);
+      }
       FlutterError.onError = (details) {
         Future.microtask(() {
           commonPrint.log(
@@ -41,6 +45,7 @@ void main() {
             home: InitErrorScreen(error: e, stack: s),
           ),
         );
+        unawaited(window?.showInitFailure());
       }
     },
     (error, stack) {

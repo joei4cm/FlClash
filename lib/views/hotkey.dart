@@ -9,12 +9,6 @@ import 'package:fl_clash/widgets/scaffold.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-
-extension IntlExt on Intl {
-  static String actionMessage(String messageText) =>
-      Intl.message('action_$messageText');
-}
 
 class HotKeyView extends StatelessWidget {
   const HotKeyView({super.key});
@@ -51,7 +45,7 @@ class HotKeyView extends StatelessWidget {
                 getHotKeyActionProvider(hotAction),
               );
               return ListItem(
-                title: Text(IntlExt.actionMessage(hotAction.name)),
+                title: Text(hotAction.label),
                 subtitle: Text(
                   getSubtitle(context, hotKeyAction),
                   style: context.textTheme.bodyMedium?.copyWith(
@@ -177,7 +171,7 @@ class _HotKeyRecorderState extends ConsumerState<HotKeyRecorder> {
       },
       autofocus: true,
       child: CommonDialog(
-        title: IntlExt.actionMessage(widget.hotKeyAction.action.name),
+        title: widget.hotKeyAction.action.label,
         actions: [
           TextButton(
             onPressed: () {

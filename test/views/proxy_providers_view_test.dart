@@ -157,7 +157,7 @@ void main() {
     expect(find.textContaining(' · '), findsNothing);
     final countChip = find.ancestor(
       of: find.text(l10n.proxiesCount(7)),
-      matching: find.byType(ListItemMetaChip),
+      matching: find.byType(MetaChip),
     );
     expect(countChip, findsOneWidget);
     expect(tester.getSize(countChip).height, lessThanOrEqualTo(20));
@@ -172,7 +172,7 @@ void main() {
         matching: find.byWidgetPredicate(
           (widget) =>
               widget is Padding &&
-              widget.padding == const EdgeInsets.symmetric(vertical: 4),
+              widget.padding == const EdgeInsets.only(top: 4, bottom: 2),
         ),
       ),
       findsOneWidget,
@@ -188,28 +188,20 @@ void main() {
       find.descendant(of: countChip, matching: find.byType(Padding)),
     );
     final colorScheme = Theme.of(tester.element(countChip)).colorScheme;
-    expect(decoration.color, colorScheme.secondary);
-    expect(decoration.shape, AppShape.sm);
+    expect(decoration.color, colorScheme.surfaceContainerHighest);
+    expect(
+      decoration.shape,
+      AppShape.sm.copyWith(side: BorderSide(color: colorScheme.outlineVariant)),
+    );
     expect(
       padding.padding,
       const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
     );
     expect(
       tester.widget<Text>(find.text(l10n.proxiesCount(7))).style?.color,
-      colorScheme.onSecondary,
+      colorScheme.onSurfaceVariant,
     );
-    final tones = tester
-        .widgetList<ListItemMetaChip>(find.byType(ListItemMetaChip))
-        .map((chip) => chip.tone)
-        .toList();
-    expect(
-      tones.where((tone) => tone == ListItemMetaChipTone.secondary),
-      hasLength(2),
-    );
-    expect(
-      tones.where((tone) => tone == ListItemMetaChipTone.tertiary),
-      hasLength(3),
-    );
+    expect(find.byType(MetaChip), findsNWidgets(5));
     expect(tester.takeException(), null);
   });
 

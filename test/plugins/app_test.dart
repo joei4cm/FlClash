@@ -68,26 +68,27 @@ void main() {
   });
 
   test(
-    'caches packages without an icon and skips empty package names',
+    'falls back to the default activity icon for unknown packages',
     () async {
-      var iconCallCount = 0;
+      final requested = <String?>[];
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (_) async {
-            iconCallCount++;
-            return null;
+          .setMockMethodCallHandler(channel, (call) async {
+            final packageName = call.arguments['packageName'] as String?;
+            requested.add(packageName);
+            return packageName == '' ? '/icons/default_icon.webp' : null;
           });
 
       final app = App();
 
-      expect(await app.getPackageIcon(''), isNull);
-      expect(iconCallCount, 0);
-      expect(app.hasPackageIcon(''), isFalse);
+      final fallback = await app.getPackageIcon('com.a');
+      final defaultIcon = await app.getPackageIcon('');
 
-      expect(await app.getPackageIcon('com.a'), isNull);
-      expect(await app.getPackageIcon('com.a'), isNull);
+      expect(fallback, isNotNull);
+      expect(fallback, same(defaultIcon));
+      expect(requested, ['com.a', '']);
 
-      expect(iconCallCount, 1);
-      expect(app.hasPackageIcon('com.a'), isTrue);
+      expect(await app.getPackageIcon('com.b'), same(defaultIcon));
+      expect(requested, ['com.a', '', 'com.b']);
     },
   );
 
@@ -103,7 +104,10 @@ void main() {
 
     expect(await app.getPackageIcon('com.a'), isNull);
     expect(await app.getPackageIcon('com.a'), isNull);
-    expect(iconCallCount, 1);
+    expect(await app.getPackageIcon(''), isNull);
+    expect(iconCallCount, 2);
+    expect(app.hasPackageIcon('com.a'), isTrue);
+    expect(app.hasPackageIcon(''), isTrue);
   });
 
   test('uses false when crash detection is unavailable', () async {
@@ -149,6 +153,22 @@ void main() {
         });
 
     expect(await App().getLastExitInfo(), isNull);
+  });
+
+  test('forwards package change notices from Android', () async {
+    var changes = 0;
+    final app = App();
+    app.onPackagesChanged = () => changes++;
+    addTearDown(() => app.onPackagesChanged = null);
+
+    await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .handlePlatformMessage(
+          channel.name,
+          channel.codec.encodeMethodCall(const MethodCall('packagesChanged')),
+          (_) {},
+        );
+
+    expect(changes, 1);
   });
 
   test('reports the installed apps permission Android answers with', () async {

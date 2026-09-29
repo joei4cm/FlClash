@@ -60,6 +60,7 @@ class _OverwriteNestedSheetState<T>
     extends ConsumerState<OverwriteNestedSheet<T>> {
   final GlobalKey<NavigatorState> _nestedNavigatorKey = GlobalKey();
   late final T _origin;
+  bool _closing = false;
 
   @override
   void initState() {
@@ -68,17 +69,23 @@ class _OverwriteNestedSheetState<T>
   }
 
   Future<void> _handleClose() async {
-    final state = _nestedNavigatorKey.currentState;
-    if (state != null && state.canPop()) {
-      final res = await dialogs.showMessage(
-        message: TextSpan(text: context.appLocalizations.confirmExitWindow),
-      );
-      if (res != true) {
-        return;
+    if (_closing) return;
+    _closing = true;
+    try {
+      final state = _nestedNavigatorKey.currentState;
+      if (state != null && state.canPop()) {
+        final res = await dialogs.showMessage(
+          message: TextSpan(text: context.appLocalizations.confirmExitWindow),
+        );
+        if (res != true) {
+          return;
+        }
       }
-    }
-    if (context.mounted) {
-      unawaited(_handleExit());
+      if (context.mounted) {
+        unawaited(_handleExit());
+      }
+    } finally {
+      _closing = false;
     }
   }
 

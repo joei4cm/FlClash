@@ -3,10 +3,10 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:tray/tray.dart';
 
 import 'app_localizations.dart';
+import 'l10n_labels.dart';
 import 'app_ports.dart';
 import 'constant.dart';
 import 'provider_reader.dart';
@@ -39,18 +39,21 @@ class AppTray implements TrayPort {
     return AppTray._internal(isMacOS: isMacOS, isWindows: isWindows);
   }
 
-  String get trayIconSuffix {
+  String get _trayIconSuffix {
     return isWindows ? 'ico' : 'png';
   }
 
+  String get _trayIconDir {
+    return isWindows ? 'assets/images/tray/windows' : 'assets/images/tray/unix';
+  }
+
   String getTrayIcon({required bool isStart, required bool tunEnable}) {
-    if (isMacOS || !isStart) {
-      return 'assets/images/icon/status_1.$trayIconSuffix';
-    }
-    if (!tunEnable) {
-      return 'assets/images/icon/status_2.$trayIconSuffix';
-    }
-    return 'assets/images/icon/status_3.$trayIconSuffix';
+    final status = switch ((isMacOS || !isStart, tunEnable)) {
+      (true, _) => 1,
+      (false, false) => 2,
+      (false, true) => 3,
+    };
+    return '$_trayIconDir/status_$status.$_trayIconSuffix';
   }
 
   @override
@@ -126,7 +129,7 @@ class AppTray implements TrayPort {
       const TrayMenuSeparator(),
       for (final mode in Mode.values)
         TrayMenuCheckbox(
-          label: Intl.message(mode.name),
+          label: mode.label,
           checked: mode == trayState.mode,
           onSelected: () {
             setupAction.changeMode(mode);

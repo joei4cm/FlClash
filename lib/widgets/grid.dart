@@ -383,7 +383,6 @@ class GridSlot {
 }
 
 class GridGeometry {
-  /// Distance between the leading edges of two adjacent columns.
   final double stride;
 
   final List<GridSlot> slots;
@@ -404,9 +403,6 @@ double gridStride({
   return (crossAxisExtent + crossAxisSpacing) / crossAxisCount;
 }
 
-/// Packs children into a [crossAxisCount] column skyline, first fit by lowest
-/// main-axis offset.
-///
 /// [RenderGrid] positions its children with this, and `SuperGrid` animates a
 /// drag to the slot it reports, so the preview and the final layout agree by
 /// construction.

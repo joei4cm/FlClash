@@ -8,14 +8,12 @@ import 'render.dart';
 
 /// Versions up to and including this tag are frozen: they predate the
 /// structured pipeline and are kept verbatim at the bottom of `CHANGELOG.md`.
-const frozenBoundaryTag = 'v0.8.95';
+const frozenBoundaryTag = 'v0.8.96';
 
 const changelogDataPath = 'changelog.json';
 
 const changelogMarkdownPath = 'CHANGELOG.md';
 
-/// A version that has content but no tag yet, used between the release commit
-/// and the tag push, and for prerelease builds.
 class PendingVersion {
   const PendingVersion({
     required this.version,
@@ -127,8 +125,6 @@ int _frozenBoundary(String content) {
   }
 }
 
-/// Keeps the frozen tail of an existing `CHANGELOG.md` and replaces everything
-/// above the marker with freshly rendered content.
 String mergeMarkdown(String rendered, String existing) {
   final boundary = _frozenBoundary(existing);
   if (boundary < 0) {
@@ -141,7 +137,6 @@ String mergeMarkdown(String rendered, String existing) {
   return '$rendered${existing.substring(boundary).trimLeft()}';
 }
 
-/// Splits a `CHANGELOG.md` into the generated head and the frozen tail.
 String markdownHead(String content) {
   final boundary = _frozenBoundary(content);
   return boundary < 0 ? content : content.substring(0, boundary);

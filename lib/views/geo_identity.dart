@@ -553,10 +553,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     );
   }
 
-  String _captureModeLabel(
-    AppLocalizations l10n,
-    GeoIdentityCaptureMode mode,
-  ) {
+  String _captureModeLabel(AppLocalizations l10n, GeoIdentityCaptureMode mode) {
     return switch (mode) {
       GeoIdentityCaptureMode.auto => l10n.geoIdentityCaptureModeAuto,
       GeoIdentityCaptureMode.tun => l10n.geoIdentityCaptureModeTun,

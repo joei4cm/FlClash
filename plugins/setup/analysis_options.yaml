@@ -2,7 +2,7 @@ include: ../../lint_options.yaml
 
 analyzer:
   exclude:
-    - buildkit/build_tool/**
+    - setup_hooks/**
     - build/**
     - android/**
     - ios/**

@@ -5,6 +5,7 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wifi_ssid/wifi_ssid_manager.dart';
 
@@ -44,6 +45,8 @@ class Permissions {
   final bool Function() _supportsLocationPermissions;
 
   bool _isRequestingLocation = false;
+  bool _autoRequestedLocation = false;
+  bool _hadExcludeSSIDs = false;
   bool needWaitingBatteryOptimizationSettings = false;
 
   void check(ProviderReader read) {
@@ -90,17 +93,28 @@ class Permissions {
     final needRequestPermission = read(
       excludeSSIDsProvider.select((state) => state.isNotEmpty),
     );
+    if (needRequestPermission && !_hadExcludeSSIDs) {
+      _autoRequestedLocation = false;
+    }
+    _hadExcludeSSIDs = needRequestPermission;
     if (res == WifiSsidPermission.denied &&
         needRequestPermission &&
+        !_autoRequestedLocation &&
         !_isRequestingLocation) {
+      _isRequestingLocation = true;
       try {
-        _isRequestingLocation = true;
         final res = await WifiSsidManager.instance.requestPermission();
+        _autoRequestedLocation = true;
         read(locationPermissionsProvider.notifier).value = res;
         if (res == WifiSsidPermission.granted) {
           final ssid = await WifiSsidManager.instance.getSsid();
           read(currentSSIDProvider.notifier).value = ssid;
         }
+      } on PlatformException catch (e) {
+        commonPrint.log(
+          'requestPermission error ${e.toString()}',
+          logLevel: LogLevel.warning,
+        );
       } finally {
         _isRequestingLocation = false;
       }

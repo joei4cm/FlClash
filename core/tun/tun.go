@@ -16,10 +16,13 @@ import (
 	"github.com/metacubex/mihomo/tunnel"
 )
 
-// Start takes ownership of fd. It hands it to sing-tun once the options
-// validate; until then a failure has to close it here, since the descriptor was
-// detached from its ParcelFileDescriptor on the Android side and nothing else
-// still refers to it.
+// Start takes ownership of fd. dupFd is handed to sing_tun.New, which only
+// takes ownership of it once tunNew succeeds inside New; from that point
+// Listener.Close (run by New's own deferred cleanup on error) closes dupFd,
+// so this must never close dupFd itself. New's error alone can't say
+// whether tunNew was reached; the options built below never enable the
+// tun features whose validation runs before tunNew, so New cannot fail
+// before taking ownership of dupFd.
 func Start(fd int, stack string, address, dns string) *sing_tun.Listener {
 	var prefix4 []netip.Prefix
 	var prefix6 []netip.Prefix
@@ -51,8 +54,22 @@ func Start(fd int, stack string, address, dns string) *sing_tun.Listener {
 		if len(d) == 0 {
 			continue
 		}
-		dnsHijack = append(dnsHijack, net.JoinHostPort(d, "53"))
+		hijack := net.JoinHostPort(d, "53")
+		if _, err := netip.ParseAddrPort(hijack); err != nil {
+			log.Errorln("TUN: %v", err)
+			_ = syscall.Close(fd)
+			return nil
+		}
+		dnsHijack = append(dnsHijack, hijack)
 	}
+
+	dupFd, err := syscall.Dup(fd)
+	if err != nil {
+		log.Errorln("TUN: %v", err)
+		_ = syscall.Close(fd)
+		return nil
+	}
+	defer func() { _ = syscall.Close(fd) }()
 
 	options := LC.Tun{
 		Enable:              true,
@@ -64,16 +81,12 @@ func Start(fd int, stack string, address, dns string) *sing_tun.Listener {
 		Inet4Address:        prefix4,
 		Inet6Address:        prefix6,
 		MTU:                 9000,
-		FileDescriptor:      fd,
+		FileDescriptor:      dupFd,
 	}
 
 	listener, err := sing_tun.New(options, tunnel.Tunnel)
 
 	if err != nil {
-		// fd went to sing-tun with the options; whether it got as far as
-		// wrapping the descriptor is not observable from here, so closing it
-		// again risks freeing a number something else has already been handed.
-		// The caller tears the VPN down instead, which reclaims the interface.
 		log.Errorln("TUN: %v", err)
 		return nil
 	}

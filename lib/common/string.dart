@@ -137,13 +137,25 @@ String generateRandomString({int minLength = 10, int maxLength = 100}) {
   return result;
 }
 
+String generateRandomSecret(int length) {
+  const chars =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  final random = Random.secure();
+  return String.fromCharCodes(
+    Iterable.generate(
+      length,
+      (_) => chars.codeUnitAt(random.nextInt(chars.length)),
+    ),
+  );
+}
+
 String getOverwriteLabel(String label) {
   final reg = RegExp(r'\((\d+)\)$');
   final matches = reg.allMatches(label);
   if (matches.isNotEmpty) {
     final match = matches.last;
     final number = int.parse(match[1] ?? '0') + 1;
-    return label.replaceFirst(reg, '($number)', label.length - 3 - 1);
+    return '${label.substring(0, match.start)}($number)';
   } else {
     return '$label(1)';
   }

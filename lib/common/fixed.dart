@@ -51,3 +51,17 @@ class FixedList<T> {
   @override
   int get hashCode => Object.hash(identityHashCode(_list), _revision);
 }
+
+/// Restores the head that [latest] trimmed off [current] so a paused view
+/// stays anchored; the result is capped at [limit] from the tail.
+List<T> retainTrimmedHead<T>(List<T> current, List<T> latest, int limit) {
+  if (current.isEmpty || latest.isEmpty) {
+    return latest;
+  }
+  final index = current.indexWhere((item) => identical(item, latest.first));
+  if (index == 0) {
+    return latest;
+  }
+  final head = index > 0 ? current.sublist(0, index) : current;
+  return List.unmodifiable([...head, ...latest].take(limit));
+}

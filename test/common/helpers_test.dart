@@ -97,6 +97,22 @@ void main() {
     test('increments higher numbers', () {
       expect(getOverwriteLabel('foo(9)'), 'foo(10)');
     });
+
+    test('increments a two-digit suffix into three digits', () {
+      expect(getOverwriteLabel('foo(99)'), 'foo(100)');
+    });
+
+    test('increments an existing three-digit suffix', () {
+      expect(getOverwriteLabel('foo(100)'), 'foo(101)');
+    });
+
+    test('increments a bare parenthesized number', () {
+      expect(getOverwriteLabel('(1)'), '(2)');
+    });
+
+    test('increments a single-character label', () {
+      expect(getOverwriteLabel('a(1)'), 'a(2)');
+    });
   });
 
   group('compareVersions', () {

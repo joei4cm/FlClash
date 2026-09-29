@@ -235,6 +235,93 @@ void main() {
   );
 
   testWidgets(
+    'tools page survives widening past the breakpoint with more items',
+    (tester) async {
+      tester.view.physicalSize = const Size(500, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final container = ProviderContainer(
+        overrides: [
+          navigationItemsStateProvider.overrideWithValue(
+            NavigationItemsState(
+              value: [
+                NavigationItem(
+                  icon: const Icon(Icons.space_dashboard),
+                  label: PageLabel.dashboard,
+                  builder: (_) => const SizedBox.shrink(),
+                ),
+                NavigationItem(
+                  icon: const Icon(Icons.article),
+                  label: PageLabel.logs,
+                  modes: const [
+                    NavigationItemMode.desktop,
+                    NavigationItemMode.more,
+                  ],
+                  builder: (_) => const SizedBox.shrink(),
+                ),
+                NavigationItem(
+                  icon: const Icon(Icons.link),
+                  label: PageLabel.connections,
+                  modes: const [
+                    NavigationItemMode.desktop,
+                    NavigationItemMode.more,
+                  ],
+                  builder: (_) => const SizedBox.shrink(),
+                ),
+                NavigationItem(
+                  icon: const Icon(Icons.construction),
+                  label: PageLabel.tools,
+                  builder: (_) =>
+                      const ToolsView(key: GlobalObjectKey(PageLabel.tools)),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      globalState.container = container;
+      container.read(viewSizeProvider.notifier).value = const Size(500, 800);
+      container.read(currentPageLabelProvider.notifier).toPage(PageLabel.tools);
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const TestApp(includeNavigatorKey: false, child: HomePage()),
+        ),
+      );
+      await tester.pump();
+      expect(find.byType(ToolsView), findsOneWidget);
+      expect(find.byType(NavigationBar), findsOneWidget);
+
+      for (var width = 520.0; width <= 1200; width += 20) {
+        tester.view.physicalSize = Size(width, 800);
+        container.read(viewSizeProvider.notifier).value = Size(width, 800);
+        await tester.pump(const Duration(milliseconds: 16));
+        expect(tester.takeException(), isNull, reason: 'width: $width');
+      }
+      await tester.pump(const Duration(milliseconds: 301));
+      expect(tester.takeException(), isNull);
+      expect(find.byType(ToolsView), findsOneWidget);
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(container.read(currentPageLabelProvider), PageLabel.tools);
+
+      for (var width = 1180.0; width >= 500; width -= 20) {
+        tester.view.physicalSize = Size(width, 800);
+        container.read(viewSizeProvider.notifier).value = Size(width, 800);
+        await tester.pump(const Duration(milliseconds: 16));
+        expect(tester.takeException(), isNull, reason: 'width: $width');
+      }
+      await tester.pump(const Duration(milliseconds: 301));
+      expect(tester.takeException(), isNull);
+      expect(find.byType(ToolsView), findsOneWidget);
+      expect(container.read(currentPageLabelProvider), PageLabel.tools);
+    },
+  );
+
+  testWidgets(
     'profile trailing controls stay valid while a maximized window restores',
     (tester) async {
       tester.view.physicalSize = const Size(1440, 900);

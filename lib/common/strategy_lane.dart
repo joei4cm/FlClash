@@ -3,14 +3,7 @@ import 'package:fl_clash/models/clash_config.dart';
 import 'package:fl_clash/models/common.dart';
 
 /// Fixed business lanes shown in the Strategy Lanes UI.
-enum StrategyLaneId {
-  streaming,
-  ai,
-  messaging,
-  social,
-  search,
-  gaming,
-}
+enum StrategyLaneId { streaming, ai, messaging, social, search, gaming }
 
 /// How a business lane should pick its outbound.
 enum StrategyLanePolicyKind {
@@ -295,8 +288,7 @@ class StrategyLaneInjection {
   /// Non-follow policies that were not injected (missing group/proxy, etc.).
   final List<StrategyLaneId> skippedLanes;
 
-  bool get isEmpty =>
-      groups.isEmpty && rules.isEmpty && skippedLanes.isEmpty;
+  bool get isEmpty => groups.isEmpty && rules.isEmpty && skippedLanes.isEmpty;
 
   bool get hasSkipped => skippedLanes.isNotEmpty;
 }
@@ -569,10 +561,7 @@ StrategyLaneInjection buildStrategyLaneInjection({
         continue;
       }
       groups.add(
-        buildStrategyLaneProxyGroup(
-          laneId: preset.id,
-          proxyName: proxyName,
-        ),
+        buildStrategyLaneProxyGroup(laneId: preset.id, proxyName: proxyName),
       );
     } else if (policy.kind == StrategyLanePolicyKind.group) {
       if (!existingNames.contains(target)) {
@@ -660,8 +649,7 @@ class StrategyExtraGroup {
   final String currentOutlet;
   final String? overrideOutlet;
 
-  bool get hasOverride =>
-      overrideOutlet != null && overrideOutlet!.isNotEmpty;
+  bool get hasOverride => overrideOutlet != null && overrideOutlet!.isNotEmpty;
 }
 
 List<StrategyExtraGroup> buildStrategyExtraGroups({
@@ -685,8 +673,9 @@ List<StrategyExtraGroup> buildStrategyExtraGroups({
       continue;
     }
     final override = selectedMap[group.name];
-    final overrideOutlet =
-        (override != null && override.isNotEmpty) ? override : null;
+    final overrideOutlet = (override != null && override.isNotEmpty)
+        ? override
+        : null;
     extras.add(
       StrategyExtraGroup(
         groupName: group.name,

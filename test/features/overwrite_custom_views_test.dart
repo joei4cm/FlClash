@@ -1,4 +1,5 @@
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/features/overwrite/overwrite.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
@@ -129,6 +130,68 @@ void main() {
       find.descendant(of: rows.last, matching: find.byType(Divider)),
       findsNothing,
     );
+
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('group editor keeps long values inside its rows', (tester) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final profile = Profile.normal().copyWith(
+      overwriteType: OverwriteType.custom,
+    );
+    final proxyGroups = [
+      ProxyGroup(
+        id: 100,
+        profileId: profile.id,
+        name: 'a-very-long-proxy-group-name-that-goes-on-and-on',
+        type: GroupType.URLTest,
+        icon: 'https://example.com/a/very/long/path/to/an/icon/file/name.png',
+        filter: '(?i)hk|hong ?kong|an extremely long filter expression here',
+        url: 'https://www.gstatic.com/generate_204/a/very/long/url/path',
+      ),
+    ];
+    final container = ProviderContainer(
+      overrides: [
+        profilesProvider.overrideWith(() => TestProfiles([profile])),
+        currentProfileIdProvider.overrideWithBuild((_, _) => profile.id),
+        proxyGroupsProvider.overrideWith2((_) => _TestProxyGroups(proxyGroups)),
+        customOverwriteDateProvider(profile.id).overrideWithValue(
+          CustomOverwriteDate(
+            loaded: true,
+            proxyNames: const ['DIRECT'],
+            proxyTypes: const {'DIRECT': 'Direct'},
+            proxyGroups: proxyGroups,
+            ruleTargets: RuleTarget.baseTargets,
+          ),
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+    globalState.container = container;
+    container
+        .read(viewSizeProvider.notifier)
+        .update((_) => const Size(360, 800));
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: TestApp(child: CustomProxyGroupsView(profile.id)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+
+    await tester.tap(find.text(proxyGroups.single.name));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.byType(OverwriteFormRow), findsWidgets);
+
+    await tester.enterText(find.byType(TextFormField).first, 'y' * 400);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
 
     await tester.pumpWidget(const SizedBox.shrink());
   });

@@ -12,14 +12,11 @@
 
 A multi-platform proxy client based on ClashMeta, simple and easy to use, open-source and ad-free.
 
-on Desktop:
-<p style="text-align: center;">
-    <img alt="desktop" src="snapshots/desktop.gif">
-</p>
-
-on Mobile:
-<p style="text-align: center;">
-    <img alt="mobile" src="snapshots/mobile.gif">
+<p align="center">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="snapshots/preview-dark.png">
+        <img alt="FlClash on desktop and mobile" src="snapshots/preview.png" width="90%">
+    </picture>
 </p>
 
 ## Features
@@ -42,7 +39,6 @@ on Mobile:
 
    ```bash
     sudo apt-get install libayatana-appindicator3-dev
-    sudo apt-get install libkeybinder-3.0-dev
    ```
 
 ### Android
@@ -109,7 +105,7 @@ brew install --cask flclash
 
         2. Dependencies are auto-installed by setup script, or manually:
            ```bash
-           sudo apt-get install -y libayatana-appindicator3-dev libkeybinder-3.0-dev
+           sudo apt-get install -y libayatana-appindicator3-dev
            ```
 
         3. Run build script

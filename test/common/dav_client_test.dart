@@ -67,8 +67,6 @@ class _TestServer {
   final List<_RecordedRequest> requests = [];
   final Map<String, List<int>> files = {};
 
-  /// Answers the next request of a matching method with this status instead of
-  /// the default behaviour.
   final List<_ScriptedResponse> responses = [];
 
   String get uri => 'http://${_server.address.host}:${_server.port}';

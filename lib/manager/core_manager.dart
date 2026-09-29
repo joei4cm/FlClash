@@ -35,12 +35,13 @@ class _CoreContainerState extends ConsumerState<CoreManager>
     super.initState();
     coreEventManager.addListener(this);
     ref.read(updatingActionProvider.notifier);
+    // A rejected profile stays selected on purpose: silently reverting to
+    // the previous one hides the error and looks like the switch was lost.
     ref.listenManual(currentProfileIdProvider, (prev, next) {
-      if (prev != next) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          ref.read(setupActionProvider.notifier).fullSetup();
-        });
-      }
+      if (prev == next) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        unawaited(ref.read(setupActionProvider.notifier).fullSetup());
+      });
     });
     ref.listenManual(updateParamsProvider, (prev, next) {
       if (prev != next) {
@@ -117,10 +118,6 @@ class _CoreContainerState extends ConsumerState<CoreManager>
       return;
     }
     ref.read(coreStatusProvider.notifier).value = CoreStatus.disconnected;
-    // Keep Flutter run-state honest: a crashed core is not "still connected".
-    if (ref.read(isStartProvider)) {
-      unawaited(ref.read(setupActionProvider.notifier).setRunning(false));
-    }
     if (WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
       context.showNotifier(message, level: MessageLevel.error);
     }
@@ -133,17 +130,5 @@ class _CoreContainerState extends ConsumerState<CoreManager>
         .read(geoResourceActionProvider.notifier)
         .handleCoreUpdate(geoType, updating, skipped, error);
     super.onGeoUpdate(geoType, updating, skipped, error);
-  }
-
-  @override
-  void onTraffic(Map<String, dynamic> snapshot) {
-    ref.read(commonActionProvider.notifier).applyTrafficPush(snapshot);
-    super.onTraffic(snapshot);
-  }
-
-  @override
-  void onConnections(List<TrackerInfo> connections) {
-    ref.read(connectionsSnapshotProvider.notifier).apply(connections);
-    super.onConnections(connections);
   }
 }

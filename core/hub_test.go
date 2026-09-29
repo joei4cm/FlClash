@@ -172,8 +172,6 @@ func TestShouldPublishDelayDropsFailuresMeasuredInDoze(t *testing.T) {
 	}
 }
 
-// typeMap turns a name -> adapter type table into the lookup proxyGroupNames
-// expects, reporting a miss for any name outside the table.
 func typeMap(types map[string]constant.AdapterType) func(string) (constant.AdapterType, bool) {
 	return func(name string) (constant.AdapterType, bool) {
 		adapterType, ok := types[name]
@@ -471,7 +469,6 @@ func TestHandleShutdownTearsDownBackgroundWork(t *testing.T) {
 	}
 }
 
-// The write itself touches one field on one group.
 func TestHandleChangeProxyDoesNotWaitOutAConfigApply(t *testing.T) {
 	configMu.Lock()
 	defer configMu.Unlock()
@@ -673,8 +670,11 @@ func TestUpdateExternalProviderRunsOneAtATime(t *testing.T) {
 
 	select {
 	case methodError := <-second:
-		if methodError != nil {
-			t.Fatalf("the duplicate request reported %q", methodError.Message)
+		if methodError == nil {
+			t.Fatal("the duplicate request reported success")
+		}
+		if methodError.Code != "provider_updating" {
+			t.Errorf("code = %q, want provider_updating", methodError.Code)
 		}
 	case <-time.After(time.Second):
 		t.Fatal("the duplicate request reached the provider instead of being coalesced")
@@ -787,13 +787,11 @@ func TestAllProxiesPicksUpAProviderThatLoadsAfterTheApply(t *testing.T) {
 	tunnel.UpdateProxies(base, map[string]cp.ProxyProvider{"subscription": loading})
 	t.Cleanup(func() { tunnel.UpdateProxies(nil, nil) })
 
-	// A UI poll landing between the two executor steps.
 	during := proxyNamesOf(tunnel.AllProxies())
 	if !slices.Equal(during, []string{"DIRECT"}) {
 		t.Fatalf("mid-apply AllProxies = %v, want only the base proxies", during)
 	}
 
-	// Initial() finished parsing the subscription.
 	loading.setProxies("node-a", "node-b")
 
 	after := proxyNamesOf(tunnel.AllProxies())

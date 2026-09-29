@@ -30,8 +30,6 @@ internal const val VPN_PERMISSION_MESSAGE = "VPN permission required."
 internal const val START_FAILED_MESSAGE = "Failed to start service."
 
 /**
- * Serializes run intents onto the bound background service.
- *
  * Callers request a transition; the newest request always wins. Every step that outlives its own
  * suspension point re-checks [isCurrent] before it publishes anything, so a start that was overtaken
  * by a stop cannot report itself as started.
@@ -339,6 +337,7 @@ internal class ServiceStateMachine(private val host: ServiceStateHost) {
             title = state.currentProfileName,
             stopText = state.stopText,
             onlyStatisticsProxy = state.onlyStatisticsProxy,
+            showStopAction = state.showStopAction,
         )
     }
 }

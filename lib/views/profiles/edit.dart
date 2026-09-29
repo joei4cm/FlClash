@@ -84,13 +84,17 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
           profile = profile.copyWith(autoUpdate: false);
         }
       }
-      profilesAction.putProfile(
-        await profile.saveFile(
+      final savedProfile = await globalState.safeRun(
+        () => profile.saveFile(
           _fileData!,
           validate: (path) =>
               ref.read(coreHandlerProvider).validateConfig(path),
         ),
       );
+      if (savedProfile == null) {
+        return;
+      }
+      profilesAction.putProfile(savedProfile);
     } else if (!hasUpdate) {
       profilesAction.putProfile(profile);
     } else {
@@ -389,6 +393,39 @@ class _ProfileFileItem extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onUpload;
 
+  Widget _buildMetadata(BuildContext context, FileInfo fileInfo) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 2),
+      child: Row(
+        spacing: 4,
+        children: [
+          MetaChip(label: fileInfo.size.traffic.show),
+          MetaChip(
+            label:
+                fileInfo.lastModified?.getLastUpdateTimeDesc(context) ??
+                context.appLocalizations.unknown,
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<CommonPopupMenuItem> _menuItems(BuildContext context) {
+    final appLocalizations = context.appLocalizations;
+    return [
+      CommonPopupMenuItem(
+        icon: Icons.edit_outlined,
+        label: appLocalizations.edit,
+        onPressed: onEdit,
+      ),
+      CommonPopupMenuItem(
+        icon: Icons.upload_outlined,
+        label: appLocalizations.upload,
+        onPressed: onUpload,
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final appLocalizations = context.appLocalizations;
@@ -399,31 +436,27 @@ class _ProfileFileItem extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: fileInfo == null
               ? Container()
-              : ListItem(
-                  title: Text(appLocalizations.profile),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 4),
-                      Text(fileInfo.getDesc(context)),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        runSpacing: 6,
-                        spacing: 12,
-                        children: [
-                          CommonChip(
-                            avatar: const Icon(Icons.edit),
-                            label: appLocalizations.edit,
-                            onPressed: onEdit,
-                          ),
-                          CommonChip(
-                            avatar: const Icon(Icons.upload),
-                            label: appLocalizations.upload,
-                            onPressed: onUpload,
-                          ),
-                        ],
+              : Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ItemPositionProvider(
+                    position: ItemPosition.startAndEnd,
+                    child: DecorationListItem(
+                      minVerticalPadding: 8,
+                      contentPadding: const EdgeInsets.only(left: 16, right: 8),
+                      title: Text(appLocalizations.profile),
+                      subtitle: _buildMetadata(context, fileInfo),
+                      trailing: CommonPopupBox(
+                        popupBuilder: (_) =>
+                            CommonPopupMenu(items: _menuItems(context)),
+                        targetBuilder: (open) {
+                          return IconButton(
+                            tooltip: appLocalizations.more,
+                            onPressed: open,
+                            icon: const Icon(Icons.more_vert),
+                          );
+                        },
                       ),
-                    ],
+                    ),
                   ),
                 ),
         );

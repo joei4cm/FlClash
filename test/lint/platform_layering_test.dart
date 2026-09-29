@@ -4,11 +4,10 @@ import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
 const _platformPackages = [
-  'tray_manager',
+  'tray',
   'window_manager',
   'launch_at_startup',
   'screen_retriever',
-  'hotkey_manager',
 ];
 
 const _platformModules = [
@@ -24,8 +23,6 @@ final _platformImport = RegExp(
   multiLine: true,
 );
 
-/// Everything `lib/common/common.dart` pulls into its compile graph, as
-/// repository paths for project files and `package:`/`dart:` uris otherwise.
 Set<String> _closureOfCommonBarrel() {
   String resolve(String uri, String from) {
     if (uri.startsWith('package:fl_clash/')) {

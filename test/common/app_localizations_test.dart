@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:fl_clash/common/app_localizations.dart';
+import 'package:fl_clash/core/desktop/helper_client.dart';
+import 'package:fl_clash/core/desktop/launch_policy.dart';
+import 'package:fl_clash/core/desktop/model.dart';
 import 'package:fl_clash/core/method.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:material_ui/material_ui.dart';
@@ -75,5 +78,58 @@ void main() {
       ),
       'proxy 0: unsupported type',
     );
+  });
+
+  group('policy-blocked Core launch', () {
+    const blocked = DesktopCoreFailure(
+      code: 'start_failed',
+      phase: DesktopCorePhase.starting,
+      revision: 1,
+      cause: HelperException(
+        code: 'processLaunchFailed',
+        message: 'spawn failed',
+        details: {'osError': 577},
+      ),
+    );
+
+    tearDown(() {
+      smartAppControlStateReader = readSmartAppControlState;
+    });
+
+    test('names Smart App Control when it is on', () {
+      smartAppControlStateReader = () => SmartAppControlState.on;
+
+      expect(
+        userFacingErrorMessage(blocked, appLocalizations),
+        appLocalizations.coreBlockedBySmartAppControlTip,
+      );
+    });
+
+    test('names the generic policy with its error code otherwise', () {
+      smartAppControlStateReader = () => SmartAppControlState.off;
+
+      expect(
+        userFacingErrorMessage(blocked, appLocalizations),
+        appLocalizations.coreBlockedByPolicyTip(577),
+      );
+    });
+
+    test('leaves other start failures on the raw description', () {
+      smartAppControlStateReader = () => SmartAppControlState.on;
+      const timedOut = DesktopCoreFailure(
+        code: 'start_failed',
+        phase: DesktopCorePhase.starting,
+        revision: 1,
+        cause: HelperException(
+          code: 'transportError',
+          message: 'Helper start request failed',
+        ),
+      );
+
+      expect(
+        userFacingErrorMessage(timedOut, appLocalizations),
+        timedOut.toString(),
+      );
+    });
   });
 }

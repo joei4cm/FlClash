@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 import '../../tool/src/changelog/builder.dart';
 import '../../tool/src/changelog/git.dart';
 import '../../tool/src/changelog/models.dart';
+import '../../tool/src/changelog/render.dart';
 
 void main() {
   late Directory repo;
@@ -62,6 +63,35 @@ void main() {
 
     expect(versions.map((version) => version.tag), ['v1.1.0']);
     expect(versions.single.date, '2026-01-02');
+  });
+
+  test('preserves frozen history before the first structured release', () {
+    git(['checkout', '--quiet', '--orphan', 'frozen-history']);
+    commit('chore: optimize commented policy');
+    git(['tag', 'v0.8.96']);
+    final builder = ChangelogBuilder(Git(workingDirectory: repo.path));
+    expect(builder.build().changelog.versions, isEmpty);
+
+    commit('fix: new release fix');
+    final next = builder
+        .build(
+          pending: const PendingVersion(version: '0.8.97', date: '2026-09-10'),
+        )
+        .changelog;
+    expect(next.versions.single.tag, 'v0.8.97');
+    expect(
+      next.versions.single.groups.single.entries.single.text,
+      'New release fix',
+    );
+
+    const history =
+        '## v0.8.96 (2026-08-17)\n\n'
+        '- Optimize commented policy\n'
+        '- Fix whole group delay test failing on Windows\n'
+        '- Optimize package icon loading and connections polling\n';
+    final original = '${renderMarkdown(builder.build().changelog)}$history';
+    final merged = mergeMarkdown(renderMarkdown(next), original);
+    expect(merged.substring(merged.indexOf('## v0.8.96')), history);
   });
 
   test('a prerelease tag does not split the stable range', () {

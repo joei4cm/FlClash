@@ -7,15 +7,12 @@ void main() {
   group('StrategyLanePolicy', () {
     test('round-trips encodings', () {
       expect(StrategyLanePolicy.parse(null).isFollow, isTrue);
-      expect(StrategyLanePolicy.parse('auto').kind, StrategyLanePolicyKind.auto);
       expect(
-        StrategyLanePolicy.parse('group:Netflix').target,
-        'Netflix',
+        StrategyLanePolicy.parse('auto').kind,
+        StrategyLanePolicyKind.auto,
       );
-      expect(
-        const StrategyLanePolicy.proxy('US-01').encode(),
-        'proxy:US-01',
-      );
+      expect(StrategyLanePolicy.parse('group:Netflix').target, 'Netflix');
+      expect(const StrategyLanePolicy.proxy('US-01').encode(), 'proxy:US-01');
     });
   });
 
@@ -221,9 +218,7 @@ void main() {
     test('surfaces discovery and overrides', () {
       final rows = buildStrategyLaneRows(
         profileId: 3,
-        policies: {
-          strategyLanePolicyKey(3, StrategyLaneId.ai): 'direct',
-        },
+        policies: {strategyLanePolicyKey(3, StrategyLaneId.ai): 'direct'},
         proxyGroups: [
           ProxyGroup(
             id: 1,

@@ -39,7 +39,7 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    expect(find.byTooltip(trafficLabel), findsOneWidget);
+    expect(find.text(trafficLabel), findsOneWidget);
     expect(
       find.descendant(
         of: find.byType(SubscriptionInfoView),

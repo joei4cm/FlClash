@@ -19,6 +19,7 @@ const packageName = 'com.follow.clash';
 final unixSocketPath = '/tmp/FlClashSocket_${Random().nextInt(10000)}.sock';
 final windowsPipeName = '\\\\.\\pipe\\FlClashCore_${_randomPipeId()}';
 const helperPort = 47890;
+const helperSocketPath = '/run/flclash/helper.sock';
 const helperProtocolVersionHeader = 'x-flclash-helper-protocol';
 const helperProtocolVersion = '6';
 const maxTextScale = 1.4;
@@ -51,10 +52,6 @@ final defaultTextScaleFactor =
 /// How long the Core may spend on one delay test. It spends this twice in the
 /// worst case - once queueing for a slot, once on the probe itself - so the
 /// guard below has to outlast twice this value.
-///
-/// The old five seconds covered a whole QUIC or TLS handshake plus an HTTP
-/// HEAD, which a Hysteria2 or AnyTLS node on a weak mobile link routinely
-/// misses on the first attempt, so healthy nodes reported Timeout.
 const delayTestTimeoutDuration = Duration(seconds: 8);
 
 const delayTestGuardDuration = Duration(seconds: 30);
@@ -97,10 +94,8 @@ final commonFilter = ImageFilter.blur(
   tileMode: TileMode.clamp,
 );
 
-const trackerInfoListEquality = ListEquality<TrackerInfo>();
 const stringListEquality = ListEquality<String>();
 const intListEquality = ListEquality<int>();
-const logListEquality = ListEquality<Log>();
 const ruleListEquality = ListEquality<Rule>();
 const scriptListEquality = ListEquality<Script>();
 const profileListEquality = ListEquality<Profile>();
@@ -121,7 +116,10 @@ double getWidgetHeight(num lines) {
   return max(lines * (80.ap + space) - space, 0);
 }
 
-const maxLength = 1000;
+const maxLogsLength = 5000;
+const maxRequestsLength = 2000;
+const pausedMaxLogsLength = maxLogsLength * 2;
+const pausedMaxRequestsLength = maxRequestsLength * 2;
 
 const trafficSampleLength = 30;
 

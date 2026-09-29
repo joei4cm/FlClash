@@ -12,7 +12,6 @@ import 'package:fl_clash/widgets/animated_visibility.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 class AppStateManager extends ConsumerStatefulWidget {
   final Widget child;
@@ -34,28 +33,11 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
         ref.read(networkDetectionProvider.notifier).startCheck();
       }
     });
-    // Prefer leaf listens over configProvider so preference dirty detection
-    // does not rebuild the aggregate Config on every leaf change (PERF-12).
-    void schedulePreferencesSave<T>(T? prev, T next) {
+    ref.listenManual(configProvider, (prev, next) {
       if (prev != next) {
         ref.read(storeActionProvider.notifier).savePreferencesDebounce();
       }
-    }
-
-    ref.listenManual(appSettingProvider, schedulePreferencesSave);
-    ref.listenManual(windowSettingProvider, schedulePreferencesSave);
-    ref.listenManual(vpnSettingProvider, schedulePreferencesSave);
-    ref.listenManual(networkSettingProvider, schedulePreferencesSave);
-    ref.listenManual(themeSettingProvider, schedulePreferencesSave);
-    ref.listenManual(currentProfileIdProvider, schedulePreferencesSave);
-    ref.listenManual(davSettingProvider, schedulePreferencesSave);
-    ref.listenManual(overrideDnsProvider, schedulePreferencesSave);
-    ref.listenManual(hotKeyActionsProvider, schedulePreferencesSave);
-    ref.listenManual(proxiesStyleSettingProvider, schedulePreferencesSave);
-    ref.listenManual(patchClashConfigProvider, schedulePreferencesSave);
-    ref.listenManual(excludeSSIDsProvider, schedulePreferencesSave);
-    ref.listenManual(tailscaleSettingProvider, schedulePreferencesSave);
-    ref.listenManual(geoIdentitySettingProvider, schedulePreferencesSave);
+    });
     ref.listenManual(needUpdateGroupsProvider, (prev, next) {
       if (prev != next) {
         ref.read(proxiesActionProvider.notifier).updateGroupsDebounce();
@@ -179,7 +161,7 @@ class _SidebarRail extends StatelessWidget {
               for (final item in items)
                 NavigationRailDestination(
                   icon: item.icon,
-                  label: Text(Intl.message(item.label.name)),
+                  label: Text(item.label.label),
                 ),
             ],
             onDestinationSelected: onSelected,
@@ -237,9 +219,7 @@ class AppSidebarContainer extends ConsumerWidget {
     final navigationItems = navigationState.navigationItems;
     final isMobileView = navigationState.viewMode == ViewMode.mobile;
     final currentIndex = navigationState.currentIndex;
-    final showLabel = ref.watch(
-      appSettingProvider.select((state) => state.showLabel),
-    );
+    final showLabel = ref.watch(appSettingProvider).showLabel;
     return Container(
       color: context.colorScheme.surfaceContainer,
       child: Row(
@@ -260,7 +240,7 @@ class AppSidebarContainer extends ConsumerWidget {
                     ],
                     Expanded(
                       child: ScrollConfiguration(
-                        behavior: HiddenBarScrollBehavior(),
+                        behavior: const HiddenBarScrollBehavior(),
                         child: _SidebarRail(
                           items: navigationItems,
                           currentIndex: currentIndex,

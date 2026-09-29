@@ -19,7 +19,6 @@ import 'package:fl_clash/widgets/scaffold.dart';
 import 'package:fl_clash/widgets/text.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 class BackupAndRestore extends ConsumerStatefulWidget {
   const BackupAndRestore({super.key});
@@ -187,7 +186,7 @@ class _BackupAndRestoreState extends ConsumerState<BackupAndRestore>
       child: OptionsDialog<RestoreStrategy>(
         title: currentAppLocalizations.restoreStrategy,
         options: RestoreStrategy.values,
-        textBuilder: (mode) => Intl.message('restoreStrategy_${mode.name}'),
+        textBuilder: (mode) => mode.label,
         value: restoreStrategy,
       ),
     );
@@ -351,7 +350,7 @@ class _RestoreStrategyItem extends ConsumerWidget {
       title: Text(context.appLocalizations.restoreStrategy),
       trailing: FilledButton(
         onPressed: onPressed,
-        child: Text(Intl.message('restoreStrategy_${restoreStrategy.name}')),
+        child: Text(restoreStrategy.label),
       ),
     );
   }
@@ -469,6 +468,7 @@ class _WebDAVFormDialogState extends ConsumerState<WebDAVFormDialog> {
               inputFormatters: TextInputLimits.limit(TextInputLimits.uri),
               maxLines: 5,
               minLines: 1,
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.link),
                 labelText: appLocalizations.address,
@@ -484,6 +484,7 @@ class _WebDAVFormDialogState extends ConsumerState<WebDAVFormDialog> {
             TextFormField(
               controller: _userController,
               inputFormatters: TextInputLimits.limit(TextInputLimits.userName),
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.account_circle),
                 labelText: appLocalizations.account,
@@ -504,6 +505,10 @@ class _WebDAVFormDialogState extends ConsumerState<WebDAVFormDialog> {
                     TextInputLimits.password,
                   ),
                   obscureText: obscure,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) {
+                    _submit();
+                  },
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.password),
                     suffixIcon: IconButton(

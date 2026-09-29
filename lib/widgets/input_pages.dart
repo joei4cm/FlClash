@@ -55,15 +55,38 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
     });
   }
 
+  static final _separator = RegExp(r'[,，]');
+
+  List<String> _splitValues(String? value) {
+    return (value ?? '')
+        .split(_separator)
+        .map((entry) => entry.trim())
+        .where((entry) => entry.isNotEmpty)
+        .toSet()
+        .toList();
+  }
+
   Future<void> _handleAddOrEdit([String? item]) async {
     final appLocalizations = context.appLocalizations;
-    String? uniqueValidator(String? value) {
-      final index = _items.indexWhere((entry) {
-        return entry == value;
-      });
-      final current = item == value;
-      if (index != -1 && !current) {
-        return appLocalizations.existsTip(appLocalizations.value);
+    final label = widget.valueLabel ?? appLocalizations.value;
+    final isEdit = item != null;
+
+    String? editValidator(String? value) {
+      final exists = _items.contains(value) && value != item;
+      return exists ? appLocalizations.existsTip(label) : null;
+    }
+
+    String? addValidator(String? value) {
+      final values = _splitValues(value);
+      if (values.isEmpty) {
+        return appLocalizations.emptyTip(label);
+      }
+      final maxLength = widget.itemMaxLength;
+      if (maxLength != null && values.any((v) => v.length > maxLength)) {
+        return appLocalizations.maxLengthTip(label, maxLength);
+      }
+      if (values.any(_items.contains)) {
+        return appLocalizations.existsTip(label);
       }
       return null;
     }
@@ -71,24 +94,23 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
     final value = await dialogs.showCommonDialog<String>(
       child: AddDialog(
         valueField: Field(
-          label: widget.valueLabel ?? appLocalizations.value,
+          label: label,
           value: item ?? '',
-          validator: uniqueValidator,
+          validator: isEdit ? editValidator : addValidator,
         ),
-        valueMaxLength: widget.itemMaxLength,
-        title: item != null ? appLocalizations.edit : appLocalizations.add,
+        valueMaxLength: isEdit ? widget.itemMaxLength : null,
+        valueHelperText: isEdit ? null : appLocalizations.multipleValuesTip,
+        title: isEdit ? appLocalizations.edit : appLocalizations.add,
       ),
     );
 
+    if (!mounted) return;
     if (value == null) return;
-    final index = _items.indexWhere((entry) {
-      return entry == item;
-    });
     final nextItems = List<String>.from(_items);
-    if (item != null) {
-      nextItems[index] = value;
+    if (isEdit) {
+      nextItems[_items.indexOf(item)] = value;
     } else {
-      nextItems.add(value);
+      nextItems.addAll(_splitValues(value));
     }
     _items = nextItems;
     setState(() {});
@@ -108,7 +130,7 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
     final res = await dialogs.showMessage(
       message: TextSpan(text: context.appLocalizations.resetPageChangesTip),
     );
-    if (res != true) {
+    if (!mounted || res != true) {
       return;
     }
     _items = _originItems;
@@ -199,43 +221,45 @@ class _ListInputPageState extends ConsumerState<ListInputPage> {
           ),
           const SizedBox(width: 8),
         ],
-        body: _items.isEmpty
-            ? NullStatus(label: appLocalizations.noData)
-            : ReorderableListView.builder(
-                padding: const EdgeInsets.only(
-                  bottom: 16 + 64,
-                  top: 16,
-                  left: 16,
-                  right: 16,
+        body: NullStatusSwitcher(
+          isEmpty: _items.isEmpty,
+          nullStatus: NullStatus(label: appLocalizations.noData),
+          child: ReorderableListView.builder(
+            padding: const EdgeInsets.only(
+              bottom: 16 + 64,
+              top: 16,
+              left: 16,
+              right: 16,
+            ),
+            buildDefaultDragHandles: false,
+            itemCount: _items.length,
+            itemBuilder: (context, index) {
+              final value = _items[index];
+              return _buildItem(
+                value: value,
+                index: index,
+                length: _items.length,
+                isSelected: selectedItems.contains(value),
+                isEditing: selectedItems.isNotEmpty,
+              );
+            },
+            proxyDecorator: (child, index, animation) {
+              final value = _items[index];
+              return commonProxyDecorator(
+                _buildItem(
+                  value: value,
+                  index: index,
+                  length: _items.length,
+                  isSelected: selectedItems.contains(value),
+                  isEditing: selectedItems.isNotEmpty,
                 ),
-                buildDefaultDragHandles: false,
-                itemCount: _items.length,
-                itemBuilder: (context, index) {
-                  final value = _items[index];
-                  return _buildItem(
-                    value: value,
-                    index: index,
-                    length: _items.length,
-                    isSelected: selectedItems.contains(value),
-                    isEditing: selectedItems.isNotEmpty,
-                  );
-                },
-                proxyDecorator: (child, index, animation) {
-                  final value = _items[index];
-                  return commonProxyDecorator(
-                    _buildItem(
-                      value: value,
-                      index: index,
-                      length: _items.length,
-                      isSelected: selectedItems.contains(value),
-                      isEditing: selectedItems.isNotEmpty,
-                    ),
-                    index,
-                    animation,
-                  );
-                },
-                onReorderItem: _handleReorder,
-              ),
+                index,
+                animation,
+              );
+            },
+            onReorderItem: _handleReorder,
+          ),
+        ),
       ),
     );
   }
@@ -333,6 +357,7 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
         title: item != null ? appLocalizations.edit : appLocalizations.add,
       ),
     );
+    if (!mounted) return;
     if (value == null) return;
     final index = _items.indexWhere((entry) {
       return entry.key == item?.key;
@@ -362,7 +387,7 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
     final res = await dialogs.showMessage(
       message: TextSpan(text: context.appLocalizations.resetPageChangesTip),
     );
-    if (res != true) {
+    if (!mounted || res != true) {
       return;
     }
     _items = _originItems;
@@ -456,43 +481,45 @@ class _MapInputPageState extends ConsumerState<MapInputPage> {
           ),
           const SizedBox(width: 8),
         ],
-        body: _items.isEmpty
-            ? NullStatus(label: appLocalizations.noData)
-            : ReorderableListView.builder(
-                padding: const EdgeInsets.only(
-                  bottom: 16 + 64,
-                  top: 16,
-                  left: 16,
-                  right: 16,
+        body: NullStatusSwitcher(
+          isEmpty: _items.isEmpty,
+          nullStatus: NullStatus(label: appLocalizations.noData),
+          child: ReorderableListView.builder(
+            padding: const EdgeInsets.only(
+              bottom: 16 + 64,
+              top: 16,
+              left: 16,
+              right: 16,
+            ),
+            buildDefaultDragHandles: false,
+            itemCount: _items.length,
+            itemBuilder: (context, index) {
+              final value = _items[index];
+              return _buildItem(
+                value: value,
+                index: index,
+                length: _items.length,
+                isSelected: selectedItems.contains(value.key),
+                isEditing: selectedItems.isNotEmpty,
+              );
+            },
+            proxyDecorator: (child, index, animation) {
+              final value = _items[index];
+              return commonProxyDecorator(
+                _buildItem(
+                  value: value,
+                  index: index,
+                  length: _items.length,
+                  isSelected: selectedItems.contains(value.key),
+                  isEditing: selectedItems.isNotEmpty,
                 ),
-                buildDefaultDragHandles: false,
-                itemCount: _items.length,
-                itemBuilder: (context, index) {
-                  final value = _items[index];
-                  return _buildItem(
-                    value: value,
-                    index: index,
-                    length: _items.length,
-                    isSelected: selectedItems.contains(value.key),
-                    isEditing: selectedItems.isNotEmpty,
-                  );
-                },
-                proxyDecorator: (child, index, animation) {
-                  final value = _items[index];
-                  return commonProxyDecorator(
-                    _buildItem(
-                      value: value,
-                      index: index,
-                      length: _items.length,
-                      isSelected: selectedItems.contains(value.key),
-                      isEditing: selectedItems.isNotEmpty,
-                    ),
-                    index,
-                    animation,
-                  );
-                },
-                onReorderItem: _handleReorder,
-              ),
+                index,
+                animation,
+              );
+            },
+            onReorderItem: _handleReorder,
+          ),
+        ),
       ),
     );
   }

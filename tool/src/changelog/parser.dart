@@ -1,6 +1,5 @@
 import 'models.dart';
 
-/// A single rendered line of a version, together with the group it belongs to.
 class ChangelogItem {
   const ChangelogItem({required this.type, required this.entry});
 
@@ -23,13 +22,22 @@ final _trailerPattern = RegExp(
   r'^(BREAKING[ -]CHANGE|Changelog(?:-[A-Za-z0-9-]+)?|Breaking-[A-Za-z0-9-]+):[ \t]*(.*)$',
 );
 
+/// Any line shaped like a git trailer: a hyphenated key (`Co-authored-by`,
+/// `Signed-off-by`, `Reviewed-by`, `Change-Id`, ...) or one of the known
+/// unhyphenated trailers. Trailers we don't recognize still end the trailer
+/// being accumulated, so e.g. a `Co-authored-by:` line after a `Changelog:`
+/// footer isn't glued onto the changelog text as a continuation line. Plain
+/// prose like `Note: ...` has neither shape and stays a continuation line.
+final _genericTrailerPattern = RegExp(
+  r'^(?:[A-Za-z][A-Za-z0-9]*(?:-[A-Za-z0-9]+)+|Refs|Fixes|Closes):[ \t]*',
+  caseSensitive: false,
+);
+
 /// The only suffixed trailer left. Translations were removed on purpose: the
 /// changelog ships English, and anything else belongs in a post-processing
 /// step, not in the commit message.
 const _knownSuffixedTrailer = 'Changelog-Type';
 
-/// Turns conventional commits into changelog items.
-///
 /// The parser is pure: it never touches git or the filesystem, so every rule
 /// below is covered by `test/tool/changelog_parser_test.dart`.
 class ChangelogParser {
@@ -139,6 +147,10 @@ class ChangelogParser {
       if (currentKey == null) {
         continue;
       }
+      if (_genericTrailerPattern.hasMatch(line)) {
+        currentKey = null;
+        continue;
+      }
       final continuation = line.trim();
       if (continuation.isEmpty) {
         currentKey = null;
@@ -161,8 +173,6 @@ class ChangelogParser {
   }
 }
 
-/// Collapses items into the groups of one version, keeping [ChangelogType]
-/// declaration order and dropping groups that ended up empty.
 List<ChangelogGroup> groupItems(List<ChangelogItem> items) {
   final groups = <ChangelogGroup>[];
   for (final type in ChangelogType.values) {

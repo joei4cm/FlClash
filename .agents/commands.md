@@ -17,26 +17,45 @@ dart setup.dart windows
 dart setup.dart android
 ```
 
-Build only the Go core and skip Flutter packaging:
+The Go core and the Rust helper build automatically: Flutter runs
+`plugins/setup/hook/build.dart` on every `flutter build` and `flutter test`,
+and the hook drives `CoreBuilder` from the `setup_hooks` package in
+`plugins/setup/setup_hooks/`. Android builds take the NDK from the C compiler
+Flutter hands the hook; no `ANDROID_NDK` variable is needed.
+Artifacts land in `libclash/`. The hook reruns only when Go, Rust, or
+`setup_hooks` inputs change; the fingerprint cache lives in
+`.dart_tool/setup_build_cache/`. To force a rebuild, delete that directory:
 
 ```bash
-make core-macos
-make core-linux
-make core-windows
-make core-android
+rm -rf .dart_tool/setup_build_cache
 ```
 
-Pass `ARCH` or `TARGET_PLATFORM` through `make` when needed, for example:
+Flutter hides the hook's output on success, so to see why the Core was or was
+not rebuilt read `.dart_tool/setup_build_cache/hook.log`; each invocation starts
+with a `===` line carrying its timestamp and target.
 
-```bash
-make core-macos ARCH=arm64
-make core-android TARGET_PLATFORM=android-arm64
+The hook runs for `flutter test` and for `dart run` of any root-package script
+too, so a pure Dart test run needs the Go toolchain, and on Linux and Windows
+also `cargo` and `rustc` — the Helper fingerprint shells out to both even on a
+cache hit. The hook protocol carries no build mode and no caller, so the only
+switch is the user-define in the root `pubspec.yaml`:
+
+```yaml
+hooks:
+  user_defines:
+    setup:
+      build_assets: true   # false turns the Go core and Helper hook into a no-op
+    rust_api:
+      build_assets: true   # false does the same for the Rust library
 ```
 
-Core builds use setup's input fingerprint cache. Pass `FORCE=1` to bypass it,
-for example `make core-macos ARCH=arm64 FORCE=1`.
-
-The Makefile wraps `plugins/setup/buildkit/run_build_tool.sh`; prefer the `make` entry points unless debugging the build tool itself.
+CI flips both to `false` with `yq` before `dart run tool/changelog.dart` and
+`flutter test`, and restores the file afterwards; no test loads either library.
+Never commit `false`: a build with it set stages whatever `libclash/` already
+holds and bundles no Rust library, which is why `setup.dart` refuses to package
+while it is set. Locally, `false` is worth setting for a Dart-only test loop,
+but the hook cache keys on the user-define, so the first build afterwards runs
+the hooks again.
 
 ## Flutter Development
 
@@ -71,6 +90,19 @@ Generated output paths, configured in `build.yaml`:
 - `lib/providers/generated/*.g.dart`.
 - `lib/database/generated/*.g.dart`.
 
+Tray and Windows app icons are generated, not hand-edited. `assets_source/images/icon/*.svg` is
+the source of truth; the script needs `rsvg-convert` (librsvg) on `PATH`:
+
+```bash
+dart run tool/generate_status_icons.dart
+```
+
+It writes the tray PNGs with Flutter `2.0x/`–`4.0x/` resolution variants to `assets/images/tray/unix/`,
+multi-size tray `.ico` files to `assets/images/tray/windows/`, and `windows/runner/resources/app_icon.ico`
+from `assets/images/icon.png`. `pubspec.yaml` declares the two tray directories with `platforms:` so each
+build only bundles the format its tray loads; a new status icon needs a source SVG and an entry in the
+script's `statusIconNames`, nothing in `pubspec.yaml`.
+
 ## Testing
 
 Tests use `package:test/test.dart` for pure Dart logic and `flutter_test` for provider and widget tests. `mocktail` is the mocking framework.
@@ -86,6 +118,10 @@ flutter test test/widgets/
 flutter test test/setup_test.dart
 flutter test plugins/proxy/test/proxy_test.dart
 ```
+
+`plugins/setup/setup_hooks/` is a pure Dart package and is tested with `dart test` from its own directory, which is
+also what CI runs; `tool/check_plugins.sh` does not descend into it. It must stay out of `flutter test`, because a test
+run of `plugins/setup` would execute the build hook itself.
 
 Root `flutter test` only discovers the root package's `test/` directory by default. Include bundled plugin Dart tests by passing paths explicitly, or run `flutter test` from that plugin package directory, or run `bash tool/check_plugins.sh` to analyze and test every plugin package the way CI does. Native plugin tests under platform folders are not run by `flutter test`.
 
@@ -189,7 +225,7 @@ the tag is what `render release` reads. CI never writes back to the repository; 
 `changelog.json` may be edited by hand as long as no derivable entry disappears and every entry still points at a commit
 inside that version's range.
 
-Entries at or below `v0.8.95` are frozen: they predate the pipeline, live under the `<!-- changelog:frozen -->` marker
+Entries at or below `v0.8.96` are frozen: they predate the pipeline, live under the `<!-- changelog:frozen -->` marker
 in `CHANGELOG.md`, and are never regenerated.
 
 `verify` compares a version only when its tag is reachable from `HEAD`, because that is the same scope the builder walks
@@ -204,28 +240,41 @@ while `v<pubspec version>` is still tagged it refuses to collect anything and th
 
 ## Verify
 
-The tag-triggered release workflow runs these root-package checks in order:
+Every branch push runs the `dart` job, which performs these root-package checks
+in order:
 
 ```bash
-flutter pub get
-flutter analyze --no-fatal-infos
-dart run tool/changelog.dart verify
-flutter test --reporter expanded
 bash tool/check_commit_msg_test.sh
 bash tool/check_comment_density_test.sh
+flutter pub get
+dart format --output=none --set-exit-if-changed lib test tool plugins setup.dart
+flutter analyze --no-fatal-infos
+dart run tool/changelog.dart verify   # main and tags only
+flutter test --reporter expanded --coverage
+dart run tool/check_coverage.dart coverage/lcov.info 75
 ```
 
 Run `flutter analyze` locally before committing when practical.
 
-The workflow runs only for `v*` tag pushes; pull requests do not trigger it.
+Release builds run only for `v*` tag pushes; pull requests trigger nothing.
 Root analysis excludes `plugins/**`, and root tests do not discover nested
-plugin packages, so CI also validates local Flutter packages, the setup build
-tool, the Go wrapper, and Rust components from their own package directories. A
-separate Windows runner compiles and tests the helper's `windows-service`
-feature before release builds can start.
+plugin packages, so parallel jobs validate the rest from their own package
+directories: `plugins` (local Flutter packages and the setup build tool), `go`
+(the Core wrapper, plus an NDK-backed vet of the Android files), `android`
+(JVM unit tests for `:common`, `:service` and `:app`, with the Flutter compile
+tasks excluded so no native build hook runs), `rust` (both crates), and a
+Windows runner for the helper's `windows-service` feature. Release builds start
+once all of them pass.
 
 `bash tool/check_plugins.sh` is that plugin gate, and CI runs the same script.
 It discovers every `plugins/*/pubspec.yaml`, analyzes each package, and runs
 `flutter test` wherever `test/*_test.dart` exists. Adding a plugin package needs
 no workflow edit; enumerating packages by hand in the workflow is what
 previously left `plugins/tray` unanalyzed and untested.
+
+## Worktree Tooling
+
+```bash
+bash tool/worktrees.sh list       # every worktree with owner tool and dirty/clean state
+bash tool/worktrees.sh prune      # remove clean worktrees; add --force to drop dirty ones too
+```

@@ -103,9 +103,6 @@ class EmojiText extends StatelessWidget {
   final int? maxLines;
   final TextOverflow? overflow;
 
-  static final Map<String, List<TextSpan>> _spanCache = {};
-  static final RegExp _emojiProbe = emojiRegex();
-
   const EmojiText(
     this.text, {
     super.key,
@@ -114,24 +111,9 @@ class EmojiText extends StatelessWidget {
     this.style,
   });
 
-  bool get _mayContainEmoji {
-    // BMP-only text cannot contain emoji; skip regex for common proxy names.
-    for (final unit in text.codeUnits) {
-      if (unit >= 0x2000) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  List<TextSpan> _buildTextSpans() {
-    final cacheKey = '${style?.hashCode ?? 0}|$text';
-    final cached = _spanCache[cacheKey];
-    if (cached != null) {
-      return cached;
-    }
+  List<TextSpan> _buildTextSpans(String emojis) {
     final List<TextSpan> spans = [];
-    final matches = _emojiProbe.allMatches(text);
+    final matches = emojiRegex().allMatches(text);
 
     int lastMatchEnd = 0;
     for (final match in matches) {
@@ -154,28 +136,17 @@ class EmojiText extends StatelessWidget {
     if (lastMatchEnd < text.length) {
       spans.add(TextSpan(text: text.substring(lastMatchEnd), style: style));
     }
-    if (_spanCache.length > 256) {
-      _spanCache.clear();
-    }
-    _spanCache[cacheKey] = spans;
+
     return spans;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_mayContainEmoji) {
-      return Text(
-        text,
-        style: style,
-        maxLines: maxLines,
-        overflow: overflow ?? TextOverflow.clip,
-      );
-    }
     return RichText(
       textScaler: MediaQuery.textScalerOf(context),
       maxLines: maxLines,
       overflow: overflow ?? TextOverflow.clip,
-      text: TextSpan(children: _buildTextSpans()),
+      text: TextSpan(children: _buildTextSpans(text)),
     );
   }
 }

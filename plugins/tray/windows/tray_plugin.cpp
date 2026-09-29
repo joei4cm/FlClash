@@ -58,7 +58,6 @@ std::wstring Utf16FromUtf8(const std::string& value) {
 
 }  // namespace
 
-// static
 void TrayPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
   auto channel =

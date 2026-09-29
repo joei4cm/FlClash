@@ -19,7 +19,6 @@ abstract class NavigationItem with _$NavigationItem {
   const factory NavigationItem({
     required Icon icon,
     required PageLabel label,
-    final String? description,
     required WidgetBuilder builder,
     @Default(true) bool keep,
     String? path,
@@ -115,6 +114,14 @@ abstract class TrackerInfo with _$TrackerInfo {
 }
 
 extension TrackerInfoExt on TrackerInfo {
+  String get title {
+    final host = metadata.host;
+    if (host.isNotEmpty) {
+      return host;
+    }
+    return metadata.destinationIP;
+  }
+
   String get desc {
     var text = '${metadata.network}://';
     final ips = [

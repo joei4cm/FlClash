@@ -12,14 +12,11 @@
 
 基于ClashMeta的多平台代理客户端，简单易用，开源无广告。
 
-on Desktop:
-<p style="text-align: center;">
-    <img alt="desktop" src="snapshots/desktop.gif">
-</p>
-
-on Mobile:
-<p style="text-align: center;">
-    <img alt="mobile" src="snapshots/mobile.gif">
+<p align="center">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="snapshots/preview-dark.png">
+        <img alt="FlClash on desktop and mobile" src="snapshots/preview.png" width="90%">
+    </picture>
 </p>
 
 ## Features
@@ -42,7 +39,6 @@ on Mobile:
 
    ```bash
     sudo apt-get install libayatana-appindicator3-dev
-    sudo apt-get install libkeybinder-3.0-dev
    ```
 
 ### Android
@@ -109,7 +105,7 @@ brew install --cask flclash
 
         2. 依赖会由 setup 脚本自动安装，也可以手动安装：
            ```bash
-           sudo apt-get install -y libayatana-appindicator3-dev libkeybinder-3.0-dev
+           sudo apt-get install -y libayatana-appindicator3-dev
            ```
 
         3. 运行构建脚本
