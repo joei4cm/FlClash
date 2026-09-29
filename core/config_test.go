@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net"
+	"net/netip"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,9 +12,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/metacubex/mihomo/adapter/inbound"
 	"github.com/metacubex/mihomo/component/updater"
 	"github.com/metacubex/mihomo/config"
 	"github.com/metacubex/mihomo/constant"
+	authStore "github.com/metacubex/mihomo/listener/auth"
 	"github.com/metacubex/mihomo/log"
 	"github.com/metacubex/mihomo/tunnel"
 )
@@ -116,6 +119,38 @@ func TestUpdateConfigAppliesAllowLan(t *testing.T) {
 
 	if !currentConfig.General.AllowLan {
 		t.Error("AllowLan stayed false; the patched value never reached the general config")
+	}
+}
+
+func TestUpdateConfigAppliesAuthenticationAndClearsLoopbackExemptions(t *testing.T) {
+	withCurrentConfig(t, &config.Config{General: &config.General{}, Controller: &config.Controller{}})
+	currentConfig.General.SkipAuthPrefixes = []netip.Prefix{
+		netip.MustParsePrefix("127.0.0.1/32"),
+	}
+	inbound.SetSkipAuthPrefixes(currentConfig.General.SkipAuthPrefixes)
+	t.Cleanup(func() {
+		authStore.Default.SetAuthenticator(nil)
+		inbound.SetSkipAuthPrefixes(nil)
+	})
+
+	users := []string{"user:pass"}
+	if err := updateConfig(&UpdateParams{Authentication: &users}); err != nil {
+		t.Fatalf("updateConfig error: %v", err)
+	}
+	authenticator := authStore.Default.Authenticator()
+	if authenticator == nil || !authenticator.Verify("user", "pass") {
+		t.Error("authenticator missing or rejecting the configured credentials")
+	}
+	if inbound.SkipAuthRemoteAddress("127.0.0.1:1234") {
+		t.Error("loopback stayed exempt; local apps could bypass the credentials")
+	}
+
+	empty := []string{}
+	if err := updateConfig(&UpdateParams{Authentication: &empty}); err != nil {
+		t.Fatalf("updateConfig error: %v", err)
+	}
+	if authStore.Default.Authenticator() != nil {
+		t.Error("authenticator survived an empty authentication list")
 	}
 }
 
@@ -414,8 +449,8 @@ func TestHandleUpdateGeoDataRunsOneUpdatePerResource(t *testing.T) {
 		t.Fatal("the first update never started")
 	}
 
-	if message := handleUpdateGeoData(resource); message != "" {
-		t.Fatalf("the duplicate request reported %q", message)
+	if message := handleUpdateGeoData(resource); message == "" {
+		t.Fatal("the duplicate request reported no error while an update was already in flight")
 	}
 	select {
 	case <-started:
@@ -451,8 +486,8 @@ func TestGeoUpdateHookBlocksAManualUpdateOfTheSameResource(t *testing.T) {
 
 	updater.GeoUpdateHook(resource, true, false, nil)
 
-	if message := handleUpdateGeoData(resource); message != "" {
-		t.Fatalf("handleUpdateGeoData = %q, want no error", message)
+	if message := handleUpdateGeoData(resource); message == "" {
+		t.Fatal("handleUpdateGeoData reported no error while the hook already claimed this resource")
 	}
 	select {
 	case <-ran:
@@ -496,13 +531,11 @@ func TestGeoUpdateHookDoesNotReleaseAManualClaim(t *testing.T) {
 		t.Fatal("the manual update never started")
 	}
 
-	// An automatic pass over the same resource, start to finish, while the
-	// manual one is still running.
 	updater.GeoUpdateHook(resource, true, false, nil)
 	updater.GeoUpdateHook(resource, false, false, nil)
 
-	if message := handleUpdateGeoData(resource); message != "" {
-		t.Fatalf("the duplicate request reported %q", message)
+	if message := handleUpdateGeoData(resource); message == "" {
+		t.Fatal("the duplicate request reported no error while the manual claim was still held")
 	}
 	select {
 	case <-started:
@@ -608,7 +641,6 @@ func TestHandleSetupConfigLeavesTheListenerAloneOnSuccess(t *testing.T) {
 	}
 }
 
-// The host abandons a delay test after a fixed time.
 func TestAcquireDelayTestSlotGivesUpOnTheDeadline(t *testing.T) {
 	for i := 0; i < delayTestConcurrency; i++ {
 		delayTestSlots <- struct{}{}

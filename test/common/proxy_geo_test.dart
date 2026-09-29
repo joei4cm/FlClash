@@ -11,24 +11,15 @@ void main() {
 
   test('resolvePreferredStickyGeo uses configured then geo-identity US', () {
     expect(
-      resolvePreferredStickyGeo(
-        configuredGeo: 'JP',
-        geoIdentityEnabled: true,
-      ),
+      resolvePreferredStickyGeo(configuredGeo: 'JP', geoIdentityEnabled: true),
       'JP',
     );
     expect(
-      resolvePreferredStickyGeo(
-        configuredGeo: null,
-        geoIdentityEnabled: true,
-      ),
+      resolvePreferredStickyGeo(configuredGeo: null, geoIdentityEnabled: true),
       'US',
     );
     expect(
-      resolvePreferredStickyGeo(
-        configuredGeo: null,
-        geoIdentityEnabled: false,
-      ),
+      resolvePreferredStickyGeo(configuredGeo: null, geoIdentityEnabled: false),
       isNull,
     );
   });

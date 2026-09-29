@@ -53,7 +53,7 @@ class OverwriteDismissItem extends ConsumerWidget {
             title: TooltipText(
               text: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
-            subtitle: subtitle != null ? Text(subtitle!) : null,
+            subtitle: subtitle != null ? TooltipLabel(subtitle!) : null,
             contentPadding: const EdgeInsets.only(left: 16, right: 0),
             leading: CommonMinIconButtonTheme(
               child: IconButton.filledTonal(

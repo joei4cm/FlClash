@@ -7,7 +7,6 @@ import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 class OutboundMode extends ConsumerWidget {
   const OutboundMode({super.key});
@@ -96,7 +95,7 @@ class _ModeRadioList extends StatelessWidget {
                 },
                 value: item,
                 title: Text(
-                  Intl.message(item.name),
+                  item.label,
                   style: Theme.of(context).textTheme.bodyMedium?.toSoftBold,
                 ),
               ),
@@ -152,7 +151,7 @@ class OutboundModeV2 extends StatelessWidget {
                           children: {
                             for (final item in Mode.values)
                               item: _ModeTab(
-                                label: Intl.message(item.name),
+                                label: item.label,
                                 height: height - 8.ap - 24,
                                 color: item == mode
                                     ? _getTextColor(context, item)

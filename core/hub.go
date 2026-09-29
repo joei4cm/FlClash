@@ -36,8 +36,6 @@ var (
 	logMu         sync.Mutex
 	logSubscriber observable.Subscription[log.Event]
 	logCancel     context.CancelFunc
-	trafficStopCh chan struct{}
-	trafficPushMu sync.Mutex
 )
 
 func handleInitClash(params *InitParams) bool {
@@ -56,7 +54,6 @@ func handleStartListener() bool {
 	isRunning.Store(true)
 	updateListeners(currentConfig)
 	resolver.ResetConnection()
-	startTrafficPush()
 	return true
 }
 
@@ -64,7 +61,6 @@ func handleStopListener() bool {
 	configMu.Lock()
 	defer configMu.Unlock()
 	isRunning.Store(false)
-	stopTrafficPush()
 	listener.StopListener()
 	resolver.ResetConnection()
 	return true
@@ -85,7 +81,6 @@ func handleForceGC() {
 
 func handleShutdown() bool {
 	handleStopLog()
-	stopTrafficPush()
 
 	configMu.Lock()
 	isRunning.Store(false)
@@ -235,89 +230,6 @@ func delayValue(delay uint16) int32 {
 		return -1
 	}
 	return int32(delay)
-}
-
-func handleGetTrafficSnapshot(onlyStatisticsProxy bool) map[string]int64 {
-	up, down := statistic.DefaultManager.NowTraffic(onlyStatisticsProxy)
-	totalUp, totalDown := statistic.DefaultManager.TotalTraffic(onlyStatisticsProxy)
-	return map[string]int64{
-		"up":        up,
-		"down":      down,
-		"totalUp":   totalUp,
-		"totalDown": totalDown,
-	}
-}
-
-func trafficSnapshotPayload() map[string]int64 {
-	up, down := statistic.DefaultManager.NowTraffic(false)
-	totalUp, totalDown := statistic.DefaultManager.TotalTraffic(false)
-	proxyUp, proxyDown := statistic.DefaultManager.NowTraffic(true)
-	proxyTotalUp, proxyTotalDown := statistic.DefaultManager.TotalTraffic(true)
-	return map[string]int64{
-		"up":             up,
-		"down":           down,
-		"totalUp":        totalUp,
-		"totalDown":      totalDown,
-		"proxyUp":        proxyUp,
-		"proxyDown":      proxyDown,
-		"proxyTotalUp":   proxyTotalUp,
-		"proxyTotalDown": proxyTotalDown,
-	}
-}
-
-func sendTrafficSnapshotMessage() {
-	sendMessage(Message{
-		Type: TrafficMessage,
-		Data: trafficSnapshotPayload(),
-	})
-}
-
-func sendConnectionsSnapshotMessage() {
-	snapshot := statistic.DefaultManager.Snapshot()
-	sendMessage(Message{
-		Type: ConnectionsMessage,
-		Data: snapshot,
-	})
-}
-
-func startTrafficPush() {
-	trafficPushMu.Lock()
-	defer trafficPushMu.Unlock()
-	stopTrafficPushLocked()
-	stopCh := make(chan struct{})
-	trafficStopCh = stopCh
-	go func() {
-		ticker := time.NewTicker(time.Second)
-		defer ticker.Stop()
-		sendTrafficSnapshotMessage()
-		sendConnectionsSnapshotMessage()
-		ticks := 0
-		for {
-			select {
-			case <-ticker.C:
-				sendTrafficSnapshotMessage()
-				ticks++
-				if ticks%2 == 0 {
-					sendConnectionsSnapshotMessage()
-				}
-			case <-stopCh:
-				return
-			}
-		}
-	}()
-}
-
-func stopTrafficPush() {
-	trafficPushMu.Lock()
-	defer trafficPushMu.Unlock()
-	stopTrafficPushLocked()
-}
-
-func stopTrafficPushLocked() {
-	if trafficStopCh != nil {
-		close(trafficStopCh)
-		trafficStopCh = nil
-	}
 }
 
 var anyDelayTestStatus utils.IntRanges[uint16]
@@ -517,7 +429,7 @@ func handleUpdateGeoData(geoType string) string {
 		return "unknown geo resource: " + geoType
 	}
 	if !claimGeoUpdate(geoType) {
-		return ""
+		return "geo update already in progress: " + geoType
 	}
 	safeGoDetached("updateGeoData("+geoType+")", func() {
 		defer releaseGeoUpdate(geoType)
@@ -565,7 +477,11 @@ func handleUpdateExternalProvider(providerName string) *MethodError {
 	}
 	key := providerUpdateScope + providerName
 	if !claimUpdate(key) {
-		return nil
+		return providerMethodError(
+			"provider_updating",
+			providerName,
+			errors.New("external provider is updating"),
+		)
 	}
 	defer releaseUpdate(key)
 	if err := p.Update(); err != nil {
@@ -637,8 +553,6 @@ func handleSuspend(suspended bool) bool {
 	return true
 }
 
-// shouldPublishDelay reports whether a probe result is worth showing.
-//
 // A failure measured while the device is dozing says nothing about the node -
 // the app had no network at all - and publishing it repaints the entire list as
 // Timeout for a user who is not even looking. Successes still are worth having,
@@ -729,9 +643,6 @@ func handleUpdateConfig(params *UpdateParams) string {
 	return ""
 }
 
-// providerPaths derives the providers root and the directory belonging to one
-// profile.
-//
 // The profile ID is an int64 rendered through strconv, so the last element can
 // never carry a separator or a `..` — that is what keeps handleClearEffect from
 // becoming a general-purpose privileged file deletion API.

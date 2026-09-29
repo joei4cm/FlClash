@@ -4,7 +4,10 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.VpnService
 import android.os.Build
@@ -25,6 +28,7 @@ import com.follow.clash.common.GlobalState
 import com.follow.clash.common.PendingCallback
 import com.follow.clash.common.QuickAction
 import com.follow.clash.common.quickIntent
+import com.follow.clash.common.registerReceiverCompat
 import com.follow.clash.getPackageIconPath
 import com.follow.clash.packages.PackageResolver
 import com.follow.clash.showToast
@@ -75,13 +79,28 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         )
     }
 
+    private var packageChangeContext: Context? = null
+
+    private val packageChangeReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent == null || intent.data?.schemeSpecificPart == GlobalState.application.packageName) {
+                return
+            }
+            val addedByUpdate = intent.action == Intent.ACTION_PACKAGE_ADDED &&
+                intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)
+            if (addedByUpdate) {
+                return
+            }
+            packageResolver.invalidate()
+            channel.invokeMethod("packagesChanged", null)
+        }
+    }
+
     private var skipNotificationPermissionRequest = false
 
     private val mainHandler = Handler(Looper.getMainLooper())
 
     /**
-     * Runs [block] on the main thread.
-     *
      * The permission and consent hops below touch the Activity — starting an
      * activity for result, raising a permission prompt — and read the state that
      * tracks whether one is already up. Their callers are coroutines on
@@ -176,7 +195,7 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
     }
 
     private fun handleGetPackageIcon(call: MethodCall, result: Result) = reply(result) {
-        val packageName = call.argument<String>("packageName") ?: return@reply ""
+        val packageName = call.argument<String>("packageName") ?: ""
         GlobalState.application.packageManager.getPackageIconPath(packageName)
     }
 
@@ -350,9 +369,23 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         channel =
             MethodChannel(flutterPluginBinding.binaryMessenger, "${Components.PACKAGE_NAME}/app")
         channel.setMethodCallHandler(this)
+        watchPackageChanges(flutterPluginBinding.applicationContext)
+    }
+
+    private fun watchPackageChanges(context: Context) {
+        val filter = IntentFilter().apply {
+            addAction(Intent.ACTION_PACKAGE_ADDED)
+            addAction(Intent.ACTION_PACKAGE_REPLACED)
+            addAction(Intent.ACTION_PACKAGE_FULLY_REMOVED)
+            addDataScheme("package")
+        }
+        context.registerReceiverCompat(packageChangeReceiver, filter)
+        packageChangeContext = context
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        packageChangeContext?.unregisterReceiver(packageChangeReceiver)
+        packageChangeContext = null
         channel.setMethodCallHandler(null)
         scope.cancel()
         invokeVpnPrepareCallback(false)

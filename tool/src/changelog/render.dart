@@ -25,7 +25,6 @@ const telegramLimit = 900;
 
 const emptyVersionNote = 'Internal improvements only.';
 
-/// The structured part of `CHANGELOG.md`: title, versions, frozen marker.
 String renderMarkdown(Changelog changelog) {
   final buffer = StringBuffer()
     ..writeln(changelogTitle)
@@ -56,8 +55,6 @@ String renderMarkdown(Changelog changelog) {
   return buffer.toString();
 }
 
-/// GitHub release body for a single version, wrapped in the markers the app
-/// uses to separate real entries from the appended download template.
 String renderRelease(ChangelogVersion version) {
   final buffer = StringBuffer()..writeln(releaseBeginMarker);
   if (version.isEmpty) {
@@ -89,8 +86,6 @@ String renderReleaseJson(ChangelogVersion version) {
   return '$releaseJsonBeginMarker\n$payload\n$releaseJsonEndMarker\n';
 }
 
-/// Escapes the three characters Telegram's HTML parse mode treats as markup.
-///
 /// The caption is sent with a parse mode, so entry text is markup, not text: a
 /// commit subject carrying a `<` used to be a malformed tag and Telegram
 /// rejected the whole upload. HTML rather than Markdown because it is the one

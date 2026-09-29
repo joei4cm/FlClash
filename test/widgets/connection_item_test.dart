@@ -1,5 +1,6 @@
 import 'package:fl_clash/models/models.dart';
-import 'package:fl_clash/views/connection/item.dart';
+import 'package:fl_clash/features/features.dart';
+import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -43,18 +44,21 @@ void main() {
     await tester.pumpWidget(
       TestApp(
         homeBuilder: (child) => Scaffold(body: child),
-        child: TrackerInfoDetailView(
-          trackerInfo: _tracker(
-            rule: 'DOMAIN-SUFFIX',
-            rulePayload: 'example.com',
-            process: 'chrome',
-            uid: 1000,
-            sourceIP: '1.2.3.4',
-            sourcePort: '8080',
-            destinationIP: '5.6.7.8',
-            destinationPort: '443',
-            host: 'example.com',
-            chains: const ['DIRECT'],
+        child: SheetProvider(
+          type: SheetType.page,
+          child: TrackerInfoDetailView(
+            trackerInfo: _tracker(
+              rule: 'DOMAIN-SUFFIX',
+              rulePayload: 'example.com',
+              process: 'chrome',
+              uid: 1000,
+              sourceIP: '1.2.3.4',
+              sourcePort: '8080',
+              destinationIP: '5.6.7.8',
+              destinationPort: '443',
+              host: 'example.com',
+              chains: const ['DIRECT'],
+            ),
           ),
         ),
       ),
@@ -66,6 +70,11 @@ void main() {
     expect(find.text('1.2.3.4:8080'), findsOneWidget);
     expect(find.text('5.6.7.8:443'), findsOneWidget);
     expect(find.text('example.com'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('DIRECT'),
+      100,
+      scrollable: find.byType(Scrollable),
+    );
     expect(find.text('DIRECT'), findsOneWidget);
     expect(tester.takeException(), isNull);
 
@@ -76,7 +85,10 @@ void main() {
     await tester.pumpWidget(
       TestApp(
         homeBuilder: (child) => Scaffold(body: child),
-        child: TrackerInfoDetailView(trackerInfo: _tracker()),
+        child: SheetProvider(
+          type: SheetType.page,
+          child: TrackerInfoDetailView(trackerInfo: _tracker()),
+        ),
       ),
     );
     await tester.pump();
@@ -88,10 +100,10 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('TrackerInfoItem renders chains and forwards keyword clicks', (
+  testWidgets('TrackerInfoItem shows all chains and forwards their clicks', (
     tester,
   ) async {
-    String? clicked;
+    final clicked = <String>[];
     await tester.pumpWidget(
       TestApp(
         wrapInProviderScope: true,
@@ -99,7 +111,7 @@ void main() {
         child: TrackerInfoItem(
           trackerInfo: _tracker(chains: const ['Proxy A', 'Proxy B']),
           detailTitle: 'detail',
-          onClickKeyword: (keyword) => clicked = keyword,
+          onClickKeyword: clicked.add,
         ),
       ),
     );
@@ -110,8 +122,10 @@ void main() {
 
     await tester.tap(find.text('Proxy A'));
     await tester.pump();
+    await tester.tap(find.text('Proxy B'));
+    await tester.pump();
 
-    expect(clicked, 'Proxy A');
+    expect(clicked, ['Proxy A', 'Proxy B']);
 
     await tester.pumpWidget(const SizedBox.shrink());
   });

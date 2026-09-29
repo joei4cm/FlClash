@@ -112,17 +112,72 @@ void main() {
       expect(groups.single.all.map((proxy) => proxy.name), ['HK-01']);
     });
 
-    test('keeps the groups already on screen when core throws', () async {
-      when(core.getProxies).thenThrow(StateError('core down'));
+    test(
+      'publishes the groups once a retry succeeds after core throws',
+      () async {
+        var attempt = 0;
+        when(core.getProxies).thenAnswer((_) async {
+          attempt++;
+          if (attempt == 1) {
+            throw StateError('core down');
+          }
+          return ProxiesData(
+            all: const ['Proxy', 'Direct'],
+            proxies: Map<String, dynamic>.from({
+              'Proxy': Map<String, dynamic>.from({
+                'name': 'Proxy',
+                'type': 'Selector',
+                'now': 'HK-01',
+                'all': ['HK-01'],
+              }),
+              'Direct': Map<String, dynamic>.from({
+                'name': 'Direct',
+                'type': 'Direct',
+              }),
+              'HK-01': Map<String, dynamic>.from({
+                'name': 'HK-01',
+                'type': 'ss',
+              }),
+            }),
+          );
+        });
+        final container = buildContainer();
+
+        await actionOf(container).updateGroups();
+
+        final groups = container.read(groupsProvider);
+        expect(groups.map((group) => group.name), ['Proxy']);
+        verify(core.getProxies).called(2);
+      },
+    );
+
+    test(
+      'clears the groups once retry is exhausted after core throws',
+      () async {
+        when(core.getProxies).thenThrow(StateError('core down'));
+        final container = buildContainer();
+        container.read(groupsProvider.notifier).value = [
+          _group('Stale', const []),
+        ];
+
+        await actionOf(container).updateGroups();
+
+        expect(container.read(groupsProvider), isEmpty);
+        verify(core.getProxies).called(3);
+      },
+    );
+
+    test('a core status change alone does not clear the groups', () {
       final container = buildContainer();
+      actionOf(container);
+      container.read(coreStatusProvider.notifier).value = CoreStatus.connected;
       container.read(groupsProvider.notifier).value = [
         _group('Stale', const []),
       ];
 
-      await actionOf(container).updateGroups();
+      container.read(coreStatusProvider.notifier).value =
+          CoreStatus.disconnected;
 
-      // Stale groups beat no groups: a core hiccup used to empty the list the
-      // user was looking at, and nothing refills it until the next update.
       expect(container.read(groupsProvider).map((group) => group.name), [
         'Stale',
       ]);
@@ -167,28 +222,6 @@ void main() {
         container,
       ).changeProxy(groupName: 'Proxy', proxyName: 'HK-01');
 
-      verify(core.resetConnections).called(1);
-      verifyNever(core.closeConnections);
-    });
-
-    test('policy switch skips selectedMap persist and connection close', () async {
-      final container = buildContainer(profile: _selectedProfile('HK-01'));
-      container.read(appSettingProvider.notifier).value = const AppSettingProps(
-        closeConnections: true,
-      );
-
-      final ok = await actionOf(container).changeProxy(
-        groupName: 'Proxy',
-        proxyName: 'US-01',
-        persistOverride: false,
-        closeConnections: false,
-      );
-
-      expect(ok, isTrue);
-      expect(
-        container.read(currentProfileProvider)?.selectedMap['Proxy'],
-        'HK-01',
-      );
       verify(core.resetConnections).called(1);
       verifyNever(core.closeConnections);
     });

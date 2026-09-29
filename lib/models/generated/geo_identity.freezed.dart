@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of '../geo_identity.dart';
@@ -9,6 +9,7 @@ part of '../geo_identity.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -35,16 +36,21 @@ $GeoIdentityPropsCopyWith<GeoIdentityProps> get copyWith => _$GeoIdentityPropsCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GeoIdentityProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.useUsAcceptLanguage, useUsAcceptLanguage) || other.useUsAcceptLanguage == useUsAcceptLanguage)&&(identical(other.captureMode, captureMode) || other.captureMode == captureMode)&&(identical(other.previousOsTimezone, previousOsTimezone) || other.previousOsTimezone == previousOsTimezone)&&(identical(other.appliedOsTimezone, appliedOsTimezone) || other.appliedOsTimezone == appliedOsTimezone));
+  final _this = this as GeoIdentityProps;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GeoIdentityProps&&(identical(other.enable, _this.enable) || other.enable == _this.enable)&&(identical(other.useUsAcceptLanguage, _this.useUsAcceptLanguage) || other.useUsAcceptLanguage == _this.useUsAcceptLanguage)&&(identical(other.captureMode, _this.captureMode) || other.captureMode == _this.captureMode)&&(identical(other.previousOsTimezone, _this.previousOsTimezone) || other.previousOsTimezone == _this.previousOsTimezone)&&(identical(other.appliedOsTimezone, _this.appliedOsTimezone) || other.appliedOsTimezone == _this.appliedOsTimezone));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,enable,useUsAcceptLanguage,captureMode,previousOsTimezone,appliedOsTimezone);
+int get hashCode {
+  final _this = this as GeoIdentityProps;
+  return Object.hash(runtimeType,_this.enable,_this.useUsAcceptLanguage,_this.captureMode,_this.previousOsTimezone,_this.appliedOsTimezone);
+}
 
 @override
 String toString() {
-  return 'GeoIdentityProps(enable: $enable, useUsAcceptLanguage: $useUsAcceptLanguage, captureMode: $captureMode, previousOsTimezone: $previousOsTimezone, appliedOsTimezone: $appliedOsTimezone)';
+  final _this = this as GeoIdentityProps;
+  return 'GeoIdentityProps(enable: ${_this.enable}, useUsAcceptLanguage: ${_this.useUsAcceptLanguage}, captureMode: ${_this.captureMode}, previousOsTimezone: ${_this.previousOsTimezone}, appliedOsTimezone: ${_this.appliedOsTimezone})';
 }
 
 
@@ -73,7 +79,7 @@ class _$GeoIdentityPropsCopyWithImpl<$Res>
 /// Create a copy of GeoIdentityProps
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? enable = null,Object? useUsAcceptLanguage = null,Object? captureMode = null,Object? previousOsTimezone = freezed,Object? appliedOsTimezone = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(GeoIdentityProps(
 enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
 as bool,useUsAcceptLanguage: null == useUsAcceptLanguage ? _self.useUsAcceptLanguage : useUsAcceptLanguage // ignore: cast_nullable_to_non_nullable
 as bool,captureMode: null == captureMode ? _self.captureMode : captureMode // ignore: cast_nullable_to_non_nullable
@@ -249,16 +255,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GeoIdentityProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.useUsAcceptLanguage, useUsAcceptLanguage) || other.useUsAcceptLanguage == useUsAcceptLanguage)&&(identical(other.captureMode, captureMode) || other.captureMode == captureMode)&&(identical(other.previousOsTimezone, previousOsTimezone) || other.previousOsTimezone == previousOsTimezone)&&(identical(other.appliedOsTimezone, appliedOsTimezone) || other.appliedOsTimezone == appliedOsTimezone));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _GeoIdentityProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.useUsAcceptLanguage, useUsAcceptLanguage) || other.useUsAcceptLanguage == useUsAcceptLanguage)&&(identical(other.captureMode, captureMode) || other.captureMode == captureMode)&&(identical(other.previousOsTimezone, previousOsTimezone) || other.previousOsTimezone == previousOsTimezone)&&(identical(other.appliedOsTimezone, appliedOsTimezone) || other.appliedOsTimezone == appliedOsTimezone));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,enable,useUsAcceptLanguage,captureMode,previousOsTimezone,appliedOsTimezone);
+int get hashCode {
+    return Object.hash(runtimeType,enable,useUsAcceptLanguage,captureMode,previousOsTimezone,appliedOsTimezone);
+}
 
 @override
 String toString() {
-  return 'GeoIdentityProps(enable: $enable, useUsAcceptLanguage: $useUsAcceptLanguage, captureMode: $captureMode, previousOsTimezone: $previousOsTimezone, appliedOsTimezone: $appliedOsTimezone)';
+    return 'GeoIdentityProps(enable: $enable, useUsAcceptLanguage: $useUsAcceptLanguage, captureMode: $captureMode, previousOsTimezone: $previousOsTimezone, appliedOsTimezone: $appliedOsTimezone)';
 }
 
 

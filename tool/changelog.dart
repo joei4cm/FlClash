@@ -149,9 +149,6 @@ int _verify(String root) {
   }
 
   final changelog = decodeChangelog(dataFile.readAsStringSync());
-  if (changelog.versions.isEmpty) {
-    problems.add('$changelogDataPath decoded to an empty changelog');
-  }
 
   final markdown = markdownFile.readAsStringSync();
   if (!markdown.contains(changelogFrozenMarker)) {

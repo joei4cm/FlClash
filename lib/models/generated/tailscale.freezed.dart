@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of '../tailscale.dart';
@@ -9,6 +9,7 @@ part of '../tailscale.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $TailscalePropsCopyWith<TailscaleProps> get copyWith => _$TailscalePropsCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TailscaleProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.bypassTraffic, bypassTraffic) || other.bypassTraffic == bypassTraffic)&&const DeepCollectionEquality().equals(other.proxies, proxies));
+  final _this = this as TailscaleProps;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TailscaleProps&&(identical(other.enable, _this.enable) || other.enable == _this.enable)&&(identical(other.bypassTraffic, _this.bypassTraffic) || other.bypassTraffic == _this.bypassTraffic)&&const DeepCollectionEquality().equals(other.proxies, _this.proxies));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,enable,bypassTraffic,const DeepCollectionEquality().hash(proxies));
+int get hashCode {
+  final _this = this as TailscaleProps;
+  return Object.hash(runtimeType,_this.enable,_this.bypassTraffic,const DeepCollectionEquality().hash(_this.proxies));
+}
 
 @override
 String toString() {
-  return 'TailscaleProps(enable: $enable, bypassTraffic: $bypassTraffic, proxies: $proxies)';
+  final _this = this as TailscaleProps;
+  return 'TailscaleProps(enable: ${_this.enable}, bypassTraffic: ${_this.bypassTraffic}, proxies: ${_this.proxies})';
 }
 
 
@@ -66,7 +72,7 @@ class _$TailscalePropsCopyWithImpl<$Res>
 /// Create a copy of TailscaleProps
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? enable = null,Object? bypassTraffic = null,Object? proxies = null,}) {
-  return _then(_self.copyWith(
+  return _then(TailscaleProps(
 enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
 as bool,bypassTraffic: null == bypassTraffic ? _self.bypassTraffic : bypassTraffic // ignore: cast_nullable_to_non_nullable
 as bool,proxies: null == proxies ? _self.proxies : proxies // ignore: cast_nullable_to_non_nullable
@@ -211,7 +217,7 @@ return $default(_that.enable,_that.bypassTraffic,_that.proxies);case _:
 @JsonSerializable()
 
 class _TailscaleProps implements TailscaleProps {
-  const _TailscaleProps({this.enable = false, this.bypassTraffic = false, final  List<TailscaleProxy> proxies = const []}): _proxies = proxies;
+  const _TailscaleProps({this.enable = false, this.bypassTraffic = false,  List<TailscaleProxy> proxies = const []}): _proxies = proxies;
   factory _TailscaleProps.fromJson(Map<String, dynamic> json) => _$TailscalePropsFromJson(json);
 
 @override@JsonKey() final  bool enable;
@@ -237,16 +243,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TailscaleProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.bypassTraffic, bypassTraffic) || other.bypassTraffic == bypassTraffic)&&const DeepCollectionEquality().equals(other._proxies, _proxies));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TailscaleProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.bypassTraffic, bypassTraffic) || other.bypassTraffic == bypassTraffic)&&const DeepCollectionEquality().equals(other.proxies, _proxies));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,enable,bypassTraffic,const DeepCollectionEquality().hash(_proxies));
+int get hashCode {
+    return Object.hash(runtimeType,enable,bypassTraffic,const DeepCollectionEquality().hash(_proxies));
+}
 
 @override
 String toString() {
-  return 'TailscaleProps(enable: $enable, bypassTraffic: $bypassTraffic, proxies: $proxies)';
+    return 'TailscaleProps(enable: $enable, bypassTraffic: $bypassTraffic, proxies: $proxies)';
 }
 
 
@@ -303,16 +311,21 @@ $TailscaleProxyCopyWith<TailscaleProxy> get copyWith => _$TailscaleProxyCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TailscaleProxy&&(identical(other.name, name) || other.name == name)&&(identical(other.authKey, authKey) || other.authKey == authKey)&&(identical(other.hostname, hostname) || other.hostname == hostname)&&(identical(other.controlUrl, controlUrl) || other.controlUrl == controlUrl)&&(identical(other.stateDir, stateDir) || other.stateDir == stateDir)&&(identical(other.ephemeral, ephemeral) || other.ephemeral == ephemeral)&&(identical(other.udp, udp) || other.udp == udp)&&(identical(other.acceptRoutes, acceptRoutes) || other.acceptRoutes == acceptRoutes)&&(identical(other.exitNode, exitNode) || other.exitNode == exitNode)&&(identical(other.exitNodeAllowLanAccess, exitNodeAllowLanAccess) || other.exitNodeAllowLanAccess == exitNodeAllowLanAccess)&&const DeepCollectionEquality().equals(other.routes, routes));
+  final _this = this as TailscaleProxy;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TailscaleProxy&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.authKey, _this.authKey) || other.authKey == _this.authKey)&&(identical(other.hostname, _this.hostname) || other.hostname == _this.hostname)&&(identical(other.controlUrl, _this.controlUrl) || other.controlUrl == _this.controlUrl)&&(identical(other.stateDir, _this.stateDir) || other.stateDir == _this.stateDir)&&(identical(other.ephemeral, _this.ephemeral) || other.ephemeral == _this.ephemeral)&&(identical(other.udp, _this.udp) || other.udp == _this.udp)&&(identical(other.acceptRoutes, _this.acceptRoutes) || other.acceptRoutes == _this.acceptRoutes)&&(identical(other.exitNode, _this.exitNode) || other.exitNode == _this.exitNode)&&(identical(other.exitNodeAllowLanAccess, _this.exitNodeAllowLanAccess) || other.exitNodeAllowLanAccess == _this.exitNodeAllowLanAccess)&&const DeepCollectionEquality().equals(other.routes, _this.routes));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,authKey,hostname,controlUrl,stateDir,ephemeral,udp,acceptRoutes,exitNode,exitNodeAllowLanAccess,const DeepCollectionEquality().hash(routes));
+int get hashCode {
+  final _this = this as TailscaleProxy;
+  return Object.hash(runtimeType,_this.name,_this.authKey,_this.hostname,_this.controlUrl,_this.stateDir,_this.ephemeral,_this.udp,_this.acceptRoutes,_this.exitNode,_this.exitNodeAllowLanAccess,const DeepCollectionEquality().hash(_this.routes));
+}
 
 @override
 String toString() {
-  return 'TailscaleProxy(name: $name, authKey: $authKey, hostname: $hostname, controlUrl: $controlUrl, stateDir: $stateDir, ephemeral: $ephemeral, udp: $udp, acceptRoutes: $acceptRoutes, exitNode: $exitNode, exitNodeAllowLanAccess: $exitNodeAllowLanAccess, routes: $routes)';
+  final _this = this as TailscaleProxy;
+  return 'TailscaleProxy(name: ${_this.name}, authKey: ${_this.authKey}, hostname: ${_this.hostname}, controlUrl: ${_this.controlUrl}, stateDir: ${_this.stateDir}, ephemeral: ${_this.ephemeral}, udp: ${_this.udp}, acceptRoutes: ${_this.acceptRoutes}, exitNode: ${_this.exitNode}, exitNodeAllowLanAccess: ${_this.exitNodeAllowLanAccess}, routes: ${_this.routes})';
 }
 
 
@@ -341,7 +354,7 @@ class _$TailscaleProxyCopyWithImpl<$Res>
 /// Create a copy of TailscaleProxy
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? authKey = null,Object? hostname = null,Object? controlUrl = null,Object? stateDir = null,Object? ephemeral = null,Object? udp = null,Object? acceptRoutes = null,Object? exitNode = null,Object? exitNodeAllowLanAccess = null,Object? routes = null,}) {
-  return _then(_self.copyWith(
+  return _then(TailscaleProxy(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,authKey: null == authKey ? _self.authKey : authKey // ignore: cast_nullable_to_non_nullable
 as String,hostname: null == hostname ? _self.hostname : hostname // ignore: cast_nullable_to_non_nullable
@@ -494,7 +507,7 @@ return $default(_that.name,_that.authKey,_that.hostname,_that.controlUrl,_that.s
 @JsonSerializable()
 
 class _TailscaleProxy implements TailscaleProxy {
-  const _TailscaleProxy({required this.name, this.authKey = '', this.hostname = '', this.controlUrl = '', this.stateDir = '', this.ephemeral = false, this.udp = false, this.acceptRoutes = false, this.exitNode = '', this.exitNodeAllowLanAccess = false, final  List<String> routes = const []}): _routes = routes;
+  const _TailscaleProxy({required this.name, this.authKey = '', this.hostname = '', this.controlUrl = '', this.stateDir = '', this.ephemeral = false, this.udp = false, this.acceptRoutes = false, this.exitNode = '', this.exitNodeAllowLanAccess = false,  List<String> routes = const []}): _routes = routes;
   factory _TailscaleProxy.fromJson(Map<String, dynamic> json) => _$TailscaleProxyFromJson(json);
 
 @override final  String name;
@@ -528,16 +541,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TailscaleProxy&&(identical(other.name, name) || other.name == name)&&(identical(other.authKey, authKey) || other.authKey == authKey)&&(identical(other.hostname, hostname) || other.hostname == hostname)&&(identical(other.controlUrl, controlUrl) || other.controlUrl == controlUrl)&&(identical(other.stateDir, stateDir) || other.stateDir == stateDir)&&(identical(other.ephemeral, ephemeral) || other.ephemeral == ephemeral)&&(identical(other.udp, udp) || other.udp == udp)&&(identical(other.acceptRoutes, acceptRoutes) || other.acceptRoutes == acceptRoutes)&&(identical(other.exitNode, exitNode) || other.exitNode == exitNode)&&(identical(other.exitNodeAllowLanAccess, exitNodeAllowLanAccess) || other.exitNodeAllowLanAccess == exitNodeAllowLanAccess)&&const DeepCollectionEquality().equals(other._routes, _routes));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TailscaleProxy&&(identical(other.name, name) || other.name == name)&&(identical(other.authKey, authKey) || other.authKey == authKey)&&(identical(other.hostname, hostname) || other.hostname == hostname)&&(identical(other.controlUrl, controlUrl) || other.controlUrl == controlUrl)&&(identical(other.stateDir, stateDir) || other.stateDir == stateDir)&&(identical(other.ephemeral, ephemeral) || other.ephemeral == ephemeral)&&(identical(other.udp, udp) || other.udp == udp)&&(identical(other.acceptRoutes, acceptRoutes) || other.acceptRoutes == acceptRoutes)&&(identical(other.exitNode, exitNode) || other.exitNode == exitNode)&&(identical(other.exitNodeAllowLanAccess, exitNodeAllowLanAccess) || other.exitNodeAllowLanAccess == exitNodeAllowLanAccess)&&const DeepCollectionEquality().equals(other.routes, _routes));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,authKey,hostname,controlUrl,stateDir,ephemeral,udp,acceptRoutes,exitNode,exitNodeAllowLanAccess,const DeepCollectionEquality().hash(_routes));
+int get hashCode {
+    return Object.hash(runtimeType,name,authKey,hostname,controlUrl,stateDir,ephemeral,udp,acceptRoutes,exitNode,exitNodeAllowLanAccess,const DeepCollectionEquality().hash(_routes));
+}
 
 @override
 String toString() {
-  return 'TailscaleProxy(name: $name, authKey: $authKey, hostname: $hostname, controlUrl: $controlUrl, stateDir: $stateDir, ephemeral: $ephemeral, udp: $udp, acceptRoutes: $acceptRoutes, exitNode: $exitNode, exitNodeAllowLanAccess: $exitNodeAllowLanAccess, routes: $routes)';
+    return 'TailscaleProxy(name: $name, authKey: $authKey, hostname: $hostname, controlUrl: $controlUrl, stateDir: $stateDir, ephemeral: $ephemeral, udp: $udp, acceptRoutes: $acceptRoutes, exitNode: $exitNode, exitNodeAllowLanAccess: $exitNodeAllowLanAccess, routes: $routes)';
 }
 
 

@@ -34,7 +34,7 @@ class Database extends _$Database {
   Database([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   static LazyDatabase _openConnection() {
     return LazyDatabase(() async {
@@ -53,8 +53,29 @@ class Database extends _$Database {
           await _resetOrders();
           await _migrateRules(m);
         }
+        if (from < 3) {
+          await _addColumnIfMissing(m, profiles, profiles.matchTarget);
+        }
       },
     );
+  }
+
+  /// Drift rewinds user_version on downgrade but keeps the columns it added.
+  Future<void> _addColumnIfMissing(
+    Migrator m,
+    TableInfo table,
+    GeneratedColumn column,
+  ) async {
+    final tableInfo = await customSelect(
+      'PRAGMA table_info(${table.actualTableName})',
+    ).get();
+    final exists = tableInfo.any(
+      (row) => row.read<String>('name') == column.name,
+    );
+    if (exists) {
+      return;
+    }
+    await m.addColumn(table, column);
   }
 
   Future<void> _migrateRules(Migrator m) async {

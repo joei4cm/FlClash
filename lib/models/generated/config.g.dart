@@ -13,6 +13,8 @@ _AppSettingProps _$AppSettingPropsFromJson(Map<String, dynamic> json) =>
           ? defaultDashboardWidgets
           : dashboardWidgetsSafeFormJson(json['dashboardWidgets'] as List?),
       onlyStatisticsProxy: json['onlyStatisticsProxy'] as bool? ?? false,
+      showNotificationStopAction:
+          json['showNotificationStopAction'] as bool? ?? true,
       autoLaunch: json['autoLaunch'] as bool? ?? false,
       silentLaunch: json['silentLaunch'] as bool? ?? false,
       autoRun: json['autoRun'] as bool? ?? false,
@@ -57,6 +59,7 @@ Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
           .map((e) => _$DashboardWidgetEnumMap[e]!)
           .toList(),
       'onlyStatisticsProxy': instance.onlyStatisticsProxy,
+      'showNotificationStopAction': instance.showNotificationStopAction,
       'autoLaunch': instance.autoLaunch,
       'silentLaunch': instance.silentLaunch,
       'autoRun': instance.autoRun,
@@ -182,6 +185,21 @@ Map<String, dynamic> _$VpnPropsToJson(_VpnProps instance) => <String, dynamic>{
   'accessControlProps': instance.accessControlProps,
 };
 
+_AuthenticationProps _$AuthenticationPropsFromJson(Map<String, dynamic> json) =>
+    _AuthenticationProps(
+      enable: json['enable'] as bool? ?? false,
+      username: json['username'] as String? ?? '',
+      password: json['password'] as String? ?? '',
+    );
+
+Map<String, dynamic> _$AuthenticationPropsToJson(
+  _AuthenticationProps instance,
+) => <String, dynamic>{
+  'enable': instance.enable,
+  'username': instance.username,
+  'password': instance.password,
+};
+
 _NetworkProps _$NetworkPropsFromJson(Map<String, dynamic> json) =>
     _NetworkProps(
       systemProxy: json['systemProxy'] as bool? ?? true,
@@ -195,6 +213,11 @@ _NetworkProps _$NetworkPropsFromJson(Map<String, dynamic> json) =>
           RouteMode.config,
       autoSetSystemDns: json['autoSetSystemDns'] as bool? ?? true,
       appendSystemDns: json['appendSystemDns'] as bool? ?? false,
+      authentication: json['authentication'] == null
+          ? defaultAuthenticationProps
+          : AuthenticationProps.fromJson(
+              json['authentication'] as Map<String, dynamic>?,
+            ),
     );
 
 Map<String, dynamic> _$NetworkPropsToJson(_NetworkProps instance) =>
@@ -204,6 +227,7 @@ Map<String, dynamic> _$NetworkPropsToJson(_NetworkProps instance) =>
       'routeMode': _$RouteModeEnumMap[instance.routeMode]!,
       'autoSetSystemDns': instance.autoSetSystemDns,
       'appendSystemDns': instance.appendSystemDns,
+      'authentication': instance.authentication,
     };
 
 const _$RouteModeEnumMap = {

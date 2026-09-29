@@ -139,16 +139,31 @@ Future<({String yaml, String md5})> _makeRealProfileTask(
       }
       // Two providers may share a URL and differ only by header.
       final url = provider['url'];
-      provider['path'] = getProvidersFilePathInner(
+      final hasUrl = url is String && url.isNotEmpty;
+      final path = getProvidersFilePathInner(
         type,
-        url is String && url.isNotEmpty ? '$name@$url' : '$section/$name',
+        hasUrl ? '$name@$url' : '$section/$name',
       );
+      if (hasUrl) {
+        _migrateLegacyProviderFile(
+          legacyPath: getProvidersFilePathInner(type, url),
+          newPath: path,
+        );
+      }
+      provider['path'] = path;
     }
   }
 
   rawConfig['external-controller'] = realPatchConfig.externalController.value;
   rawConfig['external-ui'] = '';
-  rawConfig['interface-name'] ??= '';
+  switch (realPatchConfig.interfaceNameMode) {
+    case InterfaceNameMode.clear:
+      rawConfig['interface-name'] = '';
+    case InterfaceNameMode.follow:
+      break;
+    case InterfaceNameMode.custom:
+      rawConfig['interface-name'] = realPatchConfig.interfaceName;
+  }
   rawConfig['external-ui-url'] = '';
   rawConfig['tcp-concurrent'] = realPatchConfig.tcpConcurrent;
   rawConfig['unified-delay'] = realPatchConfig.unifiedDelay;
@@ -164,6 +179,10 @@ Future<({String yaml, String md5})> _makeRealProfileTask(
   rawConfig['tproxy-port'] = realPatchConfig.tproxyPort;
   rawConfig['find-process-mode'] = realPatchConfig.findProcessMode.name;
   rawConfig['allow-lan'] = realPatchConfig.allowLan;
+  // The app owns local inbound authentication; a profile-provided
+  // skip-auth-prefixes could silently exempt loopback and defeat it.
+  rawConfig['authentication'] = data.authentication;
+  rawConfig['skip-auth-prefixes'] = [];
   rawConfig['mode'] = realPatchConfig.mode.name;
   if (rawConfig['tun'] == null) {
     rawConfig['tun'] = {};
@@ -254,9 +273,12 @@ Future<({String yaml, String md5})> _makeRealProfileTask(
       final hasMatchPlaceholder = addedRules.any(
         (item) => item.ruleTarget?.toUpperCase() == 'MATCH',
       );
-      String? replacementTarget;
+      String? replacementTarget = data.matchTarget?.trim();
+      if (replacementTarget?.isEmpty == true) {
+        replacementTarget = null;
+      }
 
-      if (hasMatchPlaceholder) {
+      if (hasMatchPlaceholder && replacementTarget == null) {
         for (int i = rules.length - 1; i >= 0; i--) {
           final parsed = Rule.parse(rules[i]);
           if (parsed.ruleAction == RuleAction.MATCH) {
@@ -384,6 +406,24 @@ List<String> shakeOrphanFiles({
   );
   scanDirectory(Directory(scriptsDirPath), scriptIds);
   return targets;
+}
+
+// Best-effort: a legacy url shared by two providers, or any rename failure,
+// just leaves the file to be re-downloaded under the new path.
+void _migrateLegacyProviderFile({
+  required String legacyPath,
+  required String newPath,
+}) {
+  if (legacyPath == newPath || File(newPath).existsSync()) {
+    return;
+  }
+  try {
+    final legacyFile = File(legacyPath);
+    if (legacyFile.existsSync()) {
+      Directory(dirname(newPath)).createSync(recursive: true);
+      legacyFile.renameSync(newPath);
+    }
+  } catch (_) {}
 }
 
 Future<String> encodeLogsTask(List<Log> data) async {
@@ -642,9 +682,6 @@ Future<MigrationData> _restoreTask(RootIsolateToken token) async {
   );
 }
 
-/// Resolves the archive entry [name] against the directory it is unpacked into,
-/// or returns null when the entry would land outside it.
-///
 /// `posix.normalize` was doing this on its own and it does not: it collapses
 /// `a/../b`, but a name that starts with `../` normalizes to itself and an
 /// absolute one stays absolute, so either writes wherever the archive asks. A

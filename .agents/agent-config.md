@@ -5,8 +5,7 @@ Use the smallest durable surface that matches the job.
 ## Surfaces
 
 - `AGENTS.md`: repository entry point. Keep it small and reserve it for always-on rules, routing, and high-priority expectations.
-- `CLAUDE.md`: a one-line `@AGENTS.md` import and nothing else. Claude Code loads `CLAUDE.md` into the system prompt at startup; the import makes `AGENTS.md` arrive with it. Without it, `AGENTS.md` reaches the session only as a tool result some agent chose to fetch, which is the weakest position in context and the first thing dropped when the conversation is summarized. Do not let rules accumulate in this file.
-- `.claude/agents/*.md` and `.codex/agents/*.toml`: subagent definitions. These are separate contexts that do not inherit the parent's loaded instructions, so any always-on rule a subagent must not break is restated in full inside the definition. Duplication is the cost of the rule actually arriving.
+- `CLAUDE.md`: the `@AGENTS.md` import and nothing that is not Claude-only. Claude Code loads `CLAUDE.md` into the system prompt at startup; the import makes `AGENTS.md` arrive with it. Without it, `AGENTS.md` reaches the session only as a tool result some agent chose to fetch, which is the weakest position in context and the first thing dropped when the conversation is summarized. Do not let rules accumulate in this file.
 - `.agents/*.md`: human- and agent-readable reference docs linked from `AGENTS.md`. Use these for detailed project context, commands, architecture, and conventions.
 - `.agents/skills/*/SKILL.md`: repo-scoped Codex skills. Use these for repeatable workflows that should be discoverable by name and description.
 - `.codex/config.toml`: trusted project Codex settings such as MCP, hooks, sandbox, approval, or model defaults.

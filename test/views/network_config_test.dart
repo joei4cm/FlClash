@@ -140,6 +140,74 @@ void main() {
 
       expect(container.read(networkSettingProvider).routeMode, target);
     });
+
+    testWidgets('the interface name mode picker writes the chosen mode', (
+      tester,
+    ) async {
+      await pumpItem(tester, const InterfaceNameModeItem());
+      final initial = container
+          .read(patchClashConfigProvider)
+          .interfaceNameMode;
+      final target = InterfaceNameMode.values.firstWhere(
+        (item) => item != initial,
+      );
+
+      await tester.tap(find.byType(ListTile).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(_interfaceNameModeLabel(target)).last);
+      await tester.pumpAndSettle();
+
+      expect(
+        container.read(patchClashConfigProvider).interfaceNameMode,
+        target,
+      );
+    });
+  });
+
+  group('interface name visibility', () {
+    testWidgets('is hidden unless the mode is custom', (tester) async {
+      container
+          .read(patchClashConfigProvider.notifier)
+          .update(
+            (state) =>
+                state.copyWith(interfaceNameMode: InterfaceNameMode.follow),
+          );
+
+      await pumpItem(tester, const InterfaceNameItem());
+
+      expect(find.byType(ListTile), findsNothing);
+    });
+
+    testWidgets('is shown when the mode is custom', (tester) async {
+      container
+          .read(patchClashConfigProvider.notifier)
+          .update(
+            (state) =>
+                state.copyWith(interfaceNameMode: InterfaceNameMode.custom),
+          );
+
+      await pumpItem(tester, const InterfaceNameItem());
+
+      expect(find.byType(ListTile), findsOneWidget);
+    });
+  });
+
+  group('network options items', () {
+    test('interface name rows appear only on desktop', () {
+      final desktopTypes = networkOptionsItems(
+        isDesktop: true,
+        isMacOS: false,
+      ).map((item) => item.runtimeType);
+      expect(desktopTypes, contains(InterfaceNameModeItem));
+      expect(desktopTypes, contains(InterfaceNameItem));
+
+      final androidTypes = networkOptionsItems(
+        isDesktop: false,
+        isMacOS: false,
+      ).map((item) => item.runtimeType);
+      expect(androidTypes, isNot(contains(InterfaceNameModeItem)));
+      expect(androidTypes, isNot(contains(InterfaceNameItem)));
+    });
   });
 
   group('route address visibility', () {
@@ -170,6 +238,14 @@ void main() {
 String _routeModeLabel(RouteMode mode) {
   return switch (mode) {
     RouteMode.config => 'Use config',
-    RouteMode.bypassPrivate => 'Bypass private route address',
+    RouteMode.bypassPrivate => 'Bypass private addresses',
+  };
+}
+
+String _interfaceNameModeLabel(InterfaceNameMode mode) {
+  return switch (mode) {
+    InterfaceNameMode.clear => 'Clear',
+    InterfaceNameMode.follow => 'Follow config',
+    InterfaceNameMode.custom => 'Custom',
   };
 }

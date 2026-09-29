@@ -86,20 +86,32 @@ class ProxiesAction extends _$ProxiesAction {
           final selectedMap = ref.read(
             currentProfileProvider.select((state) => state?.selectedMap ?? {}),
           );
-          return _core.getProxiesGroups(
-            selectedMap: selectedMap,
-            sortType: sortType,
-            delayMap: delayMap,
-            defaultTestUrl: testUrl,
-          );
+          try {
+            return await _core.getProxiesGroups(
+              selectedMap: selectedMap,
+              sortType: sortType,
+              delayMap: delayMap,
+              defaultTestUrl: testUrl,
+            );
+          } catch (e) {
+            commonPrint.log(
+              'updateGroups error: $e',
+              logLevel: coreFailureLogLevel(e),
+            );
+            return [];
+          }
         },
         retryIf: (res) => res.isEmpty,
       );
-      ref.read(groupsProvider.notifier).value = groups;
-      await AutoSelectSticky.enforce(ref, groups);
+      final typedGroups = List<Group>.from(groups);
+      ref.read(groupsProvider.notifier).value = typedGroups;
+      await AutoSelectSticky.enforce(ref, typedGroups);
     } catch (e) {
+      // The Core failure path already runs inside the retry task above; a
+      // throw here only means ref.read hit a disposed container or the
+      // groupsProvider write itself failed.
       commonPrint.log(
-        'updateGroups error: $e',
+        'updateGroups failed: $e',
         logLevel: coreFailureLogLevel(e),
       );
     }

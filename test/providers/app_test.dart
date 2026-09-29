@@ -393,6 +393,22 @@ void main() {
 
       expect(container.read(loadingProvider(LoadingTag.profiles)), false);
     });
+
+    test(
+      'disposing while the minimum-duration timer is pending is safe',
+      () async {
+        final scoped = ProviderContainer();
+        final notifier = scoped.read(
+          loadingProvider(LoadingTag.profiles).notifier,
+        );
+
+        notifier.start();
+        await notifier.stop();
+        scoped.dispose();
+
+        await Future.delayed(const Duration(milliseconds: 1100));
+      },
+    );
   });
 
   group('UpdatingKeys provider', () {

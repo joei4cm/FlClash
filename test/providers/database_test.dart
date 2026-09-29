@@ -47,9 +47,6 @@ void main() {
     await pumpEventQueue();
   }
 
-  /// Runs [body] in a guarded zone and completes with the error the failed
-  /// write reported.
-  ///
   /// Most call sites wrap the persist step in `unawaited(...)`, so the failure
   /// never reaches the caller — it lands in the zone handler, and only after
   /// the rollback has already restored the snapshot.
@@ -61,8 +58,6 @@ void main() {
     return completer.future.timeout(const Duration(seconds: 5));
   }
 
-  /// Makes every subsequent write to [table] fail.
-  ///
   /// `customStatement` does not raise a drift table-update notification, so the
   /// streams the notifiers watch keep serving their last good rows — which is
   /// what lets a test observe the rolled-back state rather than an error state.

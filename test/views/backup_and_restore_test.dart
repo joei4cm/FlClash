@@ -94,7 +94,7 @@ void main() {
       tester,
     ) async {
       expect(
-        await openAndChoose(tester, 'Restore configuration files only'),
+        await openAndChoose(tester, 'Restore profiles only'),
         RestoreOption.onlyProfiles,
       );
     });

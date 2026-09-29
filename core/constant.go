@@ -31,6 +31,7 @@ type UpdateParams struct {
 	TCPConcurrent      *bool              `json:"tcp-concurrent"`
 	ExternalController *string            `json:"external-controller"`
 	UnifiedDelay       *bool              `json:"unified-delay"`
+	Authentication     *[]string          `json:"authentication"`
 	GeoAutoUpdate      *bool              `json:"geo-auto-update"`
 	GeoUpdateInterval  *int               `json:"geo-update-interval"`
 }
@@ -92,7 +93,6 @@ const (
 	changeProxyMethod              CoreMethod = "changeProxy"
 	getTrafficMethod               CoreMethod = "getTraffic"
 	getTotalTrafficMethod          CoreMethod = "getTotalTraffic"
-	getTrafficSnapshotMethod       CoreMethod = "getTrafficSnapshot"
 	resetTrafficMethod             CoreMethod = "resetTraffic"
 	asyncTestDelayMethod           CoreMethod = "asyncTestDelay"
 	getConnectionsMethod           CoreMethod = "getConnections"
@@ -136,9 +136,7 @@ const (
 	DelayMessage     MessageType = "delay"
 	RequestMessage   MessageType = "request"
 	LoadedMessage    MessageType = "loaded"
-	GeoUpdateMessage   MessageType = "geoUpdate"
-	TrafficMessage     MessageType = "traffic"
-	ConnectionsMessage MessageType = "connections"
+	GeoUpdateMessage MessageType = "geoUpdate"
 )
 
 type GeoUpdateStatus struct {

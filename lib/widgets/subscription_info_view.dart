@@ -3,6 +3,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'list.dart';
+import 'text.dart';
 
 const _expireGap = 12.0;
 
@@ -44,14 +45,11 @@ class SubscriptionInfoView extends StatelessWidget {
     );
     final metaStyle = context.textTheme.bodySmall?.toLight;
     final trafficLabel = '$useShow / $totalShow';
-    final trafficText = Tooltip(
-      message: trafficLabel,
-      child: Text(
-        trafficLabel,
-        style: valueStyle,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
+    final trafficText = Text(
+      trafficLabel,
+      style: valueStyle,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
     );
     final expireText = Text(
       expireShow,
@@ -99,7 +97,7 @@ class SubscriptionInfoDetailView extends StatelessWidget {
   Widget _buildItem({String? label, required String value}) {
     return DecorationListItem(
       title: Text(label ?? value),
-      subtitle: label == null ? null : Text(value),
+      subtitle: label == null ? null : TooltipLabel(value),
     );
   }
 

@@ -86,6 +86,14 @@ class ApplicationSettingView extends StatelessWidget {
       ),
       if (system.isAndroid)
         _appSettingToggle(
+          title: (l) => l.showNotificationStopAction,
+          subtitle: (l) => l.showNotificationStopActionDesc,
+          select: (state) => state.showNotificationStopAction,
+          update: (state, value) =>
+              state.copyWith(showNotificationStopAction: value),
+        ),
+      if (system.isAndroid)
+        _appSettingToggle(
           title: (l) => l.crashlytics,
           subtitle: (l) => l.crashlyticsTip,
           select: (state) => state.crashlytics,
@@ -107,6 +115,7 @@ class ApplicationSettingView extends StatelessWidget {
     return BaseScaffold(
       title: context.appLocalizations.application,
       body: ListView.separated(
+        padding: const EdgeInsets.only(bottom: 20),
         itemBuilder: (_, index) => items[index],
         separatorBuilder: (_, _) => const Divider(height: 0),
         itemCount: items.length,

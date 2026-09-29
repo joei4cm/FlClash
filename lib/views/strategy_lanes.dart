@@ -37,20 +37,26 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
     StrategyLaneDiscovery discovery,
   ) {
     return switch (policy.kind) {
-      StrategyLanePolicyKind.follow => discovery.hasGroup
-          ? l10n.strategyLaneFollowWithGroup(discovery.groupName!)
-          : l10n.strategyLaneFollowSubscription,
+      StrategyLanePolicyKind.follow =>
+        discovery.hasGroup
+            ? l10n.strategyLaneFollowWithGroup(discovery.groupName!)
+            : l10n.strategyLaneFollowSubscription,
       StrategyLanePolicyKind.auto => l10n.strategyLanePolicyAuto,
       StrategyLanePolicyKind.direct => 'DIRECT',
       StrategyLanePolicyKind.reject => 'REJECT',
-      StrategyLanePolicyKind.group =>
-        l10n.strategyLanePolicyGroup(policy.target ?? ''),
-      StrategyLanePolicyKind.proxy =>
-        l10n.strategyLanePolicyProxy(policy.target ?? ''),
+      StrategyLanePolicyKind.group => l10n.strategyLanePolicyGroup(
+        policy.target ?? '',
+      ),
+      StrategyLanePolicyKind.proxy => l10n.strategyLanePolicyProxy(
+        policy.target ?? '',
+      ),
     };
   }
 
-  Future<void> _setPolicy(StrategyLaneId laneId, StrategyLanePolicy policy) async {
+  Future<void> _setPolicy(
+    StrategyLaneId laneId,
+    StrategyLanePolicy policy,
+  ) async {
     final profileId = ref.read(currentProfileIdProvider);
     if (profileId == null) {
       return;
@@ -100,10 +106,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
       } while (_pendingApply && mounted);
     } catch (error) {
       if (mounted) {
-        context.showNotifier(
-          error.toString(),
-          level: MessageLevel.error,
-        );
+        context.showNotifier(error.toString(), level: MessageLevel.error);
       }
     } finally {
       if (mounted) {
@@ -131,8 +134,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
     final customGroups =
         ref.read(proxyGroupsProvider(profileId)).value ?? const <ProxyGroup>[];
     final customRules =
-        ref.read(profileCustomRulesProvider(profileId)).value ??
-        const <Rule>[];
+        ref.read(profileCustomRulesProvider(profileId)).value ?? const <Rule>[];
     final inputs = resolveStrategyLaneConfigInputs(
       overwriteType: overwriteType,
       subscriptionGroups: clash.proxyGroups,
@@ -329,7 +331,8 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
                                 l10n.strategyLaneEffective(
                                   row.effectiveTarget!,
                                 ),
-                              if (row.policy.isFollow && !row.discovery.hasGroup)
+                              if (row.policy.isFollow &&
+                                  !row.discovery.hasGroup)
                                 l10n.strategyLaneUncovered,
                             ].join('\n'),
                           ),

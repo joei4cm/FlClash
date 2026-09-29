@@ -335,6 +335,24 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('c'), findsNWidgets(3));
 
+    await tester.tap(find.text('Add'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField), 'x, y，x , toolong');
+    await tester.tap(find.text('Confirm'));
+    await tester.pumpAndSettle();
+    expect(find.text('Value must be at most 4 characters'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextFormField), 'x, y，x , a');
+    await tester.tap(find.text('Confirm'));
+    await tester.pumpAndSettle();
+    expect(find.text('Value already exists'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextFormField), 'x, y，x ,');
+    await tester.tap(find.text('Confirm'));
+    await tester.pumpAndSettle();
+    expect(find.text('x'), findsNWidgets(3));
+    expect(find.text('y'), findsNWidgets(3));
+
     await tester.tap(find.text('c').first);
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField), 'd');

@@ -105,8 +105,8 @@ void main() {
     final groups = tester
         .widgetList<RadioGroup<int>>(find.byType(RadioGroup<int>))
         .toList();
-    expect(groups, hasLength(2));
-    expect(groups.every((group) => group.groupValue == 11), isTrue);
+    expect(groups, hasLength(1));
+    expect(groups.single.groupValue, 11);
   });
 
   testWidgets('tapping an unselected script selects it', (tester) async {

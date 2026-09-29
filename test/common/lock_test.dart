@@ -14,8 +14,9 @@ void main() {
         join(home.path, 'FlClash.lock');
   });
 
-  tearDown(() {
+  tearDown(() async {
     SingleInstanceLock.resolvePath = () => appPath.lockFilePath;
+    await SingleInstanceLock().release();
     if (home.existsSync()) home.deleteSync(recursive: true);
   });
 

@@ -1,67 +1,31 @@
 # Changelog
 
-## v0.8.111 (2026-08-29)
-
-- Add Strategy Lanes: map common services (streaming / AI / messaging / social /
-  search / gaming) onto subscription strategies, or override with auto-select,
-  a group, a node, DIRECT, or REJECT.
-- Inject lane groups/rules on profile apply without requiring Custom overwrite
-  (Tailscale-style), with discovery from GEOSITE / DOMAIN / RULE-SET and group
-  names.
-- Harden apply: honest success/partial toasts, skip unloadable targets, trailing
-  re-apply, safer name/domain matching, custom-overwrite alignment, and exclude
-  FlClash-* groups from geo sticky.
-
-## v0.8.110 (2026-08-29)
-
-Production sync: rebase the fork onto `upstream/dev`'s architecture (`material_ui`, QuickJS-based scripting,
-core rewrite, platform fixes) while retaining the fork's features on top:
-
-- Tailscale integration (proxies/rules/fake-IP injection, settings UI).
-- Geo identity verification (timezone-aligned identity check).
-- Auto-select geo sticky policy so url-test/fallback groups can stay in a chosen region.
-- Dashboard service-reachability tile (search / social / AI / streaming probes through the current node).
-- Core traffic/connections push path for lower-latency stats.
-- Linux taskbar icon grouping fix on Ubuntu/Debian (`StartupWMClass`).
-- Windows installer icon path fix (`setup_icon_file`).
-- Geo identity traffic capture mode (auto / TUN / system proxy / both).
-- Refactor auto-select sticky: only recover unhealthy nodes, never lock `selectedMap` or close all connections; clear overrides on all auto groups; sync run-state on core crash.
-
-## v0.8.109
-
-- Fix Linux taskbar icon grouping on Ubuntu/Debian via `StartupWMClass`.
-- Add auto-select geo sticky policy so url-test/fallback can stay in a chosen region.
-- Sync production features onto main (service reachability, auto-select UX, multi-day uptime).
-
-## v0.8.108
-
-- Fix VPN uptime display for multi-day sessions (no more `999:59:59` ceiling; show `Nd HH:MM:SS`).
-- Add dashboard service-reachability tile (search / social / AI / streaming probes through the current node).
-- Show url-test / fallback current node with restore-auto, plus enable-auto-select flow.
-
-## v0.8.107
-
-- Integrate upstream/dev: package icon loading + connections ActivePolling, Windows group delay/RPC fix, commented-policy cleanup.
-- Rebase fork onto upstream/main with performance push path, Tailscale outbounds/bypass, and Geo identity.
-
-## v0.8.106
-
-- Port fork main features onto upstream/dev: performance push path, Tailscale outbounds/bypass, and Geo identity.
-- Add fork-friendly release.yaml workflow.
-- Include delay-test and CoreEventManager dispatch robustness.
-
-## v0.8.96 (2026-08-17)
+## v0.8.98 (2026-09-14)
 
 **Bug Fixes**
 
-- Fix whole group delay test failing on Windows (7fb4f4f)
+- **resources** Refresh the geo file size and time after an update finishes (c5bf5bd)
+- **core** Keep the core running while Windows sleeps with the app suspended (60f371a)
 
-**Performance**
+## v0.8.97 (2026-09-10)
 
-- Optimize package icon loading and connections polling (903e2b8)
+**Features**
+
+- **ui** Rework the app UI and refresh the localization (26cfbaf)
+- **app** Rework the app layer and window handling, and add proxy authentication (aaf934c)
+- **desktop** Rework the desktop runners, packaging, and native build (c0fcbc0)
+- **android** Rework the Android VPN service and lifecycle handling (ae29f38)
+- **plugins** Rework the desktop plugins and add the Helper service and Rust bridge (adf715f)
+- **core** Rework the core IPC and process lifecycle (c6eaa0a)
 
 <!-- changelog:frozen -->
 <!-- Entries below predate the structured pipeline. Their wording is kept as written; only the heading and list style were normalized. -->
+
+## v0.8.96 (2026-08-17)
+
+- Optimize commented policy
+- Fix whole group delay test failing on Windows
+- Optimize package icon loading and connections polling
 
 ## v0.8.95 (2026-08-14)
 

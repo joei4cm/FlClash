@@ -27,7 +27,7 @@ class AuthorizedTunEnable extends _$AuthorizedTunEnable
 class Logs extends _$Logs with AutoDisposeNotifierMixin {
   @override
   FixedList<Log> build() {
-    return FixedList(maxLength);
+    return FixedList(maxLogsLength);
   }
 
   void add(Log value) {
@@ -52,7 +52,7 @@ class Logs extends _$Logs with AutoDisposeNotifierMixin {
 class Requests extends _$Requests with AutoDisposeNotifierMixin {
   @override
   FixedList<TrackerInfo> build() {
-    return FixedList(maxLength);
+    return FixedList(maxRequestsLength);
   }
 
   void addRequest(TrackerInfo value) {
@@ -132,19 +132,6 @@ class LoadedLocale extends _$LoadedLocale with AutoDisposeNotifierMixin {
   @override
   Locale? build() {
     return null;
-  }
-}
-
-@Riverpod(keepAlive: true)
-class ConnectionsSnapshot extends _$ConnectionsSnapshot
-    with AutoDisposeNotifierMixin {
-  @override
-  List<TrackerInfo> build() {
-    return const [];
-  }
-
-  void apply(List<TrackerInfo> next) {
-    value = next;
   }
 }
 
@@ -366,6 +353,9 @@ class Loading extends _$Loading with AutoDisposeNotifierMixin {
 
   @override
   bool build(LoadingTag tag) {
+    ref.onDispose(() {
+      _timer?.cancel();
+    });
     return false;
   }
 
@@ -454,6 +444,8 @@ class UpdatingKeys extends _$UpdatingKeys {
   void stopKeys(Iterable<String> keys) {
     _discard(keys.toList());
   }
+
+  UpdatingScope? scopeOf(String key) => _scopes[key];
 
   void _discardScope(UpdatingScope scope) {
     _discard(state.where((key) => _scopes[key] == scope).toList());

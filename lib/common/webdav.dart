@@ -5,8 +5,6 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:fl_clash/common/string.dart';
 
-/// A WebDAV request the server answered, but not with a status this client can
-/// treat as success.
 final class DAVException implements Exception {
   final String method;
   final String path;
@@ -31,9 +29,6 @@ final class DAVException implements Exception {
   }
 }
 
-/// The slice of WebDAV that backup and restore need: probe the server, create
-/// the backup collection, upload the archive, download it again.
-///
 /// Requests go through `Dio`, so they inherit the app-wide HttpOverrides: the
 /// user's proxy selection and the TLS certificate setting apply here too.
 class DAVTransport {
@@ -121,12 +116,14 @@ class DAVTransport {
     ResponseType responseType = ResponseType.plain,
     required Set<int> accept,
   }) async {
-    var uri = resolve(path, collection: collection);
+    final origin = resolve(path, collection: collection);
+    var uri = origin;
     var retriedAuth = false;
     for (var redirects = 0; ; redirects++) {
       final response = await _request(
         method,
         uri,
+        origin: origin,
         body: body,
         headers: headers,
         responseType: responseType,
@@ -156,6 +153,7 @@ class DAVTransport {
   Future<Response<dynamic>> _request(
     String method,
     Uri uri, {
+    required Uri origin,
     List<int>? body,
     required Map<String, dynamic> headers,
     required ResponseType responseType,
@@ -165,7 +163,7 @@ class DAVTransport {
       data: body,
       options: Options(
         method: method,
-        headers: {...headers, ..._authorization(method, uri)},
+        headers: {...headers, ..._authorization(method, uri, origin)},
         responseType: responseType,
         // Redirects are followed by hand so that a PUT stays a PUT, and every
         // status reaches the caller instead of becoming a DioException.
@@ -189,17 +187,36 @@ class DAVTransport {
   }
 
   bool _adoptChallenge(Response<dynamic> response) {
-    final header = response.headers.value('www-authenticate');
-    final challenge = _DigestChallenge.parse(header);
-    if (challenge == null) {
+    // Basic and Digest may each arrive as their own www-authenticate line.
+    final headerValues = response.headers[Headers.wwwAuthenticateHeader];
+    if (headerValues == null) {
       return false;
     }
-    _digest = challenge;
-    _digestNonceCount = 0;
-    return true;
+    for (final header in headerValues) {
+      final challenge = _DigestChallenge.parse(header);
+      if (challenge != null) {
+        _digest = challenge;
+        _digestNonceCount = 0;
+        return true;
+      }
+    }
+    return false;
   }
 
-  Map<String, dynamic> _authorization(String method, Uri uri) {
+  static bool _sameOrigin(Uri a, Uri b) {
+    return a.scheme == b.scheme && a.host == b.host && _port(a) == _port(b);
+  }
+
+  static int _port(Uri uri) {
+    if (uri.hasPort) return uri.port;
+    return uri.scheme == 'https' ? 443 : 80;
+  }
+
+  Map<String, dynamic> _authorization(String method, Uri uri, Uri origin) {
+    // Never forward credentials to a redirect target on another origin.
+    if (!_sameOrigin(uri, origin)) {
+      return const {};
+    }
     if (user.isEmpty && password.isEmpty) {
       return const {};
     }

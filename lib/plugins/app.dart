@@ -14,6 +14,7 @@ class App {
   static App? _instance;
   late MethodChannel methodChannel;
   Function()? onExit;
+  Function()? onPackagesChanged;
 
   App._internal() {
     methodChannel = const MethodChannel('$packageName/app');
@@ -23,6 +24,8 @@ class App {
           if (onExit != null) {
             await onExit!();
           }
+        case 'packagesChanged':
+          onPackagesChanged?.call();
         default:
           throw MissingPluginException();
       }
@@ -91,9 +94,6 @@ class App {
   }
 
   Future<ImageProvider?> getPackageIcon(String packageName) {
-    if (packageName.isEmpty) {
-      return Future.value(null);
-    }
     if (_packageIcons.containsKey(packageName)) {
       return Future.value(_packageIcons[packageName]);
     }
@@ -101,18 +101,28 @@ class App {
   }
 
   Future<ImageProvider?> _loadPackageIcon(String packageName) async {
-    ImageProvider? icon;
-    try {
-      final path = await methodChannel.invokeMethod<String>('getPackageIcon', {
-        'packageName': packageName,
-      });
-      icon = path == null ? null : FileImage(File(path));
-    } catch (error) {
-      commonPrint.log('getPackageIcon error: $error');
+    var icon = await _requestPackageIcon(packageName);
+    if (icon == null && packageName.isNotEmpty) {
+      icon = await getPackageIcon('');
     }
     _packageIcons[packageName] = icon;
     unawaited(_packageIconTasks.remove(packageName));
     return icon;
+  }
+
+  Future<ImageProvider?> _requestPackageIcon(String packageName) async {
+    try {
+      final path = await methodChannel.invokeMethod<String>('getPackageIcon', {
+        'packageName': packageName,
+      });
+      if (path == null || path.isEmpty) {
+        return null;
+      }
+      return FileImage(File(path));
+    } catch (error) {
+      commonPrint.log('getPackageIcon error: $error');
+      return null;
+    }
   }
 
   @visibleForTesting

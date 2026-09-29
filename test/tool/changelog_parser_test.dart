@@ -146,6 +146,42 @@ Some other paragraph.
       );
     });
 
+    test('stops a trailer at the next unrelated git trailer', () {
+      final items = ChangelogParser().parse(
+        commit('feat: multi line', '''
+Changelog: A long entry
+Co-authored-by: Someone <someone@example.com>
+'''),
+      );
+
+      expect(items.single.entry.text, 'A long entry');
+    });
+
+    test('stops a trailer at a git trailer with no space after the colon', () {
+      final items = ChangelogParser().parse(
+        commit('feat: multi line', '''
+Changelog: A long entry
+Claude-Session:https://claude.ai/code/session_abc
+'''),
+      );
+
+      expect(items.single.entry.text, 'A long entry');
+    });
+
+    test('joins a Note: line as a continuation, not a trailer', () {
+      final items = ChangelogParser().parse(
+        commit('feat: multi line', '''
+Changelog: A long entry
+Note: the old handle still works
+'''),
+      );
+
+      expect(
+        items.single.entry.text,
+        'A long entry Note: the old handle still works',
+      );
+    });
+
     test('warns about a translation trailer left in a commit', () {
       final parser = ChangelogParser();
       final items = parser.parse(commit('feat: x', 'Changelog-zh-CN: 新功能'));

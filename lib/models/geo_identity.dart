@@ -44,9 +44,7 @@ GeoIdentityCaptureActions resolveGeoIdentityCaptureActions({
       GeoIdentityCaptureMode.systemProxy ||
       GeoIdentityCaptureMode.both => !currentVpnEnable,
     };
-    return GeoIdentityCaptureActions(
-      setVpnEnable: needsVpn ? true : null,
-    );
+    return GeoIdentityCaptureActions(setVpnEnable: needsVpn ? true : null);
   }
 
   return switch (mode) {

@@ -5,10 +5,14 @@ UpdateParams updateParams(Ref ref) {
   final routeMode = ref.watch(
     networkSettingProvider.select((state) => state.routeMode),
   );
+  final authentication = ref.watch(
+    networkSettingProvider.select((state) => state.authentication),
+  );
   return ref.watch(
     patchClashConfigProvider.select(
       (state) => UpdateParams(
         tun: state.tun.getRealTun(routeMode),
+        authentication: authentication.credentials,
         allowLan: state.allowLan,
         findProcessMode: state.findProcessMode,
         mode: state.mode,
@@ -172,17 +176,28 @@ SharedState sharedState(Ref ref) {
     appSettingProvider.select(
       (state) => (
         onlyStatisticsProxy: state.onlyStatisticsProxy,
+        showStopAction: state.showNotificationStopAction,
         crashlytics: state.crashlytics,
         testUrl: state.testUrl,
       ),
     ),
   );
-  final bypassDomain = ref.watch(
-    networkSettingProvider.select((state) => state.bypassDomain),
+  final networkSetting = ref.watch(
+    networkSettingProvider.select(
+      (state) => (
+        bypassDomain: state.bypassDomain,
+        routeMode: state.routeMode,
+        authenticated: state.authentication.credentials.isNotEmpty,
+      ),
+    ),
   );
   final clashConfig = ref.watch(
     patchClashConfigProvider.select(
-      (state) => (stack: state.tun.stack.name, mixedPort: state.mixedPort),
+      (state) => (
+        stack: state.tun.stack.name,
+        mixedPort: state.mixedPort,
+        routeAddress: state.tun.resolveRouteAddress(networkSetting.routeMode),
+      ),
     ),
   );
   final vpnSetting = ref.watch(vpnSettingProvider);
@@ -196,6 +211,7 @@ SharedState sharedState(Ref ref) {
   return SharedState(
     currentProfileName: currentProfileName,
     onlyStatisticsProxy: onlyStatisticsProxy,
+    showStopAction: appSetting.showStopAction,
     stopText: currentAppLocalizations.stop,
     crashlytics: crashlytics,
     stopTip: currentAppLocalizations.stopVpn,
@@ -204,13 +220,17 @@ SharedState sharedState(Ref ref) {
     vpnOptions: VpnOptions(
       enable: vpnSetting.enable,
       stack: stack,
-      systemProxy: vpnSetting.systemProxy,
+      // VpnService.setHttpProxy cannot carry credentials, so an authenticated
+      // mixed port must not be declared as the system HTTP proxy; traffic
+      // still flows through TUN.
+      systemProxy: vpnSetting.systemProxy && !networkSetting.authenticated,
       port: port,
       ipv6: vpnSetting.ipv6,
       dnsHijacking: vpnSetting.dnsHijacking,
       accessControlProps: vpnSetting.accessControlProps,
       allowBypass: vpnSetting.allowBypass,
-      bypassDomain: bypassDomain,
+      bypassDomain: networkSetting.bypassDomain,
+      routeAddress: clashConfig.routeAddress,
     ),
   );
 }

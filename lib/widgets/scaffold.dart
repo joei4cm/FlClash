@@ -1,5 +1,4 @@
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/widgets/pop_scope.dart';
 import 'package:material_ui/material_ui.dart';
@@ -355,8 +354,7 @@ class CommonScaffoldState extends State<CommonScaffold> {
                     for (final keyword in keywords)
                       CommonChip(
                         label: keyword,
-                        type: ChipType.delete,
-                        onPressed: () {
+                        onDeleted: () {
                           _deleteKeyword(keyword);
                         },
                       ),

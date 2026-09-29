@@ -84,8 +84,6 @@ func disarmProbe(err error) {
 	log.Errorln("[APP] fd pressure probe disabled after an unexpected error: %v", err)
 }
 
-// openFdCount reports how many descriptors the process actually holds, or -1
-// when that cannot be established.
 func openFdCount() int {
 	dir, err := os.Open("/proc/self/fd")
 	if err != nil {

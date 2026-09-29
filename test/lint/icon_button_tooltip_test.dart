@@ -26,7 +26,6 @@ Iterable<File> _dartFilesIn(String root) sync* {
   }
 }
 
-/// The source of the constructor's argument list, starting after its `(`.
 String _arguments(String source, int start) {
   var depth = 1;
   var index = start;

@@ -27,8 +27,8 @@ Desktop core mode:
   applies a three-minute default method timeout, unwraps `CoreMethodResponse`, and fails all pending calls when transport
   disconnects or closes.
 - `lib/core/desktop/lifecycle.dart` serializes process intents and owns the authoritative desktop state machine.
-- `lib/core/desktop/launcher.dart` abstracts direct child-process and Windows Helper ownership through idempotent process
-  leases. `lib/core/desktop/helper_client.dart` is the typed loopback HTTP client for the privileged Helper.
+- `lib/core/desktop/launcher.dart` abstracts direct child-process and privileged Helper ownership through idempotent process
+  leases. `lib/core/desktop/helper_client.dart` is the typed local HTTP client for the privileged Helper.
 
 `lib/core/controller.dart` (`CoreController`) selects the implementation based on platform. `lib/core/interface.dart` defines the shared `CoreHandlerInterface`.
 
@@ -46,13 +46,24 @@ Key Go core files:
 generated profile. With `allow-lan` off, mihomo's `genAddr` binds each listener to `127.0.0.1`; the external controller is
 `ExternalControllerStatus.close` by default and never binds anywhere but loopback.
 
-The loopback listener takes local connections without authentication on every platform, Android included. That is the
-design, not an oversight: the app reaches the network through its own mixed port, and credentials on that port would lock
-out both FlClash and every other local consumer, which is the reason a local proxy client exists. The boundary the binding
-does enforce is that traffic must originate on the device; it does not isolate programs already running there, so on
-Android any app holding `INTERNET` can use the proxy and learn the outbound IP. Reports treating that as a vulnerability
-(#1934) are answered by this paragraph. Do not add authentication, per-UID filtering, or a random local credential to this
-path without an explicit decision from the maintainer.
+The loopback listener takes local connections without authentication by default: mandatory credentials would lock out
+every external local consumer a proxy client exists for. The binding only guarantees traffic originates on the device;
+it does not isolate programs already running there, so on Android any app holding `INTERNET` can use the proxy and learn
+the outbound IP (#1934). The opt-in answer is the local authentication setting (`NetworkProps.localAuth`), which spans
+four paths that must stay in sync: `_makeRealProfileTask` writes the credentials into `authentication` and force-clears
+`skip-auth-prefixes` so a profile cannot silently exempt loopback; `UpdateParams.authentication` applies the same list
+to a running core; `FlClashHttpOverrides` sends the credentials with the app's own proxied requests; and `sharedState`
+withholds the Android VPN system proxy declaration because `ProxyInfo` cannot carry credentials (TUN still captures that
+traffic). Desktop system proxy is deliberately not gated — dropping it would leak traffic direct, so the setting's
+description tells users to supply credentials manually instead.
+
+### Interface Name Modes
+
+The same task also writes `interface-name` per `PatchClashConfig.interfaceNameMode`: `clear` (default) forces it empty so a
+subscription's value cannot survive into the generated profile, `follow` leaves whatever the profile YAML already has, and
+`custom` writes the user's `interfaceName`. mihomo ignores `interface-name` on Android whenever `dialer.DefaultSocketHook`
+is installed (`core/lib.go` `installHooks`, vendored `dialer.go`), so `NetworkListView` in `lib/views/config/network.dart`
+shows the mode picker and text field only on desktop.
 
 ## Lifecycle Ownership And Convergence
 
@@ -102,8 +113,8 @@ caller, and uses a three-second watchdog as an emergency application-exit path. 
 - An unexpected disconnect or transport failure while running is converted to `DesktopCoreFailure`, the owned process is
   cleaned up, and `CoreService` emits a Core crash event for the normal UI recovery path.
 
-Direct launch is used on macOS/Linux and as the Windows fallback when the privileged Helper is not ready. When the Helper
-is ready on Windows, the Helper owns the Core child and Dart owns it through a session-scoped lease.
+Direct launch is used on macOS, inside an AppImage, and as the Windows/Linux fallback when the privileged Helper is not
+ready. When the Helper is ready, it owns the Core child and Dart owns it through a session-scoped lease.
 
 ### Android Service Lifecycle
 
@@ -444,67 +455,68 @@ Shared:
 
 ## Build System
 
-`setup.dart` is the release build orchestrator:
+`setup.dart` is the release build orchestrator: it writes `env.json` (`APP_ENV`), activates `flutter_distributor` from
+the `chen08209/flutter_distributor` fork pinned to a `v<version>-flclash.<n>` tag (cut a new tag there and bump
+`--git-ref` when the fork changes), and leaves the Core artifacts to the build hook.
 
-1. Writes `env.json` (`APP_ENV`).
-2. Activates `flutter_distributor` for packaging.
-3. Relies on the platform build hook to build the required Core artifacts before
-   the native application is linked.
+The Go core and the Rust helper are built by a Dart build hook. `plugins/setup/hook/build.dart` only constructs
+`CoreBuilder`, a `package:hooks` `Builder` in `plugins/setup/setup_hooks/`, the same shape `rust_api` uses. Flutter
+runs it for every platform build and for `flutter test`, once per target architecture. `CoreBuilder` turns the hook
+input into a `BuildRequest` (repository root, `Target`, Android toolchain) and hands it to `buildPlatform`. It lives in
+`setup_hooks` so `dart test` there can cover it; a test run of `plugins/setup` itself would execute the hook. Failures
+reach the runner as `BuildError` (Go or Cargo failed, no Core for the architecture) or `InfraError` (a toolchain could
+not start, Flutter passed no NDK compiler, the package is not at `plugins/setup`).
 
-Go core building is handled by `build_tool`, a standalone Dart CLI in `plugins/setup/buildkit/build_tool/`.
+What the hook protocol forces:
 
-Platform build hooks inside `flutter build` trigger `build_tool` automatically:
+- Android derives the per-ABI clang wrapper from the C compiler and `targetNdkApi` (the app's `minSdk`) Flutter
+  passes; `hooks_runner` filters the environment, so `ANDROID_NDK` is not read.
+- `PATH` arrives unextended, so `runCommand` appends the Homebrew, Go and rustup locations that Xcode's and Gradle's
+  stripped `PATH` hides.
+- The hook does not know the build mode: the protocol carries none and `linkingEnabled` only says whether link hooks
+  run, so nothing in the hook branches on debug versus release. It cannot tell `flutter test` from a build either; the
+  `build_assets: false` user-define in the root `pubspec.yaml` is the one switch (see `.agents/commands.md`), and
+  `setup.dart` refuses to package while it is set.
+- The hook declares the files it read but the *directories* it wrote: `hooks_runner` hashes a file by content and a
+  directory by child names, so `libclash/macos/` catches a deleted artifact without MD5-ing a 55 MB Core on every
+  build. A rebuild touches those directories after the runner's cutoff, so the next build runs the hook once more and
+  setup's cache answers it; that extra run is expected.
+- The runner discards hook output on success, even under `-v`, so the hook mirrors it into
+  `.dart_tool/setup_build_cache/hook.log` (rotated at 512 KB), one `===` header per invocation.
 
-- macOS: podspec script phase, `build_pod.sh`, `build_tool macos`.
-- Linux: CMake include, `buildkit/cmake/buildkit.cmake`, `build_tool linux`.
-- Windows: CMake include, `buildkit/cmake/buildkit.cmake`, `build_tool windows`. CMake forwards the active configuration through `BUILDKIT_CONFIGURATION`.
-- Android: Gradle include, `buildkit/gradle/plugin.gradle`, `build_tool android`.
+Platform projects copy the artifacts out of `libclash/`; application code must not import `plugins/setup`:
 
-### Setup Build Harness Plugin
+- Android: the Go core is built `c-shared`, and `libclash.so` with its headers lands in the `:core` module (see Android
+  Native Task Ordering).
+- macOS: a standalone `FlClashCore`. `Release.xcconfig` pins release and profile `ARCHS` to the host because
+  flutter_tools otherwise builds a universal binary and every artifact ships one slice; the hook skips a non-host slice
+  for the same reason. The `Stage Core` phase copies the Core after the hook may have rewritten it and fails when it is
+  missing or lacks a slice for `ARCHS`, so a skipped hook cannot stage a stale Core silently.
+- Linux and Windows: `FlClashCore`, the Rust `FlClashHelperService`, and a `manifest.json` holding `coreSha256`; the
+  Core builds first because the Helper embeds its hash. The CMake `install` rules copy them, and the Windows bundle
+  places `manifest.json` beside the executable. A Helper running from a Debug build keeps its exe open and the install
+  fails behind an opaque `MSB3073`, so `windows/CMakeLists.txt` stops it from an `install(CODE)` step for the `Debug`
+  configuration only, and only when the staged Helper differs from the installed one; that step is where the
+  configuration is known, and a Release install never stops a registered service. The step matches the process by
+  executable path rather than image name, so a Helper registered from an installed release keeps running.
 
-`plugins/setup/` is a build-time Flutter plugin, not a runtime Dart or FFI API. Its plugin shape exists so Flutter's native
-build graphs can run the Go/Rust build harness before platform consumers need the generated artifacts. Application code
-must not import or call it.
+Setup keeps its own cache under `.dart_tool/setup_build_cache/v1/` because it builds a Go core and, on Windows and
+Linux, a Rust helper:
 
-Responsibilities are deliberately split:
-
-- CocoaPods, Gradle, and CMake hooks schedule a lightweight check on every native build. They do not decide which Go or
-  Rust files are stale.
-- `buildkit/build_tool/` owns target resolution, input fingerprinting, compilation, output copying, and cache validation.
-- `core/` and `services/helper/` remain source owners; `libclash/` and Android `jniLibs`/header directories are generated
-  output locations.
-- `setup.dart` remains the release/package orchestrator and does not pre-build
-  platform artifacts or use `dart-define` for Core integrity data. The Windows
-  build tool writes the runtime `manifest.json` beside the Core output, and the
-  Windows bundle copies it beside the application executable.
-
-Platform outputs remain explicit:
-
-- Android builds the Go core as `c-shared`, then copies `libclash.so` and generated headers into the `:core` Android module.
-- macOS and Linux build a standalone `FlClashCore` process used by the desktop socket integration.
-- Windows builds `FlClashCore.exe`, the Rust `FlClashHelperService.exe` privileged helper, and a
-  `manifest.json` containing only `coreSha256`.
-
-The hooks follow rust_api/Cargokit's phony-output scheduling pattern, but setup uses its own cache because it builds both a
-Go core and, on Windows, a separate Rust helper. Per-target records live under `.dart_tool/setup_build_cache/v1/`:
-
-- Go fingerprints cover the target-specific `go list -deps` inputs inside `core/` and `Clash.Meta`, module files, effective
-  build configuration, build-tool sources, target flags, Go environment/toolchain, and Android NDK compiler details.
-- Windows helper fingerprints cover its Rust sources and manifests, Cargo/Rust
-  toolchains and flags, and the expected Core SHA256.
-- A cache hit requires the fingerprint and every recorded output's path, size, and modification state to match. It exits
-  silently without Go/Cargo compilation, output copying, or Windows `taskkill`.
-- Cache records are written only after a successful build and protected by per-target process/file locks. Missing outputs,
-  changed inputs, cache-schema changes, or `--force` rebuild only the affected target.
-- `flutter clean` removes `.dart_tool`, so the next native build performs one full core rebuild. Manual builds can bypass
-  the cache with `make core-<platform> FORCE=1`.
-
-This differs from `rust_api`: rust_api is a runtime Flutter Rust Bridge integration whose Cargokit hooks produce its native
-FFI library, while setup is only the build and packaging bridge for FlClash's external core artifacts.
+- Go fingerprints cover the target-specific `go list -deps` inputs in `core/` and `Clash.Meta`, module files, the
+  effective build configuration, `setup_hooks` sources, target flags, the Go toolchain and the Android clang version.
+  Helper fingerprints cover its Rust sources and manifests, Cargo/Rust toolchains and flags, and the expected Core
+  SHA256.
+- A hit requires the fingerprint and every recorded output's path, size and modification state to match, and skips
+  compilation and copying.
+- Records are written only after a successful build, under per-target locks. Compilation happens in a staging
+  directory and moves into place on success, so a failed build never destroys the previous artifacts.
+- `flutter clean` removes `.dart_tool` and forces one full rebuild; deleting `.dart_tool/setup_build_cache/` does the
+  same without a clean.
 
 Windows helper integrity/version check:
 
-- The build tool constructs the Core first, calculates its SHA256, and always
+- `setup_hooks` constructs the Core first, calculates its SHA256, and always
   builds the Rust Helper with release hardening and that expected hash.
 - Flutter reads the Core SHA256 from the bundled `manifest.json` and sends it with `/ping`. Debug, Profile, and Release
   builds use the same Helper protocol and may use TUN through the same flow.
@@ -529,25 +541,65 @@ Windows helper integrity/version check:
 - `/stop` requires the same session ID. A missing process returns `notRunning`; a different owner returns
   `sessionMismatch` without terminating that process. Session IDs are ownership tokens for lifecycle safety, not a claim
   that the loopback HTTP endpoints are authenticated.
+- The Core must not outlive the Helper. On Linux the systemd unit's cgroup and `Restart=on-failure` cover that; on
+  Windows the Helper puts the Core in a Job Object with `KILL_ON_JOB_CLOSE`, so the kernel kills the Core when the Helper
+  process ends for any reason, and the `install` subcommand configures SCM failure actions (three restarts, 5 s apart,
+  reset after 24 h). Stopping a Core sends SIGTERM first on Linux, because only a shutdown removes the policy routes
+  sing-tun installed; the Core runs the same teardown itself when its IPC host disconnects or it receives a termination
+  signal. `HelperClient.stopTimeout` must stay above the Helper's graceful-plus-kill budget.
 - Never take `MANAGED_CORE` or `LOGS` with `lock().unwrap()`. The Helper is a long-lived service running as SYSTEM, so a
   single panic while a lock is held would poison it and turn every later request into another panic — the service stays
   dead until Windows restarts it. `lock_surviving_poison` recovers the guard through `PoisonError::into_inner` instead.
   `hub.rs` uses it at every lock site, tests included, and two tests in that file pin the behaviour.
 
-Build configuration defaults live in `build_tool/lib/src/options.dart` and can be overridden via a root `build_config.yaml`.
+Build configuration defaults live in `plugins/setup/setup_hooks/lib/src/options.dart` and can be overridden via the root
+`build_config.yaml`.
 
 Architecture detection is automatic. The `--description` flag passed to `flutter_distributor` adds arch suffixes to artifact names, such as `FlClash-0.8.93-macos-arm64.dmg`.
 
+#### Android Native Task Ordering
+
+`:core` consumes `libclash.so` and its headers as files the setup build hook writes into `android/core/src/main`, not
+as an asset the hook hands back, so nothing in Gradle's model links the two. AGP's configure fingerprint tracks only
+`CMakeLists.txt` and its own generated files, which makes a wrong ordering *sticky*: a configure that ran before the
+hook stays cached and every later build reuses it. `CMakeLists.txt` therefore links `clash` unconditionally, and
+`android/core/build.gradle.kts` fails before any native task runs when those files are absent — both push the failure
+out of the configure step, where it would be cached, and into a place that re-evaluates every build. Three details
+there are easy to get wrong:
+
+- `defaultConfig.ndk.abiFilters` is derived from the `target-platform` property Flutter passes to Gradle, mapped
+  through the same ABI table as `Target.forPlatform('android')` in `setup_hooks`; keep the two tables equal. The hook
+  builds a Core only for the platforms of the current build, so a `:core` ABI outside that set has no `libclash.so` to
+  link, and without any filter AGP would configure the NDK's full default ABI set.
+- Match task names by **prefix**. AGP puts the ABI in the names of the tasks that do the work
+  (`configureCMakeDebug[arm64-v8a]`). The bare `configureCMakeDebug`, `buildCMakeDebug`, and `externalNativeBuildDebug`
+  that an exact-name match catches are grouping tasks that never enter an app build's execution graph.
+- Use `mustRunAfter`, not `dependsOn`. `:core` declares only `debug` and `release` variants, so a **profile** app
+  consumes `:core`'s `debug` variant; no `:core` variant name maps onto the right `:app` task, and `dependsOn` would
+  drag a second, wrong-mode Flutter build into the graph.
+
+A standalone `./gradlew :core:assembleDebug` stays legal once the hook has run at least once; it only warns that the
+artifacts under `src/main` are whatever the last hook run left behind, which is the one failure mode this guard cannot
+detect. Verify a change here with `./gradlew ":core:buildCMakeDebug[arm64-v8a]" :app:compileFlutterBuildDebug
+--dry-run`: the Flutter task must be listed first even though the CMake task was requested first.
+
 ## Local Plugins
 
-- `setup`: build-time harness for Go core artifacts and the Windows Rust helper; no runtime Dart API.
+- `setup`: build-time harness for Go core artifacts and the Rust helper, driven by a Dart build hook; no runtime Dart API.
 - `proxy`: system proxy configuration.
-- `rust_api`: runtime Flutter Rust Bridge FFI plugin built through Cargokit. See below.
+- `rust_api`: runtime Flutter Rust Bridge FFI package built through Native Assets. See below.
 - `tray`: system tray for Linux, macOS and Windows. Written for FlClash; replaced the `tray_manager` fork.
 - `wifi_ssid`: Wi-Fi SSID detection.
 - `flutter_distributor`: app packaging/distribution.
 
 ## rust_api Crate Layout
+
+`plugins/rust_api` has no platform folders. `hook/build.dart` is a Dart build hook: Flutter runs it for every platform
+build and for `flutter test`, and `flutter_rust_bridge_hooks` (over `native_toolchain_rust`) compiles the crate with
+Cargo and registers `librust_api` as a code asset that Flutter bundles and signs. The build runs
+`rustup run <channel>`, so `rust/rust-toolchain.toml` must pin an exact channel and list every target the project ships;
+the hook refuses `stable` and a target missing from that list. `rustup show` installs the pinned toolchain and those
+targets on first use.
 
 `plugins/rust_api/rust/src/` separates the bridge boundary from the code behind it:
 
@@ -557,10 +609,14 @@ Architecture detection is automatic. The `--description` flag passed to `flutter
   bounded send queue), `platform` (socket cleanup, Windows peer credentials and the non-blocking pipe reader), and
   `server` (lifecycle, accept loop, and the `RUNNING`/`STATE` globals).
 - `script/` runs profile override scripts on QuickJS through `rquickjs`.
+- `hotkey/` registers desktop global shortcuts through `global-hotkey`: `keys` maps Flutter USB HID usages to key
+  codes, `owner` runs every registration on the thread the platform binds it to (a dedicated message-loop thread on
+  Windows, the main dispatch queue on macOS, in place on Linux), and `service` owns the registry and forwards presses
+  to Dart. Linux is X11 only; a Wayland session without XWayland gets an error rather than a silent no-op.
 
-What a platform does not use, it does not compile. `interprocess` is declared under
-`cfg(not(target_os = "android"))`, and `ipc/mod.rs` swaps in `ipc/unsupported.rs` there, because Android loads the Core
-in-process and never opens a socket. Adding a capability follows the same shape: implement it in its own module, gate the
+What a platform does not use, it does not compile. `interprocess` and `global-hotkey` are declared under
+`cfg(not(target_os = "android"))`, and `ipc/mod.rs` and `hotkey/mod.rs` swap in their `unsupported.rs` there, because
+Android loads the Core in-process and has no global shortcuts. Adding a capability follows the same shape: implement it in its own module, gate the
 dependency by target, and keep the `api/` entry point unconditional so one set of bindings still serves every platform.
 
 `RustLib.init()` runs on every platform now, not only desktop — the script engine is shared.
@@ -573,9 +629,9 @@ returns the JSON the script produced. Nothing about the script runs in Dart.
 - QuickJS is compiled from source for the target being built, which is what removed the prebuilt `quickjs-c-bridge`
   binaries: `flutter_js` shipped x64 Windows and desktop-only libraries, so Windows ARM64 could not start (#2361).
 - `rquickjs` carries pre-generated bindings for every target this project builds except the Android ones, so Android
-  builds enable its `bindgen` feature. That needs the NDK's own libclang and sysroot;
-  `cargokit/build_tool/lib/src/android_environment.dart` exports `LIBCLANG_PATH` and `BINDGEN_EXTRA_CLANG_ARGS` for it,
-  which is a local change to vendored Cargokit.
+  builds enable its `bindgen` feature. That needs the NDK's own libclang and sysroot: `native_toolchain_rust` exports
+  the sysroot through `BINDGEN_EXTRA_CLANG_ARGS_<target>`, and `hook/build.dart` adds `LIBCLANG_PATH` from the NDK
+  toolchain Flutter hands the hook, because bindgen otherwise loads whatever libclang the host has, or none.
 - Evaluation is bounded: a 10-second interrupt deadline and a memory ceiling, because a script that never returns would
   otherwise hold the profile forever. `console` is installed before the script runs, since scripts written for other
   clients log as they work.
@@ -586,14 +642,9 @@ returns the JSON the script produced. Nothing about the script runs in Dart.
 
 ## Rust Helper Service
 
-`services/helper/` is a Windows-only privileged helper for starting the core as admin and managing TUN. It is built with:
-
-```bash
-make core-windows
-```
-
-The build tool always compiles the Helper in Rust release mode after calculating
-the SHA256 of the Core produced for the active Flutter configuration.
+`services/helper/` is the privileged helper that starts the core elevated so TUN works. It ships on Windows and Linux
+and is built by the setup build hook alongside the Core, which always compiles the Helper in Rust release mode
+after calculating the SHA256 of the Core produced for the active Flutter configuration.
 
 The helper owns its Windows Service Control Manager lifecycle through two elevated commands:
 
@@ -604,6 +655,38 @@ The helper owns its Windows Service Control Manager lifecycle through two elevat
 
 The Dart layer only launches the helper's `install` command through `ShellExecuteW`; it does not compose `sc.exe`,
 `taskkill`, or `cmd.exe` command lines.
+
+Linux takes the same shape with systemd in place of the Service Control Manager, and the same install timing: nothing
+is registered at package install, and `Linux.registerService` asks for elevation only when TUN authorization needs it.
+
+- `FlClashHelperService install`, run through `pkexec` so polkit raises the system prompt, writes
+  `/etc/systemd/system/flclash-helper.service` for the current executable path and enables and restarts it. It reads
+  `PKEXEC_UID`/`SUDO_UID` to learn who asked, and refuses to install without one — there would be no account to grant
+  the socket to. It also refuses a Helper whose binary or directory is not root-owned and non-writable (a unit runs it
+  as root at every boot, so an unpacked bundle would be a standing escalation), and refuses to replace a unit already
+  installed for a different UID rather than restart the service out from under that account.
+- That ownership check is why the `flutter_distributor` fork normalizes the packaging tree to 0755/0644 before
+  `dpkg-deb`, `rpmbuild` and `appimagetool` run: they record modes verbatim, and Ubuntu's per-user default umask
+  of 002 would otherwise ship `/opt/FlClash` as 0775, which the installer rejects as group-writable.
+- The rpm spec sets `debug_package` and `__os_install_post` to nil for the same reason: rpmbuild's find-debuginfo and
+  brp-strip rewrite `FlClashCore`, and a Core whose SHA256 no longer matches the Helper's embedded value is refused at
+  `/start`, which silently degrades every launch to the direct Core.
+- `FlClashHelperService uninstall` disables the unit, removes it and reloads systemd.
+- The unit carries `Group=` (the owner's primary GID), `RuntimeDirectory=flclash`, the owner's UID/GID in
+  `FLCLASH_HELPER_OWNER_UID`/`_GID`, a double-quoted `ExecStart=` with `%` escaped, and `Restart=on-failure` under a
+  start limit so a broken unit ends up failed instead of restarting forever. The helper serves
+  `/run/flclash/helper.sock` at mode `0660`, additionally drops any connection whose `SO_PEERCRED` UID is not the
+  owner's, logs and retries an `accept` failure instead of letting hyper end the server, and handles SIGTERM so
+  `systemctl stop` still runs its own Core teardown.
+- `/start` additionally requires the Core address to be a socket owned by the owner UID before spawning, since the
+  Core connects to it as root.
+- The Core is spawned with the owner's real UID and an effective UID of 0, which is what a setuid Core would have had.
+  It is the signal `core/ownership_unix.go` uses to hand the files it created back to the user; without it a root
+  service would leave a root-owned config tree in the owner's home.
+- An AppImage has neither a stable executable path nor a writable Core, and its FUSE mount is `nosuid`, so
+  `system.isAppImage` reports TUN authorization as unavailable instead of prompting for a password that cannot help.
+- A Linux host without systemd (`/run/systemd/system` absent) has no Helper: `system.hasHelperService` is false there,
+  readiness is the `stat` check, and `pkexec` sets the setuid bit on the bundled Core as before.
 
 In every Flutter build mode `/start` opens the fixed Core executable beside the Helper without write/delete sharing,
 validates it against the SHA256 embedded only in the Helper, and keeps that handle open through process creation.
@@ -618,6 +701,9 @@ it never hashes the Core. Protocol version 6 uses 32-character lowercase-hex ses
 - `POST /stop` validates `{sessionId}` and only stops the matching managed Core. A session mismatch is HTTP 409.
 - `GET /logs` exposes the bounded recent Helper/Core stderr buffer with `no-store` caching.
 
-All endpoints bind only to `127.0.0.1:47890` and do not use request-token authentication. Lifecycle safety comes from the
-fixed executable/hash, strict pipe namespace, session-scoped stop contract, and Dart-side peer-PID verification. When the
-Helper service itself shuts down, it unconditionally stops the Core process it owns.
+Endpoints bind only to `127.0.0.1:47890` on Windows and to `/run/flclash/helper.sock` on Linux, and do not use
+request-token authentication. Lifecycle safety comes from the fixed executable/hash, the strict address namespace
+(`\\.\pipe\FlClashCore_<32 hex>` on Windows, `/tmp/FlClashSocket_<digits>.sock` on Linux), the session-scoped stop
+contract, Dart-side peer-PID verification on Windows and, on Unix, the Core socket that `plugins/rust_api` sets to
+mode `0600` so only the owning user (and the root-effective Core) can connect. When the Helper service itself shuts
+down, it unconditionally stops the Core process it owns; under systemd the unit's control group does the same.

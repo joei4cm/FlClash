@@ -1,5 +1,6 @@
 library;
 
+import 'package:collection/collection.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
@@ -14,6 +15,8 @@ final ruleItemHeight =
     12;
 
 class RuleItem extends StatelessWidget {
+  static const _targetMaxWidthFactor = 0.5;
+
   final bool isSelected;
   final bool isEditing;
   final Rule rule;
@@ -93,25 +96,47 @@ class RuleItem extends StatelessWidget {
         onSelected();
       },
       title: Center(
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(child: _RuleItemLabel(rule: rule)),
-            Row(
-              mainAxisSize: MainAxisSize.min,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (invalid) _buildInfoWidget(context),
-                if (rule.realTarget != null)
-                  Text(
-                    rule.realTarget!,
-                    style: context.textTheme.bodyMedium?.toJetBrainsMono
-                        .copyWith(color: checkResult.color),
+                Expanded(child: _RuleItemLabel(rule: rule)),
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: constraints.maxWidth * _targetMaxWidthFactor,
                   ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (invalid) _buildInfoWidget(context),
+                      if (rule.realTarget != null)
+                        Flexible(
+                          child: TooltipText(
+                            text: Text(
+                              hasMatch &&
+                                      rule.realTarget!.toUpperCase() ==
+                                          RuleAction.MATCH.value
+                                  ? context.appLocalizations.matchTarget
+                                  : rule.realTarget!,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: context
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.toJetBrainsMono
+                                  .copyWith(color: checkResult.color),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
               ],
-            ),
-          ],
+            );
+          },
         ),
       ),
       onPressed: () {
@@ -200,6 +225,7 @@ class AddOrEditRuleDialog extends StatefulWidget {
 
 class _AddOrEditRuleDialogState extends State<AddOrEditRuleDialog> {
   late RuleAction _ruleAction;
+  String _ruleTarget = '';
   final _ruleTargetController = TextEditingController();
   final _contentController = TextEditingController();
   bool _noResolve = false;
@@ -207,10 +233,16 @@ class _AddOrEditRuleDialogState extends State<AddOrEditRuleDialog> {
   List<DropdownMenuEntry> _targetItems = [];
   final _formKey = GlobalKey<FormState>();
 
+  bool _initialized = false;
+
   @override
-  void initState() {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initialized) {
+      return;
+    }
+    _initialized = true;
     _initState();
-    super.initState();
   }
 
   void _initState() {
@@ -218,21 +250,31 @@ class _AddOrEditRuleDialogState extends State<AddOrEditRuleDialog> {
       ...RuleTarget.values.map(
         (item) => DropdownMenuEntry(value: item.name, label: item.name),
       ),
-      const DropdownMenuEntry(value: 'MATCH', label: 'MATCH'),
+      DropdownMenuEntry(
+        value: RuleAction.MATCH.value,
+        label: context.appLocalizations.matchTarget,
+      ),
     ];
     final rule = widget.rule;
     if (rule != null) {
       _ruleAction = rule.ruleAction;
       _contentController.text = rule.content ?? '';
-      _ruleTargetController.text = rule.ruleTarget ?? '';
+      _selectTarget(rule.ruleTarget ?? '');
       _noResolve = rule.noResolve;
       _src = rule.src;
       return;
     }
     _ruleAction = RuleAction.addedRuleActions.first;
     if (_targetItems.isNotEmpty) {
-      _ruleTargetController.text = _targetItems.first.value;
+      _selectTarget(_targetItems.first.value);
     }
+  }
+
+  void _selectTarget(String value) {
+    _ruleTarget = value;
+    _ruleTargetController.text =
+        _targetItems.firstWhereOrNull((item) => item.value == value)?.label ??
+        value;
   }
 
   @override
@@ -259,7 +301,7 @@ class _AddOrEditRuleDialogState extends State<AddOrEditRuleDialog> {
       id: widget.rule?.id ?? snowflake.id,
       ruleAction: _ruleAction,
       content: _contentController.text,
-      ruleTarget: _ruleTargetController.text,
+      ruleTarget: _ruleTarget,
       noResolve: _noResolve,
       src: _src,
     );
@@ -321,6 +363,11 @@ class _AddOrEditRuleDialogState extends State<AddOrEditRuleDialog> {
                   _RuleTargetField(
                     controller: _ruleTargetController,
                     entries: _targetItems,
+                    onSelected: (value) {
+                      if (value != null) {
+                        _selectTarget(value);
+                      }
+                    },
                   ),
                   if (_ruleAction.hasParams) ...[
                     const SizedBox(height: 20),
@@ -390,10 +437,15 @@ class _RuleContentField extends StatelessWidget {
 }
 
 class _RuleTargetField extends StatelessWidget {
-  const _RuleTargetField({required this.controller, required this.entries});
+  const _RuleTargetField({
+    required this.controller,
+    required this.entries,
+    required this.onSelected,
+  });
 
   final TextEditingController controller;
   final List<DropdownMenuEntry> entries;
+  final ValueChanged<String?> onSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -414,6 +466,7 @@ class _RuleTargetField extends StatelessWidget {
           enableFilter: false,
           enableSearch: false,
           dropdownMenuEntries: entries,
+          onSelected: (value) => onSelected(value as String?),
           errorText: filed.errorText,
         );
       },

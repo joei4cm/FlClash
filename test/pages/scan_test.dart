@@ -9,7 +9,6 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../helpers/test_app.dart';
 
-/// A platform that never touches a camera: barcodes are pushed by the test.
 class _FakeScannerPlatform extends MobileScannerPlatform {
   final StreamController<BarcodeCapture?> _barcodes =
       StreamController<BarcodeCapture?>.broadcast();

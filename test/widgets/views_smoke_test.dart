@@ -104,7 +104,7 @@ void main() {
 
   final toolDestinations = <String, Type>{
     'Theme': ThemeView,
-    'Backup and Restore': BackupAndRestore,
+    'Backup and restore': BackupAndRestore,
     'Basic configuration': ConfigView,
     'Advanced configuration': AdvancedConfigView,
     'Application': ApplicationSettingView,
@@ -216,23 +216,23 @@ void main() {
     await tester.tap(find.text('Port').first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Show more'));
+    await tester.tap(find.byTooltip('Expand'));
     await tester.pumpAndSettle();
 
-    await tester.enterText(_portField('Socks Port'), '');
+    await tester.enterText(_portField('SOCKS port'), '');
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Show less'));
+    await tester.tap(find.byTooltip('Collapse'));
     await tester.pumpAndSettle();
-    expect(_portField('Socks Port'), findsNothing);
+    expect(_portField('SOCKS port'), findsNothing);
 
     await tester.tap(find.text('Submit'));
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), null);
     expect(container.read(patchClashConfigProvider), before);
-    expect(_portField('Socks Port'), findsOneWidget);
-    expect(find.text('Socks Port cannot be empty'), findsOneWidget);
+    expect(_portField('SOCKS port'), findsOneWidget);
+    expect(find.text('SOCKS port cannot be empty'), findsOneWidget);
   });
 
   testWidgets('DNS mode options update the patch configuration', (
@@ -292,7 +292,7 @@ void main() {
       ),
     );
     await tester.pump();
-    await tester.tap(find.text('Override Dns'));
+    await tester.tap(find.text('Override DNS'));
     await tester.pump();
     await tester.tap(find.text('Status'));
     await tester.pump();

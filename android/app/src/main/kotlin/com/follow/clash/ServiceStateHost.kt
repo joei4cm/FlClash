@@ -12,8 +12,6 @@ import io.flutter.embedding.engine.FlutterEngine
 import kotlinx.coroutines.CoroutineScope
 
 /**
- * Everything [ServiceStateMachine] needs from the Android runtime.
- *
  * The machine owns the arbitration and the transitions; this is only the part that cannot run on a
  * plain JVM, so unit tests can drive the state machine with an in-memory implementation.
  */
@@ -48,14 +46,12 @@ internal interface ServiceStateHost {
     suspend fun isVpnServiceActive(): Boolean
 }
 
-/** The Quick Settings tile surface, backed by [TilePlugin] in production. */
 internal interface TileGateway {
     fun handleStart()
 
     fun handleStop()
 }
 
-/** The foreground-app surface, backed by [AppPlugin] in production. */
 internal interface AppGateway {
     fun requestNotificationPermission(callback: (Boolean) -> Unit)
 

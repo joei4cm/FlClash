@@ -382,6 +382,74 @@ void main() {
     );
   });
 
+  test('shared state hands the VPN service the resolved route list', () async {
+    await AppLocalizations.load(const Locale('en'));
+    container.listen(sharedStateProvider, (_, _) {});
+    container
+        .read(patchClashConfigProvider.notifier)
+        .update(
+          (state) => state.copyWith(
+            tun: state.tun.copyWith(routeAddress: const ['10.0.0.0/8']),
+          ),
+        );
+    container
+        .read(networkSettingProvider.notifier)
+        .update((state) => state.copyWith(routeMode: RouteMode.config));
+    expect(container.read(sharedStateProvider).vpnOptions?.routeAddress, [
+      '10.0.0.0/8',
+    ]);
+
+    container
+        .read(networkSettingProvider.notifier)
+        .update((state) => state.copyWith(routeMode: RouteMode.bypassPrivate));
+    expect(
+      container.read(sharedStateProvider).vpnOptions?.routeAddress,
+      defaultBypassPrivateRouteAddress,
+    );
+  });
+
+  // VpnService.setHttpProxy cannot carry credentials.
+  test('local authentication withholds the VPN system proxy', () async {
+    await AppLocalizations.load(const Locale('en'));
+    container.listen(sharedStateProvider, (_, _) {});
+    expect(container.read(sharedStateProvider).vpnOptions?.systemProxy, true);
+
+    container
+        .read(networkSettingProvider.notifier)
+        .update(
+          (state) => state.copyWith(
+            authentication: const AuthenticationProps(
+              enable: true,
+              username: 'user',
+              password: 'pass',
+            ),
+          ),
+        );
+    expect(container.read(sharedStateProvider).vpnOptions?.systemProxy, false);
+    expect(container.read(updateParamsProvider).authentication, ['user:pass']);
+
+    container
+        .read(networkSettingProvider.notifier)
+        .update(
+          (state) => state.copyWith(
+            authentication: const AuthenticationProps(enable: false),
+          ),
+        );
+    expect(container.read(sharedStateProvider).vpnOptions?.systemProxy, true);
+    expect(container.read(updateParamsProvider).authentication, isEmpty);
+  });
+
+  test('shared state carries the notification stop action switch', () async {
+    await AppLocalizations.load(const Locale('en'));
+    container.listen(sharedStateProvider, (_, _) {});
+    expect(container.read(sharedStateProvider).showStopAction, true);
+
+    container
+        .read(appSettingProvider.notifier)
+        .update((state) => state.copyWith(showNotificationStopAction: false));
+    expect(container.read(sharedStateProvider).showStopAction, false);
+  });
+
   test('shared state follows the locale whose messages are loaded', () async {
     container.listen(sharedStateProvider, (_, _) {});
     await AppLocalizations.load(const Locale('en'));

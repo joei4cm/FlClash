@@ -106,29 +106,11 @@ Future<T?> showExtend<T>(
   };
 }
 
-Future<T?> showAdaptivePage<T>(
-  BuildContext context, {
-  required String title,
-  required WidgetBuilder bodyBuilder,
-  ExtendProps props = const ExtendProps(),
-}) {
-  return showExtend<T>(
-    context,
-    props: props,
-    builder: (context) {
-      final body = bodyBuilder(context);
-      return context.isMobileView
-          ? CommonScaffold(title: title, body: body)
-          : AdaptiveSheetScaffold(body: body, title: title);
-    },
-  );
-}
-
 class AdaptiveSheetScaffold extends StatefulWidget {
   final Widget body;
   final String title;
   final bool sheetTransparentToolBar;
-  final bool centerTitle;
+  final bool? centerTitle;
   final List<IconButtonData> actions;
   final VoidCallback? backAction;
 
@@ -137,7 +119,7 @@ class AdaptiveSheetScaffold extends StatefulWidget {
     required this.body,
     required this.title,
     this.sheetTransparentToolBar = false,
-    this.centerTitle = true,
+    this.centerTitle,
     this.actions = const [],
     this.backAction,
   });
@@ -147,8 +129,6 @@ class AdaptiveSheetScaffold extends StatefulWidget {
 }
 
 class _AdaptiveSheetScaffoldState extends State<AdaptiveSheetScaffold> {
-  final _isScrolledController = ValueNotifier<bool>(false);
-
   IconData get backIconData {
     if (kIsWeb) {
       return Icons.arrow_back;
@@ -173,67 +153,75 @@ class _AdaptiveSheetScaffoldState extends State<AdaptiveSheetScaffold> {
     }
   }
 
-  @override
-  void dispose() {
-    _isScrolledController.dispose();
-    super.dispose();
+  Widget _buildIconButton(IconButtonData data, {required bool filled}) {
+    return _SheetIconButton(data: data, filled: filled);
+  }
+
+  IconButtonData _popButtonData(
+    BuildContext context, {
+    required bool useCloseIcon,
+  }) {
+    if (useCloseIcon) {
+      return IconButtonData(
+        icon: Icons.close,
+        onPressed: context.safeNestedPop,
+        tooltip: context.appLocalizations.close,
+      );
+    }
+    return IconButtonData(
+      icon: backIconData,
+      onPressed: widget.backAction ?? () => Navigator.of(context).pop(),
+      tooltip: context.appLocalizations.back,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final sheetProvider = SheetProvider.of(context);
-    final nestedNavigatorPop = sheetProvider?.nestedNavigatorPop;
-    final ModalRoute<dynamic>? route = ModalRoute.of(context);
     final type = sheetProvider?.type ?? SheetType.page;
-    final backgroundColor = type == SheetType.bottomSheet
-        ? context.colorScheme.surfaceContainerLow
-        : context.colorScheme.surface;
-    final useCloseIcon =
-        type != SheetType.page &&
-        (nestedNavigatorPop != null && route?.impliesAppBarDismissal == false ||
-            nestedNavigatorPop == null);
     final isBottomSheet = type == SheetType.bottomSheet;
-    Widget buildIconButton(IconButtonData data) {
-      return _SheetIconButton(data: data, filled: isBottomSheet);
+    final centerTitle = widget.centerTitle ?? isBottomSheet;
+
+    if (type == SheetType.page) {
+      return CommonScaffold(
+        title: widget.title,
+        centerTitle: centerTitle,
+        actions: [
+          for (final data in widget.actions)
+            _buildIconButton(data, filled: false),
+        ],
+        body: widget.body,
+      );
     }
 
-    final actions = widget.actions.map(buildIconButton).toList();
-
-    final popButton = type != SheetType.page
-        ? (useCloseIcon
-              ? buildIconButton(
-                  IconButtonData(
-                    icon: Icons.close,
-                    onPressed: context.safeNestedPop,
-                    tooltip: context.appLocalizations.close,
-                  ),
-                )
-              : buildIconButton(
-                  IconButtonData(
-                    icon: backIconData,
-                    onPressed:
-                        widget.backAction ??
-                        () {
-                          Navigator.of(context).pop();
-                        },
-                    tooltip: context.appLocalizations.back,
-                  ),
-                ))
-        : null;
-
-    final suffixPop = type != SheetType.page && actions.isEmpty && useCloseIcon;
+    final nestedNavigatorPop = sheetProvider?.nestedNavigatorPop;
+    final route = ModalRoute.of(context);
+    final useCloseIcon =
+        nestedNavigatorPop == null || route?.impliesAppBarDismissal == false;
+    final actions = [
+      for (final data in widget.actions)
+        _buildIconButton(data, filled: isBottomSheet),
+    ];
+    final popButton = _buildIconButton(
+      _popButtonData(context, useCloseIcon: useCloseIcon),
+      filled: isBottomSheet,
+    );
+    final popAsSuffix = useCloseIcon && actions.isEmpty;
+    final backgroundColor = isBottomSheet
+        ? context.colorScheme.surfaceContainerLow
+        : context.colorScheme.surface;
     final appBar = AppBar(
       backgroundColor: backgroundColor,
-      forceMaterialTransparency: type == SheetType.bottomSheet ? true : false,
-      leading: suffixPop || popButton == null ? null : Center(child: popButton),
-      automaticallyImplyLeading: type == SheetType.page ? true : false,
-      centerTitle: widget.centerTitle,
-      toolbarHeight: type == SheetType.bottomSheet ? 48 : null,
+      forceMaterialTransparency: isBottomSheet,
+      automaticallyImplyLeading: false,
+      leading: popAsSuffix ? null : Center(child: popButton),
+      centerTitle: centerTitle,
+      toolbarHeight: isBottomSheet ? 48 : null,
       title: Text(widget.title),
-      titleTextStyle: type == SheetType.bottomSheet
+      titleTextStyle: isBottomSheet
           ? context.textTheme.titleLarge?.adjustSize(-4)
           : null,
-      actions: !suffixPop ? genActions(actions) : genActions([?popButton]),
+      actions: genActions(popAsSuffix ? [popButton] : actions),
     );
     if (!isBottomSheet) {
       return CommonScaffold(appBar: appBar, body: widget.body);
@@ -246,11 +234,15 @@ class _AdaptiveSheetScaffoldState extends State<AdaptiveSheetScaffold> {
         children: [
           if (!widget.sheetTransparentToolBar) ...[
             sheetAppBar,
-            Flexible(child: widget.body),
+            Flexible(
+              child: ScrollConfiguration(
+                behavior: const ShowBarScrollBehavior(),
+                child: widget.body,
+              ),
+            ),
           ] else
             Flexible(
               child: _TransparentToolBarBody(
-                isScrolledController: _isScrolledController,
                 backgroundColor: backgroundColor,
                 toolBar: sheetAppBar,
                 body: widget.body,
@@ -331,13 +323,11 @@ class _SheetToolBar extends StatelessWidget {
 
 class _TransparentToolBarBody extends StatelessWidget {
   const _TransparentToolBarBody({
-    required this.isScrolledController,
     required this.backgroundColor,
     required this.toolBar,
     required this.body,
   });
 
-  final ValueNotifier<bool> isScrolledController;
   final Color backgroundColor;
   final Widget toolBar;
   final Widget body;
@@ -346,37 +336,31 @@ class _TransparentToolBarBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        NotificationListener<ScrollNotification>(
-          onNotification: (notification) {
-            if (notification is ScrollUpdateNotification) {
-              isScrolledController.value = notification.metrics.pixels > 6;
-            }
-            return false;
-          },
+        ScrollConfiguration(
+          behavior: const ShowBarScrollBehavior(
+            scrollbarPadding: EdgeInsets.only(top: sheetAppBarHeight),
+          ),
           child: body,
         ),
         Positioned(
           top: 0,
           left: 0,
           right: 0,
-          child: ValueListenableBuilder(
-            valueListenable: isScrolledController,
-            builder: (_, isScrolled, child) {
-              if (!isScrolled) {
-                return ColoredBox(color: backgroundColor, child: child!);
-              }
-              return ClipRSuperellipse(
-                borderRadius: AppRadius.top(AppCorner.xxl),
-                child: BackdropFilter(
-                  filter: commonFilter,
-                  child: ColoredBox(
-                    color: backgroundColor.opacity60,
-                    child: child!,
-                  ),
-                ),
-              );
-            },
-            child: toolBar,
+          height: sheetAppBarHeight,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: const [0, 0.5, 1],
+                colors: [
+                  backgroundColor.opacity60,
+                  backgroundColor.opacity60,
+                  backgroundColor.opacity0,
+                ],
+              ),
+            ),
+            child: Align(alignment: Alignment.topCenter, child: toolBar),
           ),
         ),
       ],

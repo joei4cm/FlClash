@@ -189,15 +189,15 @@ class _GeoResourceListItemState extends ConsumerState<_GeoResourceListItem> {
     return file.getFileInfo();
   }
 
-  Future<void> _handleUpdateGeoDataItem() async {
-    await globalState.safeRun<void>(() async {
+  Future<void> _handleUpdateGeoDataItem() {
+    return globalState.safeRun<void>(() async {
       await ref
           .read(geoResourceActionProvider.notifier)
           .updateGeoResource(widget.type);
     }, silence: false);
-    if (!mounted) {
-      return;
-    }
+  }
+
+  void _refreshFileInfo() {
     setState(() {
       _fileInfoFuture = _getGeoFileInfo(fileName);
     });
@@ -223,7 +223,13 @@ class _GeoResourceListItemState extends ConsumerState<_GeoResourceListItem> {
 
   @override
   Widget build(BuildContext context) {
-    final isUpdating = ref.watch(isUpdatingProvider(widget.type.updatingKey));
+    final updatingKey = widget.type.updatingKey;
+    ref.listen(isUpdatingProvider(updatingKey), (previous, next) {
+      if (previous == true && !next) {
+        _refreshFileInfo();
+      }
+    });
+    final isUpdating = ref.watch(isUpdatingProvider(updatingKey));
     final url = ref.watch(
       patchClashConfigProvider.select((state) => state.geoXUrl[widget.type]),
     );
@@ -238,21 +244,17 @@ class _GeoResourceListItemState extends ConsumerState<_GeoResourceListItem> {
           subtitle: fileInfo == null
               ? null
               : Padding(
-                  padding: const EdgeInsets.only(top: 4, bottom: 4),
+                  padding: const EdgeInsets.only(top: 4, bottom: 2),
                   child: Row(
                     spacing: 4,
                     children: [
-                      ListItemMetaChip(
-                        label: fileInfo.size.traffic.show,
-                        tone: ListItemMetaChipTone.primary,
-                      ),
-                      ListItemMetaChip(
+                      MetaChip(label: fileInfo.size.traffic.show),
+                      MetaChip(
                         label:
                             fileInfo.lastModified?.getLastUpdateTimeDesc(
                               context,
                             ) ??
                             context.appLocalizations.unknown,
-                        tone: ListItemMetaChipTone.tertiary,
                       ),
                     ],
                   ),

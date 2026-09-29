@@ -43,6 +43,7 @@ app.*.map.json
 
 # Claude Code - ignore user-specific settings only
 .claude/settings.local.json
+.claude/worktrees/
 
 # Documentation (generated/planning artifacts)
 docs/

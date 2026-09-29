@@ -59,6 +59,21 @@ class BroadcastLeaseTest {
     }
 
     @Test
+    fun `the lease is still released when the reason throws`() {
+        var releases = 0
+        val lease = BroadcastLease { releases++ }
+
+        try {
+            lease.release { throw RuntimeException("boom") }
+        } catch (_: RuntimeException) {
+            // expected: propagated after the lease is released
+        }
+
+        assertEquals(1, releases)
+        assertTrue(lease.isReleased)
+    }
+
+    @Test
     fun `only one of many concurrent releases wins`() {
         val threads = 16
         val releases = AtomicInteger(0)

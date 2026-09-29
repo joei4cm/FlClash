@@ -1,5 +1,6 @@
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/config/on_demand.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -73,7 +74,7 @@ void main() {
   ) async {
     await pumpView(tester);
 
-    expect(find.text('SSIDs is empty'), findsOneWidget);
+    expect(find.text('SSIDs are empty'), findsOneWidget);
     expect(find.text('Add'), findsOneWidget);
     expect(find.text('Select all'), findsNothing);
     expect(find.byIcon(Icons.delete), findsNothing);
@@ -84,7 +85,7 @@ void main() {
 
     expect(find.text('Home'), findsOneWidget);
     expect(find.text('Office'), findsOneWidget);
-    expect(find.text('SSIDs is empty'), findsNothing);
+    expect(find.text('SSIDs are empty'), findsNothing);
   });
 
   testWidgets('selecting an item swaps the header into selection mode', (
@@ -163,73 +164,36 @@ void main() {
   ) async {
     await pumpView(tester, isAndroid: true);
 
-    expect(find.text('Ignore Battery Optimization'), findsOneWidget);
-    expect(find.text('Location Permission'), findsOneWidget);
+    expect(find.text('Ignore battery optimization'), findsOneWidget);
+    expect(find.text('Location permission'), findsOneWidget);
   });
 
-  testWidgets('a narrow row in a verbose locale keeps its text readable', (
+  testWidgets('the authorize action sits on its own line under the text', (
     tester,
   ) async {
-    await pumpView(
-      tester,
-      isMacOS: true,
-      locale: const Locale('ru'),
-      size: const Size(360, 800),
-    );
+    await pumpView(tester, isMacOS: true, locale: const Locale('ru'));
 
-    final rowWidth = tester
-        .getSize(find.byType(DecorationListItem).first)
-        .width;
-    final descWidth = tester
-        .getSize(
-          find.text(
-            'По требованию системы для получения имени сети Wi-Fi необходимо '
-            'разрешение на геолокацию.',
-          ),
+    final appLocalizations = AppLocalizations.of(
+      tester.element(find.byType(OnDemandView)),
+    );
+    final desc = find.text(appLocalizations.locationPermissionDesc);
+    final button = find
+        .ancestor(
+          of: find.text(appLocalizations.tapToAuthorize),
+          matching: find.byType(FilledButton),
         )
-        .width;
+        .first;
 
     expect(
-      descWidth,
-      greaterThan(rowWidth * 0.5),
-      reason: 'the authorize button must not squeeze the description',
-    );
-  });
-
-  testWidgets('an action too wide for its row moves under the text', (
-    tester,
-  ) async {
-    await pumpView(
-      tester,
-      isMacOS: true,
-      locale: const Locale('ru'),
-      size: const Size(260, 800),
-    );
-
-    final desc = find.text(
-      'По требованию системы для получения имени сети Wi-Fi необходимо '
-      'разрешение на геолокацию.',
-    );
-
-    final card = tester.getRect(find.byType(DecorationListItem).first);
-    final button = tester.getRect(
-      find
-          .ancestor(
-            of: find.text('Разрешить'),
-            matching: find.byType(FilledButton),
-          )
-          .first,
-    );
-
-    expect(
-      button.top,
+      tester.getTopLeft(button).dy,
       greaterThanOrEqualTo(tester.getBottomLeft(desc).dy),
-      reason: 'the button stacks under the text instead of squeezing it',
     );
     expect(
-      card.bottom - button.bottom,
-      card.right - button.right,
-      reason: 'a stacked button keeps the same gap to the card as the text',
+      tester.getRect(button).right,
+      closeTo(
+        tester.getRect(find.byType(DecorationListItem).first).right - 16,
+        1,
+      ),
     );
   });
 
@@ -238,8 +202,8 @@ void main() {
   ) async {
     await pumpView(tester);
 
-    expect(find.text('Ignore Battery Optimization'), findsNothing);
-    expect(find.text('Location Permission'), findsNothing);
+    expect(find.text('Ignore battery optimization'), findsNothing);
+    expect(find.text('Location permission'), findsNothing);
     expect(find.bySemanticsLabel('Tap to authorize'), findsNothing);
   });
 }

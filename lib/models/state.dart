@@ -7,9 +7,9 @@ import 'app.dart';
 import 'clash_config.dart';
 import 'common.dart';
 import 'config.dart';
-import 'tailscale.dart';
 import 'core.dart';
 import 'profile.dart';
+import 'tailscale.dart';
 
 part 'generated/state.freezed.dart';
 part 'generated/state.g.dart';
@@ -319,6 +319,7 @@ abstract class SharedState with _$SharedState {
     required String currentProfileName,
     required String stopText,
     required bool onlyStatisticsProxy,
+    @Default(true) bool showStopAction,
     required bool crashlytics,
   }) = _SharedState;
 
@@ -354,6 +355,8 @@ abstract class MakeRealProfileState with _$MakeRealProfileState {
     required List<Rule> rules,
     required List<Rule> addedRules,
     required String defaultUA,
+    @Default([]) List<String> authentication,
+    String? matchTarget,
     @Default([]) List<TailscaleProxy> tailscaleProxies,
     @Default([]) List<String> tailscaleRules,
     @Default([]) List<String> tailscaleFakeIpFilters,
@@ -386,5 +389,6 @@ abstract class SetupState with _$SetupState {
     required Script? script,
     required bool overrideDns,
     required Dns dns,
+    String? matchTarget,
   }) = _SetupState;
 }

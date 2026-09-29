@@ -31,6 +31,15 @@ class TestProfiles extends Profiles {
     state = List.of(profiles);
   }
 
+  @override
+  void updateProfile(int profileId, Profile Function(Profile profile) builder) {
+    final index = state.indexWhere((item) => item.id == profileId);
+    if (index == -1) return;
+    final next = List<Profile>.from(state);
+    next[index] = builder(state[index]);
+    state = next;
+  }
+
   void replace(List<Profile> profiles) {
     state = profiles;
   }

@@ -2,7 +2,12 @@
 
 set -euo pipefail
 
-max_density="${COMMENT_DENSITY_MAX:-10}"
+# Git exports these to its hooks, and they outrank the `-C <dir>` the probes
+# below rely on: every file then resolves its own directory as the repository,
+# so a main checkout skips the file and a linked worktree measures all of it.
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE
+
+max_density="${COMMENT_DENSITY_MAX:-5}"
 min_lines="${COMMENT_DENSITY_MIN_LINES:-20}"
 
 is_checkable() {
@@ -12,7 +17,7 @@ is_checkable() {
     *) return 1 ;;
   esac
   case "$file" in
-    */build/* | */generated/* | */l10n/intl/* | */Clash.Meta/* | */.dart_tool/*) return 1 ;;
+    */build/* | */generated/* | */l10n/intl/* | */l10n/l10n.dart | */Clash.Meta/* | */.dart_tool/*) return 1 ;;
     *.g.dart | *.freezed.dart | */frb_generated*.dart | */frb_generated.rs | */open_container.dart) return 1 ;;
   esac
   return 0

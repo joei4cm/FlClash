@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/core.dart';
 import 'package:fl_clash/enum/enum.dart';
@@ -44,10 +46,21 @@ class _AndroidContainerState extends ConsumerState<AndroidManager>
       }
     });
     service?.addListener(this);
+    app?.onPackagesChanged = _reloadPackages;
+  }
+
+  void _reloadPackages() {
+    if (ref.read(packagesProvider).isEmpty) {
+      return;
+    }
+    unawaited(ref.read(systemActionProvider.notifier).getPackages());
   }
 
   @override
   void dispose() {
+    if (app?.onPackagesChanged == _reloadPackages) {
+      app?.onPackagesChanged = null;
+    }
     service?.removeListener(this);
     super.dispose();
   }

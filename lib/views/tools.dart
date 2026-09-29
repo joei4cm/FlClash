@@ -9,14 +9,13 @@ import 'package:fl_clash/views/access.dart';
 import 'package:fl_clash/views/application_setting.dart';
 import 'package:fl_clash/views/backup_and_restore.dart';
 import 'package:fl_clash/views/config/config.dart';
-import 'package:fl_clash/views/hotkey.dart';
-import 'package:fl_clash/views/tailscale.dart';
 import 'package:fl_clash/views/geo_identity.dart';
+import 'package:fl_clash/views/hotkey.dart';
 import 'package:fl_clash/views/strategy_lanes.dart';
+import 'package:fl_clash/views/tailscale.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:path/path.dart' show dirname, join;
 
 import 'config/advanced.dart';
@@ -32,12 +31,11 @@ class ToolsView extends ConsumerStatefulWidget {
 
 class _ToolViewState extends ConsumerState<ToolsView> {
   Widget _buildNavigationMenuItem(NavigationItem navigationItem) {
+    final description = navigationItem.label.description;
     return ListItem.open(
       leading: navigationItem.icon,
-      title: Text(Intl.message(navigationItem.label.name)),
-      subtitle: navigationItem.description != null
-          ? Text(Intl.message(navigationItem.description!))
-          : null,
+      title: Text(navigationItem.label.label),
+      subtitle: description != null ? Text(description) : null,
       widget: navigationItem.builder(context),
       maxWidth: 400,
       forceFull: false,
@@ -139,7 +137,7 @@ class _LocaleItem extends ConsumerWidget {
 
   String _getLocaleString(BuildContext context, Locale? locale) {
     if (locale == null) return context.appLocalizations.defaultText;
-    return Intl.message(locale.toString());
+    return locale.label;
   }
 
   @override
@@ -147,12 +145,11 @@ class _LocaleItem extends ConsumerWidget {
     final locale = ref.watch(
       appSettingProvider.select((state) => state.locale),
     );
-    final subTitle = locale ?? context.appLocalizations.defaultText;
     final currentLocale = getLocaleForString(locale);
     return ListItem<Locale?>.options(
       leading: const Icon(Icons.language_outlined),
       title: Text(context.appLocalizations.language),
-      subtitle: Text(Intl.message(subTitle)),
+      subtitle: Text(_getLocaleString(context, currentLocale)),
       dialogTitle: context.appLocalizations.language,
       options: [null, ...AppLocalizations.delegate.supportedLocales],
       onChanged: (Locale? locale) {

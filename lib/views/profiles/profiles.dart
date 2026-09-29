@@ -34,10 +34,12 @@ class _ProfilesViewState extends ConsumerState<ProfilesView> {
 
   void _handleShowAddExtendPage() {
     final context = globalState.navigatorKey.currentState!.context;
-    showAdaptivePage(
+    showExtend(
       context,
-      title: context.appLocalizations.addProfile,
-      bodyBuilder: (context) => AddProfileView(context: context),
+      builder: (context) => AdaptiveSheetScaffold(
+        title: context.appLocalizations.addProfile,
+        body: AddProfileView(context: context),
+      ),
     );
   }
 
@@ -117,16 +119,18 @@ class _ProfilesViewState extends ConsumerState<ProfilesView> {
           title: appLocalizations.profiles,
           floatingActionButton: _buildFAB(),
           actions: _buildActions(state.profiles),
-          body: state.profiles.isEmpty
-              ? NullStatus(
-                  label: appLocalizations.nullProfileDesc,
-                  illustration: const ProfileEmptyIllustration(),
-                )
-              : _ProfilesGrid(
-                  profiles: state.profiles,
-                  currentProfileId: state.currentProfileId,
-                  spacing: spacing,
-                ),
+          body: NullStatusSwitcher(
+            isEmpty: state.profiles.isEmpty,
+            nullStatus: NullStatus(
+              label: appLocalizations.nullProfileDesc,
+              illustration: NullStatusIllustration.profile,
+            ),
+            child: _ProfilesGrid(
+              profiles: state.profiles,
+              currentProfileId: state.currentProfileId,
+              spacing: spacing,
+            ),
+          ),
         );
       },
     );
@@ -254,11 +258,12 @@ class ProfileItem extends ConsumerWidget {
   }
 
   void _handleShowEditExtendPage(BuildContext context) {
-    showAdaptivePage(
+    showExtend(
       context,
-      title: context.appLocalizations.edit,
-      bodyBuilder: (context) =>
-          EditProfileView(profile: profile, context: context),
+      builder: (context) => AdaptiveSheetScaffold(
+        title: context.appLocalizations.edit,
+        body: EditProfileView(profile: profile, context: context),
+      ),
     );
   }
 
@@ -339,14 +344,6 @@ class ProfileItem extends ConsumerWidget {
           _handlePreview(context);
         },
       ),
-      if (hasSubscriptionInfo)
-        CommonPopupMenuItem(
-          icon: Icons.data_usage,
-          label: appLocalizations.subscriptionInfo,
-          onPressed: () {
-            _handleShowSubscriptionInfo(context);
-          },
-        ),
       if (isUrl)
         CommonPopupMenuItem(
           icon: Icons.sync_alt_sharp,
@@ -366,6 +363,14 @@ class ProfileItem extends ConsumerWidget {
               _handlePushGenProfilePage(context, profile.id);
             },
           ),
+          if (hasSubscriptionInfo)
+            CommonPopupMenuItem(
+              icon: Icons.data_usage,
+              label: appLocalizations.subscriptionInfo,
+              onPressed: () {
+                _handleShowSubscriptionInfo(context);
+              },
+            ),
           if (isUrl)
             CommonPopupMenuItem(
               icon: Icons.copy,
@@ -537,12 +542,12 @@ class _ReorderableProfilesSheetState
     return ItemPositionProvider(
       key: Key(profile.id.toString()),
       position: position,
-      child: DecorationListItem(
-        trailing: ReorderableDelayedDragStartListener(
-          index: index,
-          child: const Icon(Icons.drag_handle),
+      child: ReorderableDelayedDragStartListener(
+        index: index,
+        child: DecorationListItem(
+          trailing: const Icon(Icons.drag_handle),
+          title: Text(profile.realLabel),
         ),
-        title: Text(profile.realLabel),
       ),
     );
   }

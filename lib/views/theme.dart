@@ -7,7 +7,6 @@ import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:material_color_utilities/hct/hct.dart';
 
 class ThemeModeItem {
@@ -244,7 +243,7 @@ class _PrimaryColorItemState extends ConsumerState<_PrimaryColorItem> {
       child: OptionsDialog<DynamicSchemeVariant>(
         title: context.appLocalizations.colorSchemes,
         options: DynamicSchemeVariant.values,
-        textBuilder: (item) => Intl.message('${item.name}Scheme'),
+        textBuilder: (item) => item.label,
         value: schemeVariant,
       ),
     );
@@ -303,7 +302,7 @@ class _PrimaryColorItemState extends ConsumerState<_PrimaryColorItem> {
                   visualDensity: VisualDensity.compact,
                 ),
                 onPressed: _handleChangeSchemeVariant,
-                child: Text(Intl.message('${schemeVariant.name}Scheme')),
+                child: Text(schemeVariant.label),
               ),
             if (_removablePrimaryColor != null)
               FilledButton(

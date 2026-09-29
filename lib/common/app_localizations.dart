@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:fl_clash/core/desktop/launch_policy.dart';
 import 'package:fl_clash/core/method.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 
@@ -22,8 +23,23 @@ String? networkErrorMessage(Object error, AppLocalizations appLocalizations) {
   return null;
 }
 
+String? coreLaunchBlockedMessage(
+  Object error,
+  AppLocalizations appLocalizations,
+) {
+  if (!isPolicyBlockedLaunch(error)) {
+    return null;
+  }
+  return switch (smartAppControlStateReader()) {
+    SmartAppControlState.on || SmartAppControlState.evaluation =>
+      appLocalizations.coreBlockedBySmartAppControlTip,
+    _ => appLocalizations.coreBlockedByPolicyTip(launchOsError(error)!),
+  };
+}
+
 String userFacingErrorMessage(Object error, AppLocalizations appLocalizations) {
   return networkErrorMessage(error, appLocalizations) ??
+      coreLaunchBlockedMessage(error, appLocalizations) ??
       switch (error) {
         CoreMethodException(:final message) => message,
         _ => error.toString(),

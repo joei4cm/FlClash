@@ -299,7 +299,6 @@ void main() {
   });
 }
 
-/// The JSON between the comment markers `renderRelease` appends.
 String _payloadOf(String body) {
   final start =
       body.indexOf(releaseJsonBeginMarker) + releaseJsonBeginMarker.length;

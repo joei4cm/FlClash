@@ -29,8 +29,6 @@ class _FakePathProvider extends PathProviderPlatform {
   Future<String?> getApplicationCachePath() async => root;
 }
 
-/// Covers the backup, restore and legacy-migration half of `common/task.dart`.
-///
 /// The public entry points hand their work to a background isolate, which
 /// cannot reach the mocked platform channels, so the tests drive the worker
 /// functions the isolate calls. Those take every path as an argument, so each
@@ -428,7 +426,6 @@ void main() {
       databasePath = join(home.path, 'database.sqlite');
     });
 
-    /// Seeds a real database file with one row per table the restore reads.
     Future<void> seedDatabase() async {
       final database = db.Database(NativeDatabase(File(databasePath)));
       await database.profilesDao.putAll([

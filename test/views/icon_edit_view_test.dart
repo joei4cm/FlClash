@@ -26,7 +26,6 @@ ProviderContainer _containerFor(WidgetTester tester) {
   return container;
 }
 
-// Holds the route result, which only arrives after the view pops.
 class _PopResult {
   String? value;
 }

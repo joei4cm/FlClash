@@ -94,7 +94,6 @@ class _ProvidersViewState extends ConsumerState<ProvidersView> {
         .where((item) => item.type == 'Rule')
         .toList();
     return AdaptiveSheetScaffold(
-      centerTitle: false,
       actions: [
         IconButtonData(
           icon: Icons.sync,
@@ -190,20 +189,13 @@ class ProviderItem extends ConsumerWidget {
     };
     final chips = [
       if (provider.updateAt.microsecondsSinceEpoch > 0)
-        ListItemMetaChip(
-          label: provider.updateAt.getLastUpdateTimeDesc(context),
-          tone: ListItemMetaChipTone.tertiary,
-        ),
-      if (provider.count > 0 && countLabel != null)
-        ListItemMetaChip(
-          label: countLabel,
-          tone: ListItemMetaChipTone.secondary,
-        ),
+        MetaChip(label: provider.updateAt.getLastUpdateTimeDesc(context)),
+      if (provider.count > 0 && countLabel != null) MetaChip(label: countLabel),
     ];
     return chips.isEmpty
         ? null
         : Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.only(top: 4, bottom: 2),
             child: Row(spacing: 4, children: chips),
           );
   }

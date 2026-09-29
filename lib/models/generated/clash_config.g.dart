@@ -326,6 +326,7 @@ const _$RuleActionEnumMap = {
   RuleAction.DOMAIN_SUFFIX: 'DOMAIN_SUFFIX',
   RuleAction.DOMAIN_KEYWORD: 'DOMAIN_KEYWORD',
   RuleAction.DOMAIN_REGEX: 'DOMAIN_REGEX',
+  RuleAction.DOMAIN_WILDCARD: 'DOMAIN_WILDCARD',
   RuleAction.GEOSITE: 'GEOSITE',
   RuleAction.IP_CIDR: 'IP_CIDR',
   RuleAction.IP_CIDR6: 'IP_CIDR6',
@@ -342,10 +343,13 @@ const _$RuleActionEnumMap = {
   RuleAction.IN_TYPE: 'IN_TYPE',
   RuleAction.IN_USER: 'IN_USER',
   RuleAction.IN_NAME: 'IN_NAME',
+  RuleAction.REMATCH_NAME: 'REMATCH_NAME',
   RuleAction.PROCESS_PATH: 'PROCESS_PATH',
   RuleAction.PROCESS_PATH_REGEX: 'PROCESS_PATH_REGEX',
+  RuleAction.PROCESS_PATH_WILDCARD: 'PROCESS_PATH_WILDCARD',
   RuleAction.PROCESS_NAME: 'PROCESS_NAME',
   RuleAction.PROCESS_NAME_REGEX: 'PROCESS_NAME_REGEX',
+  RuleAction.PROCESS_NAME_WILDCARD: 'PROCESS_NAME_WILDCARD',
   RuleAction.UID: 'UID',
   RuleAction.NETWORK: 'NETWORK',
   RuleAction.DSCP: 'DSCP',
@@ -416,6 +420,14 @@ _PatchClashConfig _$PatchClashConfigFromJson(Map<String, dynamic> json) =>
             unknownValue: FindProcessMode.off,
           ) ??
           FindProcessMode.off,
+      interfaceNameMode:
+          $enumDecodeNullable(
+            _$InterfaceNameModeEnumMap,
+            json['interface-name-mode'],
+            unknownValue: InterfaceNameMode.clear,
+          ) ??
+          InterfaceNameMode.clear,
+      interfaceName: json['interface-name'] as String? ?? '',
       keepAliveInterval:
           (json['keep-alive-interval'] as num?)?.toInt() ??
           defaultKeepAliveInterval,
@@ -461,6 +473,9 @@ Map<String, dynamic> _$PatchClashConfigToJson(_PatchClashConfig instance) =>
       'log-level': _$LogLevelEnumMap[instance.logLevel]!,
       'ipv6': instance.ipv6,
       'find-process-mode': _$FindProcessModeEnumMap[instance.findProcessMode]!,
+      'interface-name-mode':
+          _$InterfaceNameModeEnumMap[instance.interfaceNameMode]!,
+      'interface-name': instance.interfaceName,
       'keep-alive-interval': instance.keepAliveInterval,
       'unified-delay': instance.unifiedDelay,
       'tcp-concurrent': instance.tcpConcurrent,
@@ -493,6 +508,12 @@ const _$LogLevelEnumMap = {
 const _$FindProcessModeEnumMap = {
   FindProcessMode.always: 'always',
   FindProcessMode.off: 'off',
+};
+
+const _$InterfaceNameModeEnumMap = {
+  InterfaceNameMode.clear: 'clear',
+  InterfaceNameMode.follow: 'follow',
+  InterfaceNameMode.custom: 'custom',
 };
 
 const _$GeodataLoaderEnumMap = {

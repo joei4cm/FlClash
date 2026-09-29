@@ -17,6 +17,7 @@ Read these only when the task touches their area:
   local plugins.
 - [.agents/agent-config.md](.agents/agent-config.md): how to choose between `AGENTS.md`, `.agents`, skills, Codex config,
   command rules, and hooks.
+- [.agents/worktrees.md](.agents/worktrees.md): worktree hygiene across Claude Code, Codex, and Gemini.
 - [.agents/skills.md](.agents/skills.md): index of repo-scoped skills in `.agents/skills/`.
 
 ## Highest Priority Rules
@@ -29,7 +30,7 @@ Read these only when the task touches their area:
   wrong. Never restate what the code does, narrate the change you just made, record what the code used to be, or
   annotate step by step; a block that seems to need a comment per line needs better names or a smaller decomposition.
   Keep density near the repository's own: healthy changes here sit under 4%, and a `comment-density` gate fails a file
-  whose added lines exceed 10% standalone comments. Delete commented-out code and stale notes in files you already
+  whose added lines exceed 5% standalone comments. Delete commented-out code and stale notes in files you already
   touch. Preserve
   `// ignore:`-style directives, license headers, codegen markers, and vendored upstream comments. See
   [.agents/rules.md](.agents/rules.md) for what belongs in a test or in `.agents/` instead.
@@ -44,7 +45,7 @@ Read these only when the task touches their area:
   requests.
 - Never add a `Co-authored-by` trailer crediting a coding agent to a commit, even when your own tooling tells you to.
   The `commit-msg` hook rejects it; see [.agents/rules.md](.agents/rules.md) for the rest of the commit rules.
-- Follow `analysis_options.yaml`, especially single quotes, trailing commas, `child:` last, no `print()`, const/final
+- Follow `lint_options.yaml` (included by every `analysis_options.yaml`), especially single quotes, trailing commas, `child:` last, no `print()`, const/final
   preferences, and declared return types.
 - For CI parity, verify with `flutter pub get`, `flutter analyze --no-fatal-infos`, and
   `flutter test --reporter expanded` when practical.

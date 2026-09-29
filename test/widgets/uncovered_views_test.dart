@@ -1,8 +1,8 @@
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/features/overwrite/overwrite.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
-import 'package:fl_clash/providers/app.dart';
-import 'package:fl_clash/providers/config.dart';
-import 'package:fl_clash/providers/database.dart';
+import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/about.dart';
 import 'package:fl_clash/views/config/scripts.dart';
@@ -285,6 +285,65 @@ void main() {
         await tester.pump();
       }
     }
+    expect(tester.takeException(), null);
+  });
+
+  testWidgets('standard overwrite picks a MATCH-TARGET from the profile', (
+    tester,
+  ) async {
+    final profile = Profile.normal();
+    final container = _containerFor(
+      tester,
+      profiles: [profile],
+      overrides: [
+        currentProfileIdProvider.overrideWithBuild((_, _) => profile.id),
+        profileAddedRulesProvider.overrideWith2(
+          (_) => _TestProfileAddedRules(const []),
+        ),
+        globalRulesProvider.overrideWith(() => _TestGlobalRules(const [])),
+        profileDisabledRuleIdsProvider.overrideWith2(
+          (_) => _TestProfileDisabledRuleIds(const []),
+        ),
+        clashConfigProvider(profile.id).overrideWithValue(
+          const AsyncData(
+            ClashConfig(
+              proxies: [Proxy(name: 'HK', type: 'ss')],
+              proxyGroups: [
+                ProxyGroup(id: 1, name: 'Proxy', type: GroupType.Selector),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: TestApp(
+          child: ProfileIdProvider(
+            profileId: profile.id,
+            child: const Scaffold(
+              body: CustomScrollView(slivers: [StandardContent()]),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    final l10n = AppLocalizations.current;
+    expect(find.text(l10n.followProfile), findsOneWidget);
+
+    await tester.tap(find.text(l10n.matchTarget));
+    await tester.pumpAndSettle();
+    expect(find.byType(OverwriteSelectionSheet<String>), findsOneWidget);
+    expect(find.text('Proxy'), findsOneWidget);
+
+    await tester.tap(find.text('HK'));
+    await tester.pumpAndSettle();
+    expect(find.byType(OverwriteSelectionSheet<String>), findsNothing);
+    expect(container.read(profilesProvider).first.matchTarget, 'HK');
+    expect(find.text('HK'), findsOneWidget);
     expect(tester.takeException(), null);
   });
 }

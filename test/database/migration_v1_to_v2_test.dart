@@ -12,6 +12,7 @@ import 'package:sqlite3/sqlite3.dart';
 /// real database back to v1 and reopening it is the only way to run the real
 /// `onUpgrade` against a real SQLite file.
 void _downgradeToV1(Database raw) {
+  _downgradeToV2(raw);
   raw.execute('DROP TABLE IF EXISTS proxy_groups');
   raw.execute('DROP TABLE IF EXISTS icon_records');
   raw.execute('DROP INDEX IF EXISTS idx_rule_target');
@@ -23,6 +24,12 @@ void _downgradeToV1(Database raw) {
     )
   ''');
   raw.execute('PRAGMA user_version = 1');
+}
+
+/// Schema version 2 had no `match_target` on `profiles`.
+void _downgradeToV2(Database raw) {
+  raw.execute('ALTER TABLE profiles DROP COLUMN match_target');
+  raw.execute('PRAGMA user_version = 2');
 }
 
 Set<String> _columnsOf(Database raw, String table) => {
@@ -63,14 +70,37 @@ void main() {
     return database;
   }
 
-  test('a v1 database is left at schema version 2', () async {
+  test('a v1 database is left at the current schema version', () async {
     _downgradeToV1(raw);
     expect(_userVersion(raw), 1);
 
     await openAndMigrate();
 
-    expect(_userVersion(raw), 2);
+    expect(_userVersion(raw), 3);
   });
+
+  test('the v3 upgrade adds match_target to profiles', () async {
+    _downgradeToV2(raw);
+    expect(_columnsOf(raw, 'profiles'), isNot(contains('match_target')));
+
+    await openAndMigrate();
+
+    expect(_columnsOf(raw, 'profiles'), contains('match_target'));
+    expect(_userVersion(raw), 3);
+  });
+
+  test(
+    'a v2 user_version with match_target already present still opens',
+    () async {
+      raw.execute('PRAGMA user_version = 2');
+      expect(_columnsOf(raw, 'profiles'), contains('match_target'));
+
+      await openAndMigrate();
+
+      expect(_columnsOf(raw, 'profiles'), contains('match_target'));
+      expect(_userVersion(raw), 3);
+    },
+  );
 
   test('the upgrade creates the tables v2 added', () async {
     _downgradeToV1(raw);
@@ -143,7 +173,7 @@ void main() {
 
     final database = await openAndMigrate();
 
-    expect(_userVersion(raw), 2);
+    expect(_userVersion(raw), 3);
     expect(await database.customSelect('SELECT * FROM rules').get(), isEmpty);
   });
 
@@ -153,7 +183,7 @@ void main() {
     await openAndMigrate();
 
     expect(_columnsOf(raw, 'rules'), before);
-    expect(_userVersion(raw), 2);
+    expect(_userVersion(raw), 3);
     expect(_hasTable(raw, 'proxy_groups'), isTrue);
   });
 }

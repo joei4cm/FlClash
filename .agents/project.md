@@ -126,13 +126,12 @@ accessor — only that one function has to change.
 Linux:
 
 ```bash
-sudo apt-get install libayatana-appindicator3-dev libkeybinder-3.0-dev
+sudo apt-get install libayatana-appindicator3-dev
 ```
 
 Windows:
 
 - GCC and Inno Setup.
-- `ANDROID_NDK` env var for Android builds.
 
 macOS:
 

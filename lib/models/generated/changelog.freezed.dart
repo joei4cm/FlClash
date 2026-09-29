@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of '../changelog.dart';
@@ -9,6 +9,7 @@ part of '../changelog.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $ChangelogEntryCopyWith<ChangelogEntry> get copyWith => _$ChangelogEntryCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChangelogEntry&&(identical(other.id, id) || other.id == id)&&(identical(other.scope, scope) || other.scope == scope)&&(identical(other.text, text) || other.text == text));
+  final _this = this as ChangelogEntry;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChangelogEntry&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.scope, _this.scope) || other.scope == _this.scope)&&(identical(other.text, _this.text) || other.text == _this.text));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,scope,text);
+int get hashCode {
+  final _this = this as ChangelogEntry;
+  return Object.hash(runtimeType,_this.id,_this.scope,_this.text);
+}
 
 @override
 String toString() {
-  return 'ChangelogEntry(id: $id, scope: $scope, text: $text)';
+  final _this = this as ChangelogEntry;
+  return 'ChangelogEntry(id: ${_this.id}, scope: ${_this.scope}, text: ${_this.text})';
 }
 
 
@@ -66,7 +72,7 @@ class _$ChangelogEntryCopyWithImpl<$Res>
 /// Create a copy of ChangelogEntry
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? scope = freezed,Object? text = null,}) {
-  return _then(_self.copyWith(
+  return _then(ChangelogEntry(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,scope: freezed == scope ? _self.scope : scope // ignore: cast_nullable_to_non_nullable
 as String?,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
@@ -231,16 +237,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangelogEntry&&(identical(other.id, id) || other.id == id)&&(identical(other.scope, scope) || other.scope == scope)&&(identical(other.text, text) || other.text == text));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangelogEntry&&(identical(other.id, id) || other.id == id)&&(identical(other.scope, scope) || other.scope == scope)&&(identical(other.text, text) || other.text == text));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,scope,text);
+int get hashCode {
+    return Object.hash(runtimeType,id,scope,text);
+}
 
 @override
 String toString() {
-  return 'ChangelogEntry(id: $id, scope: $scope, text: $text)';
+    return 'ChangelogEntry(id: $id, scope: $scope, text: $text)';
 }
 
 
@@ -297,16 +305,21 @@ $ChangelogGroupCopyWith<ChangelogGroup> get copyWith => _$ChangelogGroupCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChangelogGroup&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.entries, entries));
+  final _this = this as ChangelogGroup;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChangelogGroup&&(identical(other.type, _this.type) || other.type == _this.type)&&const DeepCollectionEquality().equals(other.entries, _this.entries));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,type,const DeepCollectionEquality().hash(entries));
+int get hashCode {
+  final _this = this as ChangelogGroup;
+  return Object.hash(runtimeType,_this.type,const DeepCollectionEquality().hash(_this.entries));
+}
 
 @override
 String toString() {
-  return 'ChangelogGroup(type: $type, entries: $entries)';
+  final _this = this as ChangelogGroup;
+  return 'ChangelogGroup(type: ${_this.type}, entries: ${_this.entries})';
 }
 
 
@@ -335,7 +348,7 @@ class _$ChangelogGroupCopyWithImpl<$Res>
 /// Create a copy of ChangelogGroup
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? type = null,Object? entries = null,}) {
-  return _then(_self.copyWith(
+  return _then(ChangelogGroup(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as ChangelogType,entries: null == entries ? _self.entries : entries // ignore: cast_nullable_to_non_nullable
 as List<ChangelogEntry>,
@@ -479,7 +492,7 @@ return $default(_that.type,_that.entries);case _:
 @JsonSerializable()
 
 class _ChangelogGroup implements ChangelogGroup {
-  const _ChangelogGroup({@JsonKey(unknownEnumValue: ChangelogType.unknown) this.type = ChangelogType.unknown, final  List<ChangelogEntry> entries = const []}): _entries = entries;
+  const _ChangelogGroup({@JsonKey(unknownEnumValue: ChangelogType.unknown) this.type = ChangelogType.unknown,  List<ChangelogEntry> entries = const []}): _entries = entries;
   factory _ChangelogGroup.fromJson(Map<String, dynamic> json) => _$ChangelogGroupFromJson(json);
 
 @override@JsonKey(unknownEnumValue: ChangelogType.unknown) final  ChangelogType type;
@@ -504,16 +517,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangelogGroup&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._entries, _entries));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangelogGroup&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.entries, _entries));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,type,const DeepCollectionEquality().hash(_entries));
+int get hashCode {
+    return Object.hash(runtimeType,type,const DeepCollectionEquality().hash(_entries));
+}
 
 @override
 String toString() {
-  return 'ChangelogGroup(type: $type, entries: $entries)';
+    return 'ChangelogGroup(type: $type, entries: $entries)';
 }
 
 
@@ -569,16 +584,21 @@ $ChangelogVersionCopyWith<ChangelogVersion> get copyWith => _$ChangelogVersionCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChangelogVersion&&(identical(other.version, version) || other.version == version)&&(identical(other.tag, tag) || other.tag == tag)&&(identical(other.date, date) || other.date == date)&&(identical(other.prerelease, prerelease) || other.prerelease == prerelease)&&const DeepCollectionEquality().equals(other.groups, groups));
+  final _this = this as ChangelogVersion;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChangelogVersion&&(identical(other.version, _this.version) || other.version == _this.version)&&(identical(other.tag, _this.tag) || other.tag == _this.tag)&&(identical(other.date, _this.date) || other.date == _this.date)&&(identical(other.prerelease, _this.prerelease) || other.prerelease == _this.prerelease)&&const DeepCollectionEquality().equals(other.groups, _this.groups));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,version,tag,date,prerelease,const DeepCollectionEquality().hash(groups));
+int get hashCode {
+  final _this = this as ChangelogVersion;
+  return Object.hash(runtimeType,_this.version,_this.tag,_this.date,_this.prerelease,const DeepCollectionEquality().hash(_this.groups));
+}
 
 @override
 String toString() {
-  return 'ChangelogVersion(version: $version, tag: $tag, date: $date, prerelease: $prerelease, groups: $groups)';
+  final _this = this as ChangelogVersion;
+  return 'ChangelogVersion(version: ${_this.version}, tag: ${_this.tag}, date: ${_this.date}, prerelease: ${_this.prerelease}, groups: ${_this.groups})';
 }
 
 
@@ -607,7 +627,7 @@ class _$ChangelogVersionCopyWithImpl<$Res>
 /// Create a copy of ChangelogVersion
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? version = null,Object? tag = null,Object? date = null,Object? prerelease = null,Object? groups = null,}) {
-  return _then(_self.copyWith(
+  return _then(ChangelogVersion(
 version: null == version ? _self.version : version // ignore: cast_nullable_to_non_nullable
 as String,tag: null == tag ? _self.tag : tag // ignore: cast_nullable_to_non_nullable
 as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
@@ -754,7 +774,7 @@ return $default(_that.version,_that.tag,_that.date,_that.prerelease,_that.groups
 @JsonSerializable()
 
 class _ChangelogVersion implements ChangelogVersion {
-  const _ChangelogVersion({required this.version, required this.tag, this.date = '', this.prerelease = false, final  List<ChangelogGroup> groups = const []}): _groups = groups;
+  const _ChangelogVersion({required this.version, required this.tag, this.date = '', this.prerelease = false,  List<ChangelogGroup> groups = const []}): _groups = groups;
   factory _ChangelogVersion.fromJson(Map<String, dynamic> json) => _$ChangelogVersionFromJson(json);
 
 @override final  String version;
@@ -782,16 +802,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangelogVersion&&(identical(other.version, version) || other.version == version)&&(identical(other.tag, tag) || other.tag == tag)&&(identical(other.date, date) || other.date == date)&&(identical(other.prerelease, prerelease) || other.prerelease == prerelease)&&const DeepCollectionEquality().equals(other._groups, _groups));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangelogVersion&&(identical(other.version, version) || other.version == version)&&(identical(other.tag, tag) || other.tag == tag)&&(identical(other.date, date) || other.date == date)&&(identical(other.prerelease, prerelease) || other.prerelease == prerelease)&&const DeepCollectionEquality().equals(other.groups, _groups));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,version,tag,date,prerelease,const DeepCollectionEquality().hash(_groups));
+int get hashCode {
+    return Object.hash(runtimeType,version,tag,date,prerelease,const DeepCollectionEquality().hash(_groups));
+}
 
 @override
 String toString() {
-  return 'ChangelogVersion(version: $version, tag: $tag, date: $date, prerelease: $prerelease, groups: $groups)';
+    return 'ChangelogVersion(version: $version, tag: $tag, date: $date, prerelease: $prerelease, groups: $groups)';
 }
 
 
@@ -850,16 +872,21 @@ $ChangelogCopyWith<Changelog> get copyWith => _$ChangelogCopyWithImpl<Changelog>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Changelog&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&const DeepCollectionEquality().equals(other.versions, versions));
+  final _this = this as Changelog;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Changelog&&(identical(other.schemaVersion, _this.schemaVersion) || other.schemaVersion == _this.schemaVersion)&&const DeepCollectionEquality().equals(other.versions, _this.versions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,schemaVersion,const DeepCollectionEquality().hash(versions));
+int get hashCode {
+  final _this = this as Changelog;
+  return Object.hash(runtimeType,_this.schemaVersion,const DeepCollectionEquality().hash(_this.versions));
+}
 
 @override
 String toString() {
-  return 'Changelog(schemaVersion: $schemaVersion, versions: $versions)';
+  final _this = this as Changelog;
+  return 'Changelog(schemaVersion: ${_this.schemaVersion}, versions: ${_this.versions})';
 }
 
 
@@ -888,7 +915,7 @@ class _$ChangelogCopyWithImpl<$Res>
 /// Create a copy of Changelog
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? schemaVersion = null,Object? versions = null,}) {
-  return _then(_self.copyWith(
+  return _then(Changelog(
 schemaVersion: null == schemaVersion ? _self.schemaVersion : schemaVersion // ignore: cast_nullable_to_non_nullable
 as int,versions: null == versions ? _self.versions : versions // ignore: cast_nullable_to_non_nullable
 as List<ChangelogVersion>,
@@ -1032,7 +1059,7 @@ return $default(_that.schemaVersion,_that.versions);case _:
 @JsonSerializable()
 
 class _Changelog implements Changelog {
-  const _Changelog({this.schemaVersion = 0, final  List<ChangelogVersion> versions = const []}): _versions = versions;
+  const _Changelog({this.schemaVersion = 0,  List<ChangelogVersion> versions = const []}): _versions = versions;
   factory _Changelog.fromJson(Map<String, dynamic> json) => _$ChangelogFromJson(json);
 
 @override@JsonKey() final  int schemaVersion;
@@ -1057,16 +1084,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Changelog&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&const DeepCollectionEquality().equals(other._versions, _versions));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Changelog&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&const DeepCollectionEquality().equals(other.versions, _versions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,schemaVersion,const DeepCollectionEquality().hash(_versions));
+int get hashCode {
+    return Object.hash(runtimeType,schemaVersion,const DeepCollectionEquality().hash(_versions));
+}
 
 @override
 String toString() {
-  return 'Changelog(schemaVersion: $schemaVersion, versions: $versions)';
+    return 'Changelog(schemaVersion: $schemaVersion, versions: $versions)';
 }
 
 

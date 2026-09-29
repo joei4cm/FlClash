@@ -147,8 +147,14 @@ class _ImageCacheWidgetState extends State<ImageCacheWidget> {
 class PackageIcon extends StatefulWidget {
   final String packageName;
   final double size;
+  final Widget? placeholder;
 
-  const PackageIcon({super.key, required this.packageName, required this.size});
+  const PackageIcon({
+    super.key,
+    required this.packageName,
+    required this.size,
+    this.placeholder,
+  });
 
   @override
   State<PackageIcon> createState() => _PackageIconState();
@@ -176,7 +182,7 @@ class _PackageIconState extends State<PackageIcon> {
     final generation = ++_generation;
     final packageName = widget.packageName;
     final currentApp = app;
-    if (currentApp == null || packageName.isEmpty) {
+    if (currentApp == null) {
       _icon = null;
       return;
     }
@@ -199,7 +205,8 @@ class _PackageIconState extends State<PackageIcon> {
   Widget build(BuildContext context) {
     final icon = _icon;
     if (icon == null) {
-      return SizedBox(width: widget.size, height: widget.size);
+      return widget.placeholder ??
+          SizedBox(width: widget.size, height: widget.size);
     }
     return Image(
       image: icon,

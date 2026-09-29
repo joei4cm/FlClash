@@ -124,6 +124,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    await tester.tap(find.text(currentAppLocalizations.more).last);
+    await tester.pumpAndSettle();
     await tester.tap(find.text(currentAppLocalizations.subscriptionInfo));
     await tester.pumpAndSettle();
 

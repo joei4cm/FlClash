@@ -14,8 +14,9 @@ class _RecordingSetupAction extends SetupAction {
   static final requests = <bool>[];
 
   @override
-  Future<void> setRunning(bool running, {bool initialize = false}) async {
+  Future<bool> setRunning(bool running, {bool initialize = false}) async {
     requests.add(running);
+    return true;
   }
 }
 

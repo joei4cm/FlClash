@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/window.dart';
 import 'package:fl_clash/bootstrap.dart';
 import 'package:fl_clash/common/system_dns.dart';
 import 'package:fl_clash/l10n/l10n.dart';
@@ -90,20 +91,23 @@ class ApplicationState extends ConsumerState<Application> {
 
   void _initLink() {
     linkManager.initAppLinksListen((url) async {
+      unawaited(window?.show());
+      final message = currentAppLocalizations.createProfileFromUrlTip(url);
+      final parts = message.split(url);
       final res = await dialogs.showMessage(
         title: currentAppLocalizations.addProfile,
         message: TextSpan(
           children: [
-            TextSpan(text: currentAppLocalizations.doYouWantToPass),
+            TextSpan(text: parts.first),
             TextSpan(
-              text: ' $url ',
+              text: url,
               style: TextStyle(
                 color: context.colorScheme.primary,
                 decoration: TextDecoration.underline,
                 decorationColor: context.colorScheme.primary,
               ),
             ),
-            TextSpan(text: currentAppLocalizations.createProfile),
+            if (parts.length > 1) TextSpan(text: parts.last),
           ],
         ),
       );
@@ -153,17 +157,22 @@ class ApplicationState extends ConsumerState<Application> {
             AppLocalizations.delegate,
             ...GlobalMaterialLocalizations.delegates,
           ],
-          builder: (_, child) {
+          builder: (context, child) {
+            // The bridge's legacy Theme swaps in its own default IconTheme color,
+            // which material_ui IconButton.filled reads as custom and loses onPrimary.
             // ignore: deprecated_member_use
             return MaterialUiCompatibilityBridge(
-              child: buildManagerStack(
-                isDesktop: system.isDesktop,
-                onConnectivityChanged: _handleConnectivityChanged,
-                child: child!,
+              child: IconTheme(
+                data: Theme.of(context).iconTheme,
+                child: buildManagerStack(
+                  isDesktop: system.isDesktop,
+                  onConnectivityChanged: _handleConnectivityChanged,
+                  child: child!,
+                ),
               ),
             );
           },
-          scrollBehavior: BaseScrollBehavior(),
+          scrollBehavior: const BaseScrollBehavior(),
           title: appName,
           locale: getLocaleForString(locale),
           supportedLocales: AppLocalizations.delegate.supportedLocales,

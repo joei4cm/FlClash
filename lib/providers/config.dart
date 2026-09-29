@@ -106,7 +106,7 @@ class ExcludeSSIDs extends _$ExcludeSSIDs with AutoDisposeNotifierMixin {
 /// Aggregate Config for save/load and tests only.
 ///
 /// UI and derived providers should watch leaf setting providers (with
-/// `.select` when possible) instead of this aggregate (PERF-12).
+/// `.select` when possible) instead of this aggregate.
 
 @riverpod
 class TailscaleSetting extends _$TailscaleSetting

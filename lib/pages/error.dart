@@ -81,10 +81,7 @@ class InitErrorScreen extends StatelessWidget {
                 ),
                 child: SelectableText(
                   stack.toString(),
-                  style: const TextStyle(
-                    fontFamily: 'monospace', // Makes code easier to read
-                    fontSize: 12,
-                  ),
+                  style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
                 ),
               ),
               const SizedBox(height: 80),

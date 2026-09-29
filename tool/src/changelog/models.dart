@@ -1,10 +1,7 @@
-/// Structured changelog model shared by the parser, the renderers and the
-/// `changelog.json` data file embedded in GitHub release bodies.
 library;
 
 const changelogSchemaVersion = 2;
 
-/// Groups a changelog entry can land in, in render order.
 enum ChangelogType {
   breaking('breaking', 'Breaking Changes'),
   feat('feat', 'Features'),
@@ -27,7 +24,6 @@ enum ChangelogType {
   }
 }
 
-/// A commit as read from `git log`, before any conventional-commit parsing.
 class RawCommit {
   const RawCommit({
     required this.hash,

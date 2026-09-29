@@ -635,7 +635,7 @@ abstract class _$ExcludeSSIDs extends $Notifier<List<String>> {
 /// Aggregate Config for save/load and tests only.
 ///
 /// UI and derived providers should watch leaf setting providers (with
-/// `.select` when possible) instead of this aggregate (PERF-12).
+/// `.select` when possible) instead of this aggregate.
 
 @ProviderFor(TailscaleSetting)
 final tailscaleSettingProvider = TailscaleSettingProvider._();
@@ -643,13 +643,13 @@ final tailscaleSettingProvider = TailscaleSettingProvider._();
 /// Aggregate Config for save/load and tests only.
 ///
 /// UI and derived providers should watch leaf setting providers (with
-/// `.select` when possible) instead of this aggregate (PERF-12).
+/// `.select` when possible) instead of this aggregate.
 final class TailscaleSettingProvider
     extends $NotifierProvider<TailscaleSetting, TailscaleProps> {
   /// Aggregate Config for save/load and tests only.
   ///
   /// UI and derived providers should watch leaf setting providers (with
-  /// `.select` when possible) instead of this aggregate (PERF-12).
+  /// `.select` when possible) instead of this aggregate.
   TailscaleSettingProvider._()
     : super(
         from: null,
@@ -682,7 +682,7 @@ String _$tailscaleSettingHash() => r'0671fd8714eec5eafdf6f51ffae54abe45b66e69';
 /// Aggregate Config for save/load and tests only.
 ///
 /// UI and derived providers should watch leaf setting providers (with
-/// `.select` when possible) instead of this aggregate (PERF-12).
+/// `.select` when possible) instead of this aggregate.
 
 abstract class _$TailscaleSetting extends $Notifier<TailscaleProps> {
   TailscaleProps build();

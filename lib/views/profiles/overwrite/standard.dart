@@ -1,6 +1,6 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/features/overwrite/rule.dart';
+import 'package:fl_clash/features/overwrite/overwrite.dart';
 import 'package:fl_clash/models/clash_config.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -169,6 +169,7 @@ class _StandardContentState extends ConsumerState<StandardContent> {
                 .order,
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
+          SliverToBoxAdapter(child: _MatchTargetItem(_profileId)),
           SliverToBoxAdapter(
             child: MoreActionButton(
               label: appLocalizations.controlGlobalAddedRules,
@@ -177,6 +178,94 @@ class _StandardContentState extends ConsumerState<StandardContent> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _MatchTargetItem extends ConsumerWidget {
+  final int profileId;
+
+  const _MatchTargetItem(this.profileId);
+
+  Future<void> _handleSelect(BuildContext context, WidgetRef ref) async {
+    final res = await showSheet<String>(
+      context: context,
+      props: const SheetProps(isScrollControlled: true),
+      builder: (context) => Consumer(
+        builder: (_, ref, _) {
+          final appLocalizations = context.appLocalizations;
+          final clashConfig = ref.watch(clashConfigProvider(profileId)).value;
+          final groups = clashConfig?.proxyGroups ?? const [];
+          final proxies = clashConfig?.proxies ?? const [];
+          final groupTypes = {
+            for (final item in groups) item.name: item.type.name,
+          };
+          final proxyTypes = {for (final item in proxies) item.name: item.type};
+          return OverwriteSelectionSheet<String>(
+            title: appLocalizations.matchTarget,
+            sections: [
+              const OverwriteSelectionSection(items: ['']),
+              OverwriteSelectionSection(
+                label: appLocalizations.basicStrategy,
+                items: RuleTarget.baseTargetNames,
+              ),
+              OverwriteSelectionSection(
+                label: appLocalizations.ruleTarget,
+                items: groupTypes.keys.toList(),
+                subtitleBuilder: (_, name) => groupTypes[name] ?? '',
+              ),
+              OverwriteSelectionSection(
+                label: appLocalizations.proxies,
+                items: proxyTypes.keys.toList(),
+                subtitleBuilder: (_, name) => proxyTypes[name] ?? '',
+              ),
+            ],
+            labelBuilder: (item) =>
+                item.isEmpty ? appLocalizations.followProfile : item,
+            selectedOf: (ref) => ref.watch(
+              profileProvider(
+                profileId,
+              ).select((state) => state?.matchTarget ?? ''),
+            ),
+            onSelected: (item) => Navigator.of(context).pop(item),
+          );
+        },
+      ),
+    );
+    if (res == null) {
+      return;
+    }
+    ref.read(profilesProvider.notifier).updateProfile(profileId, (state) {
+      return state.copyWith(matchTarget: res.isEmpty ? null : res);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appLocalizations = context.appLocalizations;
+    final matchTarget = ref.watch(
+      profileProvider(profileId).select((state) => state?.matchTarget),
+    );
+    final clashConfig = ref.watch(clashConfigProvider(profileId)).value;
+    final invalid =
+        matchTarget != null &&
+        clashConfig != null &&
+        !RuleTarget.baseTargets.contains(matchTarget) &&
+        !clashConfig.proxyGroups.any((item) => item.name == matchTarget) &&
+        !clashConfig.proxies.any((item) => item.name == matchTarget);
+    return MoreActionButton(
+      label: appLocalizations.matchTarget,
+      trailing: Text(
+        matchTarget ?? appLocalizations.followProfile,
+        style: context.textTheme.bodyMedium?.toJetBrainsMono.copyWith(
+          color: invalid
+              ? context.colorScheme.error
+              : context.colorScheme.tertiary,
+        ),
+      ),
+      onPressed: () {
+        _handleSelect(context, ref);
+      },
     );
   }
 }
@@ -204,30 +293,35 @@ class _EditGlobalAddedRules extends ConsumerWidget {
     final rules = ref.watch(globalRulesProvider).value ?? [];
     return BaseScaffold(
       title: appLocalizations.editGlobalRules,
-      body: rules.isEmpty
-          ? NullStatus(
-              label: appLocalizations.nullTip(appLocalizations.rule),
-              illustration: const RuleEmptyIllustration(),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemExtent: ruleItemHeight,
-              itemBuilder: (context, index) {
-                final rule = rules[index];
-                final position = ItemPosition.get(index, rules.length);
-                return ItemPositionProvider(
-                  position: position,
-                  child: RuleStatusItem(
-                    status: !disabledRuleIds.contains(rule.id),
-                    rule: rule,
-                    onChange: (status) {
-                      _handleChange(ref, profileId, !status, rule.id);
-                    },
-                  ),
-                );
-              },
-              itemCount: rules.length,
-            ),
+      body: NullStatusSwitcher(
+        isEmpty: rules.isEmpty,
+        nullStatus: NullStatus(
+          label: appLocalizations.nullTip(appLocalizations.rule),
+          illustration: NullStatusIllustration.rules,
+        ),
+        child: ScrollConfiguration(
+          behavior: const ShowBarScrollBehavior(),
+          child: ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemExtent: ruleItemHeight,
+            itemBuilder: (context, index) {
+              final rule = rules[index];
+              final position = ItemPosition.get(index, rules.length);
+              return ItemPositionProvider(
+                position: position,
+                child: RuleStatusItem(
+                  status: !disabledRuleIds.contains(rule.id),
+                  rule: rule,
+                  onChange: (status) {
+                    _handleChange(ref, profileId, !status, rule.id);
+                  },
+                ),
+              );
+            },
+            itemCount: rules.length,
+          ),
+        ),
+      ),
     );
   }
 }

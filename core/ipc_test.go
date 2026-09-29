@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/metacubex/mihomo/common/observable"
+	"github.com/metacubex/mihomo/config"
 	"github.com/metacubex/mihomo/log"
 )
 
@@ -27,6 +28,8 @@ type fakeConn struct {
 	writeErrTimes int
 	closed        bool
 	deadlines     int
+	deadlineErr   error
+	deadlineOK    int
 }
 
 func (fake *fakeConn) Read(p []byte) (int, error) {
@@ -85,6 +88,9 @@ func (fake *fakeConn) SetWriteDeadline(time.Time) error {
 	fake.mu.Lock()
 	defer fake.mu.Unlock()
 	fake.deadlines++
+	if fake.deadlineErr != nil && fake.deadlines > fake.deadlineOK {
+		return fake.deadlineErr
+	}
 	return nil
 }
 
@@ -468,18 +474,82 @@ func TestSendResumesAFrameThatStalledOnTheWriteDeadline(t *testing.T) {
 	}
 }
 
-func TestSendDropsTheConnectionWhenAStalledFrameNeverDrains(t *testing.T) {
-	fake := &fakeConn{writeErr: os.ErrDeadlineExceeded, writeErrAfter: 2}
+func TestSendWaitsOutAHostSuspendedForManyDeadlineWindows(t *testing.T) {
+	const windows = 360
+	fake := &fakeConn{writeErr: os.ErrDeadlineExceeded, writeErrAfter: 2, writeErrTimes: windows}
+	previous := swapConn(fake)
+	defer swapConn(previous)
+
+	send([]byte("{}"))
+
+	if fake.isClosed() {
+		t.Fatal("a host asleep for an hour of deadline windows had its connection closed, and with it the Core")
+	}
+	frames := fake.frames(t)
+	if len(frames) != 1 || string(frames[0]) != "{}" {
+		t.Errorf("frames = %q, want the stalled frame finished once the host woke", frames)
+	}
+	if fake.deadlineCount() != 1+windows {
+		t.Errorf("deadlines armed = %d, want one per stalled window plus the first", fake.deadlineCount())
+	}
+}
+
+type pipeTimeoutError struct{}
+
+func (*pipeTimeoutError) Error() string { return "i/o timeout" }
+func (*pipeTimeoutError) Timeout() bool { return true }
+
+func TestSendResumesAFrameThatStalledOnANamedPipeTimeout(t *testing.T) {
+	fake := &fakeConn{writeErr: &pipeTimeoutError{}, writeErrAfter: 2, writeErrTimes: 1}
+	previous := swapConn(fake)
+	defer swapConn(previous)
+
+	send([]byte("{}"))
+
+	if fake.isClosed() {
+		t.Fatal("a Windows pipe timeout on a half-written frame closed the connection instead of resuming it")
+	}
+	frames := fake.frames(t)
+	if len(frames) != 1 || string(frames[0]) != "{}" {
+		t.Errorf("frames = %q, want the stalled frame finished so the stream stays in sync", frames)
+	}
+}
+
+type pipeNonTimeoutError struct{}
+
+func (*pipeNonTimeoutError) Error() string { return "pipe closed" }
+func (*pipeNonTimeoutError) Timeout() bool { return false }
+
+func TestSendDropsTheConnectionWhenTimeoutReportsFalse(t *testing.T) {
+	fake := &fakeConn{writeErr: &pipeNonTimeoutError{}, writeErrAfter: 2}
 	previous := swapConn(fake)
 	defer swapConn(previous)
 
 	send([]byte("{}"))
 
 	if !fake.isClosed() {
-		t.Error("a frame that stalls past every retry leaves the stream desynchronized and must close the connection")
+		t.Error("an error that implements Timeout() but reports false was treated as a stall instead of a dead host")
 	}
-	if fake.deadlineCount() != 1+ipcPartialFrameRetries {
-		t.Errorf("deadlines armed = %d, want the retries bounded at %d", fake.deadlineCount(), ipcPartialFrameRetries)
+}
+
+func TestSendDropsTheConnectionWhenAStalledFrameCannotRearmItsDeadline(t *testing.T) {
+	fake := &fakeConn{
+		writeErr:      os.ErrDeadlineExceeded,
+		writeErrAfter: 2,
+		writeErrTimes: 1,
+		deadlineErr:   errors.New("pipe closed"),
+		deadlineOK:    1,
+	}
+	previous := swapConn(fake)
+	defer swapConn(previous)
+
+	send([]byte("{}"))
+
+	if !fake.isClosed() {
+		t.Error("a half-written frame whose deadline could not be re-armed left the connection open; the stream is desynchronized")
+	}
+	if conn != nil {
+		t.Error("conn still points at the dead connection")
 	}
 }
 
@@ -682,4 +752,39 @@ func TestHandleStartLogAndStopLogLifecycle(t *testing.T) {
 		t.Fatal("handleStopLog did not clear subscriber or cancel func")
 	}
 	logMu.Unlock()
+}
+
+func TestServeReleasesTheCoreWhenTheHostDisconnects(t *testing.T) {
+	withCurrentConfig(t, &config.Config{General: &config.General{}, Controller: &config.Controller{}})
+	isInit.Store(true)
+
+	serve(&fakeConn{})
+
+	if isInit.Load() {
+		t.Error("the host went away without a shutdown call and the core kept its state, so a TUN it owned would leave its routes behind")
+	}
+	if currentConfig != nil {
+		t.Error("currentConfig survived the host disconnect")
+	}
+	connMu.Lock()
+	remaining := conn
+	connMu.Unlock()
+	if remaining != nil {
+		t.Error("serve returned with the closed connection still installed")
+	}
+}
+
+func TestReleaseOnExitIsANoOpBeforeInit(t *testing.T) {
+	isInit.Store(false)
+	logMu.Lock()
+	logSubscriber = make(chan log.Event)
+	logCancel = func() { t.Error("release before init cancelled a log pump it does not own") }
+	logMu.Unlock()
+	t.Cleanup(func() {
+		logMu.Lock()
+		logSubscriber, logCancel = nil, nil
+		logMu.Unlock()
+	})
+
+	releaseOnExit()
 }

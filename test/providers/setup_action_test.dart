@@ -1,17 +1,69 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/core/controller.dart';
+import 'package:fl_clash/core/interface.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/action.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
+import 'package:fl_clash/providers/core.dart';
 import 'package:fl_clash/providers/database.dart';
 import 'package:fl_clash/providers/state.dart';
 import 'package:fl_clash/state.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../helpers/test_profiles.dart';
+
+class _MockCoreHandlerInterface extends Mock implements CoreHandlerInterface {}
+
+// checkAndUpdateAndCopy checks the file system before it refreshes, so its
+// failure tests need appPath to resolve to a real, writable directory.
+class _FakePathProvider extends PathProviderPlatform {
+  final String root;
+
+  _FakePathProvider(this.root);
+
+  @override
+  Future<String?> getTemporaryPath() async => root;
+
+  @override
+  Future<String?> getApplicationSupportPath() async => root;
+
+  @override
+  Future<String?> getApplicationCachePath() async => root;
+}
+
+class _ListenerHandoffFailureSetupAction extends SetupAction {
+  final List<bool> coreRunningCalls = [];
+
+  @override
+  Future<bool> setCoreRunning(bool running) async {
+    coreRunningCalls.add(running);
+    if (running) {
+      throw StateError('listener handoff failed');
+    }
+    return true;
+  }
+}
+
+class _MessageFailureSetupAction extends SetupAction {
+  final List<bool> coreRunningCalls = [];
+
+  @override
+  Future<bool> setCoreRunning(bool running) async {
+    coreRunningCalls.add(running);
+    return true;
+  }
+}
 
 class TestCommonAction extends CommonAction {
   int trafficUpdates = 0;
@@ -70,6 +122,9 @@ class TestSetupAction extends SetupAction {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  setUpAll(() {
+    registerFallbackValue(const SetupParams(selectedMap: {}, testUrl: ''));
+  });
 
   late TestSetupAction action;
   late ProviderContainer container;
@@ -475,5 +530,232 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 800));
       expect(action.applyProfileCalls, 0);
     });
+  });
+
+  group('_setupConfig via the real SetupAction', () {
+    late Directory tempDir;
+    late String? originalLastConfigMd5;
+
+    setUpAll(() async {
+      tempDir = Directory.systemTemp.createTempSync('setup_action_test');
+      PathProviderPlatform.instance = _FakePathProvider(tempDir.path);
+      await AppLocalizations.load(const Locale('en'));
+      originalLastConfigMd5 = globalState.lastConfigMd5;
+    });
+
+    tearDownAll(() {
+      try {
+        tempDir.deleteSync(recursive: true);
+      } catch (_) {}
+    });
+
+    tearDown(() {
+      globalState.lastConfigMd5 = originalLastConfigMd5;
+    });
+
+    // profileId: null routes getProfile/setupState around the database and
+    // Core.getConfig, isolating the behavior under test.
+    const nullProfileSetupState = SetupState(
+      profileId: null,
+      profileLastUpdateDate: null,
+      overwriteType: OverwriteType.standard,
+      rules: [],
+      proxyGroups: [],
+      addedRules: [],
+      script: null,
+      overrideDns: false,
+      dns: Dns(),
+    );
+
+    test(
+      'a refresh failure still runs core.setupConfig and preloadInvoke',
+      () async {
+        final profile = Profile.normal(label: 'p', url: 'http://127.0.0.1:9/');
+        final core = _MockCoreHandlerInterface();
+        when(() => core.setupConfig(any())).thenAnswer((_) async => '');
+        var preloadRan = false;
+        final scoped = ProviderContainer(
+          overrides: [
+            profilesProvider.overrideWith(() => TestProfiles([profile])),
+            currentProfileIdProvider.overrideWithBuild((_, _) => profile.id),
+            setupStateProvider.overrideWith((_, _) => nullProfileSetupState),
+            coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+            setupActionProvider.overrideWith(SetupAction.new),
+          ],
+        );
+        addTearDown(scoped.dispose);
+
+        await scoped
+            .read(setupActionProvider.notifier)
+            .applyProfile(
+              force: true,
+              preloadInvoke: () async {
+                preloadRan = true;
+              },
+            );
+
+        expect(preloadRan, isTrue);
+        verify(() => core.setupConfig(any())).called(1);
+      },
+    );
+
+    test(
+      'a profile that fails to build still pushes the empty config to core',
+      () async {
+        final profile = Profile.normal(label: 'p');
+        final core = _MockCoreHandlerInterface();
+        when(() => core.getConfig(any())).thenThrow(Exception('broken yaml'));
+        String? pushedConfig;
+        when(() => core.setupConfig(any())).thenAnswer((_) async {
+          pushedConfig = await File(
+            await appPath.configFilePath,
+          ).readAsString();
+          return '';
+        });
+        globalState.packageInfo = PackageInfo(
+          appName: 'FlClash',
+          packageName: 'com.follow.clash',
+          version: '0.0.0',
+          buildNumber: '0',
+        );
+        final scoped = ProviderContainer(
+          overrides: [
+            profilesProvider.overrideWith(() => TestProfiles([profile])),
+            currentProfileIdProvider.overrideWithBuild((_, _) => profile.id),
+            setupStateProvider.overrideWith(
+              (_, profileId) =>
+                  nullProfileSetupState.copyWith(profileId: profileId),
+            ),
+            coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+            setupActionProvider.overrideWith(SetupAction.new),
+          ],
+        );
+        addTearDown(scoped.dispose);
+
+        final succeeded = await scoped
+            .read(setupActionProvider.notifier)
+            .applyProfile(force: true);
+
+        expect(succeeded, isFalse);
+        expect(pushedConfig, isEmpty);
+        expect(scoped.read(currentProfileIdProvider), profile.id);
+      },
+    );
+
+    test(
+      'a config write failure reports setup as failed without calling core',
+      () async {
+        final configPath = await appPath.configFilePath;
+        final configFile = File(configPath);
+        if (await configFile.exists()) {
+          await configFile.delete();
+        }
+        final configAsDirectory = Directory(configPath);
+        await configAsDirectory.create(recursive: true);
+
+        final core = _MockCoreHandlerInterface();
+        when(() => core.setupConfig(any())).thenAnswer((_) async => '');
+        final scoped = ProviderContainer(
+          overrides: [
+            currentProfileProvider.overrideWithValue(null),
+            setupStateProvider.overrideWith((_, _) => nullProfileSetupState),
+            coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+            setupActionProvider.overrideWith(SetupAction.new),
+          ],
+        );
+        addTearDown(scoped.dispose);
+
+        try {
+          final succeeded = await scoped
+              .read(setupActionProvider.notifier)
+              .applyProfile(force: true);
+
+          expect(succeeded, isFalse);
+          verifyNever(() => core.setupConfig(any()));
+        } finally {
+          await configAsDirectory.delete(recursive: true);
+        }
+      },
+    );
+
+    test(
+      'a rejected setupConfig without a handoff reports failure, not success',
+      () async {
+        final core = _MockCoreHandlerInterface();
+        when(() => core.setupConfig(any())).thenThrow(StateError('rejected'));
+        final scoped = ProviderContainer(
+          overrides: [
+            currentProfileProvider.overrideWithValue(null),
+            setupStateProvider.overrideWith((_, _) => nullProfileSetupState),
+            coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+            setupActionProvider.overrideWith(SetupAction.new),
+          ],
+        );
+        addTearDown(scoped.dispose);
+
+        final succeeded = await scoped
+            .read(setupActionProvider.notifier)
+            .applyProfile(force: true);
+
+        expect(succeeded, isFalse);
+        verify(() => core.setupConfig(any())).called(1);
+      },
+    );
+
+    test(
+      'a listener handoff failure during initialize rolls back running',
+      () async {
+        final core = _MockCoreHandlerInterface();
+        when(() => core.setupConfig(any())).thenAnswer((_) async => '');
+        final scoped = ProviderContainer(
+          overrides: [
+            currentProfileProvider.overrideWithValue(null),
+            setupStateProvider.overrideWith((_, _) => nullProfileSetupState),
+            coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+            setupActionProvider.overrideWith(
+              _ListenerHandoffFailureSetupAction.new,
+            ),
+          ],
+        );
+        addTearDown(scoped.dispose);
+        final handoffAction =
+            scoped.read(setupActionProvider.notifier)
+                as _ListenerHandoffFailureSetupAction;
+
+        await handoffAction.setRunning(true, initialize: true);
+
+        expect(handoffAction.coreRunningCalls, [true, false]);
+        expect(scoped.read(runTimeProvider), isNull);
+        verify(() => core.setupConfig(any())).called(1);
+      },
+    );
+
+    test(
+      'a non-empty setupConfig message during initialize rolls back running',
+      () async {
+        final core = _MockCoreHandlerInterface();
+        when(
+          () => core.setupConfig(any()),
+        ).thenAnswer((_) async => 'config rejected');
+        final scoped = ProviderContainer(
+          overrides: [
+            currentProfileProvider.overrideWithValue(null),
+            setupStateProvider.overrideWith((_, _) => nullProfileSetupState),
+            coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+            setupActionProvider.overrideWith(_MessageFailureSetupAction.new),
+          ],
+        );
+        addTearDown(scoped.dispose);
+        final messageAction =
+            scoped.read(setupActionProvider.notifier)
+                as _MessageFailureSetupAction;
+
+        await messageAction.setRunning(true, initialize: true);
+
+        expect(messageAction.coreRunningCalls, [true, false]);
+        expect(scoped.read(runTimeProvider), isNull);
+        verify(() => core.setupConfig(any())).called(1);
+      },
+    );
   });
 }

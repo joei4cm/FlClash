@@ -1,7 +1,10 @@
-import 'package:fl_clash/common/task.dart';
+import 'dart:io';
+
+import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
 
 int _double(int value) => value * 2;
@@ -231,6 +234,50 @@ void main() {
     },
   );
 
+  test(
+    'makeRealProfileTask routes MATCH placeholders to matchTarget',
+    () async {
+      final rawConfig = await decodeJSONTask<Map<String, dynamic>>(
+        await encodeJSONTask({
+          'proxies': [],
+          'rules': ['DOMAIN,existing.example,DIRECT', 'MATCH,Original'],
+        }),
+      );
+      final state = MakeRealProfileState(
+        profilesPath: '/profiles',
+        profileId: 7,
+        rawConfig: rawConfig,
+        realPatchConfig: const PatchClashConfig(),
+        overrideDns: false,
+        appendSystemDns: false,
+        proxyGroups: const [],
+        rules: const [],
+        addedRules: const [
+          Rule(
+            ruleAction: RuleAction.DOMAIN_SUFFIX,
+            content: 'added.example',
+            ruleTarget: 'MATCH',
+          ),
+        ],
+        defaultUA: 'FlClash-Test',
+        matchTarget: 'HK',
+      );
+
+      final overridden = await makeRealProfileTask(state);
+      expect((loadYaml(overridden.yaml) as YamlMap)['rules'], [
+        'DOMAIN-SUFFIX,added.example,HK',
+        'DOMAIN,existing.example,DIRECT',
+        'MATCH,Original',
+      ]);
+
+      final blank = await makeRealProfileTask(state.copyWith(matchTarget: ' '));
+      expect(
+        (loadYaml(blank.yaml) as YamlMap)['rules'].first,
+        'DOMAIN-SUFFIX,added.example,Original',
+      );
+    },
+  );
+
   // The core re-reads these two keys out of the generated config on every
   // profile apply and adopts whatever it finds, so a subscription that ships
   // them would otherwise decide whether GEO databases auto-update — including
@@ -268,6 +315,41 @@ void main() {
       expect(config['geo-update-interval'], 48);
     },
   );
+
+  // A profile-shipped loopback skip-auth-prefixes would bypass the credentials.
+  test('makeRealProfileTask lets the app own local authentication', () async {
+    final rawConfig = await decodeJSONTask<Map<String, dynamic>>(
+      await encodeJSONTask({
+        'authentication': ['subscription:injected'],
+        'skip-auth-prefixes': ['127.0.0.1/32'],
+      }),
+    );
+    final state = MakeRealProfileState(
+      profilesPath: '/profiles',
+      profileId: 12,
+      rawConfig: rawConfig,
+      realPatchConfig: const PatchClashConfig(),
+      overrideDns: false,
+      appendSystemDns: false,
+      proxyGroups: const [],
+      rules: const [],
+      addedRules: const [],
+      defaultUA: 'FlClash-Test',
+      authentication: const ['user:pass'],
+    );
+
+    final enabled = await makeRealProfileTask(state);
+    final enabledConfig = loadYaml(enabled.yaml) as YamlMap;
+    expect(enabledConfig['authentication'], ['user:pass']);
+    expect(enabledConfig['skip-auth-prefixes'], isEmpty);
+
+    final disabled = await makeRealProfileTask(
+      state.copyWith(authentication: const []),
+    );
+    final disabledConfig = loadYaml(disabled.yaml) as YamlMap;
+    expect(disabledConfig['authentication'], isEmpty);
+    expect(disabledConfig['skip-auth-prefixes'], isEmpty);
+  });
 
   test('makeRealProfileTask overrides DNS and explicit custom data', () async {
     final result = await makeRealProfileTask(
@@ -308,7 +390,6 @@ void main() {
   test('makeRealProfileTask keeps the DNS keys it cannot edit', () async {
     final rawConfig = await decodeJSONTask<Map<String, dynamic>>(
       await encodeJSONTask({
-        'interface-name': 'en0',
         'dns': {
           'enable': false,
           'direct-nameserver': ['223.5.5.5'],
@@ -340,7 +421,6 @@ void main() {
     );
     final config = loadYaml(result.yaml) as YamlMap;
 
-    expect(config['interface-name'], 'en0');
     expect(config['dns']['direct-nameserver'], ['223.5.5.5']);
     expect(config['dns']['proxy-server-nameserver-policy'], {
       'www.example.com': ['8.8.8.8'],
@@ -350,6 +430,131 @@ void main() {
       config['proxy-providers']['first']['path'],
       isNot(config['proxy-providers']['second']['path']),
     );
+  });
+
+  group('makeRealProfileTask interface-name mode', () {
+    Future<YamlMap> runWith(PatchClashConfig realPatchConfig) async {
+      final rawConfig = await decodeJSONTask<Map<String, dynamic>>(
+        await encodeJSONTask({'interface-name': 'en0'}),
+      );
+
+      final result = await makeRealProfileTask(
+        MakeRealProfileState(
+          profilesPath: '/profiles',
+          profileId: 13,
+          rawConfig: rawConfig,
+          realPatchConfig: realPatchConfig,
+          overrideDns: false,
+          appendSystemDns: false,
+          proxyGroups: const [],
+          rules: const [],
+          addedRules: const [],
+          defaultUA: 'FlClash-Test',
+        ),
+      );
+      return loadYaml(result.yaml) as YamlMap;
+    }
+
+    // Default mode, so a subscription value must not survive into the
+    // generated config.
+    test('clear forces interface-name empty', () async {
+      final config = await runWith(const PatchClashConfig());
+
+      expect(config['interface-name'], '');
+    });
+
+    test('follow leaves the profile value untouched', () async {
+      final config = await runWith(
+        const PatchClashConfig(interfaceNameMode: InterfaceNameMode.follow),
+      );
+
+      expect(config['interface-name'], 'en0');
+    });
+
+    test('custom writes the configured interface name', () async {
+      final config = await runWith(
+        const PatchClashConfig(
+          interfaceNameMode: InterfaceNameMode.custom,
+          interfaceName: 'eth0',
+        ),
+      );
+
+      expect(config['interface-name'], 'eth0');
+    });
+  });
+
+  group('makeRealProfileTask legacy provider file migration', () {
+    late Directory tempDir;
+    const url = 'https://example.com/proxy.yaml';
+    const name = 'remote';
+
+    setUp(() {
+      tempDir = Directory.systemTemp.createTempSync('task_test_providers');
+    });
+
+    tearDown(() {
+      if (tempDir.existsSync()) {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    Future<({String legacyPath, String newPath})> runMigration() async {
+      final providerDir = join(
+        tempDir.path,
+        providersDirectoryName,
+        '17',
+        proxiesProviderDirectoryName,
+      );
+      final legacyPath = join(providerDir, url.toMd5());
+      final newPath = join(providerDir, '$name@$url'.toMd5());
+
+      final result = await makeRealProfileTask(
+        MakeRealProfileState(
+          profilesPath: tempDir.path,
+          profileId: 17,
+          rawConfig: {
+            'proxy-providers': {
+              name: {'type': 'http', 'url': url},
+            },
+          },
+          realPatchConfig: const PatchClashConfig(),
+          overrideDns: false,
+          appendSystemDns: false,
+          proxyGroups: const [],
+          rules: const [],
+          addedRules: const [],
+          defaultUA: 'FlClash-Test',
+        ),
+      );
+      final config = loadYaml(result.yaml) as YamlMap;
+      expect(config['proxy-providers'][name]['path'], newPath);
+      return (legacyPath: legacyPath, newPath: newPath);
+    }
+
+    test('renames a file cached under the legacy url-only key', () async {
+      final providerDir = join(
+        tempDir.path,
+        providersDirectoryName,
+        '17',
+        proxiesProviderDirectoryName,
+      );
+      await Directory(providerDir).create(recursive: true);
+      final legacyFile = File(join(providerDir, url.toMd5()));
+      await legacyFile.writeAsString('cached-provider-data');
+
+      final paths = await runMigration();
+
+      expect(File(paths.newPath).existsSync(), isTrue);
+      expect(await File(paths.newPath).readAsString(), 'cached-provider-data');
+      expect(File(paths.legacyPath).existsSync(), isFalse);
+    });
+
+    test('is a no-op when no legacy file exists', () async {
+      final paths = await runMigration();
+
+      expect(File(paths.legacyPath).existsSync(), isFalse);
+      expect(File(paths.newPath).existsSync(), isFalse);
+    });
   });
 
   test('log and list tasks produce stable mapped output', () async {

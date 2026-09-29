@@ -84,4 +84,33 @@ void main() {
       expect(list.list, [3, 4]);
     });
   });
+
+  group('retainTrimmedHead', () {
+    final items = List.generate(6, (i) => Object());
+
+    test('passes latest through when nothing was trimmed', () {
+      final current = items.sublist(0, 3);
+      final latest = items.sublist(0, 5);
+      expect(retainTrimmedHead(current, latest, 10), same(latest));
+      expect(retainTrimmedHead(<Object>[], latest, 10), same(latest));
+    });
+
+    test('restores entries trimmed off the front', () {
+      final current = items.sublist(0, 4);
+      final latest = items.sublist(2, 6);
+      expect(retainTrimmedHead(current, latest, 10), items);
+    });
+
+    test('keeps everything current when latest is entirely newer', () {
+      final current = items.sublist(0, 2);
+      final latest = items.sublist(4, 6);
+      expect(retainTrimmedHead(current, latest, 10), [...current, ...latest]);
+    });
+
+    test('caps growth from the tail', () {
+      final current = items.sublist(0, 4);
+      final latest = items.sublist(2, 6);
+      expect(retainTrimmedHead(current, latest, 5), items.sublist(0, 5));
+    });
+  });
 }
