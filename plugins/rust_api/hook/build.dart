@@ -53,9 +53,7 @@ Map<String, String> _bindgenEnvironment(BuildInput input) {
   }
   final androidHome = Platform.environment['ANDROID_HOME'];
   if (androidHome != null && androidHome.isNotEmpty) {
-    final ndkDir = Directory(
-      '$androidHome${Platform.pathSeparator}ndk',
-    );
+    final ndkDir = Directory('$androidHome${Platform.pathSeparator}ndk');
     if (ndkDir.existsSync()) {
       final versions = ndkDir.listSync().whereType<Directory>().toList()
         ..sort((a, b) => b.path.compareTo(a.path));
