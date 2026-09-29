@@ -41,7 +41,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m9(label) => "${label}は空欄にできません";
 
-  static String m10(group) => "自動グループ ${group} を作成しました。必要ならプロキシで選択してください。";
+  static String m10(group) => "予備の自動グループ ${group} を作成しました。必要ならプロキシで選択してください。";
 
   static String m11(group) => "${group} の自動選択を復元しました";
 
@@ -352,13 +352,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "emptyTip": m9,
     "en": MessageLookupByLibrary.simpleMessage("英語"),
-    "enableAutoSelect": MessageLookupByLibrary.simpleMessage("自動選択を有効化"),
+    "enableAutoSelect": MessageLookupByLibrary.simpleMessage("予備の自動グループを作成"),
     "enableAutoSelectCreateTip": MessageLookupByLibrary.simpleMessage(
-      "url-test/fallback グループがありません。「FlClash Auto」を作成しますか？上書きをカスタムに切り替え、空のカスタム戦略グループを Auto + PROXY で置き換えます（ノードは include-all-proxies で保持）。",
+      "多くのサブスクは既に url-test/fallback を含みます。見つからない場合のみ「FlClash Auto」予備グループを作成しますか？上書きをカスタムに切り替え、空のカスタム戦略グループを Auto + PROXY に置き換えます（ノードは include-all-proxies で保持）。",
     ),
     "enableAutoSelectCreated": m10,
     "enableAutoSelectFailed": MessageLookupByLibrary.simpleMessage(
-      "自動選択の有効化に失敗しました",
+      "予備の自動グループの作成に失敗しました",
     ),
     "enableAutoSelectRestored": m11,
     "entries": MessageLookupByLibrary.simpleMessage(" エントリ"),

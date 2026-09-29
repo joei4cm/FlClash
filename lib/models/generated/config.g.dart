@@ -37,7 +37,7 @@ _AppSettingProps _$AppSettingPropsFromJson(Map<String, dynamic> json) =>
       showTrayTitle: json['showTrayTitle'] as bool? ?? true,
       checkCertificate: json['checkCertificate'] as bool? ?? true,
       customUserAgent: json['customUserAgent'] as String? ?? '',
-      autoSelectStickyGeo: json['autoSelectStickyGeo'] as bool? ?? true,
+      autoSelectStickyGeo: json['autoSelectStickyGeo'] as bool? ?? false,
       autoSelectStickyGeoByGroup:
           (json['autoSelectStickyGeoByGroup'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(k, e as String),

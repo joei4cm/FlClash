@@ -45,7 +45,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m9(label) => "${label} cannot be empty";
 
   static String m10(group) =>
-      "Created auto group ${group}. Select it under Proxies if needed.";
+      "Created fallback auto group ${group}. Select it under Proxies if needed.";
 
   static String m11(group) => "Auto select restored for ${group}";
 
@@ -441,14 +441,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "emptyTip": m9,
     "en": MessageLookupByLibrary.simpleMessage("English"),
     "enableAutoSelect": MessageLookupByLibrary.simpleMessage(
-      "Enable auto select",
+      "Create fallback auto group",
     ),
     "enableAutoSelectCreateTip": MessageLookupByLibrary.simpleMessage(
-      "No url-test/fallback group found. Create a simple “FlClash Auto” url-test group? This switches the profile overwrite to Custom and replaces empty custom strategy groups with Auto + PROXY (subscription nodes are kept via include-all-proxies).",
+      "Most subscriptions already include url-test/fallback. None was found here—create a simple “FlClash Auto” fallback group? This switches overwrite to Custom; empty custom strategy groups become Auto + PROXY (nodes stay via include-all-proxies).",
     ),
     "enableAutoSelectCreated": m10,
     "enableAutoSelectFailed": MessageLookupByLibrary.simpleMessage(
-      "Failed to enable auto select",
+      "Failed to create fallback auto group",
     ),
     "enableAutoSelectRestored": m11,
     "entries": MessageLookupByLibrary.simpleMessage(" entries"),

@@ -63,15 +63,15 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
                 );
               },
             ),
-            CommonPopupMenuItem(
-              icon: Icons.auto_mode,
-              label: appLocalizations.enableAutoSelect,
-              onPressed: () async {
-                final groups = ref.read(groupsProvider);
-                final hasAuto = groups.any(
-                  (group) => group.type.isComputedSelected,
-                );
-                if (!hasAuto) {
+            // Only offer creating a fallback auto group when the subscription
+            // has no url-test/fallback. Restore stays on AutoGroupBar.
+            if (!ref
+                .read(groupsProvider)
+                .any((group) => group.type.isComputedSelected))
+              CommonPopupMenuItem(
+                icon: Icons.auto_mode,
+                label: appLocalizations.enableAutoSelect,
+                onPressed: () async {
                   final confirmed = await dialogs.showMessage(
                     title: appLocalizations.enableAutoSelect,
                     message: TextSpan(
@@ -81,24 +81,23 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
                   if (confirmed != true) {
                     return;
                   }
-                }
-                final result = await enableAutoSelectWithContainer(ref);
-                final message = switch (result.message) {
-                  'no_profile' => appLocalizations.nullProfileDesc,
-                  'create_failed' => appLocalizations.enableAutoSelectFailed,
-                  _ when result.enabledExisting =>
-                    appLocalizations.enableAutoSelectRestored(
-                      result.groupName ?? '',
-                    ),
-                  _ when result.createdGroups =>
-                    appLocalizations.enableAutoSelectCreated(
-                      result.groupName ?? '',
-                    ),
-                  _ => appLocalizations.enableAutoSelectFailed,
-                };
-                dialogs.showNotifier(message);
-              },
-            ),
+                  final result = await enableAutoSelectWithContainer(ref);
+                  final message = switch (result.message) {
+                    'no_profile' => appLocalizations.nullProfileDesc,
+                    'create_failed' => appLocalizations.enableAutoSelectFailed,
+                    _ when result.enabledExisting =>
+                      appLocalizations.enableAutoSelectRestored(
+                        result.groupName ?? '',
+                      ),
+                    _ when result.createdGroups =>
+                      appLocalizations.enableAutoSelectCreated(
+                        result.groupName ?? '',
+                      ),
+                    _ => appLocalizations.enableAutoSelectFailed,
+                  };
+                  dialogs.showNotifier(message);
+                },
+              ),
             if (_hasProviders)
               CommonPopupMenuItem(
                 icon: Icons.poll_outlined,

@@ -708,9 +708,9 @@
   "serviceProbeTesting": "测试中",
   "serviceProbeCurrentNode": "当前节点",
   "serviceProbeDisclaimer": "通过当前节点检测各类服务的 HTTP 可达性与延迟，并非流媒体解锁或账号地区测试。",
-  "enableAutoSelect": "启用自动选优",
-  "enableAutoSelectCreateTip": "未发现 url-test/fallback 策略组。是否创建简单的 “FlClash Auto” 自动测速组？这会将配置覆写切换为自定义，并在自定义策略组为空时用 Auto + PROXY 替代（节点列表仍通过 include-all-proxies 保留）。",
-  "enableAutoSelectFailed": "启用自动选优失败",
+  "enableAutoSelect": "创建备用自动组",
+  "enableAutoSelectCreateTip": "多数机场订阅已自带 url-test/fallback。当前配置未发现这类策略组——是否创建简单的 “FlClash Auto” 备用自动组？这会将覆写切换为自定义；若自定义策略组为空则用 Auto + PROXY 替代（节点仍通过 include-all-proxies 保留）。",
+  "enableAutoSelectFailed": "创建备用自动组失败",
   "restoreAutoSelect": "恢复自动",
   "groupTypeUrlTest": "自动测速",
   "groupTypeFallback": "故障转移",
@@ -733,7 +733,7 @@
       }
     }
   },
-  "enableAutoSelectCreated": "已创建自动组 {group}。如需可在代理页选中它。",
+  "enableAutoSelectCreated": "已创建备用自动组 {group}。如需可在代理页选中它。",
   "@enableAutoSelectCreated": {
     "placeholders": {
       "group": {

@@ -708,9 +708,9 @@
   "serviceProbeTesting": "Testing",
   "serviceProbeCurrentNode": "Current node",
   "serviceProbeDisclaimer": "Checks HTTP reachability/latency through the current node. This is not a streaming unlock or account-region test.",
-  "enableAutoSelect": "Enable auto select",
-  "enableAutoSelectCreateTip": "No url-test/fallback group found. Create a simple “FlClash Auto” url-test group? This switches the profile overwrite to Custom and replaces empty custom strategy groups with Auto + PROXY (subscription nodes are kept via include-all-proxies).",
-  "enableAutoSelectFailed": "Failed to enable auto select",
+  "enableAutoSelect": "Create fallback auto group",
+  "enableAutoSelectCreateTip": "Most subscriptions already include url-test/fallback. None was found here—create a simple “FlClash Auto” fallback group? This switches overwrite to Custom; empty custom strategy groups become Auto + PROXY (nodes stay via include-all-proxies).",
+  "enableAutoSelectFailed": "Failed to create fallback auto group",
   "restoreAutoSelect": "Restore auto",
   "groupTypeUrlTest": "URLTest",
   "groupTypeFallback": "Fallback",
@@ -733,7 +733,7 @@
       }
     }
   },
-  "enableAutoSelectCreated": "Created auto group {group}. Select it under Proxies if needed.",
+  "enableAutoSelectCreated": "Created fallback auto group {group}. Select it under Proxies if needed.",
   "@enableAutoSelectCreated": {
     "placeholders": {
       "group": {

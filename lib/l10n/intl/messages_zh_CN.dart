@@ -41,7 +41,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m9(label) => "${label}不能为空";
 
-  static String m10(group) => "已创建自动组 ${group}。如需可在代理页选中它。";
+  static String m10(group) => "已创建备用自动组 ${group}。如需可在代理页选中它。";
 
   static String m11(group) => "已恢复 ${group} 的自动选优";
 
@@ -322,12 +322,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "emptyTip": m9,
     "en": MessageLookupByLibrary.simpleMessage("英语"),
-    "enableAutoSelect": MessageLookupByLibrary.simpleMessage("启用自动选优"),
+    "enableAutoSelect": MessageLookupByLibrary.simpleMessage("创建备用自动组"),
     "enableAutoSelectCreateTip": MessageLookupByLibrary.simpleMessage(
-      "未发现 url-test/fallback 策略组。是否创建简单的 “FlClash Auto” 自动测速组？这会将配置覆写切换为自定义，并在自定义策略组为空时用 Auto + PROXY 替代（节点列表仍通过 include-all-proxies 保留）。",
+      "多数机场订阅已自带 url-test/fallback。当前配置未发现这类策略组——是否创建简单的 “FlClash Auto” 备用自动组？这会将覆写切换为自定义；若自定义策略组为空则用 Auto + PROXY 替代（节点仍通过 include-all-proxies 保留）。",
     ),
     "enableAutoSelectCreated": m10,
-    "enableAutoSelectFailed": MessageLookupByLibrary.simpleMessage("启用自动选优失败"),
+    "enableAutoSelectFailed": MessageLookupByLibrary.simpleMessage("创建备用自动组失败"),
     "enableAutoSelectRestored": m11,
     "entries": MessageLookupByLibrary.simpleMessage("个条目"),
     "entriesCount": m12,

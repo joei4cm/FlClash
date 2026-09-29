@@ -708,9 +708,9 @@
   "serviceProbeTesting": "テスト中",
   "serviceProbeCurrentNode": "現在のノード",
   "serviceProbeDisclaimer": "現在のノード経由の HTTP 到達性と遅延の確認です。配信アンロックやアカウント地域の判定ではありません。",
-  "enableAutoSelect": "自動選択を有効化",
-  "enableAutoSelectCreateTip": "url-test/fallback グループがありません。「FlClash Auto」を作成しますか？上書きをカスタムに切り替え、空のカスタム戦略グループを Auto + PROXY で置き換えます（ノードは include-all-proxies で保持）。",
-  "enableAutoSelectFailed": "自動選択の有効化に失敗しました",
+  "enableAutoSelect": "予備の自動グループを作成",
+  "enableAutoSelectCreateTip": "多くのサブスクは既に url-test/fallback を含みます。見つからない場合のみ「FlClash Auto」予備グループを作成しますか？上書きをカスタムに切り替え、空のカスタム戦略グループを Auto + PROXY に置き換えます（ノードは include-all-proxies で保持）。",
+  "enableAutoSelectFailed": "予備の自動グループの作成に失敗しました",
   "restoreAutoSelect": "自動に戻す",
   "groupTypeUrlTest": "URLTest",
   "groupTypeFallback": "Fallback",
@@ -733,7 +733,7 @@
       }
     }
   },
-  "enableAutoSelectCreated": "自動グループ {group} を作成しました。必要ならプロキシで選択してください。",
+  "enableAutoSelectCreated": "予備の自動グループ {group} を作成しました。必要ならプロキシで選択してください。",
   "@enableAutoSelectCreated": {
     "placeholders": {
       "group": {
