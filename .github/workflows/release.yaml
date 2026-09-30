@@ -199,6 +199,7 @@ jobs:
 
       - name: Setup NDK
         uses: nttld/setup-ndk@v1
+        id: ndk
         with:
           ndk-version: r28c
           add-to-path: true
@@ -209,7 +210,12 @@ jobs:
           flutter --version
           flutter pub get
 
+      # Flutter 3.47 may still hand NDK 27.x (no libclang) to native-asset hooks;
+      # export r28c so rust_api bindgen / setup can resolve LIBCLANG_PATH.
       - name: Build
+        env:
+          ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
+          ANDROID_NDK_ROOT: ${{ steps.ndk.outputs.ndk-path }}
         run: dart setup.dart android ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
 
       - name: Upload artifact

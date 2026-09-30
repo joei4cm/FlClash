@@ -2,23 +2,281 @@
   "schemaVersion": 2,
   "versions": [
     {
-      "version": "0.8.98",
-      "tag": "v0.8.98",
-      "date": "2026-09-14",
+      "version": "0.8.112",
+      "tag": "v0.8.112",
+      "date": "2026-09-29",
       "prerelease": false,
       "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "59ad1ea",
+              "text": "Rebuild production on upstream/main with fork features"
+            },
+            {
+              "id": "b38c4ce",
+              "text": "Weaken auto-select in favor of subscription strategies"
+            }
+          ]
+        },
         {
           "type": "fix",
           "entries": [
             {
-              "id": "c5bf5bd",
-              "scope": "resources",
-              "text": "Refresh the geo file size and time after an update finishes"
+              "id": "316cab6",
+              "scope": "ci",
+              "text": "Resolve NDK libclang for Android rquickjs bindgen"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.8.111",
+      "tag": "v0.8.111",
+      "date": "2026-08-29",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "34a16ae",
+              "scope": "strategy-lanes",
+              "text": "Usable business routing with inject overrides"
             },
             {
-              "id": "60f371a",
-              "scope": "core",
-              "text": "Keep the core running while Windows sleeps with the app suspended"
+              "id": "0e6b5ee",
+              "text": "Add strategy lanes UI to override subscription outlets"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "b44de99",
+              "scope": "strategy-lanes",
+              "text": "Address bugbot findings"
+            },
+            {
+              "id": "070e412",
+              "scope": "strategy-lanes",
+              "text": "Harden apply, discovery, and inject safety"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.8.110",
+      "tag": "v0.8.110",
+      "date": "2026-08-29",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "05319d1",
+              "scope": "geo-identity",
+              "text": "Add traffic capture mode setting"
+            },
+            {
+              "id": "30f6eac",
+              "scope": "script",
+              "text": "Run profile scripts on QuickJS through rust_api"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "8ec4dcf",
+              "scope": "rust_api",
+              "text": "Import StreamCommon for Windows peer_creds"
+            },
+            {
+              "id": "7b855a7",
+              "scope": "auto-select",
+              "text": "Reference AutoSelectDecision for dead-file lint"
+            },
+            {
+              "id": "2b62cdb",
+              "scope": "test",
+              "text": "Drop network_test incompatible with Flutter 3.44.4"
+            },
+            {
+              "id": "d760686",
+              "scope": "auto-select",
+              "text": "Stop sticky flapping and connection drops"
+            },
+            {
+              "id": "ae8b25b",
+              "scope": "android,windows,macos",
+              "text": "Platform fixes for VPN, system proxy, and startup"
+            },
+            {
+              "id": "74aa46b",
+              "text": "Harden security, config, backup, and the release tooling"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.8.107",
+      "tag": "v0.8.107",
+      "date": "2026-08-16",
+      "prerelease": false,
+      "groups": []
+    },
+    {
+      "version": "0.8.105",
+      "tag": "v0.8.105",
+      "date": "2026-08-03",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "12c28ea",
+              "scope": "ux",
+              "text": "Tailscale advanced collapse, Features section, ARB prune"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "32220f5",
+              "text": "Harden delay tests and core event dispatch"
+            },
+            {
+              "id": "5b9e9cd",
+              "text": "Connections push, Geo/Tailscale polish, fix TASK.md"
+            },
+            {
+              "id": "2917702",
+              "scope": "ux",
+              "text": "Honest Geo status and Tailscale setup edges"
+            }
+          ]
+        },
+        {
+          "type": "perf",
+          "entries": [
+            {
+              "id": "b1a3b89",
+              "text": "Finish leftover P2 tasks and geo model cleanup"
+            },
+            {
+              "id": "40c37db",
+              "text": "FixedList notify, delay batches, prefs skip, tray/access"
+            },
+            {
+              "id": "e3da592",
+              "text": "Cut traffic IPC, list rebuilds, and find-process default"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.8.101",
+      "tag": "v0.8.101",
+      "date": "2026-07-25",
+      "prerelease": false,
+      "groups": []
+    },
+    {
+      "version": "0.8.100",
+      "tag": "v0.8.100",
+      "date": "2026-07-25",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "914fd48",
+              "scope": "geo-identity",
+              "text": "Tailscale-style one-click checklist for newbies"
+            },
+            {
+              "id": "2b244dd",
+              "scope": "geo-identity",
+              "text": "Help Claude Code via OS timezone and terminal proxy"
+            },
+            {
+              "id": "b53a1c2",
+              "scope": "geo-identity",
+              "text": "Verify network undercover via FuckClaude API"
+            },
+            {
+              "id": "ba81e57",
+              "scope": "tools",
+              "text": "Add Geo identity guide for US AI exit consistency"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "f85855d",
+              "scope": "test",
+              "text": "Update config overrides count for geo identity"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.8.99",
+      "tag": "v0.8.99",
+      "date": "2026-07-25",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "42f91cc",
+              "scope": "tailscale",
+              "text": "Friendlier setup guide and one-tap connection test"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.8.98",
+      "tag": "v0.8.98",
+      "date": "2026-07-24",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "5e6fce1",
+              "scope": "tailscale",
+              "text": "Sync Fake IP Filter with bypass toggle"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "8f0631b",
+              "scope": "tailscale",
+              "text": "Exclude control plane from fake-IP DNS on bypass"
             }
           ]
         }
@@ -27,41 +285,21 @@
     {
       "version": "0.8.97",
       "tag": "v0.8.97",
-      "date": "2026-09-10",
+      "date": "2026-07-24",
       "prerelease": false,
       "groups": [
         {
           "type": "feat",
           "entries": [
             {
-              "id": "26cfbaf",
-              "scope": "ui",
-              "text": "Rework the app UI and refresh the localization"
+              "id": "89cdc0d",
+              "scope": "tailscale",
+              "text": "One-click bypass + per-node route destinations"
             },
             {
-              "id": "aaf934c",
-              "scope": "app",
-              "text": "Rework the app layer and window handling, and add proxy authentication"
-            },
-            {
-              "id": "c0fcbc0",
-              "scope": "desktop",
-              "text": "Rework the desktop runners, packaging, and native build"
-            },
-            {
-              "id": "ae29f38",
-              "scope": "android",
-              "text": "Rework the Android VPN service and lifecycle handling"
-            },
-            {
-              "id": "adf715f",
-              "scope": "plugins",
-              "text": "Rework the desktop plugins and add the Helper service and Rust bridge"
-            },
-            {
-              "id": "c6eaa0a",
-              "scope": "core",
-              "text": "Rework the core IPC and process lifecycle"
+              "id": "e069682",
+              "scope": "tailscale",
+              "text": "Add in-app guide and a prominent add-node button"
             }
           ]
         }

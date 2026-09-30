@@ -1,22 +1,105 @@
 # Changelog
 
-## v0.8.98 (2026-09-14)
-
-**Bug Fixes**
-
-- **resources** Refresh the geo file size and time after an update finishes (c5bf5bd)
-- **core** Keep the core running while Windows sleeps with the app suspended (60f371a)
-
-## v0.8.97 (2026-09-10)
+## v0.8.112 (2026-09-29)
 
 **Features**
 
-- **ui** Rework the app UI and refresh the localization (26cfbaf)
-- **app** Rework the app layer and window handling, and add proxy authentication (aaf934c)
-- **desktop** Rework the desktop runners, packaging, and native build (c0fcbc0)
-- **android** Rework the Android VPN service and lifecycle handling (ae29f38)
-- **plugins** Rework the desktop plugins and add the Helper service and Rust bridge (adf715f)
-- **core** Rework the core IPC and process lifecycle (c6eaa0a)
+- Rebuild production on upstream/main with fork features (59ad1ea)
+- Weaken auto-select in favor of subscription strategies (b38c4ce)
+
+**Bug Fixes**
+
+- **ci** Resolve NDK libclang for Android rquickjs bindgen (316cab6)
+
+## v0.8.111 (2026-08-29)
+
+**Features**
+
+- **strategy-lanes** Usable business routing with inject overrides (34a16ae)
+- Add strategy lanes UI to override subscription outlets (0e6b5ee)
+
+**Bug Fixes**
+
+- **strategy-lanes** Address bugbot findings (b44de99)
+- **strategy-lanes** Harden apply, discovery, and inject safety (070e412)
+
+## v0.8.110 (2026-08-29)
+
+**Features**
+
+- **geo-identity** Add traffic capture mode setting (05319d1)
+- **script** Run profile scripts on QuickJS through rust_api (30f6eac)
+
+**Bug Fixes**
+
+- **rust_api** Import StreamCommon for Windows peer_creds (8ec4dcf)
+- **auto-select** Reference AutoSelectDecision for dead-file lint (7b855a7)
+- **test** Drop network_test incompatible with Flutter 3.44.4 (2b62cdb)
+- **auto-select** Stop sticky flapping and connection drops (d760686)
+- **android,windows,macos** Platform fixes for VPN, system proxy, and startup (ae8b25b)
+- Harden security, config, backup, and the release tooling (74aa46b)
+
+## v0.8.107 (2026-08-16)
+
+Internal improvements only.
+
+## v0.8.105 (2026-08-03)
+
+**Features**
+
+- **ux** Tailscale advanced collapse, Features section, ARB prune (12c28ea)
+
+**Bug Fixes**
+
+- Harden delay tests and core event dispatch (32220f5)
+- Connections push, Geo/Tailscale polish, fix TASK.md (5b9e9cd)
+- **ux** Honest Geo status and Tailscale setup edges (2917702)
+
+**Performance**
+
+- Finish leftover P2 tasks and geo model cleanup (b1a3b89)
+- FixedList notify, delay batches, prefs skip, tray/access (40c37db)
+- Cut traffic IPC, list rebuilds, and find-process default (e3da592)
+
+## v0.8.101 (2026-07-25)
+
+Internal improvements only.
+
+## v0.8.100 (2026-07-25)
+
+**Features**
+
+- **geo-identity** Tailscale-style one-click checklist for newbies (914fd48)
+- **geo-identity** Help Claude Code via OS timezone and terminal proxy (2b244dd)
+- **geo-identity** Verify network undercover via FuckClaude API (b53a1c2)
+- **tools** Add Geo identity guide for US AI exit consistency (ba81e57)
+
+**Bug Fixes**
+
+- **test** Update config overrides count for geo identity (f85855d)
+
+## v0.8.99 (2026-07-25)
+
+**Features**
+
+- **tailscale** Friendlier setup guide and one-tap connection test (42f91cc)
+
+## v0.8.98 (2026-07-24)
+
+**Features**
+
+- **tailscale** Sync Fake IP Filter with bypass toggle (5e6fce1)
+
+**Bug Fixes**
+
+- **tailscale** Exclude control plane from fake-IP DNS on bypass (8f0631b)
+
+## v0.8.97 (2026-07-24)
+
+**Features**
+
+- **tailscale** One-click bypass + per-node route destinations (89cdc0d)
+- **tailscale** Add in-app guide and a prominent add-node button (e069682)
 
 <!-- changelog:frozen -->
 <!-- Entries below predate the structured pipeline. Their wording is kept as written; only the heading and list style were normalized. -->
