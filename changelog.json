@@ -19,6 +19,16 @@
               "text": "Weaken auto-select in favor of subscription strategies"
             }
           ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "316cab6",
+              "scope": "ci",
+              "text": "Resolve NDK libclang for Android rquickjs bindgen"
+            }
+          ]
         }
       ]
     },

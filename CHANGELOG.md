@@ -7,6 +7,10 @@
 - Rebuild production on upstream/main with fork features (59ad1ea)
 - Weaken auto-select in favor of subscription strategies (b38c4ce)
 
+**Bug Fixes**
+
+- **ci** Resolve NDK libclang for Android rquickjs bindgen (316cab6)
+
 ## v0.8.111 (2026-08-29)
 
 **Features**
