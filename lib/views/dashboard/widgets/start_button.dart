@@ -1,39 +1,32 @@
+import 'dart:async';
+
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 const _dayThresholdMs = Duration.millisecondsPerDay;
 const _widthAnimationDuration = Duration(milliseconds: 200);
 const _buttonHeight = 56.0;
+const _iconMorphDuration = Duration(milliseconds: 450);
 
 TextStyle? _runTimeTextStyle(BuildContext context) {
   return context.textTheme.titleMedium?.toSoftBold.copyWith(
     color: context.colorScheme.onPrimaryContainer,
+    fontFeatures: const [FontFeature.tabularFigures()],
   );
 }
 
-TextStyle? _leadingTextStyle(BuildContext context) {
-  return context.textTheme.titleMedium?.toSoftBold.copyWith(
-    color: context.colorScheme.primary,
-    fontWeight: FontWeight.w600,
-  );
-}
-
-/// [Measure.computeTextSize] only reads [Text.data], so use plain [Text].
-double _measureRunTimeWidth(BuildContext context, {required bool hasDays}) {
-  final clockWidth = globalState.measure
-      .computeTextSize(Text('23:59:59', style: _runTimeTextStyle(context)))
-      .width;
-  if (!hasDays) {
-    return clockWidth + 16;
-  }
+double _computeRunTimeTextWidth(BuildContext context, {required bool hasDays}) {
   // Wide enough for multi-week uptimes such as `999d 23:59:59`.
-  final dayWidth = globalState.measure
-      .computeTextSize(Text('999d ', style: _leadingTextStyle(context)))
-      .width;
-  return dayWidth + clockWidth + 16;
+  final sample = hasDays ? '999d 23:59:59' : '23:59:59';
+  return globalState.measure
+          .computeTextSize(Text(sample, style: _runTimeTextStyle(context)))
+          .width +
+      16;
 }
 
 class RunTimeText extends StatelessWidget {
@@ -43,28 +36,11 @@ class RunTimeText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = getTimeText(timeStamp);
-    final style = _runTimeTextStyle(context);
-    final daySeparator = text.indexOf('d ');
-    if (daySeparator < 0) {
-      return Text(
-        text,
-        maxLines: 1,
-        overflow: TextOverflow.visible,
-        style: style,
-      );
-    }
-    return Text.rich(
-      TextSpan(
-        text: text.substring(0, daySeparator + 2),
-        style: _leadingTextStyle(context),
-        children: [
-          TextSpan(text: text.substring(daySeparator + 2), style: style),
-        ],
-      ),
+    return Text(
+      getTimeText(timeStamp),
       maxLines: 1,
       overflow: TextOverflow.visible,
-      style: style,
+      style: _runTimeTextStyle(context),
     );
   }
 }
@@ -80,16 +56,16 @@ class _StartButtonState extends ConsumerState<StartButton>
     with SingleTickerProviderStateMixin {
   AnimationController? _controller;
   late Animation<double> _animation;
-  final ValueNotifier<int?> _displayRunTime = ValueNotifier<int?>(null);
   double? _clockTextWidth;
   double? _dayTextWidth;
   double? _suspendedTextWidth;
+  int? _displayRunTime;
 
   @override
   void initState() {
     super.initState();
     final isStart = ref.read(isStartProvider);
-    _displayRunTime.value = ref.read(runTimeProvider);
+    _displayRunTime = ref.read(runTimeProvider);
     _controller = AnimationController(
       vsync: this,
       value: isStart ? 1 : 0,
@@ -117,7 +93,6 @@ class _StartButtonState extends ConsumerState<StartButton>
 
   @override
   void dispose() {
-    _displayRunTime.dispose();
     _controller?.dispose();
     _controller = null;
     super.dispose();
@@ -129,17 +104,13 @@ class _StartButtonState extends ConsumerState<StartButton>
 
   void _updateDisplayRunTime(int? runTime) {
     if (!mounted ||
-        _displayRunTime.value == runTime ||
+        _displayRunTime == runTime ||
         (runTime == null && !(_controller?.isDismissed ?? true))) {
       return;
     }
-    final wasMultiDay = (_displayRunTime.value ?? 0) >= _dayThresholdMs;
-    final isMultiDay = (runTime ?? 0) >= _dayThresholdMs;
-    _displayRunTime.value = runTime;
-    // Only rebuild the FAB chrome when the width template must change.
-    if (wasMultiDay != isMultiDay && mounted) {
-      setState(() {});
-    }
+    setState(() {
+      _displayRunTime = runTime;
+    });
   }
 
   void updateController(bool isStart) {
@@ -165,9 +136,12 @@ class _StartButtonState extends ConsumerState<StartButton>
 
   double _getRunTimeTextWidth(BuildContext context, {required bool hasDays}) {
     if (hasDays) {
-      return _dayTextWidth ??= _measureRunTimeWidth(context, hasDays: true);
+      return _dayTextWidth ??= _computeRunTimeTextWidth(context, hasDays: true);
     }
-    return _clockTextWidth ??= _measureRunTimeWidth(context, hasDays: false);
+    return _clockTextWidth ??= _computeRunTimeTextWidth(
+      context,
+      hasDays: false,
+    );
   }
 
   double _getSuspendedTextWidth(BuildContext context, String suspendedText) {
@@ -180,6 +154,25 @@ class _StartButtonState extends ConsumerState<StartButton>
         24;
   }
 
+  Widget _buildIcon(bool isStart, {required bool suspended}) {
+    return AnimatedSwitcher(
+      duration: context.motionDuration(commonDuration),
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: ScaleTransition(scale: animation, child: child),
+      ),
+      child: suspended
+          ? const GlyphIcon(AppGlyphs.wifiOff, fill: 1)
+          : TweenAnimationBuilder<double>(
+              tween: Tween(end: isStart ? 1 : 0),
+              duration: _iconMorphDuration,
+              curve: Curves.easeOutBack,
+              builder: (_, progress, _) =>
+                  GlyphIcon(AppGlyphs.playPause(progress), fill: 1),
+            ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasProfile = ref.watch(
@@ -188,10 +181,23 @@ class _StartButtonState extends ConsumerState<StartButton>
     if (!hasProfile) {
       return Container();
     }
+    final isStart = ref.watch(isStartProvider);
     final suspend = ref.watch(suspendProvider);
-    final hasDays = (_displayRunTime.value ?? 0) >= _dayThresholdMs;
-    final theme = Theme.of(context);
     final appLocalizations = context.appLocalizations;
+    final suspended = isStart && suspend;
+    if (NavigationDock.isDocked(context)) {
+      return BreathingFill(
+        active: isStart && !suspend,
+        child: FloatingActionButton(
+          heroTag: null,
+          tooltip: suspended ? appLocalizations.suspended : null,
+          onPressed: handleSwitchStart,
+          child: _buildIcon(isStart, suspended: suspended),
+        ),
+      );
+    }
+    final hasDays = (_displayRunTime ?? 0) >= _dayThresholdMs;
+    final theme = Theme.of(context);
     final textWidth = suspend
         ? _getSuspendedTextWidth(context, appLocalizations.suspended)
         : _getRunTimeTextWidth(context, hasDays: hasDays);
@@ -208,64 +214,183 @@ class _StartButtonState extends ConsumerState<StartButton>
             ),
           ),
         ),
-        child: FloatingActionButton(
-          clipBehavior: Clip.antiAlias,
-          materialTapTargetSize: MaterialTapTargetSize.padded,
-          heroTag: null,
-          onPressed: () {
-            handleSwitchStart();
-          },
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AnimatedBuilder(
-                animation: _animation,
-                builder: (_, child) {
-                  return Container(
-                    height: _buttonHeight,
-                    padding: EdgeInsets.only(
-                      left: 16,
-                      right: 16 - 8 * _animation.value,
-                    ),
-                    alignment: Alignment.centerLeft,
-                    child: child,
-                  );
-                },
-                child: AnimatedIcon(
-                  icon: AnimatedIcons.play_pause,
-                  progress: _animation,
+        child: ElasticButton(
+          child: FloatingActionButton(
+            clipBehavior: Clip.antiAlias,
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            heroTag: null,
+            onPressed: () {
+              handleSwitchStart();
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedBuilder(
+                  animation: _animation,
+                  builder: (_, child) {
+                    return Container(
+                      height: _buttonHeight,
+                      padding: EdgeInsets.only(
+                        left: 16,
+                        right: 16 - 8 * _animation.value,
+                      ),
+                      alignment: Alignment.centerLeft,
+                      child: child,
+                    );
+                  },
+                  child: _buildIcon(isStart, suspended: suspended),
                 ),
-              ),
-              SizeTransition(
-                axis: Axis.horizontal,
-                alignment: Alignment.centerLeft,
-                sizeFactor: _animation,
-                child: AnimatedContainer(
-                  width: textWidth,
-                  duration: _widthAnimationDuration,
-                  curve: Curves.easeOut,
-                  child: suspend
-                      ? Text(
-                          appLocalizations.suspended,
-                          maxLines: 1,
-                          overflow: TextOverflow.visible,
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(
-                                color: context.colorScheme.onPrimaryContainer,
-                              ),
-                        )
-                      : ValueListenableBuilder<int?>(
-                          valueListenable: _displayRunTime,
-                          builder: (_, runTime, _) {
-                            return RunTimeText(timeStamp: runTime);
-                          },
-                        ),
+                SizeTransition(
+                  axis: Axis.horizontal,
+                  alignment: Alignment.centerLeft,
+                  sizeFactor: _animation,
+                  child: AnimatedContainer(
+                    width: textWidth,
+                    duration: _widthAnimationDuration,
+                    curve: Curves.easeOut,
+                    child: suspend
+                        ? Text(
+                            appLocalizations.suspended,
+                            maxLines: 1,
+                            overflow: TextOverflow.visible,
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: context.colorScheme.onPrimaryContainer,
+                                ),
+                          )
+                        : RunTimeText(timeStamp: _displayRunTime),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+}
+
+class BreathingFill extends StatefulWidget {
+  const BreathingFill({super.key, required this.active, required this.child});
+
+  final bool active;
+  final Widget child;
+
+  @override
+  State<BreathingFill> createState() => _BreathingFillState();
+}
+
+class _BreathingFillState extends State<BreathingFill> {
+  static const _breathDuration = Duration(milliseconds: 1400);
+  // A ticker would redraw the screen on every vsync for as long as the core runs.
+  static const _breathStep = Duration(milliseconds: 66);
+  static const _fadeDuration = Duration(milliseconds: 300);
+
+  final _breath = ValueNotifier<double>(0);
+  late final AppLifecycleListener _lifecycle;
+  Timer? _timer;
+  int _steps = 0;
+  bool _canAnimate = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(onStateChange: (_) => _sync());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _canAnimate =
+        !MediaQuery.disableAnimationsOf(context) &&
+        TickerMode.valuesOf(context).enabled;
+    _sync();
+  }
+
+  @override
+  void didUpdateWidget(BreathingFill oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _sync();
+  }
+
+  bool get _isForeground => switch (WidgetsBinding.instance.lifecycleState) {
+    null || AppLifecycleState.resumed || AppLifecycleState.inactive => true,
+    _ => false,
+  };
+
+  void _sync() {
+    if (!widget.active || !_canAnimate || !_isForeground) {
+      _timer?.cancel();
+      _timer = null;
+      if (widget.active) _breath.value = 1;
+      return;
+    }
+    _timer ??= Timer.periodic(_breathStep, (_) => _step());
+  }
+
+  void _step() {
+    final period = _breathDuration.inMicroseconds / _breathStep.inMicroseconds;
+    final phase = ++_steps % (2 * period) / period;
+    _breath.value = Curves.easeInOut.transform(phase <= 1 ? phase : 2 - phase);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _lifecycle.dispose();
+    _breath.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Stack(
+      children: [
+        widget.child,
+        Positioned.fill(
+          child: IgnorePointer(
+            child: AnimatedOpacity(
+              opacity: widget.active ? 1 : 0,
+              duration: _fadeDuration,
+              child: RepaintBoundary(
+                child: CustomPaint(
+                  painter: _BreathingFillPainter(
+                    breath: _breath,
+                    color: theme.colorScheme.onPrimaryContainer,
+                    shape:
+                        theme.floatingActionButtonTheme.shape ?? AppShape.full,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _BreathingFillPainter extends CustomPainter {
+  _BreathingFillPainter({
+    required this.breath,
+    required this.color,
+    required this.shape,
+  }) : super(repaint: breath);
+
+  final ValueNotifier<double> breath;
+  final Color color;
+  final ShapeBorder shape;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawPath(
+      shape.getOuterPath(Offset.zero & size),
+      Paint()..color = color.withValues(alpha: 0.14 * breath.value),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_BreathingFillPainter oldDelegate) =>
+      color != oldDelegate.color || shape != oldDelegate.shape;
 }

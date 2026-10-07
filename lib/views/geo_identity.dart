@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
@@ -394,31 +395,31 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     final isStart = ref.watch(isStartProvider);
     final protected = _report?.isProtected == true;
     final Color accent;
-    final IconData icon;
+    final Glyph icon;
     final String title;
     if (_busy) {
       accent = context.colorScheme.tertiary;
-      icon = Icons.hourglass_top_outlined;
+      icon = AppGlyphs.clock;
       title = _statusMessage ?? l10n.geoIdentitySetupRunning;
     } else if (!enabled) {
       accent = context.colorScheme.onSurfaceVariant;
-      icon = Icons.shield_outlined;
+      icon = AppGlyphs.vpn;
       title = _statusMessage ?? l10n.geoIdentityOffStatus;
     } else if (!isStart) {
       accent = context.colorScheme.tertiary;
-      icon = Icons.play_circle_outline;
+      icon = AppGlyphs.bolt;
       title = _statusMessage ?? l10n.geoIdentityNeedStart;
     } else if (_report == null) {
       accent = context.colorScheme.tertiary;
-      icon = Icons.info_outline;
+      icon = AppGlyphs.info;
       title = _statusMessage ?? l10n.geoIdentityPendingCheck;
     } else if (protected) {
       accent = context.colorScheme.primary;
-      icon = Icons.verified_user_outlined;
+      icon = AppGlyphs.account;
       title = l10n.geoIdentityNetworkGood;
     } else {
       accent = context.colorScheme.error;
-      icon = Icons.warning_amber_outlined;
+      icon = AppGlyphs.warning;
       title = _statusMessage ?? _messageForReport(_report!);
     }
 
@@ -435,9 +436,9 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: accent.opacity12,
-          borderRadius: BorderRadius.circular(12),
+          shape: AppShape.md,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -454,7 +455,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
                     ),
                   )
                 else
-                  Icon(icon, color: accent),
+                  GlyphIcon(icon, color: accent),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -526,13 +527,13 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       child: Column(
         children: [
           ListItem(
-            leading: const Icon(Icons.content_copy_outlined),
+            leading: const GlyphIcon(AppGlyphs.copy),
             title: Text(l10n.geoIdentityCopyTerminalProxy),
             subtitle: Text(l10n.geoIdentityCopyTerminalProxyShort),
             onTap: _busy ? null : () => _copyTerminalProxyExports(),
           ),
           ListItem(
-            leading: const Icon(Icons.extension_outlined),
+            leading: const GlyphIcon(AppGlyphs.puzzle),
             title: Text(l10n.geoIdentityOpenGeoMirror),
             subtitle: Text(l10n.geoIdentityOpenGeoMirrorShort),
             onTap: () {
@@ -541,7 +542,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
           ),
           if (!system.isAndroid && previous != null && previous.isNotEmpty)
             ListItem(
-              leading: const Icon(Icons.restore_outlined),
+              leading: const GlyphIcon(AppGlyphs.reset),
               title: Text(l10n.geoIdentityRestoreOsTimezone),
               subtitle: Text(l10n.geoIdentityRestoreOsTimezoneDesc(previous)),
               onTap: _busy
@@ -582,14 +583,14 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
             ),
           ),
           ListItem.toggle(
-            leading: const Icon(Icons.shield_outlined),
+            leading: const GlyphIcon(AppGlyphs.vpn),
             title: Text(l10n.geoIdentityProtectEnable),
             subtitle: Text(l10n.geoIdentityProtectToggleDesc),
             value: enabled,
             onChanged: _busy ? null : _handleToggle,
           ),
           ListItem.options(
-            leading: const Icon(Icons.tune_outlined),
+            leading: const GlyphIcon(AppGlyphs.sliders),
             title: Text(l10n.geoIdentityCaptureMode),
             subtitle: Text(
               _captureModeLabel(

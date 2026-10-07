@@ -1,4 +1,5 @@
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/auto_select_sticky.dart';
@@ -57,13 +58,13 @@ class AutoGroupBar extends ConsumerWidget {
 
     return Material(
       color: context.colorScheme.secondaryContainer.opacity60,
-      borderRadius: BorderRadius.circular(12),
+      shape: AppShape.md,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 8, 4, 8),
         child: Row(
           children: [
-            Icon(
-              Icons.auto_mode,
+            GlyphIcon(
+              AppGlyphs.themeAuto,
               size: 18,
               color: context.colorScheme.onSecondaryContainer,
             ),

@@ -1,127 +1,198 @@
-/// Catalog of HTTP probes used to gauge current-node reachability.
-///
-/// These are latency/reachability checks via the Clash `URLTest` path — not
-/// streaming unlock or account-region tests.
-enum ServiceProbeCategory { search, social, ai, streaming, general }
+import 'dart:convert';
 
-class ServiceProbe {
+import 'package:fl_clash/common/constant.dart';
+import 'package:fl_clash/core/controller.dart';
+import 'package:fl_clash/models/models.dart';
+import 'package:flutter/foundation.dart';
+
+const directOutbound = 'DIRECT';
+const routedOutbound = '';
+
+/// [id] must match the checker name registered in core/service_check.go.
+enum ServiceTarget {
+  google('google', 'Google', 'google'),
+  github('github', 'GitHub', 'github'),
+  youtube('youtube', 'YouTube', 'youtube'),
+  chatgpt('chatgpt', 'ChatGPT', 'openai'),
+  claude('claude', 'Claude', 'claude'),
+  gemini('gemini', 'Gemini', 'gemini'),
+  netflix('netflix', 'Netflix', 'netflix'),
+  disneyPlus('disney-plus', 'Disney+', 'disneyplus'),
+  primeVideo('prime-video', 'Prime Video', 'primevideo'),
+  spotify('spotify', 'Spotify', 'spotify'),
+  tiktok('tiktok', 'TikTok', 'tiktok'),
+  bilibili('bilibili', 'bilibili', 'bilibili');
+
+  const ServiceTarget(this.id, this.label, this.icon);
+
   final String id;
-  final ServiceProbeCategory category;
-  final String url;
-  final String brand;
+  final String label;
+  final String icon;
 
-  const ServiceProbe({
-    required this.id,
-    required this.category,
-    required this.url,
-    required this.brand,
-  });
+  static ServiceTarget? byId(String id) {
+    for (final target in values) {
+      if (target.id == id) return target;
+    }
+    return null;
+  }
 }
 
-const serviceProbes = <ServiceProbe>[
-  // Search
-  ServiceProbe(
-    id: 'google',
-    category: ServiceProbeCategory.search,
-    url: 'https://www.gstatic.com/generate_204',
-    brand: 'Google',
-  ),
-  ServiceProbe(
-    id: 'bing',
-    category: ServiceProbeCategory.search,
-    url: 'https://www.bing.com/',
-    brand: 'Bing',
-  ),
-  ServiceProbe(
-    id: 'wikipedia',
-    category: ServiceProbeCategory.search,
-    url: 'https://www.wikipedia.org/',
-    brand: 'Wikipedia',
-  ),
-  // Social / forums
-  ServiceProbe(
-    id: 'reddit',
-    category: ServiceProbeCategory.social,
-    url: 'https://www.reddit.com/',
-    brand: 'Reddit',
-  ),
-  ServiceProbe(
-    id: 'discord',
-    category: ServiceProbeCategory.social,
-    url: 'https://discord.com/api/v9/gateway',
-    brand: 'Discord',
-  ),
-  ServiceProbe(
-    id: 'x',
-    category: ServiceProbeCategory.social,
-    url: 'https://x.com/',
-    brand: 'X',
-  ),
-  // AI
-  ServiceProbe(
-    id: 'chatgpt',
-    category: ServiceProbeCategory.ai,
-    url: 'https://chatgpt.com/',
-    brand: 'ChatGPT',
-  ),
-  ServiceProbe(
-    id: 'claude',
-    category: ServiceProbeCategory.ai,
-    url: 'https://claude.ai/',
-    brand: 'Claude',
-  ),
-  ServiceProbe(
-    id: 'gemini',
-    category: ServiceProbeCategory.ai,
-    url: 'https://gemini.google.com/',
-    brand: 'Gemini',
-  ),
-  // Streaming
-  ServiceProbe(
-    id: 'youtube',
-    category: ServiceProbeCategory.streaming,
-    url: 'https://www.youtube.com/generate_204',
-    brand: 'YouTube',
-  ),
-  ServiceProbe(
-    id: 'netflix',
-    category: ServiceProbeCategory.streaming,
-    url: 'https://www.netflix.com/title/80018499',
-    brand: 'Netflix',
-  ),
-  ServiceProbe(
-    id: 'appletv',
-    category: ServiceProbeCategory.streaming,
-    url: 'https://tv.apple.com/',
-    brand: 'Apple TV',
-  ),
-  ServiceProbe(
-    id: 'disney',
-    category: ServiceProbeCategory.streaming,
-    url: 'https://www.disneyplus.com/',
-    brand: 'Disney+',
-  ),
-  // General
-  ServiceProbe(
-    id: 'github',
-    category: ServiceProbeCategory.general,
-    url: 'https://github.com/',
-    brand: 'GitHub',
-  ),
-  ServiceProbe(
-    id: 'cloudflare',
-    category: ServiceProbeCategory.general,
-    url: 'https://www.cloudflare.com/cdn-cgi/trace',
-    brand: 'Cloudflare',
-  ),
-];
+enum ServiceProbeStatus {
+  available('available'),
+  unavailable('unavailable'),
+  restricted('restricted'),
+  disallowedIsp('disallowed-isp'),
+  blocked('blocked'),
+  unsupportedRegion('unsupported-region'),
+  originalsOnly('originals-only'),
+  comingSoon('coming-soon'),
+  timeout('timeout'),
+  failed('failed');
 
-const maxConcurrentServiceProbes = 4;
+  const ServiceProbeStatus(this.id);
 
-const flClashAutoGroupName = 'FlClash Auto';
-const flClashProxyGroupName = 'PROXY';
+  final String id;
 
-extension ServiceProbeCategoryExt on ServiceProbeCategory {
-  List<ServiceProbe> get probes =>
-      serviceProbes.where((item) => item.category == this).toList();
+  static ServiceProbeStatus byId(String id) {
+    for (final status in values) {
+      if (status.id == id) return status;
+    }
+    return ServiceProbeStatus.failed;
+  }
+}
+
+List<ServiceTarget> orderServiceTargets(List<String> order) {
+  return {
+    for (final id in order) ?ServiceTarget.byId(id),
+    ...ServiceTarget.values,
+  }.toList();
+}
+
+class ServiceCheck {
+  const ServiceCheck(
+    this.status, {
+    this.delay,
+    this.chains = const [],
+    this.region,
+    this.checkedAt,
+    this.coreEpoch = 0,
+    this.picksVersion = 0,
+  });
+
+  factory ServiceCheck.of(ServiceCheckItem item) {
+    return ServiceCheck(
+      ServiceProbeStatus.byId(item.status),
+      delay: item.delay > 0 ? item.delay : null,
+      chains: item.chains,
+      region: item.region.isEmpty ? null : item.region,
+      checkedAt: item.checkedAt > 0
+          ? DateTime.fromMillisecondsSinceEpoch(item.checkedAt)
+          : null,
+      coreEpoch: item.coreEpoch,
+      picksVersion: item.picksVersion,
+    );
+  }
+
+  final ServiceProbeStatus status;
+  final int? delay;
+  final List<String> chains;
+  final String? region;
+  final DateTime? checkedAt;
+  final int coreEpoch;
+  final int picksVersion;
+
+  String? get node => chains.firstOrNull;
+
+  @override
+  bool operator ==(Object other) =>
+      other is ServiceCheck &&
+      other.status == status &&
+      other.delay == delay &&
+      listEquals(other.chains, chains) &&
+      other.region == region &&
+      other.checkedAt == checkedAt &&
+      other.coreEpoch == coreEpoch &&
+      other.picksVersion == picksVersion;
+
+  @override
+  int get hashCode => Object.hash(
+    status,
+    delay,
+    Object.hashAll(chains),
+    region,
+    checkedAt,
+    coreEpoch,
+    picksVersion,
+  );
+
+  @override
+  String toString() =>
+      'ServiceCheck(${status.id}, delay: $delay, node: $node, region: $region)';
+}
+
+/// An empty [proxyName] lets the Core route by its rules; an empty [targets]
+/// checks every service.
+Future<Map<ServiceTarget, ServiceCheck>> checkServices(
+  CoreController core, {
+  String proxyName = '',
+  List<ServiceTarget> targets = const [],
+  Duration timeout = probeTimeoutDuration,
+}) async {
+  final items = await core.serviceCheck(
+    ServiceCheckParams(
+      proxyName: proxyName,
+      names: targets.map((target) => target.id).toList(),
+      timeout: timeout.inMilliseconds,
+    ),
+  );
+  return {
+    for (final item in items)
+      ?ServiceTarget.byId(item.name): ServiceCheck.of(item),
+  };
+}
+
+IpInfo Function(String) _json(IpInfo Function(Map<String, dynamic>) parse) {
+  return (body) => parse(jsonDecode(body) as Map<String, dynamic>);
+}
+
+final Map<String, IpInfo Function(String)> ipInfoSources = {
+  'https://www.cloudflare.com/cdn-cgi/trace': IpInfo.fromCloudflareTrace,
+  'https://api.ip.sb/geoip': _json(IpInfo.fromIpSbJson),
+  'https://ipinfo.io/json': _json(IpInfo.fromIpInfoIoJson),
+  'https://ipwho.is': _json(IpInfo.fromIpWhoIsJson),
+  'http://ip-api.com/json': _json(IpInfo.fromIpAPIJson),
+  'https://get.geojs.io/v1/ip/geo.json': _json(IpInfo.fromGeoJsJson),
+  'https://api.country.is': _json(IpInfo.fromCountryIsJson),
+  'https://api.ipquery.io/?format=json': _json(IpInfo.fromIpQueryJson),
+  'https://ident.me/json': _json(IpInfo.fromIdentMeJson),
+};
+
+/// Raw so the route stamp survives; [parseOutboundIp] reads the address.
+Future<OutboundIpResult?> lookupOutboundIp(
+  CoreController core,
+  String proxyName, {
+  Duration timeout = outboundIpTimeoutDuration,
+}) {
+  return core.outboundIp(
+    OutboundIpParams(
+      proxyName: proxyName,
+      urls: ipInfoSources.keys.toList(),
+      timeout: timeout.inMilliseconds,
+    ),
+  );
+}
+
+IpInfo? parseOutboundIp(OutboundIpResult? result) {
+  if (result == null || result.error != null || result.body.isEmpty) {
+    return null;
+  }
+  final parse = ipInfoSources[result.url];
+  if (parse == null) return null;
+  try {
+    return parse(result.body);
+  } on FormatException {
+    return null;
+  } on TypeError {
+    return null;
+  }
 }

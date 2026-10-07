@@ -54,7 +54,6 @@ abstract class MessageActionState with _$MessageActionState {
 @freezed
 abstract class AppBarState with _$AppBarState {
   const factory AppBarState({
-    @Default([]) List<Widget> actions,
     AppBarSearchState? searchState,
     AppBarEditState? editState,
   }) = _AppBarState;
@@ -64,7 +63,6 @@ abstract class AppBarState with _$AppBarState {
 abstract class AppBarSearchState with _$AppBarSearchState {
   const factory AppBarSearchState({
     required Function(String) onSearch,
-    @Default(true) bool autoAddSearch,
     @Default(null) String? query,
   }) = _AppBarSearchState;
 }
@@ -94,14 +92,6 @@ abstract class ProfilesState with _$ProfilesState {
 }
 
 @freezed
-abstract class NetworkDetectionState with _$NetworkDetectionState {
-  const factory NetworkDetectionState({
-    required bool isLoading,
-    required IpInfo? ipInfo,
-  }) = _NetworkDetectionState;
-}
-
-@freezed
 abstract class TrayState with _$TrayState {
   const factory TrayState({
     required Mode mode,
@@ -113,6 +103,8 @@ abstract class TrayState with _$TrayState {
     required List<Group> groups,
     required Map<String, String> selectedMap,
     required bool showTrayTitle,
+    required bool safeMode,
+    @Default({}) Map<HotAction, HotKeyAction> hotKeys,
   }) = _TrayState;
 }
 
@@ -316,6 +308,7 @@ abstract class SharedState with _$SharedState {
     VpnOptions? vpnOptions,
     required String stopTip,
     required String startTip,
+    required String localNetworkTip,
     required String currentProfileName,
     required String stopText,
     required bool onlyStatisticsProxy,
@@ -350,13 +343,18 @@ abstract class MakeRealProfileState with _$MakeRealProfileState {
     required Map<String, dynamic> rawConfig,
     required PatchClashConfig realPatchConfig,
     required bool overrideDns,
+    required bool overrideNtp,
     required bool appendSystemDns,
     required List<ProxyGroup> proxyGroups,
     required List<Rule> rules,
     required List<Rule> addedRules,
     required String defaultUA,
+    @Default([]) List<CustomProxy> proxies,
     @Default([]) List<String> authentication,
+    @Default({}) Map<String, dynamic> injectedProxyProviders,
+    @Default({}) Map<String, dynamic> injectedRuleProviders,
     String? matchTarget,
+    @Default(false) bool safeMode,
     @Default([]) List<TailscaleProxy> tailscaleProxies,
     @Default([]) List<String> tailscaleRules,
     @Default([]) List<String> tailscaleFakeIpFilters,
@@ -374,6 +372,8 @@ abstract class MigrationData with _$MigrationData {
     @Default([]) List<Profile> profiles,
     @Default([]) List<ProfileRuleLink> links,
     @Default([]) List<ProxyGroup> proxyGroups,
+    @Default([]) List<ClashProvider> clashProviders,
+    @Default([]) List<CustomProxy> customProxies,
   }) = _MigrationData;
 }
 
@@ -387,8 +387,12 @@ abstract class SetupState with _$SetupState {
     required List<ProxyGroup> proxyGroups,
     required List<Rule> addedRules,
     required Script? script,
+    @Default([]) List<CustomProxy> customProxies,
     required bool overrideDns,
     required Dns dns,
+    required Set<DnsOverrideKey> dnsOverrideKeys,
+    @Default([]) List<ClashProvider> clashProviders,
+    @Default({}) Map<String, int> profileProviders,
     String? matchTarget,
   }) = _SetupState;
 }

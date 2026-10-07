@@ -22,7 +22,7 @@ void main() {
       expect(value.onlyStatisticsProxy, false);
       expect(value.autoLaunch, false);
       expect(value.closeConnections, true);
-      expect(value.isAnimateToPage, true);
+      expect(value.tabAnimation, TabAnimation.slide);
     });
 
     test('can update state', () {
@@ -351,16 +351,18 @@ void main() {
         themeProps: ThemeProps(),
         currentProfileId: 7,
         overrideDns: true,
+        overrideNtp: true,
         geoIdentityProps: GeoIdentityProps(enable: true),
       );
       final overrides = buildConfigOverrides(config);
-      expect(overrides.length, 14);
+      expect(overrides.length, 15);
 
       final overrideContainer = ProviderContainer(overrides: overrides);
       addTearDown(overrideContainer.dispose);
 
       expect(overrideContainer.read(currentProfileIdProvider), 7);
       expect(overrideContainer.read(overrideDnsProvider), true);
+      expect(overrideContainer.read(overrideNtpProvider), true);
       expect(
         overrideContainer.read(patchClashConfigProvider),
         config.patchClashConfig,
