@@ -60,10 +60,6 @@ object Core {
         )
     }
 
-    external fun suspended(
-        suspended: Boolean,
-    )
-
     private external fun invokeMethod(
         data: String,
         cb: InvokeInterface,
@@ -71,12 +67,12 @@ object Core {
 
     fun invokeMethod(
         data: String,
-        cb: (result: String?) -> Unit,
+        cb: (result: ByteArray?) -> Unit,
     ) {
         invokeMethod(
             data,
             object : InvokeInterface {
-                override fun onResult(result: String?) {
+                override fun onResult(result: ByteArray?) {
                     cb(result)
                 }
             },
@@ -93,8 +89,8 @@ object Core {
         } else {
             setEventListener(
                 object : InvokeInterface {
-                    override fun onResult(result: String?) {
-                        callback(result)
+                    override fun onResult(result: ByteArray?) {
+                        callback(result?.decodeToString())
                     }
                 },
             )
@@ -110,8 +106,8 @@ object Core {
             initParamsString,
             setupParamsString,
             object : InvokeInterface {
-                override fun onResult(result: String?) {
-                    callback(result)
+                override fun onResult(result: ByteArray?) {
+                    callback(result?.decodeToString())
                 }
             },
         )

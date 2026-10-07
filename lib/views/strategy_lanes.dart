@@ -1,4 +1,5 @@
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
@@ -241,7 +242,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
           ? ListView(
               children: [
                 ListItem(
-                  leading: const Icon(Icons.info_outline),
+                  leading: const GlyphIcon(AppGlyphs.info),
                   title: Text(l10n.strategyLanesNeedProfile),
                 ),
               ],
@@ -251,7 +252,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
               error: (error, _) => ListView(
                 children: [
                   ListItem(
-                    leading: const Icon(Icons.error_outline),
+                    leading: const GlyphIcon(AppGlyphs.error),
                     title: Text(l10n.strategyLanesLoadFailed),
                     subtitle: Text(error.toString()),
                   ),
@@ -318,10 +319,10 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
                     items: [
                       for (final row in rows)
                         ListItem(
-                          leading: Icon(
+                          leading: GlyphIcon(
                             row.policy.isFollow
-                                ? Icons.account_tree_outlined
-                                : Icons.tune,
+                                ? AppGlyphs.layers
+                                : AppGlyphs.sliders,
                           ),
                           title: Text(_laneLabel(l10n, row.id)),
                           subtitle: Text(
@@ -336,7 +337,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
                                 l10n.strategyLaneUncovered,
                             ].join('\n'),
                           ),
-                          trailing: const Icon(Icons.chevron_right),
+                          trailing: const GlyphIcon(AppGlyphs.chevronForward),
                           onTap: _busy
                               ? null
                               : () => _pickPolicy(
@@ -413,12 +414,12 @@ class _ExtraGroupItem extends StatelessWidget {
         : _followSentinel;
 
     return ListItem(
-      leading: Icon(
-        group.hasOverride ? Icons.tune : Icons.account_tree_outlined,
+      leading: GlyphIcon(
+        group.hasOverride ? AppGlyphs.sliders : AppGlyphs.layers,
       ),
       title: Text(group.groupName),
       subtitle: Text('$overrideLabel\n$currentLabel'),
-      trailing: const Icon(Icons.chevron_right),
+      trailing: const GlyphIcon(AppGlyphs.chevronForward),
       onTap: () async {
         final value = await dialogs.showCommonDialog<String>(
           child: OptionsDialog<String>(

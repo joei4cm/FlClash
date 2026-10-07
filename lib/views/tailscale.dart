@@ -1,4 +1,5 @@
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -81,17 +82,17 @@ class TailscaleView extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: context.colorScheme.primaryContainer.opacity38,
-          borderRadius: BorderRadius.circular(12),
+          shape: AppShape.md,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(
-                  isAndroid ? Icons.phone_android : Icons.computer,
+                GlyphIcon(
+                  isAndroid ? AppGlyphs.devices : AppGlyphs.devices,
                   size: 20,
                   color: context.colorScheme.primary,
                 ),
@@ -164,17 +165,17 @@ class TailscaleView extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: context.colorScheme.surfaceContainerHighest.opacity38,
-          borderRadius: BorderRadius.circular(12),
+          shape: AppShape.md,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.checklist_outlined,
+                GlyphIcon(
+                  AppGlyphs.checkDouble,
                   size: 20,
                   color: context.colorScheme.primary,
                 ),
@@ -255,33 +256,33 @@ class TailscaleView extends ConsumerWidget {
     final isStart = ref.watch(isStartProvider);
     final String message;
     final Color? color;
-    final IconData icon;
+    final Glyph icon;
     if (!enable) {
       message = appLocalizations.tailscaleStatusDisabled;
       color = context.colorScheme.onSurfaceVariant;
-      icon = Icons.pause_circle_outline;
+      icon = AppGlyphs.block;
     } else if (nodeCount == 0) {
       message = appLocalizations.tailscaleStatusNoNodes;
       color = context.colorScheme.tertiary;
-      icon = Icons.info_outline;
+      icon = AppGlyphs.info;
     } else if (routeCount == 0) {
       message = appLocalizations.tailscaleStatusNeedRoutes;
       color = context.colorScheme.tertiary;
-      icon = Icons.alt_route_outlined;
+      icon = AppGlyphs.split;
     } else if (!isStart) {
       message = appLocalizations.tailscaleStatusNeedStart;
       color = context.colorScheme.tertiary;
-      icon = Icons.play_circle_outline;
+      icon = AppGlyphs.bolt;
     } else {
       message = appLocalizations.tailscaleStatusReady(nodeCount);
       color = context.colorScheme.primary;
-      icon = Icons.check_circle_outline;
+      icon = AppGlyphs.checkCircle;
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: color),
+          GlyphIcon(icon, size: 18, color: color),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -318,7 +319,7 @@ class TailscaleView extends ConsumerWidget {
     return Text(
       delay > 0 ? '$delay ms' : appLocalizations.timeout,
       style: context.textTheme.labelSmall?.copyWith(
-        color: getDelayColor(delay),
+        color: context.colorScheme.delayColor(delay),
         fontWeight: FontWeight.w600,
       ),
     );
@@ -345,7 +346,7 @@ class TailscaleView extends ConsumerWidget {
   }) {
     final appLocalizations = context.appLocalizations;
     return ListItem(
-      leading: const Icon(Icons.device_hub),
+      leading: const GlyphIcon(AppGlyphs.devices),
       title: Text(proxy.name, maxLines: 1, overflow: TextOverflow.ellipsis),
       subtitle: Text(
         _buildSubtitle(context, proxy),
@@ -362,14 +363,14 @@ class TailscaleView extends ConsumerWidget {
             onPressed: () {
               _handleTest(context, ref, proxy);
             },
-            icon: const Icon(Icons.network_ping),
+            icon: const GlyphIcon(AppGlyphs.networkCheck),
           ),
           IconButton(
             tooltip: appLocalizations.delete,
             onPressed: () {
               _handleDelete(context, ref, proxy);
             },
-            icon: const Icon(Icons.delete_outline),
+            icon: const GlyphIcon(AppGlyphs.delete),
           ),
         ],
       ),
@@ -400,7 +401,7 @@ class TailscaleView extends ConsumerWidget {
           onPressed: () {
             _handleAddOrEdit(context, ref);
           },
-          icon: const Icon(Icons.add),
+          icon: const GlyphIcon(AppGlyphs.add),
         ),
         const SizedBox(width: 8),
       ],
@@ -414,7 +415,7 @@ class TailscaleView extends ConsumerWidget {
               children: [
                 _buildScenarioCard(context),
                 ListItem.toggle(
-                  leading: const Icon(Icons.vpn_key_outlined),
+                  leading: const GlyphIcon(AppGlyphs.key),
                   title: Text(appLocalizations.tailscaleEnable),
                   subtitle: Text(appLocalizations.tailscaleEnableDesc),
                   value: enable,
@@ -443,7 +444,7 @@ class TailscaleView extends ConsumerWidget {
                   },
                 ),
                 ListItem.toggle(
-                  leading: const Icon(Icons.alt_route_outlined),
+                  leading: const GlyphIcon(AppGlyphs.split),
                   title: Text(appLocalizations.tailscaleBypass),
                   subtitle: Text(
                     bypassRecommended
@@ -485,7 +486,7 @@ class TailscaleView extends ConsumerWidget {
                           onPressed: () {
                             _handleAddOrEdit(context, ref);
                           },
-                          icon: const Icon(Icons.add),
+                          icon: const GlyphIcon(AppGlyphs.add, fill: 1),
                           label: Text(appLocalizations.addTailscaleNode),
                         ),
                       ],
@@ -704,10 +705,8 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
                     onPressed: () {
                       setState(() => _obscureAuthKey = !_obscureAuthKey);
                     },
-                    icon: Icon(
-                      _obscureAuthKey
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
+                    icon: GlyphIcon(
+                      _obscureAuthKey ? AppGlyphs.eye : AppGlyphs.eyeOff,
                     ),
                   ),
                   validator: (value) {
@@ -732,8 +731,10 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
                     onPressed: () {
                       setState(() => _showAdvanced = !_showAdvanced);
                     },
-                    icon: Icon(
-                      _showAdvanced ? Icons.expand_less : Icons.expand_more,
+                    icon: GlyphIcon(
+                      _showAdvanced
+                          ? AppGlyphs.chevronUp
+                          : AppGlyphs.chevronDown,
                     ),
                     label: Text(
                       _showAdvanced

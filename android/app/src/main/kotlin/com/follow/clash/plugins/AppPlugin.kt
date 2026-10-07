@@ -68,7 +68,13 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
 
     private val requestInstalledAppsCallback = PendingCallback<Boolean>()
 
+    private val requestLocalNetworkCallback = PendingCallback<Boolean>()
+
     private var isRequestingNotificationPermission = false
+
+    private var isRequestingLocalNetworkPermission = false
+
+    private var skipLocalNetworkPermissionRequest = false
 
     private val gson = Gson()
 
@@ -266,12 +272,13 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
 
     @Suppress("DEPRECATION")
     private fun updateExcludeFromRecents(value: Boolean?) {
+        val taskId = activity?.taskId ?: return
         val am = getSystemService(GlobalState.application, ActivityManager::class.java)
         val task = am?.appTasks?.firstOrNull {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                it.taskInfo.taskId == activity?.taskId
+                it.taskInfo?.taskId == taskId
             } else {
-                it.taskInfo.id == activity?.taskId
+                it.taskInfo?.id == taskId
             }
         }
         task?.setExcludeFromRecents(value ?: false)
@@ -307,6 +314,42 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
     private fun invokeRequestNotificationCallback(shouldStart: Boolean) {
         isRequestingNotificationPermission = false
         requestNotificationCallback.resolve(shouldStart)
+    }
+
+    fun requestLocalNetworkPermission(callback: (Boolean) -> Unit) = onMainThread {
+        requestLocalNetworkCallback.replace(callback, supersededValue = false)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.CINNAMON_BUN || hasLocalNetworkPermission()) {
+            invokeRequestLocalNetworkCallback(true)
+            return@onMainThread
+        }
+        if (skipLocalNetworkPermissionRequest) {
+            invokeRequestLocalNetworkCallback(false)
+            return@onMainThread
+        }
+        if (isRequestingLocalNetworkPermission) {
+            return@onMainThread
+        }
+        val activity = activity
+        if (activity == null) {
+            invokeRequestLocalNetworkCallback(false)
+            return@onMainThread
+        }
+        isRequestingLocalNetworkPermission = true
+        ActivityCompat.requestPermissions(
+            activity,
+            arrayOf(Manifest.permission.ACCESS_LOCAL_NETWORK),
+            LOCAL_NETWORK_PERMISSION_REQUEST_CODE,
+        )
+    }
+
+    private fun hasLocalNetworkPermission(): Boolean = ContextCompat.checkSelfPermission(
+        GlobalState.application,
+        Manifest.permission.ACCESS_LOCAL_NETWORK,
+    ) == PackageManager.PERMISSION_GRANTED
+
+    private fun invokeRequestLocalNetworkCallback(granted: Boolean) {
+        isRequestingLocalNetworkPermission = false
+        requestLocalNetworkCallback.resolve(granted)
     }
 
     private fun requestInstalledAppsPermission(callback: (Boolean) -> Unit) = onMainThread {
@@ -390,6 +433,7 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         scope.cancel()
         invokeVpnPrepareCallback(false)
         invokeRequestNotificationCallback(false)
+        invokeRequestLocalNetworkCallback(false)
         invokeRequestInstalledAppsCallback(false)
     }
 
@@ -426,6 +470,7 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         detachFromActivity()
         invokeVpnPrepareCallback(false)
         invokeRequestNotificationCallback(false)
+        invokeRequestLocalNetworkCallback(false)
         invokeRequestInstalledAppsCallback(false)
     }
 
@@ -456,6 +501,15 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
             true
         }
 
+        LOCAL_NETWORK_PERMISSION_REQUEST_CODE -> {
+            skipLocalNetworkPermissionRequest = true
+            invokeRequestLocalNetworkCallback(
+                grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED,
+            )
+            true
+        }
+
         else -> false
     }
 
@@ -463,5 +517,6 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         const val VPN_PERMISSION_REQUEST_CODE = 1001
         const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1002
         const val INSTALLED_APPS_PERMISSION_REQUEST_CODE = 1003
+        const val LOCAL_NETWORK_PERMISSION_REQUEST_CODE = 1004
     }
 }
