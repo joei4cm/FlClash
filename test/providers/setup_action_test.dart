@@ -1474,10 +1474,7 @@ void main() {
 
         verify(() => core.getProfileOutbounds(any())).called(2);
         expect(handed.overlay, contains('name: "FlClash-streaming"'));
-        expect(
-          handed.overlay,
-          contains('GEOSITE,netflix,FlClash-streaming'),
-        );
+        expect(handed.overlay, contains('GEOSITE,netflix,FlClash-streaming'));
       },
     );
 
