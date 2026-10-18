@@ -6,6 +6,10 @@
 
 - Tailscale, geo identity, strategy lanes, and sticky auto-select on upstream 0.9.1, with update checks on joei4cm/FlClash (b3ba319)
 
+**Bug Fixes**
+
+- Update checks accept release tags like v0.9.2_abcdef (e5ac559)
+
 ## v0.9.1 (2026-10-17)
 
 **Breaking Changes**

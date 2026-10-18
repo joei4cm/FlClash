@@ -15,6 +15,15 @@
               "text": "Tailscale, geo identity, strategy lanes, and sticky auto-select on upstream 0.9.1, with update checks on joei4cm/FlClash"
             }
           ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "e5ac559",
+              "text": "Update checks accept release tags like v0.9.2_abcdef"
+            }
+          ]
         }
       ]
     },
