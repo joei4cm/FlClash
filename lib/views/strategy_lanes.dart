@@ -270,7 +270,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
               ],
             )
           : clashAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CommonCircleLoading.page()),
               error: (error, _) => ListView(
                 children: [
                   ListItem(
