@@ -1414,12 +1414,75 @@ void main() {
           .getProfileWithId(profile.id);
 
       verifyNever(() => core.getConfig(any()));
+      verifyNever(() => core.getProfileOutbounds(any()));
       expect(yaml, 'proxies: []\n');
       expect(built.existsSync(), isFalse);
     });
 
     test(
-      'the extend page reads only the outbounds of a profile file',
+      'a strategy override reads the outbound summary and prefixes its rules',
+      () async {
+        final profile = Profile.normal(label: 'p');
+        final core = _MockCoreHandlerInterface();
+        when(
+          () => core.getProfileBase(any()),
+        ).thenAnswer((_) async => const ProfileBase(config: {}, digest: 'd'));
+        when(() => core.getProfileOutbounds(any())).thenAnswer(
+          (_) async => {
+            'proxies': [
+              {'name': 'US-01', 'type': 'ss'},
+            ],
+            'proxy-groups': [
+              {
+                'name': '节点选择',
+                'type': 'select',
+                'proxies': ['US-01'],
+              },
+            ],
+            'rules': ['RULE-SET,geosite-netflix,节点选择'],
+          },
+        );
+        late SetupBase handed;
+        when(() => core.buildProfile(any())).thenAnswer((invocation) async {
+          handed = invocation.positionalArguments.single as SetupBase;
+          return 'spill.yaml';
+        });
+        final scoped = ProviderContainer(
+          overrides: [
+            profilesProvider.overrideWith(() => TestProfiles([profile])),
+            setupStateProvider.overrideWith(
+              (_, profileId) =>
+                  nullProfileSetupState.copyWith(profileId: profileId),
+            ),
+            appSettingProvider.overrideWithBuild(
+              (_, _) => AppSettingProps(
+                strategyLanePolicies: {
+                  strategyLanePolicyKey(profile.id, StrategyLaneId.streaming):
+                      'auto',
+                },
+              ),
+            ),
+            coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+            setupActionProvider.overrideWith(SetupAction.new),
+          ],
+        );
+        addTearDown(scoped.dispose);
+
+        await scoped
+            .read(setupActionProvider.notifier)
+            .getProfileWithId(profile.id);
+
+        verify(() => core.getProfileOutbounds(any())).called(2);
+        expect(handed.overlay, contains('name: "FlClash-streaming"'));
+        expect(
+          handed.overlay,
+          contains('GEOSITE,netflix,FlClash-streaming'),
+        );
+      },
+    );
+
+    test(
+      'the extend page reads the outbound summary of a profile file',
       () async {
         final profile = Profile.normal(label: 'p');
         final core = _MockCoreHandlerInterface();
@@ -1429,8 +1492,13 @@ void main() {
               {'name': 'a', 'type': 'ss'},
             ],
             'proxy-groups': [
-              {'name': 'g', 'type': 'select'},
+              {
+                'name': 'g',
+                'type': 'select',
+                'proxies': ['a'],
+              },
             ],
+            'rules': ['GEOSITE,netflix,g'],
           },
         );
         final scoped = ProviderContainer(
@@ -1453,6 +1521,8 @@ void main() {
           },
           {'a': 'ss', 'g': GroupType.Selector},
         );
+        expect(config.proxyGroups.single.proxies, ['a']);
+        expect(config.rules.single.rawValue, 'GEOSITE,netflix,g');
       },
     );
 

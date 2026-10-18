@@ -27,6 +27,32 @@ void main() {
       expect(discovery.source, StrategyLaneDiscoverySource.rules);
     });
 
+    test('reads a rule-set from the outbound summary', () {
+      final config = ClashConfig.fromJson({
+        'proxies': [
+          {'name': 'US-01', 'type': 'ss'},
+        ],
+        'proxy-groups': [
+          {
+            'name': '节点选择',
+            'type': 'select',
+            'proxies': ['US-01', 'DIRECT'],
+          },
+        ],
+        'rules': ['RULE-SET,geosite-netflix,节点选择', 'GEOIP,cn,DIRECT'],
+      });
+
+      final discovery = discoverStrategyLane(
+        preset: strategyLanePresetById(StrategyLaneId.streaming)!,
+        proxyGroups: config.proxyGroups,
+        rules: config.rules.map((rule) => rule.rawValue).toList(),
+      );
+
+      expect(discovery.groupName, '节点选择');
+      expect(discovery.source, StrategyLaneDiscoverySource.rules);
+      expect(config.proxyGroups.single.proxies, ['US-01', 'DIRECT']);
+    });
+
     test('falls back to group name hints', () {
       final discovery = discoverStrategyLane(
         preset: strategyLanePresetById(StrategyLaneId.ai)!,

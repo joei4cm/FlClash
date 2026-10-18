@@ -109,7 +109,7 @@ func TestHandleGetProfileBaseLeavesTheBulkSectionsInTheCore(t *testing.T) {
 	}
 }
 
-func TestHandleGetProfileOutboundsListsOnlyNamesAndTypes(t *testing.T) {
+func TestHandleGetProfileOutboundsKeepsMembersAndRoutingRules(t *testing.T) {
 	path := writeBaseProfile(t, baseProfile)
 
 	outbounds, err := handleGetProfileOutbounds(path)
@@ -118,11 +118,50 @@ func TestHandleGetProfileOutboundsListsOnlyNamesAndTypes(t *testing.T) {
 		t.Fatalf("handleGetProfileOutbounds = %v", err)
 	}
 	want := &ProfileOutbounds{
-		Proxies:     []ProfileOutbound{{Name: "a", Type: "socks5"}, {Name: "b", Type: "vless"}},
-		ProxyGroups: []ProfileOutbound{{Name: "g", Type: "select"}},
+		Proxies: []ProfileOutbound{{Name: "a", Type: "socks5"}, {Name: "b", Type: "vless"}},
+		ProxyGroups: []ProfileOutbound{{
+			Name:    "g",
+			Type:    "select",
+			Proxies: []string{"a", "b"},
+		}},
+		Rules: []string{"DOMAIN-SUFFIX,example.com,g"},
 	}
 	if !reflect.DeepEqual(outbounds, want) {
 		t.Errorf("outbounds = %+v, want %+v", outbounds, want)
+	}
+}
+
+func TestHandleGetProfileOutboundsDropsRulesDiscoveryDoesNotRead(t *testing.T) {
+	path := writeBaseProfile(t, `proxies:
+  - {name: a, type: ss, server: 1.1.1.1, port: 1}
+proxy-groups:
+  - {name: 节点选择, type: select, proxies: [a, DIRECT]}
+rules:
+  - RULE-SET,geosite-netflix,节点选择
+  - GEOSITE,openai,AI
+  - DOMAIN,example.com,节点选择
+  - DOMAIN-KEYWORD,netflix,节点选择
+  - GEOIP,cn,DIRECT
+  - IP-CIDR,1.1.1.1/32,DIRECT,no-resolve
+  - MATCH,节点选择
+`)
+
+	outbounds, err := handleGetProfileOutbounds(path)
+
+	if err != nil {
+		t.Fatalf("handleGetProfileOutbounds = %v", err)
+	}
+	want := []string{
+		"RULE-SET,geosite-netflix,节点选择",
+		"GEOSITE,openai,AI",
+		"DOMAIN,example.com,节点选择",
+		"DOMAIN-KEYWORD,netflix,节点选择",
+	}
+	if !reflect.DeepEqual(outbounds.Rules, want) {
+		t.Errorf("rules = %v, want %v", outbounds.Rules, want)
+	}
+	if got := outbounds.ProxyGroups[0].Proxies; !reflect.DeepEqual(got, []string{"a", "DIRECT"}) {
+		t.Errorf("members = %v", got)
 	}
 }
 

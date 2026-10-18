@@ -119,11 +119,13 @@ type ProfileBase struct {
 type ProfileOutbounds struct {
 	Proxies     []ProfileOutbound `json:"proxies"`
 	ProxyGroups []ProfileOutbound `json:"proxy-groups"`
+	Rules       []string          `json:"rules,omitempty"`
 }
 
 type ProfileOutbound struct {
-	Name string `json:"name"`
-	Type string `json:"type"`
+	Name    string   `json:"name"`
+	Type    string   `json:"type"`
+	Proxies []string `json:"proxies,omitempty"`
 }
 
 type UpdateParams struct {
