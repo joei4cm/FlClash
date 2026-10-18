@@ -191,6 +191,30 @@ void main() {
     expect(missingReleaseTags(derived, derived), isEmpty);
   });
 
+  test('a tag older than the recorded changelog is already shipped', () {
+    ChangelogVersion version(String tag) => ChangelogVersion(
+      version: tag.substring(1),
+      tag: tag,
+      date: '2026-01-02',
+      groups: const [],
+    );
+    final derived = Changelog(
+      versions: [version('v0.9.2'), version('v0.8.111')],
+    );
+
+    expect(
+      missingReleaseTags(
+        Changelog(versions: [version('v0.9.2'), version('v0.9.0')]),
+        derived,
+      ),
+      isEmpty,
+    );
+    expect(
+      missingReleaseTags(Changelog(versions: [version('v0.8.111')]), derived),
+      ['v0.9.2'],
+    );
+  });
+
   test('is deterministic across runs', () {
     expect(
       encodeChangelog(build().changelog),
