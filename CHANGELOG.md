@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.3 (2026-10-18)
+
+**Bug Fixes**
+
+- **strategy-lanes** Strategy lanes follow a subscription's routing rules without loading the whole profile (971f348)
+
 ## v0.9.2 (2026-10-18)
 
 **Features**

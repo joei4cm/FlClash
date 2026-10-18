@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.3",
+      "tag": "v0.9.3",
+      "date": "2026-10-18",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "971f348",
+              "scope": "strategy-lanes",
+              "text": "Strategy lanes follow a subscription's routing rules without loading the whole profile"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.2",
       "tag": "v0.9.2",
       "date": "2026-10-18",
