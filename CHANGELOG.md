@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.2 (2026-10-18)
+
+**Features**
+
+- Tailscale, geo identity, strategy lanes, and sticky auto-select on upstream 0.9.1, with update checks on joei4cm/FlClash (b3ba319)
+
 ## v0.9.1 (2026-10-17)
 
 **Breaking Changes**
@@ -43,17 +49,6 @@
 - **providers** DNS, Hosts and ports apply without a restart (532ebf0)
 - **android** Launcher shortcuts and one-step on-demand access (d3fa225)
 - **core** Share link import and mrs rule sets (2fa2f7f)
-
-**Bug Fixes**
-
-- **database** Unreadable settings no longer block startup or restores (1677024)
-- **desktop** Windows and Linux desktop fixes (94a25f4)
-- **core,helper** The elevated Core only answers its owner (d780cb8)
-
-## v0.8.99 (2026-10-03)
-
-**Features**
-
 - **editor** Editor word wrap and snippets (e131675)
 - **dashboard** More dashboard cards (e62afb7)
 - **views** Hide timed-out nodes and search every list (8378c70)
@@ -63,32 +58,25 @@
 - **config** DNS query log and per-key DNS/NTP overrides (a390a42)
 - **core** Proxied service checks and outbound IP risk (8068e68)
 - **platform** Tray hotkeys, node delays and a delay test (1e97716)
-
-**Bug Fixes**
-
-- **core** A changed resource link is now used by the next sync and by auto update (ff23f30)
-- **core** DNS lookups no longer fail on networks that report no DNS servers (e55f6d1)
-- **proxies** Smaller icons in icon-only group headers (786a6ab)
-- **core,android** Push notifications reconnect in Doze (1e9955d)
-- **backup,database** Restores never apply halfway (bee8f24)
-
-## v0.8.98 (2026-09-14)
-
-**Bug Fixes**
-
-- **resources** Refresh the geo file size and time after an update finishes (c5bf5bd)
-- **core** Keep the core running while Windows sleeps with the app suspended (60f371a)
-
-## v0.8.97 (2026-09-10)
-
-**Features**
-
 - **ui** Rework the app UI and refresh the localization (26cfbaf)
 - **app** Rework the app layer and window handling, and add proxy authentication (aaf934c)
 - **desktop** Rework the desktop runners, packaging, and native build (c0fcbc0)
 - **android** Rework the Android VPN service and lifecycle handling (ae29f38)
 - **plugins** Rework the desktop plugins and add the Helper service and Rust bridge (adf715f)
 - **core** Rework the core IPC and process lifecycle (c6eaa0a)
+
+**Bug Fixes**
+
+- **database** Unreadable settings no longer block startup or restores (1677024)
+- **desktop** Windows and Linux desktop fixes (94a25f4)
+- **core,helper** The elevated Core only answers its owner (d780cb8)
+- **core** A changed resource link is now used by the next sync and by auto update (ff23f30)
+- **core** DNS lookups no longer fail on networks that report no DNS servers (e55f6d1)
+- **proxies** Smaller icons in icon-only group headers (786a6ab)
+- **core,android** Push notifications reconnect in Doze (1e9955d)
+- **backup,database** Restores never apply halfway (bee8f24)
+- **resources** Refresh the geo file size and time after an update finishes (c5bf5bd)
+- **core** Keep the core running while Windows sleeps with the app suspended (60f371a)
 
 <!-- changelog:frozen -->
 <!-- Entries below predate the structured pipeline. Their wording is kept as written; only the heading and list style were normalized. -->
