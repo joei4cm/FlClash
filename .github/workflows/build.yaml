@@ -506,16 +506,6 @@ jobs:
           dart run tool/changelog.dart render release "${target[@]}" --out release.md
           dart run tool/changelog.dart render telegram "${target[@]}" --out telegram.md
 
-      - name: Push to telegram
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TAG: ${{ github.ref_name }}
-          RUN_ID: ${{ github.run_id }}
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
-          python release_telegram.py
-
       - name: Patch release.md
         run: |
           tag="${{ github.ref_name }}"
@@ -534,3 +524,15 @@ jobs:
         with:
           files: ./dist/*
           body_path: './release.md'
+
+      - name: Push to telegram
+        if: ${{ secrets.TELEGRAM_BOT_TOKEN != '' }}
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+          python release_telegram.py
