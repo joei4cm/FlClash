@@ -263,8 +263,8 @@ Releasing a stable version, in order:
 tool/bump_version.sh all
 dart run tool/changelog.dart release --version 0.8.96
 git commit -am "chore(release): v0.8.96"
-git tag v0.8.96
-git push origin main && git push origin v0.8.96
+git tag v0.8.96_$(git rev-parse HEAD | cut -c1-6)
+git push origin main && git push origin v0.8.96_$(git rev-parse HEAD | cut -c1-6)
 ```
 
 Push the tag by name. Every release tag here is lightweight, and `--follow-tags` carries annotated tags only: it skips a
@@ -276,7 +276,7 @@ the patch when pubspec still names an already tagged one), prints the notes the 
 
 ```bash
 tool/release.sh pre --dry-run     # plan and notes, changes nothing
-tool/release.sh pre --push        # bump, tag vX.Y.Z-pre.N, push
+tool/release.sh pre --push        # bump, tag vX.Y.Z-pre.N_<sha>, push
 tool/release.sh stable --push     # changelog, chore(release) commit, tag, push
 ```
 

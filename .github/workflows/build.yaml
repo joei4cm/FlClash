@@ -498,7 +498,8 @@ jobs:
         run: |
           target=()
           if [[ "$IS_STABLE" == 'true' ]]; then
-            target=(--tag "$TAG")
+            notes_tag=$(printf '%s' "$TAG" | sed -E 's/_[0-9a-fA-F]{6}$//')
+            target=(--tag "$notes_tag")
           else
             dart run tool/changelog.dart build --unreleased
           fi
@@ -517,8 +518,9 @@ jobs:
 
       - name: Patch release.md
         run: |
-          version=$(echo "${{ github.ref_name }}" | sed 's/^v//')
-          sed "s|VERSION|$version|g" ./.github/release_template.md >> release.md
+          tag="${{ github.ref_name }}"
+          version=$(printf '%s' "$tag" | sed -E 's/^v//; s/_[0-9a-fA-F]{6}$//')
+          sed -e "s|vVERSION|$tag|g" -e "s|VERSION|$version|g" ./.github/release_template.md >> release.md
 
       - name: Generate sha256
         if: ${{ env.IS_STABLE == 'true' }}
