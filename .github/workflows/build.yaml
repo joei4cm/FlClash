@@ -455,6 +455,8 @@ jobs:
       contents: write
     needs: [ build, dart, plugins, go, android, rust, windows-helper-test ]
     runs-on: ubuntu-latest
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
     services:
       telegram-bot-api:
         image: aiogram/telegram-bot-api:latest
@@ -526,10 +528,9 @@ jobs:
           body_path: './release.md'
 
       - name: Push to telegram
-        if: ${{ secrets.TELEGRAM_BOT_TOKEN != '' }}
+        if: ${{ env.TELEGRAM_BOT_TOKEN != '' }}
         continue-on-error: true
         env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TAG: ${{ github.ref_name }}
           RUN_ID: ${{ github.run_id }}
         run: |
