@@ -8,7 +8,10 @@ import 'package:fl_clash/views/about.dart';
 import 'package:fl_clash/views/access.dart';
 import 'package:fl_clash/views/backup_and_restore.dart';
 import 'package:fl_clash/views/config/general.dart';
+import 'package:fl_clash/views/geo_identity.dart';
 import 'package:fl_clash/views/hotkey.dart';
+import 'package:fl_clash/views/strategy_lanes.dart';
+import 'package:fl_clash/views/tailscale.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,6 +47,13 @@ class _ToolViewState extends ConsumerState<ToolsView> {
         if (enableDeveloperMode) const _DeveloperItem(),
         const _InfoItem(),
       ],
+    );
+  }
+
+  Widget _getFeatureList() {
+    return generateSection(
+      title: context.appLocalizations.features,
+      items: const [_TailscaleItem(), _GeoIdentityItem(), _StrategyLanesItem()],
     );
   }
 
@@ -87,6 +97,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
           );
         },
       ),
+      _getFeatureList(),
       _getSettingList(),
       _getOtherList(developerMode),
     ];
@@ -251,6 +262,48 @@ class _InfoItem extends StatelessWidget {
       leading: const GlyphIcon(AppGlyphs.info),
       title: Text(context.appLocalizations.about),
       widget: const AboutView(),
+    );
+  }
+}
+
+class _TailscaleItem extends StatelessWidget {
+  const _TailscaleItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListItem.open(
+      leading: const GlyphIcon(AppGlyphs.cpu),
+      title: Text(context.appLocalizations.tailscale),
+      subtitle: Text(context.appLocalizations.tailscaleDesc),
+      widget: const TailscaleView(),
+    );
+  }
+}
+
+class _GeoIdentityItem extends StatelessWidget {
+  const _GeoIdentityItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListItem.open(
+      leading: const GlyphIcon(AppGlyphs.info),
+      title: Text(context.appLocalizations.geoIdentity),
+      subtitle: Text(context.appLocalizations.geoIdentityDesc),
+      widget: const GeoIdentityView(),
+    );
+  }
+}
+
+class _StrategyLanesItem extends StatelessWidget {
+  const _StrategyLanesItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListItem.open(
+      leading: const GlyphIcon(AppGlyphs.layers),
+      title: Text(context.appLocalizations.strategyLanes),
+      subtitle: Text(context.appLocalizations.strategyLanesDesc),
+      widget: const StrategyLanesView(),
     );
   }
 }

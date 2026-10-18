@@ -7,6 +7,8 @@ typedef _SetupInputs = (
   PatchClashConfig,
   NetworkProps,
   SetupParams,
+  TailscaleProps,
+  Map<String, String>,
 );
 
 typedef BuiltProfile = ({
@@ -369,12 +371,15 @@ class SetupAction extends _$SetupAction {
     } catch (_) {
       return false;
     }
+    final appSetting = ref.read(appSettingProvider);
     return applied ==
         (
           setupState,
           _effectivePatchConfig(ref.read(patchClashConfigProvider)),
           ref.read(networkSettingProvider),
           _appliedParams,
+          ref.read(tailscaleSettingProvider),
+          appSetting.strategyLanePolicies,
         );
   }
 
@@ -429,6 +434,44 @@ class SetupAction extends _$SetupAction {
     }
   }
 
+  Future<List<ProxyGroup>> _profileGroups(int profileId) async {
+    final raw = await _core.getProfileOutbounds(profileId);
+    final groups = raw['proxy-groups'];
+    if (groups is! List) {
+      return const [];
+    }
+    final parsed = <ProxyGroup>[];
+    for (final item in groups) {
+      if (item is! Map) {
+        continue;
+      }
+      final name = item['name']?.toString() ?? '';
+      if (name.isEmpty) {
+        continue;
+      }
+      final GroupType groupType;
+      try {
+        groupType = GroupType.parse(item['type']?.toString() ?? '');
+      } catch (_) {
+        continue;
+      }
+      parsed.add(ProxyGroup(id: 0, name: name, type: groupType));
+    }
+    return parsed;
+  }
+
+  Future<Set<String>> _profileProxyNames(int profileId) async {
+    final raw = await _core.getProfileOutbounds(profileId);
+    final proxies = raw['proxies'];
+    if (proxies is! List) {
+      return const {};
+    }
+    return {
+      for (final item in proxies)
+        if (item is Map && item['name'] != null) item['name'].toString(),
+    };
+  }
+
   /// With a base, [BuiltProfile.yaml] is only the overlay the Core applies.
   Future<BuiltProfile> getProfile({
     required SetupState setupState,
@@ -467,11 +510,30 @@ class SetupAction extends _$SetupAction {
             ),
           }
         : profileBase?.base.config ?? await _core.getConfig(profileId);
-    final proxyGroups = isCustom ? setupState.proxyGroups : <ProxyGroup>[];
+    final proxyGroups = setupState.proxyGroups;
     final rules = isCustom ? setupState.rules : <Rule>[];
     if (hasScript) {
       rawConfig = await handleEvaluate(scriptContent!, rawConfig);
     }
+    final appSetting = ref.read(appSettingProvider);
+    final tailscaleProps = ref.read(tailscaleSettingProvider);
+    final strategyGroups = isCustom
+        ? setupState.proxyGroups
+        : await _profileGroups(profileId);
+    final strategyProxies = isCustom
+        ? setupState.appProxies.map((item) => item.name).toSet()
+        : await _profileProxyNames(profileId);
+    final strategyInjection = buildStrategyLaneInjection(
+      profileId: profileId,
+      policies: appSetting.strategyLanePolicies,
+      proxyGroups: strategyGroups,
+      rules: const [],
+      testUrl: appSetting.testUrl,
+      availableProxyNames: {
+        ...strategyProxies,
+        for (final group in strategyGroups) ...?group.proxies,
+      },
+    );
     final directory = await appPath.profilesPath;
     final injected = await _resolveInjectedProviders(
       setupState,
@@ -501,6 +563,11 @@ class SetupAction extends _$SetupAction {
             ? setupState.matchTarget
             : lastMatchTarget(profileBase.base.matchRules),
         safeMode: ref.read(safeModeProvider),
+        tailscaleProxies: tailscaleProps.activeProxies,
+        tailscaleRules: tailscaleProps.buildInjectedRules(),
+        tailscaleFakeIpFilters: tailscaleProps.buildFakeIpFilters(),
+        strategyLaneGroups: strategyInjection.groups,
+        strategyLaneRules: strategyInjection.rules,
       ),
     );
     if (profileBase == null) {
@@ -699,12 +766,15 @@ class SetupAction extends _$SetupAction {
     }, title: 'build profile');
     final profileFailed = realProfile == null;
     final setupParams = _setupParams.copyWith(base: realProfile?.base);
+    final appSetting = ref.read(appSettingProvider);
     final inputs = switch (setupState) {
       final state? when !profileFailed => (
         state,
         realPatchConfig,
         networkSetting,
         _appliedParams,
+        ref.read(tailscaleSettingProvider),
+        appSetting.strategyLanePolicies,
       ),
       _ => null,
     };

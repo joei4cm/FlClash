@@ -258,6 +258,11 @@ abstract class AppSettingProps with _$AppSettingProps {
     @Default([]) List<String> serviceOrder,
     @Default([]) List<String> disabledServices,
     @Default({}) Map<String, Map<String, double>> tableColumnWidths,
+    @Default(false) bool autoSelectStickyGeo,
+    @Default({}) Map<String, String> autoSelectStickyGeoByGroup,
+
+    /// Per-profile strategy-lane policies. Keys: `$profileId::$laneId`.
+    @Default({}) Map<String, String> strategyLanePolicies,
   }) = _AppSettingProps;
 
   factory AppSettingProps.fromJson(Map<String, Object?> json) =>
@@ -500,6 +505,12 @@ abstract class Config with _$Config {
     WindowProps windowProps,
     @Default(defaultClashConfig) PatchClashConfig patchClashConfig,
     @Default([]) List<String> excludeSSIDs,
+    @JsonKey(fromJson: TailscaleProps.safeFromJson)
+    @Default(defaultTailscaleProps)
+    TailscaleProps tailscaleProps,
+    @JsonKey(fromJson: GeoIdentityProps.safeFromJson)
+    @Default(defaultGeoIdentityProps)
+    GeoIdentityProps geoIdentityProps,
   }) = _Config;
 
   factory Config.fromJson(Map<String, Object?> json) =>

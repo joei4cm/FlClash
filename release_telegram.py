@@ -51,9 +51,9 @@ if TAG:
     text += f"\n<b>{html.escape(TAG)}</b>\n"
 
 if IS_STABLE:
-    text += f"\nhttps://github.com/chen08209/FlClash/releases/tag/{TAG}\n"
+    text += f"\nhttps://github.com/joei4cm/FlClash/releases/tag/{TAG}\n"
 else:
-    text += f"\nhttps://github.com/chen08209/FlClash/actions/runs/{RUN_ID}\n"
+    text += f"\nhttps://github.com/joei4cm/FlClash/actions/runs/{RUN_ID}\n"
 
 if os.path.exists(release):
     text += "\n"

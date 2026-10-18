@@ -88,6 +88,85 @@ class _PatchClashConfig extends _$PatchClashConfig
 }
 
 @riverpod
+class TailscaleSetting extends _$TailscaleSetting
+    with AutoDisposeNotifierMixin {
+  @override
+  TailscaleProps build() {
+    return const TailscaleProps();
+  }
+
+  void setEnable(bool enable) {
+    update((state) => state.copyWith(enable: enable));
+  }
+
+  void setBypassTraffic(bool bypassTraffic) {
+    update((state) => state.copyWith(bypassTraffic: bypassTraffic));
+  }
+
+  void addOrUpdate(TailscaleProxy proxy, {String? previousName}) {
+    update((state) {
+      final next = List<TailscaleProxy>.from(state.proxies);
+      final lookupName = previousName ?? proxy.name;
+      final index = next.indexWhere((item) => item.name == lookupName);
+      if (index == -1) {
+        next.add(proxy);
+      } else {
+        next[index] = proxy;
+      }
+      return state.copyWith(proxies: next);
+    });
+  }
+
+  void remove(String name) {
+    update((state) {
+      return state.copyWith(
+        proxies: state.proxies.where((item) => item.name != name).toList(),
+      );
+    });
+  }
+}
+
+@riverpod
+class GeoIdentitySetting extends _$GeoIdentitySetting
+    with AutoDisposeNotifierMixin {
+  @override
+  GeoIdentityProps build() {
+    return const GeoIdentityProps();
+  }
+
+  void setEnable(bool enable) {
+    update((state) => state.copyWith(enable: enable));
+  }
+
+  void setUseUsAcceptLanguage(bool useUsAcceptLanguage) {
+    update((state) => state.copyWith(useUsAcceptLanguage: useUsAcceptLanguage));
+  }
+
+  void setCaptureMode(GeoIdentityCaptureMode captureMode) {
+    update((state) => state.copyWith(captureMode: captureMode));
+  }
+
+  void setTimezoneHistory({
+    String? previousOsTimezone,
+    String? appliedOsTimezone,
+  }) {
+    update(
+      (state) => state.copyWith(
+        previousOsTimezone: previousOsTimezone,
+        appliedOsTimezone: appliedOsTimezone,
+      ),
+    );
+  }
+
+  void clearTimezoneHistory() {
+    update(
+      (state) =>
+          state.copyWith(previousOsTimezone: null, appliedOsTimezone: null),
+    );
+  }
+}
+
+@riverpod
 class ExcludeSSIDs extends _$ExcludeSSIDs with AutoDisposeNotifierMixin {
   @override
   List<String> build() {
@@ -108,6 +187,8 @@ Config _config(Ref ref) {
   final proxiesStyleProps = ref.watch(proxiesStyleSettingProvider);
   final patchClashConfig = ref.watch(patchClashConfigProvider);
   final excludeSSIDs = ref.watch(excludeSSIDsProvider);
+  final tailscaleProps = ref.watch(tailscaleSettingProvider);
+  final geoIdentityProps = ref.watch(geoIdentitySettingProvider);
   return Config(
     appSettingProps: appSettingProps,
     windowProps: windowProps,
@@ -120,6 +201,8 @@ Config _config(Ref ref) {
     proxiesStyleProps: proxiesStyleProps,
     patchClashConfig: patchClashConfig,
     excludeSSIDs: excludeSSIDs,
+    tailscaleProps: tailscaleProps,
+    geoIdentityProps: geoIdentityProps,
   );
 }
 
@@ -137,6 +220,8 @@ void writeConfig(Ref ref, Config config) {
   ref.read(patchClashConfigProvider.notifier).value = config.patchClashConfig
       .ensureControllerSecret();
   ref.read(excludeSSIDsProvider.notifier).value = config.excludeSSIDs;
+  ref.read(tailscaleSettingProvider.notifier).value = config.tailscaleProps;
+  ref.read(geoIdentitySettingProvider.notifier).value = config.geoIdentityProps;
 }
 
 List<Override> buildConfigOverrides(Config config) {
@@ -158,5 +243,9 @@ List<Override> buildConfigOverrides(Config config) {
       (_, _) => config.patchClashConfig,
     ),
     excludeSSIDsProvider.overrideWithBuild((_, _) => config.excludeSSIDs),
+    tailscaleSettingProvider.overrideWithBuild((_, _) => config.tailscaleProps),
+    geoIdentitySettingProvider.overrideWithBuild(
+      (_, _) => config.geoIdentityProps,
+    ),
   ];
 }

@@ -312,6 +312,19 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
       rawConfig['dns']['nameserver'] = [...nameserver, systemDns];
     }
   }
+  if (data.tailscaleFakeIpFilters.isNotEmpty) {
+    final filters = <String>[
+      ...?((rawConfig['dns'] as Map)['fake-ip-filter'] as List?)?.map(
+        (item) => item.toString(),
+      ),
+    ];
+    for (final filter in data.tailscaleFakeIpFilters) {
+      if (!filters.contains(filter)) {
+        filters.add(filter);
+      }
+    }
+    rawConfig['dns']['fake-ip-filter'] = filters;
+  }
   if (data.safeMode) {
     rawConfig['listeners'] = [];
     rawConfig['tunnels'] = [];
@@ -372,8 +385,22 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
         .map((item) => item.definition)
         .toList();
   }
+  final prefixRules = <String>[
+    ...data.tailscaleRules,
+    ...data.strategyLaneRules,
+  ];
+  if (prefixRules.isNotEmpty) {
+    rules = [...prefixRules, ...rules];
+  }
   rawConfig['rules'] = rules;
-  final yaml = await _encodeYaml(Map<String, dynamic>.from(rawConfig));
+  var mergedConfig = data.tailscaleProxies.mergeInto(
+    Map<String, dynamic>.from(rawConfig),
+  );
+  mergedConfig = mergeStrategyLaneGroupsInto(
+    mergedConfig,
+    data.strategyLaneGroups,
+  );
+  final yaml = await _encodeYaml(Map<String, dynamic>.from(mergedConfig));
   return (yaml: yaml, md5: yaml.toMd5(), counts: configCountsOf(rawConfig));
 }
 

@@ -939,5 +939,325 @@
   "customImportDroppedSubRules": "{count, plural, one{Пользовательские профили не поддерживают подправила, поэтому отброшено {label} правило SUB-RULE} few{Пользовательские профили не поддерживают подправила, поэтому отброшено {label} правила SUB-RULE} many{Пользовательские профили не поддерживают подправила, поэтому отброшено {label} правил SUB-RULE} other{Пользовательские профили не поддерживают подправила, поэтому отброшено {label} правила SUB-RULE}}",
   "autoInclude": "Автоматическое включение",
   "allReferencedProxies": "Все используемые прокси",
-  "allReferencedProxyProviders": "Все используемые провайдеры прокси"
+  "allReferencedProxyProviders": "Все используемые провайдеры прокси",
+  "networkDetection": "Проверка сети",
+  "themeDesc": "Тёмный режим и настройка цветов",
+  "override": "Переопределение",
+  "autoLaunchDesc": "Запускаться автоматически при старте системы",
+  "urlDesc": "Получить профиль по URL",
+  "importFromURL": "Импорт из URL",
+  "excludeDesc": "Скрывать приложение из недавних задач, когда оно в фоне",
+  "expand": "Стандартный",
+  "shrink": "Компактный",
+  "min": "Минимальный",
+  "vpnTip": "Изменения вступят в силу после перезапуска VPN",
+  "behavior": "Поведение",
+  "format": "Формат",
+  "overrideDns": "Переопределить DNS",
+  "overrideNtp": "Переопределить NTP",
+  "disclaimerCrashlyticsTitle": "Firebase Crashlytics (аналитика сбоев)",
+  "disclaimerCrashlyticsContent": "При сбое приложения отчёт о сбое отправляется автоматически.\n\nЧто собирается: трассировка стека и сообщение об ошибке, время сбоя, версия и номер сборки приложения, производитель и модель устройства, версия Android, ориентация экрана, свободная память и место в хранилище, наличие root-доступа, а также случайный идентификатор установки, который создаётся при установке и сбрасывается при переустановке.\n\nЦель: только поиск и исправление сбоев.\n\nВы можете отключить это в любой момент: «Инструменты > Общие > Аналитика сбоев».",
+  "disclaimerAnalyticsTitle": "Firebase Analytics (статистика использования)",
+  "disclaimerAnalyticsContent": "Вместе с Firebase автоматически собирается базовая статистика использования приложения.\n\nЧто собирается: базовые события, такие как первый запуск, открытие приложения и длительность сеанса, обновление приложения; идентификатор экземпляра приложения; модель устройства, версия ОС и язык системы; приблизительное местоположение на уровне страны или региона, определённое по IP-адресу.\n\nЦель: только оценка числа активных устройств, распределения версий и совместимости с ОС. Разработчики не используют эти данные для рекламы, не продают их и не связывают с вашими подписками или конфигурациями.",
+  "disclaimerDataProcessingContent": "Эти данные обрабатываются и хранятся компанией Google от нашего имени, могут передаваться на серверы за пределами вашей страны или региона (например, в США) и регулируются Политикой конфиденциальности Google и документацией Firebase о конфиденциальности и безопасности. Отчёты о сбоях хранятся до 90 дней; статистика хранится в соответствии с политикой хранения Firebase по умолчанию.",
+  "disclaimerAndroidOnly": "Только Android",
+  "disclaimerGooglePrivacy": "Политика конфиденциальности Google",
+  "disclaimerFirebasePrivacy": "Конфиденциальность и безопасность Firebase",
+  "routeMode": "Режим маршрутизации",
+  "routeModeBypassPrivate": "Обходить частные адреса",
+  "routeModeConfig": "Использовать конфигурацию",
+  "selectedCountTitle": "Выбрано: {count}",
+  "ruleName": "Название правила",
+  "subRule": "Подправило",
+  "colorSchemes": "Цветовые схемы",
+  "palette": "Палитра",
+  "tonalSpotScheme": "Тональный акцент",
+  "fidelityScheme": "Точная передача",
+  "neutralScheme": "Нейтральная",
+  "vibrantScheme": "Яркая",
+  "expressiveScheme": "Экспрессивная",
+  "contentScheme": "Контентная",
+  "rainbowScheme": "Радуга",
+  "fruitSaladScheme": "Фруктовый микс",
+  "dataCollectionTip": "Уведомление о сборе данных",
+  "dataCollectionContent": "Это приложение использует Firebase Crashlytics для сбора информации о сбоях, чтобы повысить стабильность.\nСобираемые данные включают сведения об устройстве и подробности сбоя и не содержат личных конфиденциальных данных.\nЭту функцию можно отключить в настройках.",
+  "crashlytics": "Аналитика сбоев",
+  "crashlyticsTip": "При включении в случае сбоя приложения автоматически загружаются логи сбоя без конфиденциальной информации",
+  "overrideMode": "Режим переопределения",
+  "quickAdd": "Быстрое добавление",
+  "overrideScript": "Скрипт переопределения",
+  "overwriteTypeCustom": "Пользовательский",
+  "overwriteTypeCustomDesc": "Пользовательский режим: полная настройка прокси, групп прокси и правил",
+  "backupAndRestoreDesc": "Синхронизация данных через WebDAV или файлы",
+  "proxyGroupNameDuplicate": "Название группы прокси уже используется",
+  "dataChangedSave": "Обнаружены изменения данных. Сохранить их?",
+  "selectProxyProviders": "Выбрать провайдеров прокси",
+  "proxyFilter": "Фильтр узлов",
+  "excludeProxyFilter": "Фильтр исключения узлов",
+  "excludeType": "Исключаемые типы",
+  "selectProxies": "Выбрать прокси",
+  "selectSubRule": "Выберите подправило",
+  "includeAllProxyProviders": "Включить всех провайдеров прокси",
+  "includeAllProxyProvidersTip": "При включении группа берёт всех провайдеров прокси этого профиля: собственных провайдеров подписки, а также профили и прокси-провайдеры приложения, которые использует любая группа прокси",
+  "addProxyProviders": "Добавить провайдеров прокси",
+  "includeAllProxies": "Включить все прокси",
+  "includeAllProxiesTip": "Подключает все прокси вне групп; ниже можно добавить дополнительные группы прокси",
+  "proxiesEmpty": "Список прокси пуст",
+  "addProxies": "Добавить прокси",
+  "confirmOverwriteTip": "После подтверждения существующие данные будут перезаписаны",
+  "configDataDetected": "В конфигурации обнаружены данные",
+  "quickFill": "Быстрое заполнение",
+  "noRecords": "Записей пока нет",
+  "subRuleEmpty": "Подправило пусто",
+  "proxyProvidersNotEmpty": "Провайдеры прокси не могут быть пустыми",
+  "subRuleNotEmpty": "Подправило не может быть пустым",
+  "proxyProvidersEmpty": "Список провайдеров прокси пуст",
+  "batteryOptimizationStatusTip": "Из-за системных ограничений во время работы невозможно корректно получить статус оптимизации батареи",
+  "geoOptions": "Настройки Geo",
+  "geoAutoUpdate": "Автообновление",
+  "geoAutoUpdateInterval": "Интервал автообновления",
+  "geoAutoUpdateIntervalTip": "Интервал автообновления должен быть больше 0",
+  "hoursCount": "{count, plural, one{{count} час} few{{count} часа} many{{count} часов} other{{count} часа}}",
+  "addWidget": "Добавить виджет",
+  "proxyNode": "Прокси-узел",
+  "proxyDefinition": "Полная конфигурация",
+  "proxyDefinitionNotMap": "Конфигурация должна быть YAML-словарём с полями name и type",
+  "customProxiesEmpty": "Пользовательских прокси нет, поэтому используются прокси самого профиля",
+  "overwriteIssueEmptyName": "Имя не задано",
+  "overwriteIssueReservedName": "{name} — встроенное имя политики, его нельзя использовать",
+  "overwriteIssueDuplicateName": "Имя {name} уже занято другим прокси или группой прокси",
+  "overwriteIssueCoreRejected": "Ядро не может разобрать этот прокси: {message}",
+  "overwriteIssueMissingProxies": "Эти прокси или политики не существуют: {names}",
+  "overwriteIssueMissingProviders": "Эти провайдеры прокси не существуют: {names}",
+  "overwriteIssueNoProxySource": "Не выбраны ни прокси, ни провайдеры прокси, поэтому ядро отклонит эту группу",
+  "overwriteIssueGroupLoop": "Группы прокси ссылаются друг на друга по кругу: {path}",
+  "overwriteIssuesSummary": "Проблем: {count}, применение переопределения может завершиться ошибкой",
+  "overwriteIssueSubscriptionGroupMissingProxies": "Собственные группы прокси профиля ссылаются на прокси, которых больше нет среди пользовательских: {names}",
+  "providerSourceSubscription": "Подписка",
+  "providerRenameShadowed": "В подписках профилей {profiles} уже есть «{label}», и после переименования они будут использовать его. Выберите другое имя",
+  "features": "Функции",
+  "tailscale": "Tailscale",
+  "tailscaleDesc": "Управление исходящими узлами Tailscale",
+  "tailscaleEnable": "Включить Tailscale",
+  "tailscaleEnableDesc": "Добавлять узлы Tailscale как исходящие. При отключении Tailscale перестаёт обрабатывать трафик; обычный трафик не затрагивается.",
+  "tailscaleEmptyTip": "Узлов Tailscale пока нет. Добавьте узел, чтобы направлять трафик через вашу сеть tailnet.",
+  "tailscaleAuthKey": "Ключ аутентификации",
+  "tailscaleHostname": "Имя хоста",
+  "tailscaleControlUrl": "URL сервера управления",
+  "tailscaleStateDir": "Каталог состояния",
+  "tailscaleEphemeral": "Временный узел",
+  "tailscaleUdp": "Ретрансляция UDP",
+  "tailscaleAcceptRoutes": "Принимать маршруты",
+  "tailscaleExitNode": "Выходной узел",
+  "tailscaleExitNodeAllowLanAccess": "Разрешить доступ к локальной сети через выходной узел",
+  "tailscaleNameExistsTip": "Узел с таким именем уже существует",
+  "tailscaleGuideTitle": "Как работает Tailscale",
+  "tailscaleAuthKeyHint": "Из консоли администратора Tailscale → Settings → Keys. Требуется для аутентификации узла.",
+  "tailscaleHostnameHint": "Необязательно. Имя устройства, отображаемое в вашей сети tailnet.",
+  "tailscaleControlUrlHint": "Необязательно. Только для собственных серверов управления, например Headscale.",
+  "tailscaleStateDirHint": "Необязательно. Каталог для хранения состояния Tailscale.",
+  "tailscaleExitNodeHint": "Необязательно. IP-адрес или имя выходного узла tailnet для маршрутизации всего трафика.",
+  "tailscaleBypass": "Оставлять трафик Tailscale напрямую",
+  "tailscaleRoutes": "Пункты назначения маршрута",
+  "tailscaleRoutesHint": "Домены или IP, направляемые через этот узел, по одному в строке (например, Tailscale IP или имя MagicDNS вашего домашнего ПК).",
+  "tailscaleScenarioAndroidTitle": "Настройка клиента Android",
+  "tailscaleScenarioAndroidBody": "Оставьте FlClash единственным VPN. Не запускайте VPN приложения Tailscale одновременно (Android допускает только один). Добавьте встроенный узел Tailscale ниже и укажите домашнее устройство в пунктах назначения маршрута.",
+  "tailscaleScenarioDesktopTitle": "Настройка ПК / хоста",
+  "tailscaleScenarioDesktopBody": "Можно запускать FlClash и настоящее приложение Tailscale вместе. Включите «Оставлять трафик Tailscale напрямую», чтобы FlClash не перехватывал плоскость управления Tailscale и fake-IP DNS.",
+  "tailscaleAndroidStep1": "Получите ключ аутентификации в консоли администратора Tailscale (Settings → Keys).",
+  "tailscaleAndroidStep2": "Добавьте узел, вставьте ключ и укажите IP или имя MagicDNS домашнего устройства в пунктах назначения маршрута.",
+  "tailscaleAndroidStep3": "Включите Tailscale. «Оставлять трафик напрямую» обычно выключайте, если приложение Tailscale на телефоне не установлено.",
+  "tailscaleAndroidStep4": "Запустите VPN FlClash, затем нажмите кнопку ping у узла, чтобы проверить соединение.",
+  "tailscaleDesktopStep1": "Если на этом ПК также работает приложение/служба Tailscale, включите «Оставлять трафик Tailscale напрямую».",
+  "tailscaleDesktopStep2": "Необязательно: добавьте встроенный узел Tailscale с ключом, чтобы направлять выбранный трафик через tailnet из FlClash.",
+  "tailscaleDesktopStep3": "Укажите назначения (домашние IP / MagicDNS) в пунктах назначения маршрута и включите Tailscale.",
+  "tailscaleDesktopStep4": "Запустите FlClash и нажмите ping у узла, чтобы убедиться, что соединение стабильно.",
+  "tailscaleBypassRecommended": "Рекомендуется на ПК, где установлено приложение/служба Tailscale. Автоматически управляет правилами DIRECT и Fake IP Filter.",
+  "tailscaleBypassAndroidHint": "На Android обычно оставляйте выключенным. Включайте только если на телефоне также установлено приложение Tailscale.",
+  "tailscaleStatusDisabled": "Tailscale выключен — узлы не добавляются в рабочий профиль.",
+  "tailscaleStatusNoNodes": "Включено, но узлов ещё нет. Добавьте узел, чтобы начать.",
+  "tailscaleStatusNeedStart": "Узлы готовы. Запустите VPN FlClash, затем нажмите ping для проверки.",
+  "tailscaleStatusReady": "Активных узлов: {count}. Нажмите ping у узла, чтобы проверить связь.",
+  "tailscaleStatusNeedRoutes": "Узлы добавлены, но нет маршрутов — трафик не совпадёт, пока не добавите маршруты (или выберите узел вручную).",
+  "tailscaleBypassNudge": "На этом устройстве, возможно, уже запущен Tailscale — включите «Прямой трафик Tailscale», чтобы избежать проблем Fake IP / control plane.",
+  "tailscaleShowSetupGuide": "Инструкция",
+  "tailscaleEnableBypassAction": "Включить",
+  "tailscaleNameHelper": "Имя исходящего узла в Proxies. Переименование меняет привязку выбора и тестов задержки.",
+  "tailscaleTestNeedEnable": "Перед проверкой включите Tailscale.",
+  "tailscaleTestNeedStart": "Перед проверкой соединения запустите VPN FlClash.",
+  "tailscaleTestNode": "Проверить соединение",
+  "tailscaleNotTested": "Не проверено",
+  "tailscaleNoRoutes": "Нет пунктов назначения",
+  "tailscaleRoutesCount": "Маршрутов: {count}",
+  "tailscaleNodesTitle": "Узлы",
+  "tailscaleTestTip": "Кнопка ping рядом с узлом проверяет, может ли исходящий Tailscale установить соединение. Задержка означает, что связь есть; Timeout — проверьте ключ, переключатель включения и что VPN FlClash запущен.",
+  "geoIdentity": "Геоидентичность",
+  "geoIdentityDesc": "Один переключатель для US exit",
+  "geoIdentityPurposeBody": "Включите, чтобы FlClash захватил трафик и проверил US-выход для AI. Для отпечатков браузера по-прежнему может понадобиться GeoMirror.",
+  "geoIdentityProtectToggleDesc": "Захват трафика, выравнивание часового пояса на ПК и проверка выхода",
+  "geoIdentityNetworkGood": "Сеть готова к работе",
+  "geoIdentityNetworkBad": "Выход ещё не US — выберите US-узел и нажмите «Проверить снова»",
+  "geoIdentityOffStatus": "Защита геоидентичности выключена",
+  "geoIdentityTurningOff": "Выключение…",
+  "geoIdentityRecheck": "Проверить снова",
+  "geoIdentityPendingCheck": "Защита включена — ожидается проверка сети",
+  "geoIdentityCheckCancelled": "Проверка сети отменена",
+  "geoIdentityHonestyLine": "Это покрывает IP выхода и язык зонда. Шрифты/геолокация браузера всё ещё нуждаются в GeoMirror; Claude Code — в совпадающей системной таймзоне (и TUN или proxy-переменных).",
+  "geoIdentityTimezoneAlignFailed": "Не удалось выровнять системную таймзону ({detail})",
+  "geoIdentityProtectEnable": "Включить защиту геоидентичности",
+  "geoIdentityCaptureMode": "Режим перехвата трафика",
+  "geoIdentityCaptureModeAuto": "Авто — не менять текущие настройки; если нет перехвата, включить только TUN",
+  "geoIdentityCaptureModeTun": "Только TUN / виртуальный NIC",
+  "geoIdentityCaptureModeSystemProxy": "Только системный прокси",
+  "geoIdentityCaptureModeBoth": "Системный прокси + TUN",
+  "geoIdentityUsAcceptLanguage": "Проверять с US Accept-Language",
+  "geoIdentityNeedStart": "Запустите FlClash перед проверкой сетевой среды.",
+  "geoIdentityCheckFailed": "Сетевая проверка не удалась",
+  "geoIdentityNetworkExposed": "Сеть всё ещё выглядит раскрытой",
+  "geoIdentityTimezone": "Системный часовой пояс",
+  "geoIdentityOpenGeoMirror": "GeoMirror на GitHub",
+  "geoIdentityRestoreOsTimezone": "Восстановить прежний часовой пояс ОС",
+  "geoIdentityRestoreOsTimezoneDesc": "Восстановить {timezone}",
+  "geoIdentityTimezoneRestored": "Часовой пояс ОС восстановлен в {timezone}",
+  "geoIdentityTimezoneMissing": "Ещё нет timezone выхода. Сначала проверьте сетевую среду.",
+  "geoIdentityTimezoneNothingToRestore": "Нет сохранённого предыдущего часового пояса ОС.",
+  "geoIdentityTimezoneAndroidTip": "Android без root не даёт приложению менять системный часовой пояс. Откройте Настройки → Система → Дата и время и выберите US-зону под ваш exit.",
+  "geoIdentityCopyTerminalProxy": "Скопировать proxy export'ы для терминала",
+  "geoIdentitySetupRunning": "Применяется быстрая настройка…",
+  "geoIdentitySetupStarting": "Запуск FlClash…",
+  "geoIdentitySetupVerifying": "Проверка сетевой среды…",
+  "geoIdentitySetupTimezone": "Выравнивание часового пояса ОС…",
+  "geoIdentitySetupDoneProtected": "Готово — сеть выглядит US-защищённой.",
+  "geoIdentitySetupDoneNeedUsNode": "Настройка применена, но выход ещё не US. Выберите US-узел и нажмите «Проверить снова».",
+  "geoIdentityCopyTerminalProxyShort": "Скопировать HTTP(S)_PROXY для терминала",
+  "geoIdentityOpenGeoMirrorShort": "Выравнивание отпечатка браузера",
+  "geoIdentityShowAdvanced": "Показать дополнительно",
+  "geoIdentityHideAdvanced": "Скрыть дополнительно",
+  "enableAutoSelect": "Создать запасную автогруппу",
+  "enableAutoSelectCreateTip": "В большинстве подписок уже есть url-test/fallback. Здесь не найдено — создать простую запасную группу «FlClash Auto»? Переключит overwrite на Custom; пустые группы станут Auto + PROXY (узлы сохраняются через include-all-proxies).",
+  "enableAutoSelectFailed": "Не удалось создать запасную автогруппу",
+  "restoreAutoSelect": "Вернуть авто",
+  "groupTypeUrlTest": "URLTest",
+  "groupTypeFallback": "Fallback",
+  "enableAutoSelectRestored": "Автовыбор восстановлен для {group}",
+  "@enableAutoSelectRestored": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "enableAutoSelectCreated": "Создана запасная автогруппа {group}. При необходимости выберите её в Proxies.",
+  "@enableAutoSelectCreated": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupTitle": "Авто · {type}",
+  "@autoGroupTitle": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupCurrent": "Текущий узел: {node}",
+  "@autoGroupCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupOverride": "Ручной выбор: {node}",
+  "@autoGroupOverride": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "stickToRegion": "Закрепить регион",
+  "autoGroupStickyRegion": "Закреплённый регион: {region}",
+  "@autoGroupStickyRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanes": "Стратегии",
+  "strategyLanesDesc": "Назначить сервисы стратегиям подписки или переопределить их",
+  "strategyLanesTip": "Каждая строка — типичный тип трафика. Следуйте подписке, если у неё уже есть стратегия, или переопределите автовыбором / группой / узлом.",
+  "strategyLanesNeedStart": "Запустите FlClash, чтобы загрузить стратегические группы текущего профиля.",
+  "strategyLanesNeedProfile": "Сначала выберите профиль.",
+  "strategyLanesLoadFailed": "Не удалось загрузить стратегии профиля",
+  "strategyLanesEmpty": "Стратегические группы не найдены",
+  "strategyLanesEmptyDesc": "В профиле пока нет выбираемых групп. Используйте подписку с правилами или выберите автовыбор для сервиса ниже.",
+  "strategyLanesBusinessTitle": "Частые сервисы",
+  "strategyLanesExtraTitle": "Другие группы подписки",
+  "strategyLanesApplied": "Стратегии применены",
+  "strategyLanesPartialApplied": "Применено, но часть переопределений пропущена (нет группы или узла)",
+  "strategyLaneFollowSubscription": "Следовать подписке",
+  "strategyLaneFollowWithGroup": "Следовать подписке ({group})",
+  "@strategyLaneFollowWithGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneFollowing": "Следует подписке",
+  "strategyLaneOverridden": "Переопределено",
+  "strategyLaneUncovered": "В подписке нет отдельной стратегии — трафик идёт по умолчанию / MATCH",
+  "strategyLaneCurrent": "Сейчас: {node}",
+  "@strategyLaneCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneEffective": "Фактическая цель: {target}",
+  "@strategyLaneEffective": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanePolicyAuto": "Автовыбор FlClash",
+  "strategyLanePolicyGroup": "Группа: {group}",
+  "@strategyLanePolicyGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanePolicyProxy": "Узел: {node}",
+  "@strategyLanePolicyProxy": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneKindStreaming": "Стриминг",
+  "strategyLaneKindAi": "ИИ",
+  "strategyLaneKindSocial": "Соцсети",
+  "strategyLaneKindSearch": "Поиск",
+  "strategyLaneKindMessaging": "Мессенджеры",
+  "strategyLaneKindGaming": "Игры",
+  "strategyLaneKindProxy": "Прокси / выбор",
+  "strategyLaneKindOther": "Другие стратегии",
+  "strategyLaneTypeSelector": "Ручной выбор",
+  "strategyLaneTypeLoadBalance": "Балансировка",
+  "strategyLaneTypeRelay": "Реле",
+  "hideAdvanced": "Скрыть дополнительно",
+  "showAdvanced": "Показать дополнительно",
+  "addTailscaleNode": "Добавить узел Tailscale",
+  "editTailscaleNode": "Изменить узел Tailscale"
 }

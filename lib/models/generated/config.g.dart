@@ -85,6 +85,17 @@ _AppSettingProps _$AppSettingPropsFromJson(
         ),
       ) ??
       const {},
+  autoSelectStickyGeo: json['autoSelectStickyGeo'] as bool? ?? false,
+  autoSelectStickyGeoByGroup:
+      (json['autoSelectStickyGeoByGroup'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, e as String),
+      ) ??
+      const {},
+  strategyLanePolicies:
+      (json['strategyLanePolicies'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, e as String),
+      ) ??
+      const {},
 );
 
 Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
@@ -120,6 +131,9 @@ Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
       'serviceOrder': instance.serviceOrder,
       'disabledServices': instance.disabledServices,
       'tableColumnWidths': instance.tableColumnWidths,
+      'autoSelectStickyGeo': instance.autoSelectStickyGeo,
+      'autoSelectStickyGeoByGroup': instance.autoSelectStickyGeoByGroup,
+      'strategyLanePolicies': instance.strategyLanePolicies,
     };
 
 const _$TabAnimationEnumMap = {
@@ -447,6 +461,16 @@ _Config _$ConfigFromJson(Map<String, dynamic> json) => _Config(
           ?.map((e) => e as String)
           .toList() ??
       const [],
+  tailscaleProps: json['tailscaleProps'] == null
+      ? defaultTailscaleProps
+      : TailscaleProps.safeFromJson(
+          json['tailscaleProps'] as Map<String, Object?>?,
+        ),
+  geoIdentityProps: json['geoIdentityProps'] == null
+      ? defaultGeoIdentityProps
+      : GeoIdentityProps.safeFromJson(
+          json['geoIdentityProps'] as Map<String, Object?>?,
+        ),
 );
 
 Map<String, dynamic> _$ConfigToJson(_Config instance) => <String, dynamic>{
@@ -461,4 +485,6 @@ Map<String, dynamic> _$ConfigToJson(_Config instance) => <String, dynamic>{
   'windowGeometry': instance.windowProps,
   'patchClashConfig': instance.patchClashConfig,
   'excludeSSIDs': instance.excludeSSIDs,
+  'tailscaleProps': instance.tailscaleProps,
+  'geoIdentityProps': instance.geoIdentityProps,
 };

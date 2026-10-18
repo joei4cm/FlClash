@@ -7836,6 +7836,2308 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Network detection`
+  String get networkDetection {
+    return Intl.message(
+      'Network detection',
+      name: 'networkDetection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set dark mode and adjust colors`
+  String get themeDesc {
+    return Intl.message(
+      'Set dark mode and adjust colors',
+      name: 'themeDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Override`
+  String get override {
+    return Intl.message('Override', name: 'override', desc: '', args: []);
+  }
+
+  /// `Launch automatically at system startup`
+  String get autoLaunchDesc {
+    return Intl.message(
+      'Launch automatically at system startup',
+      name: 'autoLaunchDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Obtain a profile from a URL`
+  String get urlDesc {
+    return Intl.message(
+      'Obtain a profile from a URL',
+      name: 'urlDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import from URL`
+  String get importFromURL {
+    return Intl.message(
+      'Import from URL',
+      name: 'importFromURL',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hide the app from recent tasks while it is in the background`
+  String get excludeDesc {
+    return Intl.message(
+      'Hide the app from recent tasks while it is in the background',
+      name: 'excludeDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Standard`
+  String get expand {
+    return Intl.message('Standard', name: 'expand', desc: '', args: []);
+  }
+
+  /// `Compact`
+  String get shrink {
+    return Intl.message('Compact', name: 'shrink', desc: '', args: []);
+  }
+
+  /// `Minimal`
+  String get min {
+    return Intl.message('Minimal', name: 'min', desc: '', args: []);
+  }
+
+  /// `Changes take effect after restarting the VPN`
+  String get vpnTip {
+    return Intl.message(
+      'Changes take effect after restarting the VPN',
+      name: 'vpnTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Behavior`
+  String get behavior {
+    return Intl.message('Behavior', name: 'behavior', desc: '', args: []);
+  }
+
+  /// `Format`
+  String get format {
+    return Intl.message('Format', name: 'format', desc: '', args: []);
+  }
+
+  /// `Override DNS`
+  String get overrideDns {
+    return Intl.message(
+      'Override DNS',
+      name: 'overrideDns',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Override NTP`
+  String get overrideNtp {
+    return Intl.message(
+      'Override NTP',
+      name: 'overrideNtp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Firebase Crashlytics (crash analytics)`
+  String get disclaimerCrashlyticsTitle {
+    return Intl.message(
+      'Firebase Crashlytics (crash analytics)',
+      name: 'disclaimerCrashlyticsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `When the app crashes, a crash report is uploaded automatically.\n\nWhat is collected: the crash stack trace and error message, the time of the crash, the app version and build number, the device brand and model, the Android version, screen orientation, free memory and storage, whether the device is rooted, and a random installation ID that is created on install and reset on reinstall.\n\nPurpose: only to locate and fix crashes.\n\nYou can turn it off at any time under "Tools > General > Crash analytics".`
+  String get disclaimerCrashlyticsContent {
+    return Intl.message(
+      'When the app crashes, a crash report is uploaded automatically.\n\nWhat is collected: the crash stack trace and error message, the time of the crash, the app version and build number, the device brand and model, the Android version, screen orientation, free memory and storage, whether the device is rooted, and a random installation ID that is created on install and reset on reinstall.\n\nPurpose: only to locate and fix crashes.\n\nYou can turn it off at any time under "Tools > General > Crash analytics".',
+      name: 'disclaimerCrashlyticsContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Firebase Analytics (usage statistics)`
+  String get disclaimerAnalyticsTitle {
+    return Intl.message(
+      'Firebase Analytics (usage statistics)',
+      name: 'disclaimerAnalyticsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Basic app usage statistics are collected automatically with Firebase.\n\nWhat is collected: basic events such as first launch, app opens and session length, and app updates; an app instance ID; the device model, OS version, and system language; and an approximate country- or region-level location inferred from the IP address.\n\nPurpose: only to understand the number of active devices, version distribution, and OS compatibility. The developers do not use this data for advertising, do not sell it, and do not link it to your subscriptions or configurations.`
+  String get disclaimerAnalyticsContent {
+    return Intl.message(
+      'Basic app usage statistics are collected automatically with Firebase.\n\nWhat is collected: basic events such as first launch, app opens and session length, and app updates; an app instance ID; the device model, OS version, and system language; and an approximate country- or region-level location inferred from the IP address.\n\nPurpose: only to understand the number of active devices, version distribution, and OS compatibility. The developers do not use this data for advertising, do not sell it, and do not link it to your subscriptions or configurations.',
+      name: 'disclaimerAnalyticsContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This data is processed and stored by Google on our behalf, may be transferred to servers outside your country or region (such as in the United States), and is governed by the Google Privacy Policy and the Firebase privacy and security documentation. Crash reports are kept for up to 90 days; statistics are kept under the Firebase default retention policy.`
+  String get disclaimerDataProcessingContent {
+    return Intl.message(
+      'This data is processed and stored by Google on our behalf, may be transferred to servers outside your country or region (such as in the United States), and is governed by the Google Privacy Policy and the Firebase privacy and security documentation. Crash reports are kept for up to 90 days; statistics are kept under the Firebase default retention policy.',
+      name: 'disclaimerDataProcessingContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Android only`
+  String get disclaimerAndroidOnly {
+    return Intl.message(
+      'Android only',
+      name: 'disclaimerAndroidOnly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Google Privacy Policy`
+  String get disclaimerGooglePrivacy {
+    return Intl.message(
+      'Google Privacy Policy',
+      name: 'disclaimerGooglePrivacy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Firebase privacy and security`
+  String get disclaimerFirebasePrivacy {
+    return Intl.message(
+      'Firebase privacy and security',
+      name: 'disclaimerFirebasePrivacy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Route mode`
+  String get routeMode {
+    return Intl.message('Route mode', name: 'routeMode', desc: '', args: []);
+  }
+
+  /// `Bypass private addresses`
+  String get routeModeBypassPrivate {
+    return Intl.message(
+      'Bypass private addresses',
+      name: 'routeModeBypassPrivate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use config`
+  String get routeModeConfig {
+    return Intl.message(
+      'Use config',
+      name: 'routeModeConfig',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} selected`
+  String selectedCountTitle(Object count) {
+    return Intl.message(
+      '$count selected',
+      name: 'selectedCountTitle',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Rule name`
+  String get ruleName {
+    return Intl.message('Rule name', name: 'ruleName', desc: '', args: []);
+  }
+
+  /// `Sub-rule`
+  String get subRule {
+    return Intl.message('Sub-rule', name: 'subRule', desc: '', args: []);
+  }
+
+  /// `Color schemes`
+  String get colorSchemes {
+    return Intl.message(
+      'Color schemes',
+      name: 'colorSchemes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Palette`
+  String get palette {
+    return Intl.message('Palette', name: 'palette', desc: '', args: []);
+  }
+
+  /// `Tonal spot`
+  String get tonalSpotScheme {
+    return Intl.message(
+      'Tonal spot',
+      name: 'tonalSpotScheme',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fidelity`
+  String get fidelityScheme {
+    return Intl.message('Fidelity', name: 'fidelityScheme', desc: '', args: []);
+  }
+
+  /// `Neutral`
+  String get neutralScheme {
+    return Intl.message('Neutral', name: 'neutralScheme', desc: '', args: []);
+  }
+
+  /// `Vibrant`
+  String get vibrantScheme {
+    return Intl.message('Vibrant', name: 'vibrantScheme', desc: '', args: []);
+  }
+
+  /// `Expressive`
+  String get expressiveScheme {
+    return Intl.message(
+      'Expressive',
+      name: 'expressiveScheme',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Content`
+  String get contentScheme {
+    return Intl.message('Content', name: 'contentScheme', desc: '', args: []);
+  }
+
+  /// `Rainbow`
+  String get rainbowScheme {
+    return Intl.message('Rainbow', name: 'rainbowScheme', desc: '', args: []);
+  }
+
+  /// `Fruit salad`
+  String get fruitSaladScheme {
+    return Intl.message(
+      'Fruit salad',
+      name: 'fruitSaladScheme',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data collection notice`
+  String get dataCollectionTip {
+    return Intl.message(
+      'Data collection notice',
+      name: 'dataCollectionTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This app uses Firebase Crashlytics to collect crash information to improve stability.\nThe collected data includes device information and crash details, and contains no personally sensitive data.\nYou can turn this off in settings.`
+  String get dataCollectionContent {
+    return Intl.message(
+      'This app uses Firebase Crashlytics to collect crash information to improve stability.\nThe collected data includes device information and crash details, and contains no personally sensitive data.\nYou can turn this off in settings.',
+      name: 'dataCollectionContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Crash analytics`
+  String get crashlytics {
+    return Intl.message(
+      'Crash analytics',
+      name: 'crashlytics',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `When enabled, crash logs without sensitive information are uploaded automatically when the app crashes`
+  String get crashlyticsTip {
+    return Intl.message(
+      'When enabled, crash logs without sensitive information are uploaded automatically when the app crashes',
+      name: 'crashlyticsTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Override mode`
+  String get overrideMode {
+    return Intl.message(
+      'Override mode',
+      name: 'overrideMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quick add`
+  String get quickAdd {
+    return Intl.message('Quick add', name: 'quickAdd', desc: '', args: []);
+  }
+
+  /// `Override script`
+  String get overrideScript {
+    return Intl.message(
+      'Override script',
+      name: 'overrideScript',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Custom`
+  String get overwriteTypeCustom {
+    return Intl.message(
+      'Custom',
+      name: 'overwriteTypeCustom',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Custom mode: fully customize proxies, proxy groups and rules`
+  String get overwriteTypeCustomDesc {
+    return Intl.message(
+      'Custom mode: fully customize proxies, proxy groups and rules',
+      name: 'overwriteTypeCustomDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sync data via WebDAV or files`
+  String get backupAndRestoreDesc {
+    return Intl.message(
+      'Sync data via WebDAV or files',
+      name: 'backupAndRestoreDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Duplicate proxy group name`
+  String get proxyGroupNameDuplicate {
+    return Intl.message(
+      'Duplicate proxy group name',
+      name: 'proxyGroupNameDuplicate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data changes detected. Save them?`
+  String get dataChangedSave {
+    return Intl.message(
+      'Data changes detected. Save them?',
+      name: 'dataChangedSave',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select proxy providers`
+  String get selectProxyProviders {
+    return Intl.message(
+      'Select proxy providers',
+      name: 'selectProxyProviders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Proxy filter`
+  String get proxyFilter {
+    return Intl.message(
+      'Proxy filter',
+      name: 'proxyFilter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exclude proxy filter`
+  String get excludeProxyFilter {
+    return Intl.message(
+      'Exclude proxy filter',
+      name: 'excludeProxyFilter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exclude type`
+  String get excludeType {
+    return Intl.message(
+      'Exclude type',
+      name: 'excludeType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select proxies`
+  String get selectProxies {
+    return Intl.message(
+      'Select proxies',
+      name: 'selectProxies',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a sub-rule`
+  String get selectSubRule {
+    return Intl.message(
+      'Please select a sub-rule',
+      name: 'selectSubRule',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Include all proxy providers`
+  String get includeAllProxyProviders {
+    return Intl.message(
+      'Include all proxy providers',
+      name: 'includeAllProxyProviders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `When enabled, the group takes every proxy provider of this profile: the subscription's own, plus the profiles and app proxy providers any proxy group uses`
+  String get includeAllProxyProvidersTip {
+    return Intl.message(
+      'When enabled, the group takes every proxy provider of this profile: the subscription\'s own, plus the profiles and app proxy providers any proxy group uses',
+      name: 'includeAllProxyProvidersTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add proxy providers`
+  String get addProxyProviders {
+    return Intl.message(
+      'Add proxy providers',
+      name: 'addProxyProviders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Include all proxies`
+  String get includeAllProxies {
+    return Intl.message(
+      'Include all proxies',
+      name: 'includeAllProxies',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Imports all proxies outside proxy groups; extra proxy groups can be added below`
+  String get includeAllProxiesTip {
+    return Intl.message(
+      'Imports all proxies outside proxy groups; extra proxy groups can be added below',
+      name: 'includeAllProxiesTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Proxies are empty`
+  String get proxiesEmpty {
+    return Intl.message(
+      'Proxies are empty',
+      name: 'proxiesEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add proxies`
+  String get addProxies {
+    return Intl.message('Add proxies', name: 'addProxies', desc: '', args: []);
+  }
+
+  /// `Confirming will overwrite existing data`
+  String get confirmOverwriteTip {
+    return Intl.message(
+      'Confirming will overwrite existing data',
+      name: 'confirmOverwriteTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data detected in the configuration`
+  String get configDataDetected {
+    return Intl.message(
+      'Data detected in the configuration',
+      name: 'configDataDetected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quick fill`
+  String get quickFill {
+    return Intl.message('Quick fill', name: 'quickFill', desc: '', args: []);
+  }
+
+  /// `No records`
+  String get noRecords {
+    return Intl.message('No records', name: 'noRecords', desc: '', args: []);
+  }
+
+  /// `Sub-rule is empty`
+  String get subRuleEmpty {
+    return Intl.message(
+      'Sub-rule is empty',
+      name: 'subRuleEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Proxy providers cannot be empty`
+  String get proxyProvidersNotEmpty {
+    return Intl.message(
+      'Proxy providers cannot be empty',
+      name: 'proxyProvidersNotEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sub-rule cannot be empty`
+  String get subRuleNotEmpty {
+    return Intl.message(
+      'Sub-rule cannot be empty',
+      name: 'subRuleNotEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Proxy providers are empty`
+  String get proxyProvidersEmpty {
+    return Intl.message(
+      'Proxy providers are empty',
+      name: 'proxyProvidersEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Due to system limitations, the battery optimization status cannot be read correctly while running`
+  String get batteryOptimizationStatusTip {
+    return Intl.message(
+      'Due to system limitations, the battery optimization status cannot be read correctly while running',
+      name: 'batteryOptimizationStatusTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Geo options`
+  String get geoOptions {
+    return Intl.message('Geo options', name: 'geoOptions', desc: '', args: []);
+  }
+
+  /// `Auto update`
+  String get geoAutoUpdate {
+    return Intl.message(
+      'Auto update',
+      name: 'geoAutoUpdate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auto-update interval`
+  String get geoAutoUpdateInterval {
+    return Intl.message(
+      'Auto-update interval',
+      name: 'geoAutoUpdateInterval',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The auto-update interval must be greater than 0`
+  String get geoAutoUpdateIntervalTip {
+    return Intl.message(
+      'The auto-update interval must be greater than 0',
+      name: 'geoAutoUpdateIntervalTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count, plural, =1{1 hour} other{{count} hours}}`
+  String hoursCount(num count) {
+    return Intl.plural(
+      count,
+      one: '1 hour',
+      other: '$count hours',
+      name: 'hoursCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Add widget`
+  String get addWidget {
+    return Intl.message('Add widget', name: 'addWidget', desc: '', args: []);
+  }
+
+  /// `Proxy node`
+  String get proxyNode {
+    return Intl.message('Proxy node', name: 'proxyNode', desc: '', args: []);
+  }
+
+  /// `Full configuration`
+  String get proxyDefinition {
+    return Intl.message(
+      'Full configuration',
+      name: 'proxyDefinition',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The configuration must be a YAML mapping with a name and a type`
+  String get proxyDefinitionNotMap {
+    return Intl.message(
+      'The configuration must be a YAML mapping with a name and a type',
+      name: 'proxyDefinitionNotMap',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No custom proxies, so the profile's own proxies are used`
+  String get customProxiesEmpty {
+    return Intl.message(
+      'No custom proxies, so the profile\'s own proxies are used',
+      name: 'customProxiesEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The name is empty`
+  String get overwriteIssueEmptyName {
+    return Intl.message(
+      'The name is empty',
+      name: 'overwriteIssueEmptyName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{name} is a built-in policy name and cannot be used here`
+  String overwriteIssueReservedName(Object name) {
+    return Intl.message(
+      '$name is a built-in policy name and cannot be used here',
+      name: 'overwriteIssueReservedName',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `The name {name} is already used by another proxy or proxy group`
+  String overwriteIssueDuplicateName(Object name) {
+    return Intl.message(
+      'The name $name is already used by another proxy or proxy group',
+      name: 'overwriteIssueDuplicateName',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `The core cannot parse this proxy: {message}`
+  String overwriteIssueCoreRejected(Object message) {
+    return Intl.message(
+      'The core cannot parse this proxy: $message',
+      name: 'overwriteIssueCoreRejected',
+      desc: '',
+      args: [message],
+    );
+  }
+
+  /// `These proxies or policies do not exist: {names}`
+  String overwriteIssueMissingProxies(Object names) {
+    return Intl.message(
+      'These proxies or policies do not exist: $names',
+      name: 'overwriteIssueMissingProxies',
+      desc: '',
+      args: [names],
+    );
+  }
+
+  /// `These proxy providers do not exist: {names}`
+  String overwriteIssueMissingProviders(Object names) {
+    return Intl.message(
+      'These proxy providers do not exist: $names',
+      name: 'overwriteIssueMissingProviders',
+      desc: '',
+      args: [names],
+    );
+  }
+
+  /// `No proxies or proxy providers are selected, so the core rejects this group`
+  String get overwriteIssueNoProxySource {
+    return Intl.message(
+      'No proxies or proxy providers are selected, so the core rejects this group',
+      name: 'overwriteIssueNoProxySource',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Proxy groups reference each other in a loop: {path}`
+  String overwriteIssueGroupLoop(Object path) {
+    return Intl.message(
+      'Proxy groups reference each other in a loop: $path',
+      name: 'overwriteIssueGroupLoop',
+      desc: '',
+      args: [path],
+    );
+  }
+
+  /// `{count} items have problems, and applying this override may fail`
+  String overwriteIssuesSummary(Object count) {
+    return Intl.message(
+      '$count items have problems, and applying this override may fail',
+      name: 'overwriteIssuesSummary',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `The profile's own proxy groups name proxies that the custom proxies no longer include: {names}`
+  String overwriteIssueSubscriptionGroupMissingProxies(Object names) {
+    return Intl.message(
+      'The profile\'s own proxy groups name proxies that the custom proxies no longer include: $names',
+      name: 'overwriteIssueSubscriptionGroupMissingProxies',
+      desc: '',
+      args: [names],
+    );
+  }
+
+  /// `Subscription`
+  String get providerSourceSubscription {
+    return Intl.message(
+      'Subscription',
+      name: 'providerSourceSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The subscriptions of {profiles} already have {label}, so those profiles would switch to theirs. Choose another name`
+  String providerRenameShadowed(Object profiles, Object label) {
+    return Intl.message(
+      'The subscriptions of $profiles already have $label, so those profiles would switch to theirs. Choose another name',
+      name: 'providerRenameShadowed',
+      desc: '',
+      args: [profiles, label],
+    );
+  }
+
+  /// `Features`
+  String get features {
+    return Intl.message('Features', name: 'features', desc: '', args: []);
+  }
+
+  /// `Tailscale`
+  String get tailscale {
+    return Intl.message('Tailscale', name: 'tailscale', desc: '', args: []);
+  }
+
+  /// `Manage Tailscale outbound nodes`
+  String get tailscaleDesc {
+    return Intl.message(
+      'Manage Tailscale outbound nodes',
+      name: 'tailscaleDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable Tailscale`
+  String get tailscaleEnable {
+    return Intl.message(
+      'Enable Tailscale',
+      name: 'tailscaleEnable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Inject Tailscale nodes as outbounds. Turning this off stops Tailscale from handling traffic; normal traffic is unaffected.`
+  String get tailscaleEnableDesc {
+    return Intl.message(
+      'Inject Tailscale nodes as outbounds. Turning this off stops Tailscale from handling traffic; normal traffic is unaffected.',
+      name: 'tailscaleEnableDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Tailscale nodes yet. Add one to route traffic through your tailnet.`
+  String get tailscaleEmptyTip {
+    return Intl.message(
+      'No Tailscale nodes yet. Add one to route traffic through your tailnet.',
+      name: 'tailscaleEmptyTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auth key`
+  String get tailscaleAuthKey {
+    return Intl.message(
+      'Auth key',
+      name: 'tailscaleAuthKey',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hostname`
+  String get tailscaleHostname {
+    return Intl.message(
+      'Hostname',
+      name: 'tailscaleHostname',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Control URL`
+  String get tailscaleControlUrl {
+    return Intl.message(
+      'Control URL',
+      name: 'tailscaleControlUrl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `State directory`
+  String get tailscaleStateDir {
+    return Intl.message(
+      'State directory',
+      name: 'tailscaleStateDir',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ephemeral`
+  String get tailscaleEphemeral {
+    return Intl.message(
+      'Ephemeral',
+      name: 'tailscaleEphemeral',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `UDP relay`
+  String get tailscaleUdp {
+    return Intl.message('UDP relay', name: 'tailscaleUdp', desc: '', args: []);
+  }
+
+  /// `Accept routes`
+  String get tailscaleAcceptRoutes {
+    return Intl.message(
+      'Accept routes',
+      name: 'tailscaleAcceptRoutes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit node`
+  String get tailscaleExitNode {
+    return Intl.message(
+      'Exit node',
+      name: 'tailscaleExitNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow LAN access via exit node`
+  String get tailscaleExitNodeAllowLanAccess {
+    return Intl.message(
+      'Allow LAN access via exit node',
+      name: 'tailscaleExitNodeAllowLanAccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A node with this name already exists`
+  String get tailscaleNameExistsTip {
+    return Intl.message(
+      'A node with this name already exists',
+      name: 'tailscaleNameExistsTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How Tailscale works`
+  String get tailscaleGuideTitle {
+    return Intl.message(
+      'How Tailscale works',
+      name: 'tailscaleGuideTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `From the Tailscale admin console → Settings → Keys. Required to authenticate the node.`
+  String get tailscaleAuthKeyHint {
+    return Intl.message(
+      'From the Tailscale admin console → Settings → Keys. Required to authenticate the node.',
+      name: 'tailscaleAuthKeyHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Optional. Device name shown in your tailnet.`
+  String get tailscaleHostnameHint {
+    return Intl.message(
+      'Optional. Device name shown in your tailnet.',
+      name: 'tailscaleHostnameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Optional. Only for self-hosted control servers such as Headscale.`
+  String get tailscaleControlUrlHint {
+    return Intl.message(
+      'Optional. Only for self-hosted control servers such as Headscale.',
+      name: 'tailscaleControlUrlHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Optional. Directory used to persist Tailscale state.`
+  String get tailscaleStateDirHint {
+    return Intl.message(
+      'Optional. Directory used to persist Tailscale state.',
+      name: 'tailscaleStateDirHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Optional. IP or name of a tailnet exit node to route all traffic through.`
+  String get tailscaleExitNodeHint {
+    return Intl.message(
+      'Optional. IP or name of a tailnet exit node to route all traffic through.',
+      name: 'tailscaleExitNodeHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep Tailscale traffic direct`
+  String get tailscaleBypass {
+    return Intl.message(
+      'Keep Tailscale traffic direct',
+      name: 'tailscaleBypass',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Route destinations`
+  String get tailscaleRoutes {
+    return Intl.message(
+      'Route destinations',
+      name: 'tailscaleRoutes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Domains or IPs sent through this node, one per line (e.g. your home PC's Tailscale IP or MagicDNS name).`
+  String get tailscaleRoutesHint {
+    return Intl.message(
+      'Domains or IPs sent through this node, one per line (e.g. your home PC\'s Tailscale IP or MagicDNS name).',
+      name: 'tailscaleRoutesHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Android client setup`
+  String get tailscaleScenarioAndroidTitle {
+    return Intl.message(
+      'Android client setup',
+      name: 'tailscaleScenarioAndroidTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep FlClash as the only VPN. Do not run the Tailscale app VPN at the same time (Android allows only one). Use an embedded Tailscale node below, then add your home device to Route destinations.`
+  String get tailscaleScenarioAndroidBody {
+    return Intl.message(
+      'Keep FlClash as the only VPN. Do not run the Tailscale app VPN at the same time (Android allows only one). Use an embedded Tailscale node below, then add your home device to Route destinations.',
+      name: 'tailscaleScenarioAndroidBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Desktop / host setup`
+  String get tailscaleScenarioDesktopTitle {
+    return Intl.message(
+      'Desktop / host setup',
+      name: 'tailscaleScenarioDesktopTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You can run FlClash and the real Tailscale app together. Turn on "Keep Tailscale traffic direct" so FlClash does not hijack Tailscale's control plane or fake-IP DNS.`
+  String get tailscaleScenarioDesktopBody {
+    return Intl.message(
+      'You can run FlClash and the real Tailscale app together. Turn on "Keep Tailscale traffic direct" so FlClash does not hijack Tailscale\'s control plane or fake-IP DNS.',
+      name: 'tailscaleScenarioDesktopBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get an auth key from the Tailscale admin console (Settings → Keys).`
+  String get tailscaleAndroidStep1 {
+    return Intl.message(
+      'Get an auth key from the Tailscale admin console (Settings → Keys).',
+      name: 'tailscaleAndroidStep1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a node, paste the auth key, and put your home device IP or MagicDNS name in Route destinations.`
+  String get tailscaleAndroidStep2 {
+    return Intl.message(
+      'Add a node, paste the auth key, and put your home device IP or MagicDNS name in Route destinations.',
+      name: 'tailscaleAndroidStep2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Turn on Enable Tailscale. Leave "Keep Tailscale traffic direct" off unless the Tailscale app is also installed.`
+  String get tailscaleAndroidStep3 {
+    return Intl.message(
+      'Turn on Enable Tailscale. Leave "Keep Tailscale traffic direct" off unless the Tailscale app is also installed.',
+      name: 'tailscaleAndroidStep3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start FlClash VPN, then tap the ping button on a node to verify the connection.`
+  String get tailscaleAndroidStep4 {
+    return Intl.message(
+      'Start FlClash VPN, then tap the ping button on a node to verify the connection.',
+      name: 'tailscaleAndroidStep4',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If this PC also runs the Tailscale app/service, turn on "Keep Tailscale traffic direct".`
+  String get tailscaleDesktopStep1 {
+    return Intl.message(
+      'If this PC also runs the Tailscale app/service, turn on "Keep Tailscale traffic direct".',
+      name: 'tailscaleDesktopStep1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Optional: add an embedded Tailscale node with an auth key to route selected traffic through the tailnet from FlClash.`
+  String get tailscaleDesktopStep2 {
+    return Intl.message(
+      'Optional: add an embedded Tailscale node with an auth key to route selected traffic through the tailnet from FlClash.',
+      name: 'tailscaleDesktopStep2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Put destinations (home IPs / MagicDNS) in Route destinations, then turn on Enable Tailscale.`
+  String get tailscaleDesktopStep3 {
+    return Intl.message(
+      'Put destinations (home IPs / MagicDNS) in Route destinations, then turn on Enable Tailscale.',
+      name: 'tailscaleDesktopStep3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start FlClash, then tap the ping button on a node to verify the connection is solid.`
+  String get tailscaleDesktopStep4 {
+    return Intl.message(
+      'Start FlClash, then tap the ping button on a node to verify the connection is solid.',
+      name: 'tailscaleDesktopStep4',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recommended on desktop when the Tailscale app/service is installed. Auto-manages DIRECT rules and Fake IP Filter.`
+  String get tailscaleBypassRecommended {
+    return Intl.message(
+      'Recommended on desktop when the Tailscale app/service is installed. Auto-manages DIRECT rules and Fake IP Filter.',
+      name: 'tailscaleBypassRecommended',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Usually leave this off on Android. Turn on only if the Tailscale app is also installed on this phone.`
+  String get tailscaleBypassAndroidHint {
+    return Intl.message(
+      'Usually leave this off on Android. Turn on only if the Tailscale app is also installed on this phone.',
+      name: 'tailscaleBypassAndroidHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tailscale is off — nodes are not injected into the running profile.`
+  String get tailscaleStatusDisabled {
+    return Intl.message(
+      'Tailscale is off — nodes are not injected into the running profile.',
+      name: 'tailscaleStatusDisabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enabled, but no nodes yet. Add a node to get started.`
+  String get tailscaleStatusNoNodes {
+    return Intl.message(
+      'Enabled, but no nodes yet. Add a node to get started.',
+      name: 'tailscaleStatusNoNodes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nodes are ready. Start FlClash VPN, then tap ping to test.`
+  String get tailscaleStatusNeedStart {
+    return Intl.message(
+      'Nodes are ready. Start FlClash VPN, then tap ping to test.',
+      name: 'tailscaleStatusNeedStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} node(s) active. Tap ping on a node to test connectivity.`
+  String tailscaleStatusReady(Object count) {
+    return Intl.message(
+      '$count node(s) active. Tap ping on a node to test connectivity.',
+      name: 'tailscaleStatusReady',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Nodes are added, but no route destinations yet — traffic will not match until you add routes (or pick the node manually).`
+  String get tailscaleStatusNeedRoutes {
+    return Intl.message(
+      'Nodes are added, but no route destinations yet — traffic will not match until you add routes (or pick the node manually).',
+      name: 'tailscaleStatusNeedRoutes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This device likely runs Tailscale already — turn on “Keep Tailscale traffic direct” to avoid fake-IP / control-plane breakage.`
+  String get tailscaleBypassNudge {
+    return Intl.message(
+      'This device likely runs Tailscale already — turn on “Keep Tailscale traffic direct” to avoid fake-IP / control-plane breakage.',
+      name: 'tailscaleBypassNudge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Setup guide`
+  String get tailscaleShowSetupGuide {
+    return Intl.message(
+      'Setup guide',
+      name: 'tailscaleShowSetupGuide',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable`
+  String get tailscaleEnableBypassAction {
+    return Intl.message(
+      'Enable',
+      name: 'tailscaleEnableBypassAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Outbound name used in Proxies. Renaming changes how selections and delay tests key this node.`
+  String get tailscaleNameHelper {
+    return Intl.message(
+      'Outbound name used in Proxies. Renaming changes how selections and delay tests key this node.',
+      name: 'tailscaleNameHelper',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Turn on Enable Tailscale before testing.`
+  String get tailscaleTestNeedEnable {
+    return Intl.message(
+      'Turn on Enable Tailscale before testing.',
+      name: 'tailscaleTestNeedEnable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start FlClash VPN before testing the connection.`
+  String get tailscaleTestNeedStart {
+    return Intl.message(
+      'Start FlClash VPN before testing the connection.',
+      name: 'tailscaleTestNeedStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Test connection`
+  String get tailscaleTestNode {
+    return Intl.message(
+      'Test connection',
+      name: 'tailscaleTestNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not tested`
+  String get tailscaleNotTested {
+    return Intl.message(
+      'Not tested',
+      name: 'tailscaleNotTested',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No route destinations`
+  String get tailscaleNoRoutes {
+    return Intl.message(
+      'No route destinations',
+      name: 'tailscaleNoRoutes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} route(s)`
+  String tailscaleRoutesCount(Object count) {
+    return Intl.message(
+      '$count route(s)',
+      name: 'tailscaleRoutesCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Nodes`
+  String get tailscaleNodesTitle {
+    return Intl.message(
+      'Nodes',
+      name: 'tailscaleNodesTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use the ping button next to a node to check whether the Tailscale outbound can dial out. A latency value means the connection is working; Timeout means check the auth key, Enable switch, and that FlClash VPN is started.`
+  String get tailscaleTestTip {
+    return Intl.message(
+      'Use the ping button next to a node to check whether the Tailscale outbound can dial out. A latency value means the connection is working; Timeout means check the auth key, Enable switch, and that FlClash VPN is started.',
+      name: 'tailscaleTestTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Geo identity`
+  String get geoIdentity {
+    return Intl.message(
+      'Geo identity',
+      name: 'geoIdentity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One switch for US exit undercover`
+  String get geoIdentityDesc {
+    return Intl.message(
+      'One switch for US exit undercover',
+      name: 'geoIdentityDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Turn this on so FlClash captures traffic and checks that your exit looks US-ready for AI tools. Browsers may still need GeoMirror for page fingerprints.`
+  String get geoIdentityPurposeBody {
+    return Intl.message(
+      'Turn this on so FlClash captures traffic and checks that your exit looks US-ready for AI tools. Browsers may still need GeoMirror for page fingerprints.',
+      name: 'geoIdentityPurposeBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Capture traffic, align desktop timezone when possible, then verify the exit`
+  String get geoIdentityProtectToggleDesc {
+    return Intl.message(
+      'Capture traffic, align desktop timezone when possible, then verify the exit',
+      name: 'geoIdentityProtectToggleDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network looks good to go`
+  String get geoIdentityNetworkGood {
+    return Intl.message(
+      'Network looks good to go',
+      name: 'geoIdentityNetworkGood',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit is not US yet — pick a US node, then tap Recheck`
+  String get geoIdentityNetworkBad {
+    return Intl.message(
+      'Exit is not US yet — pick a US node, then tap Recheck',
+      name: 'geoIdentityNetworkBad',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Geo identity protect is off`
+  String get geoIdentityOffStatus {
+    return Intl.message(
+      'Geo identity protect is off',
+      name: 'geoIdentityOffStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Turning off…`
+  String get geoIdentityTurningOff {
+    return Intl.message(
+      'Turning off…',
+      name: 'geoIdentityTurningOff',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recheck`
+  String get geoIdentityRecheck {
+    return Intl.message(
+      'Recheck',
+      name: 'geoIdentityRecheck',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Protect is on — waiting for a network check`
+  String get geoIdentityPendingCheck {
+    return Intl.message(
+      'Protect is on — waiting for a network check',
+      name: 'geoIdentityPendingCheck',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network check was cancelled`
+  String get geoIdentityCheckCancelled {
+    return Intl.message(
+      'Network check was cancelled',
+      name: 'geoIdentityCheckCancelled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This covers exit IP + probe language. Browser fonts/geolocation still need GeoMirror; Claude Code still needs a matching OS timezone (and TUN or proxy exports).`
+  String get geoIdentityHonestyLine {
+    return Intl.message(
+      'This covers exit IP + probe language. Browser fonts/geolocation still need GeoMirror; Claude Code still needs a matching OS timezone (and TUN or proxy exports).',
+      name: 'geoIdentityHonestyLine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not align OS timezone ({detail})`
+  String geoIdentityTimezoneAlignFailed(Object detail) {
+    return Intl.message(
+      'Could not align OS timezone ($detail)',
+      name: 'geoIdentityTimezoneAlignFailed',
+      desc: '',
+      args: [detail],
+    );
+  }
+
+  /// `Enable geo identity protect`
+  String get geoIdentityProtectEnable {
+    return Intl.message(
+      'Enable geo identity protect',
+      name: 'geoIdentityProtectEnable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Traffic capture mode`
+  String get geoIdentityCaptureMode {
+    return Intl.message(
+      'Traffic capture mode',
+      name: 'geoIdentityCaptureMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auto — keep current settings; enable TUN only if needed`
+  String get geoIdentityCaptureModeAuto {
+    return Intl.message(
+      'Auto — keep current settings; enable TUN only if needed',
+      name: 'geoIdentityCaptureModeAuto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TUN / virtual NIC only`
+  String get geoIdentityCaptureModeTun {
+    return Intl.message(
+      'TUN / virtual NIC only',
+      name: 'geoIdentityCaptureModeTun',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System proxy only`
+  String get geoIdentityCaptureModeSystemProxy {
+    return Intl.message(
+      'System proxy only',
+      name: 'geoIdentityCaptureModeSystemProxy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System proxy + TUN`
+  String get geoIdentityCaptureModeBoth {
+    return Intl.message(
+      'System proxy + TUN',
+      name: 'geoIdentityCaptureModeBoth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Probe with US Accept-Language`
+  String get geoIdentityUsAcceptLanguage {
+    return Intl.message(
+      'Probe with US Accept-Language',
+      name: 'geoIdentityUsAcceptLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start FlClash before verifying the network environment.`
+  String get geoIdentityNeedStart {
+    return Intl.message(
+      'Start FlClash before verifying the network environment.',
+      name: 'geoIdentityNeedStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network check failed`
+  String get geoIdentityCheckFailed {
+    return Intl.message(
+      'Network check failed',
+      name: 'geoIdentityCheckFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network still looks exposed`
+  String get geoIdentityNetworkExposed {
+    return Intl.message(
+      'Network still looks exposed',
+      name: 'geoIdentityNetworkExposed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System timezone`
+  String get geoIdentityTimezone {
+    return Intl.message(
+      'System timezone',
+      name: 'geoIdentityTimezone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `GeoMirror on GitHub`
+  String get geoIdentityOpenGeoMirror {
+    return Intl.message(
+      'GeoMirror on GitHub',
+      name: 'geoIdentityOpenGeoMirror',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restore previous OS timezone`
+  String get geoIdentityRestoreOsTimezone {
+    return Intl.message(
+      'Restore previous OS timezone',
+      name: 'geoIdentityRestoreOsTimezone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restore {timezone}`
+  String geoIdentityRestoreOsTimezoneDesc(Object timezone) {
+    return Intl.message(
+      'Restore $timezone',
+      name: 'geoIdentityRestoreOsTimezoneDesc',
+      desc: '',
+      args: [timezone],
+    );
+  }
+
+  /// `OS timezone restored to {timezone}`
+  String geoIdentityTimezoneRestored(Object timezone) {
+    return Intl.message(
+      'OS timezone restored to $timezone',
+      name: 'geoIdentityTimezoneRestored',
+      desc: '',
+      args: [timezone],
+    );
+  }
+
+  /// `No exit timezone yet. Verify the network environment first.`
+  String get geoIdentityTimezoneMissing {
+    return Intl.message(
+      'No exit timezone yet. Verify the network environment first.',
+      name: 'geoIdentityTimezoneMissing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No previous OS timezone saved.`
+  String get geoIdentityTimezoneNothingToRestore {
+    return Intl.message(
+      'No previous OS timezone saved.',
+      name: 'geoIdentityTimezoneNothingToRestore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Android cannot change the system timezone without root. Open Settings → System → Date & time and pick a US zone that matches your exit.`
+  String get geoIdentityTimezoneAndroidTip {
+    return Intl.message(
+      'Android cannot change the system timezone without root. Open Settings → System → Date & time and pick a US zone that matches your exit.',
+      name: 'geoIdentityTimezoneAndroidTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy terminal proxy exports`
+  String get geoIdentityCopyTerminalProxy {
+    return Intl.message(
+      'Copy terminal proxy exports',
+      name: 'geoIdentityCopyTerminalProxy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Applying newbie setup…`
+  String get geoIdentitySetupRunning {
+    return Intl.message(
+      'Applying newbie setup…',
+      name: 'geoIdentitySetupRunning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Starting FlClash…`
+  String get geoIdentitySetupStarting {
+    return Intl.message(
+      'Starting FlClash…',
+      name: 'geoIdentitySetupStarting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verifying network environment…`
+  String get geoIdentitySetupVerifying {
+    return Intl.message(
+      'Verifying network environment…',
+      name: 'geoIdentitySetupVerifying',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Aligning OS timezone…`
+  String get geoIdentitySetupTimezone {
+    return Intl.message(
+      'Aligning OS timezone…',
+      name: 'geoIdentitySetupTimezone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Setup complete — network looks US-protected.`
+  String get geoIdentitySetupDoneProtected {
+    return Intl.message(
+      'Setup complete — network looks US-protected.',
+      name: 'geoIdentitySetupDoneProtected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Setup applied, but the exit is not US-protected yet. Select a US node, then tap Recheck.`
+  String get geoIdentitySetupDoneNeedUsNode {
+    return Intl.message(
+      'Setup applied, but the exit is not US-protected yet. Select a US node, then tap Recheck.',
+      name: 'geoIdentitySetupDoneNeedUsNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy HTTP(S)_PROXY for terminals`
+  String get geoIdentityCopyTerminalProxyShort {
+    return Intl.message(
+      'Copy HTTP(S)_PROXY for terminals',
+      name: 'geoIdentityCopyTerminalProxyShort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Browser fingerprint alignment`
+  String get geoIdentityOpenGeoMirrorShort {
+    return Intl.message(
+      'Browser fingerprint alignment',
+      name: 'geoIdentityOpenGeoMirrorShort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show advanced`
+  String get geoIdentityShowAdvanced {
+    return Intl.message(
+      'Show advanced',
+      name: 'geoIdentityShowAdvanced',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hide advanced`
+  String get geoIdentityHideAdvanced {
+    return Intl.message(
+      'Hide advanced',
+      name: 'geoIdentityHideAdvanced',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create fallback auto group`
+  String get enableAutoSelect {
+    return Intl.message(
+      'Create fallback auto group',
+      name: 'enableAutoSelect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Most subscriptions already include url-test/fallback. None was found here—create a simple “FlClash Auto” fallback group? This switches overwrite to Custom; empty custom strategy groups become Auto + PROXY (nodes stay via include-all-proxies).`
+  String get enableAutoSelectCreateTip {
+    return Intl.message(
+      'Most subscriptions already include url-test/fallback. None was found here—create a simple “FlClash Auto” fallback group? This switches overwrite to Custom; empty custom strategy groups become Auto + PROXY (nodes stay via include-all-proxies).',
+      name: 'enableAutoSelectCreateTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to create fallback auto group`
+  String get enableAutoSelectFailed {
+    return Intl.message(
+      'Failed to create fallback auto group',
+      name: 'enableAutoSelectFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restore auto`
+  String get restoreAutoSelect {
+    return Intl.message(
+      'Restore auto',
+      name: 'restoreAutoSelect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `URLTest`
+  String get groupTypeUrlTest {
+    return Intl.message(
+      'URLTest',
+      name: 'groupTypeUrlTest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fallback`
+  String get groupTypeFallback {
+    return Intl.message(
+      'Fallback',
+      name: 'groupTypeFallback',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auto select restored for {group}`
+  String enableAutoSelectRestored(String group) {
+    return Intl.message(
+      'Auto select restored for $group',
+      name: 'enableAutoSelectRestored',
+      desc: '',
+      args: [group],
+    );
+  }
+
+  /// `Created fallback auto group {group}. Select it under Proxies if needed.`
+  String enableAutoSelectCreated(String group) {
+    return Intl.message(
+      'Created fallback auto group $group. Select it under Proxies if needed.',
+      name: 'enableAutoSelectCreated',
+      desc: '',
+      args: [group],
+    );
+  }
+
+  /// `Auto · {type}`
+  String autoGroupTitle(String type) {
+    return Intl.message(
+      'Auto · $type',
+      name: 'autoGroupTitle',
+      desc: '',
+      args: [type],
+    );
+  }
+
+  /// `Current node: {node}`
+  String autoGroupCurrent(String node) {
+    return Intl.message(
+      'Current node: $node',
+      name: 'autoGroupCurrent',
+      desc: '',
+      args: [node],
+    );
+  }
+
+  /// `Manual override: {node}`
+  String autoGroupOverride(String node) {
+    return Intl.message(
+      'Manual override: $node',
+      name: 'autoGroupOverride',
+      desc: '',
+      args: [node],
+    );
+  }
+
+  /// `Stick to region`
+  String get stickToRegion {
+    return Intl.message(
+      'Stick to region',
+      name: 'stickToRegion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sticky region: {region}`
+  String autoGroupStickyRegion(String region) {
+    return Intl.message(
+      'Sticky region: $region',
+      name: 'autoGroupStickyRegion',
+      desc: '',
+      args: [region],
+    );
+  }
+
+  /// `Strategy lanes`
+  String get strategyLanes {
+    return Intl.message(
+      'Strategy lanes',
+      name: 'strategyLanes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Map common services to subscription strategies or override them`
+  String get strategyLanesDesc {
+    return Intl.message(
+      'Map common services to subscription strategies or override them',
+      name: 'strategyLanesDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Each row is a common traffic type. Follow the subscription when it already has a strategy, or override with auto-select / a group / a node.`
+  String get strategyLanesTip {
+    return Intl.message(
+      'Each row is a common traffic type. Follow the subscription when it already has a strategy, or override with auto-select / a group / a node.',
+      name: 'strategyLanesTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start FlClash to load strategy groups from the current profile.`
+  String get strategyLanesNeedStart {
+    return Intl.message(
+      'Start FlClash to load strategy groups from the current profile.',
+      name: 'strategyLanesNeedStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a profile first.`
+  String get strategyLanesNeedProfile {
+    return Intl.message(
+      'Select a profile first.',
+      name: 'strategyLanesNeedProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not load profile strategies`
+  String get strategyLanesLoadFailed {
+    return Intl.message(
+      'Could not load profile strategies',
+      name: 'strategyLanesLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No strategy groups found`
+  String get strategyLanesEmpty {
+    return Intl.message(
+      'No strategy groups found',
+      name: 'strategyLanesEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This profile has no selectable proxy groups yet. Use a subscription with rules, or pick Auto for a business lane below.`
+  String get strategyLanesEmptyDesc {
+    return Intl.message(
+      'This profile has no selectable proxy groups yet. Use a subscription with rules, or pick Auto for a business lane below.',
+      name: 'strategyLanesEmptyDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Common services`
+  String get strategyLanesBusinessTitle {
+    return Intl.message(
+      'Common services',
+      name: 'strategyLanesBusinessTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Other subscription groups`
+  String get strategyLanesExtraTitle {
+    return Intl.message(
+      'Other subscription groups',
+      name: 'strategyLanesExtraTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Strategy lanes applied`
+  String get strategyLanesApplied {
+    return Intl.message(
+      'Strategy lanes applied',
+      name: 'strategyLanesApplied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Applied, but some overrides were skipped (missing group or node)`
+  String get strategyLanesPartialApplied {
+    return Intl.message(
+      'Applied, but some overrides were skipped (missing group or node)',
+      name: 'strategyLanesPartialApplied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Follow subscription`
+  String get strategyLaneFollowSubscription {
+    return Intl.message(
+      'Follow subscription',
+      name: 'strategyLaneFollowSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Follow subscription ({group})`
+  String strategyLaneFollowWithGroup(String group) {
+    return Intl.message(
+      'Follow subscription ($group)',
+      name: 'strategyLaneFollowWithGroup',
+      desc: '',
+      args: [group],
+    );
+  }
+
+  /// `Following subscription`
+  String get strategyLaneFollowing {
+    return Intl.message(
+      'Following subscription',
+      name: 'strategyLaneFollowing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Overridden`
+  String get strategyLaneOverridden {
+    return Intl.message(
+      'Overridden',
+      name: 'strategyLaneOverridden',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription has no dedicated strategy — traffic uses the default / MATCH path`
+  String get strategyLaneUncovered {
+    return Intl.message(
+      'Subscription has no dedicated strategy — traffic uses the default / MATCH path',
+      name: 'strategyLaneUncovered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current: {node}`
+  String strategyLaneCurrent(String node) {
+    return Intl.message(
+      'Current: $node',
+      name: 'strategyLaneCurrent',
+      desc: '',
+      args: [node],
+    );
+  }
+
+  /// `Effective target: {target}`
+  String strategyLaneEffective(String target) {
+    return Intl.message(
+      'Effective target: $target',
+      name: 'strategyLaneEffective',
+      desc: '',
+      args: [target],
+    );
+  }
+
+  /// `FlClash auto-select`
+  String get strategyLanePolicyAuto {
+    return Intl.message(
+      'FlClash auto-select',
+      name: 'strategyLanePolicyAuto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Group: {group}`
+  String strategyLanePolicyGroup(String group) {
+    return Intl.message(
+      'Group: $group',
+      name: 'strategyLanePolicyGroup',
+      desc: '',
+      args: [group],
+    );
+  }
+
+  /// `Node: {node}`
+  String strategyLanePolicyProxy(String node) {
+    return Intl.message(
+      'Node: $node',
+      name: 'strategyLanePolicyProxy',
+      desc: '',
+      args: [node],
+    );
+  }
+
+  /// `Streaming`
+  String get strategyLaneKindStreaming {
+    return Intl.message(
+      'Streaming',
+      name: 'strategyLaneKindStreaming',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AI`
+  String get strategyLaneKindAi {
+    return Intl.message('AI', name: 'strategyLaneKindAi', desc: '', args: []);
+  }
+
+  /// `Social`
+  String get strategyLaneKindSocial {
+    return Intl.message(
+      'Social',
+      name: 'strategyLaneKindSocial',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search`
+  String get strategyLaneKindSearch {
+    return Intl.message(
+      'Search',
+      name: 'strategyLaneKindSearch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Messaging`
+  String get strategyLaneKindMessaging {
+    return Intl.message(
+      'Messaging',
+      name: 'strategyLaneKindMessaging',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gaming`
+  String get strategyLaneKindGaming {
+    return Intl.message(
+      'Gaming',
+      name: 'strategyLaneKindGaming',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Proxy / select`
+  String get strategyLaneKindProxy {
+    return Intl.message(
+      'Proxy / select',
+      name: 'strategyLaneKindProxy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Other strategies`
+  String get strategyLaneKindOther {
+    return Intl.message(
+      'Other strategies',
+      name: 'strategyLaneKindOther',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manual select`
+  String get strategyLaneTypeSelector {
+    return Intl.message(
+      'Manual select',
+      name: 'strategyLaneTypeSelector',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Load balance`
+  String get strategyLaneTypeLoadBalance {
+    return Intl.message(
+      'Load balance',
+      name: 'strategyLaneTypeLoadBalance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Relay`
+  String get strategyLaneTypeRelay {
+    return Intl.message(
+      'Relay',
+      name: 'strategyLaneTypeRelay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hide advanced`
+  String get hideAdvanced {
+    return Intl.message(
+      'Hide advanced',
+      name: 'hideAdvanced',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show advanced`
+  String get showAdvanced {
+    return Intl.message(
+      'Show advanced',
+      name: 'showAdvanced',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Tailscale node`
+  String get addTailscaleNode {
+    return Intl.message(
+      'Add Tailscale node',
+      name: 'addTailscaleNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Tailscale node`
+  String get editTailscaleNode {
+    return Intl.message(
+      'Edit Tailscale node',
+      name: 'editTailscaleNode',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

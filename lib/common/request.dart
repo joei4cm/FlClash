@@ -7,6 +7,8 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/models/common.dart';
+import 'package:fl_clash/models/geo_identity.dart';
 import 'package:fl_clash/state.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
@@ -124,6 +126,39 @@ class Request {
       throw FormatException('No release tag in the redirect', location);
     }
     return {'tag_name': segments[tagIndex]};
+  }
+
+  /// Server-side exit estimate through the mixed-port stack.
+  Future<Result<GeoIdentityNetworkReport?>> checkGeoIdentity({
+    String? acceptLanguage,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      final headers = <String, dynamic>{};
+      if (acceptLanguage != null && acceptLanguage.isNotEmpty) {
+        headers['Accept-Language'] = acceptLanguage;
+      }
+      final response = await dio
+          .get<Map<String, dynamic>>(
+            geoIdentityCheckApiUrl,
+            cancelToken: cancelToken,
+            options: Options(
+              responseType: ResponseType.json,
+              headers: headers.isEmpty ? null : headers,
+            ),
+          )
+          .timeout(const Duration(seconds: 12));
+      if (response.statusCode != HttpStatus.ok || response.data == null) {
+        return Result.success(null);
+      }
+      return Result.success(GeoIdentityNetworkReport.fromJson(response.data!));
+    } catch (e) {
+      if (e is DioException && e.type == DioExceptionType.cancel) {
+        return Result.error('cancelled');
+      }
+      commonPrint.log('checkGeoIdentity error $e', logLevel: LogLevel.warning);
+      return Result.error(e.toString());
+    }
   }
 }
 

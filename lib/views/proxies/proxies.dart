@@ -32,6 +32,39 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
   List<CommonPopupMenuItem> _buildMenuItems(BuildContext context) {
     final appLocalizations = context.appLocalizations;
     return [
+      if (!ref
+          .read(groupsProvider)
+          .any((group) => group.type.isComputedSelected))
+        CommonPopupMenuItem(
+          glyph: AppGlyphs.bolt,
+          label: appLocalizations.enableAutoSelect,
+          onPressed: () async {
+            final confirmed = await dialogs.showMessage(
+              title: appLocalizations.enableAutoSelect,
+              message: TextSpan(
+                text: appLocalizations.enableAutoSelectCreateTip,
+              ),
+            );
+            if (confirmed != true || !context.mounted) {
+              return;
+            }
+            final result = await enableAutoSelectWithContainer(ref);
+            final message = switch (result.message) {
+              'no_profile' => appLocalizations.nullProfileDesc,
+              'create_failed' => appLocalizations.enableAutoSelectFailed,
+              _ when result.enabledExisting =>
+                appLocalizations.enableAutoSelectRestored(
+                  result.groupName ?? '',
+                ),
+              _ when result.createdGroups =>
+                appLocalizations.enableAutoSelectCreated(
+                  result.groupName ?? '',
+                ),
+              _ => appLocalizations.enableAutoSelectFailed,
+            };
+            dialogs.showNotifier(message);
+          },
+        ),
       CommonPopupMenuItem(
         glyph: AppGlyphs.sliders,
         label: appLocalizations.settings,

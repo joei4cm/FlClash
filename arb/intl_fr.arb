@@ -939,5 +939,325 @@
   "customImportDroppedSubRules": "{count, plural, =1{1 règle SUB-RULE a été abandonnée, car les profils personnalisés ne prennent pas en charge les sous-règles} other{{label} règles SUB-RULE ont été abandonnées, car les profils personnalisés ne prennent pas en charge les sous-règles}}",
   "autoInclude": "Inclure automatiquement",
   "allReferencedProxies": "Tous les proxys référencés",
-  "allReferencedProxyProviders": "Tous les fournisseurs de proxys référencés"
+  "allReferencedProxyProviders": "Tous les fournisseurs de proxys référencés",
+  "networkDetection": "Network detection",
+  "themeDesc": "Set dark mode and adjust colors",
+  "override": "Override",
+  "autoLaunchDesc": "Launch automatically at system startup",
+  "urlDesc": "Obtain a profile from a URL",
+  "importFromURL": "Import from URL",
+  "excludeDesc": "Hide the app from recent tasks while it is in the background",
+  "expand": "Standard",
+  "shrink": "Compact",
+  "min": "Minimal",
+  "vpnTip": "Changes take effect after restarting the VPN",
+  "behavior": "Behavior",
+  "format": "Format",
+  "overrideDns": "Override DNS",
+  "overrideNtp": "Override NTP",
+  "disclaimerCrashlyticsTitle": "Firebase Crashlytics (crash analytics)",
+  "disclaimerCrashlyticsContent": "When the app crashes, a crash report is uploaded automatically.\n\nWhat is collected: the crash stack trace and error message, the time of the crash, the app version and build number, the device brand and model, the Android version, screen orientation, free memory and storage, whether the device is rooted, and a random installation ID that is created on install and reset on reinstall.\n\nPurpose: only to locate and fix crashes.\n\nYou can turn it off at any time under \"Tools > General > Crash analytics\".",
+  "disclaimerAnalyticsTitle": "Firebase Analytics (usage statistics)",
+  "disclaimerAnalyticsContent": "Basic app usage statistics are collected automatically with Firebase.\n\nWhat is collected: basic events such as first launch, app opens and session length, and app updates; an app instance ID; the device model, OS version, and system language; and an approximate country- or region-level location inferred from the IP address.\n\nPurpose: only to understand the number of active devices, version distribution, and OS compatibility. The developers do not use this data for advertising, do not sell it, and do not link it to your subscriptions or configurations.",
+  "disclaimerDataProcessingContent": "This data is processed and stored by Google on our behalf, may be transferred to servers outside your country or region (such as in the United States), and is governed by the Google Privacy Policy and the Firebase privacy and security documentation. Crash reports are kept for up to 90 days; statistics are kept under the Firebase default retention policy.",
+  "disclaimerAndroidOnly": "Android only",
+  "disclaimerGooglePrivacy": "Google Privacy Policy",
+  "disclaimerFirebasePrivacy": "Firebase privacy and security",
+  "routeMode": "Route mode",
+  "routeModeBypassPrivate": "Bypass private addresses",
+  "routeModeConfig": "Use config",
+  "selectedCountTitle": "{count} selected",
+  "ruleName": "Rule name",
+  "subRule": "Sub-rule",
+  "colorSchemes": "Color schemes",
+  "palette": "Palette",
+  "tonalSpotScheme": "Tonal spot",
+  "fidelityScheme": "Fidelity",
+  "neutralScheme": "Neutral",
+  "vibrantScheme": "Vibrant",
+  "expressiveScheme": "Expressive",
+  "contentScheme": "Content",
+  "rainbowScheme": "Rainbow",
+  "fruitSaladScheme": "Fruit salad",
+  "dataCollectionTip": "Data collection notice",
+  "dataCollectionContent": "This app uses Firebase Crashlytics to collect crash information to improve stability.\nThe collected data includes device information and crash details, and contains no personally sensitive data.\nYou can turn this off in settings.",
+  "crashlytics": "Crash analytics",
+  "crashlyticsTip": "When enabled, crash logs without sensitive information are uploaded automatically when the app crashes",
+  "overrideMode": "Override mode",
+  "quickAdd": "Quick add",
+  "overrideScript": "Override script",
+  "overwriteTypeCustom": "Custom",
+  "overwriteTypeCustomDesc": "Custom mode: fully customize proxies, proxy groups and rules",
+  "backupAndRestoreDesc": "Sync data via WebDAV or files",
+  "proxyGroupNameDuplicate": "Duplicate proxy group name",
+  "dataChangedSave": "Data changes detected. Save them?",
+  "selectProxyProviders": "Select proxy providers",
+  "proxyFilter": "Proxy filter",
+  "excludeProxyFilter": "Exclude proxy filter",
+  "excludeType": "Exclude type",
+  "selectProxies": "Select proxies",
+  "selectSubRule": "Please select a sub-rule",
+  "includeAllProxyProviders": "Include all proxy providers",
+  "includeAllProxyProvidersTip": "When enabled, the group takes every proxy provider of this profile: the subscription's own, plus the profiles and app proxy providers any proxy group uses",
+  "addProxyProviders": "Add proxy providers",
+  "includeAllProxies": "Include all proxies",
+  "includeAllProxiesTip": "Imports all proxies outside proxy groups; extra proxy groups can be added below",
+  "proxiesEmpty": "Proxies are empty",
+  "addProxies": "Add proxies",
+  "confirmOverwriteTip": "Confirming will overwrite existing data",
+  "configDataDetected": "Data detected in the configuration",
+  "quickFill": "Quick fill",
+  "noRecords": "No records",
+  "subRuleEmpty": "Sub-rule is empty",
+  "proxyProvidersNotEmpty": "Proxy providers cannot be empty",
+  "subRuleNotEmpty": "Sub-rule cannot be empty",
+  "proxyProvidersEmpty": "Proxy providers are empty",
+  "batteryOptimizationStatusTip": "Due to system limitations, the battery optimization status cannot be read correctly while running",
+  "geoOptions": "Geo options",
+  "geoAutoUpdate": "Auto update",
+  "geoAutoUpdateInterval": "Auto-update interval",
+  "geoAutoUpdateIntervalTip": "The auto-update interval must be greater than 0",
+  "hoursCount": "{count, plural, =1{1 hour} other{{count} hours}}",
+  "addWidget": "Add widget",
+  "proxyNode": "Proxy node",
+  "proxyDefinition": "Full configuration",
+  "proxyDefinitionNotMap": "The configuration must be a YAML mapping with a name and a type",
+  "customProxiesEmpty": "No custom proxies, so the profile's own proxies are used",
+  "overwriteIssueEmptyName": "The name is empty",
+  "overwriteIssueReservedName": "{name} is a built-in policy name and cannot be used here",
+  "overwriteIssueDuplicateName": "The name {name} is already used by another proxy or proxy group",
+  "overwriteIssueCoreRejected": "The core cannot parse this proxy: {message}",
+  "overwriteIssueMissingProxies": "These proxies or policies do not exist: {names}",
+  "overwriteIssueMissingProviders": "These proxy providers do not exist: {names}",
+  "overwriteIssueNoProxySource": "No proxies or proxy providers are selected, so the core rejects this group",
+  "overwriteIssueGroupLoop": "Proxy groups reference each other in a loop: {path}",
+  "overwriteIssuesSummary": "{count} items have problems, and applying this override may fail",
+  "overwriteIssueSubscriptionGroupMissingProxies": "The profile's own proxy groups name proxies that the custom proxies no longer include: {names}",
+  "providerSourceSubscription": "Subscription",
+  "providerRenameShadowed": "The subscriptions of {profiles} already have {label}, so those profiles would switch to theirs. Choose another name",
+  "features": "Features",
+  "tailscale": "Tailscale",
+  "tailscaleDesc": "Manage Tailscale outbound nodes",
+  "tailscaleEnable": "Enable Tailscale",
+  "tailscaleEnableDesc": "Inject Tailscale nodes as outbounds. Turning this off stops Tailscale from handling traffic; normal traffic is unaffected.",
+  "tailscaleEmptyTip": "No Tailscale nodes yet. Add one to route traffic through your tailnet.",
+  "tailscaleAuthKey": "Auth key",
+  "tailscaleHostname": "Hostname",
+  "tailscaleControlUrl": "Control URL",
+  "tailscaleStateDir": "State directory",
+  "tailscaleEphemeral": "Ephemeral",
+  "tailscaleUdp": "UDP relay",
+  "tailscaleAcceptRoutes": "Accept routes",
+  "tailscaleExitNode": "Exit node",
+  "tailscaleExitNodeAllowLanAccess": "Allow LAN access via exit node",
+  "tailscaleNameExistsTip": "A node with this name already exists",
+  "tailscaleGuideTitle": "How Tailscale works",
+  "tailscaleAuthKeyHint": "From the Tailscale admin console → Settings → Keys. Required to authenticate the node.",
+  "tailscaleHostnameHint": "Optional. Device name shown in your tailnet.",
+  "tailscaleControlUrlHint": "Optional. Only for self-hosted control servers such as Headscale.",
+  "tailscaleStateDirHint": "Optional. Directory used to persist Tailscale state.",
+  "tailscaleExitNodeHint": "Optional. IP or name of a tailnet exit node to route all traffic through.",
+  "tailscaleBypass": "Keep Tailscale traffic direct",
+  "tailscaleRoutes": "Route destinations",
+  "tailscaleRoutesHint": "Domains or IPs sent through this node, one per line (e.g. your home PC's Tailscale IP or MagicDNS name).",
+  "tailscaleScenarioAndroidTitle": "Android client setup",
+  "tailscaleScenarioAndroidBody": "Keep FlClash as the only VPN. Do not run the Tailscale app VPN at the same time (Android allows only one). Use an embedded Tailscale node below, then add your home device to Route destinations.",
+  "tailscaleScenarioDesktopTitle": "Desktop / host setup",
+  "tailscaleScenarioDesktopBody": "You can run FlClash and the real Tailscale app together. Turn on \"Keep Tailscale traffic direct\" so FlClash does not hijack Tailscale's control plane or fake-IP DNS.",
+  "tailscaleAndroidStep1": "Get an auth key from the Tailscale admin console (Settings → Keys).",
+  "tailscaleAndroidStep2": "Add a node, paste the auth key, and put your home device IP or MagicDNS name in Route destinations.",
+  "tailscaleAndroidStep3": "Turn on Enable Tailscale. Leave \"Keep Tailscale traffic direct\" off unless the Tailscale app is also installed.",
+  "tailscaleAndroidStep4": "Start FlClash VPN, then tap the ping button on a node to verify the connection.",
+  "tailscaleDesktopStep1": "If this PC also runs the Tailscale app/service, turn on \"Keep Tailscale traffic direct\".",
+  "tailscaleDesktopStep2": "Optional: add an embedded Tailscale node with an auth key to route selected traffic through the tailnet from FlClash.",
+  "tailscaleDesktopStep3": "Put destinations (home IPs / MagicDNS) in Route destinations, then turn on Enable Tailscale.",
+  "tailscaleDesktopStep4": "Start FlClash, then tap the ping button on a node to verify the connection is solid.",
+  "tailscaleBypassRecommended": "Recommended on desktop when the Tailscale app/service is installed. Auto-manages DIRECT rules and Fake IP Filter.",
+  "tailscaleBypassAndroidHint": "Usually leave this off on Android. Turn on only if the Tailscale app is also installed on this phone.",
+  "tailscaleStatusDisabled": "Tailscale is off — nodes are not injected into the running profile.",
+  "tailscaleStatusNoNodes": "Enabled, but no nodes yet. Add a node to get started.",
+  "tailscaleStatusNeedStart": "Nodes are ready. Start FlClash VPN, then tap ping to test.",
+  "tailscaleStatusReady": "{count} node(s) active. Tap ping on a node to test connectivity.",
+  "tailscaleStatusNeedRoutes": "Nodes are added, but no route destinations yet — traffic will not match until you add routes (or pick the node manually).",
+  "tailscaleBypassNudge": "This device likely runs Tailscale already — turn on “Keep Tailscale traffic direct” to avoid fake-IP / control-plane breakage.",
+  "tailscaleShowSetupGuide": "Setup guide",
+  "tailscaleEnableBypassAction": "Enable",
+  "tailscaleNameHelper": "Outbound name used in Proxies. Renaming changes how selections and delay tests key this node.",
+  "tailscaleTestNeedEnable": "Turn on Enable Tailscale before testing.",
+  "tailscaleTestNeedStart": "Start FlClash VPN before testing the connection.",
+  "tailscaleTestNode": "Test connection",
+  "tailscaleNotTested": "Not tested",
+  "tailscaleNoRoutes": "No route destinations",
+  "tailscaleRoutesCount": "{count} route(s)",
+  "tailscaleNodesTitle": "Nodes",
+  "tailscaleTestTip": "Use the ping button next to a node to check whether the Tailscale outbound can dial out. A latency value means the connection is working; Timeout means check the auth key, Enable switch, and that FlClash VPN is started.",
+  "geoIdentity": "Geo identity",
+  "geoIdentityDesc": "One switch for US exit undercover",
+  "geoIdentityPurposeBody": "Turn this on so FlClash captures traffic and checks that your exit looks US-ready for AI tools. Browsers may still need GeoMirror for page fingerprints.",
+  "geoIdentityProtectToggleDesc": "Capture traffic, align desktop timezone when possible, then verify the exit",
+  "geoIdentityNetworkGood": "Network looks good to go",
+  "geoIdentityNetworkBad": "Exit is not US yet — pick a US node, then tap Recheck",
+  "geoIdentityOffStatus": "Geo identity protect is off",
+  "geoIdentityTurningOff": "Turning off…",
+  "geoIdentityRecheck": "Recheck",
+  "geoIdentityPendingCheck": "Protect is on — waiting for a network check",
+  "geoIdentityCheckCancelled": "Network check was cancelled",
+  "geoIdentityHonestyLine": "This covers exit IP + probe language. Browser fonts/geolocation still need GeoMirror; Claude Code still needs a matching OS timezone (and TUN or proxy exports).",
+  "geoIdentityTimezoneAlignFailed": "Could not align OS timezone ({detail})",
+  "geoIdentityProtectEnable": "Enable geo identity protect",
+  "geoIdentityCaptureMode": "Traffic capture mode",
+  "geoIdentityCaptureModeAuto": "Auto — keep current settings; enable TUN only if needed",
+  "geoIdentityCaptureModeTun": "TUN / virtual NIC only",
+  "geoIdentityCaptureModeSystemProxy": "System proxy only",
+  "geoIdentityCaptureModeBoth": "System proxy + TUN",
+  "geoIdentityUsAcceptLanguage": "Probe with US Accept-Language",
+  "geoIdentityNeedStart": "Start FlClash before verifying the network environment.",
+  "geoIdentityCheckFailed": "Network check failed",
+  "geoIdentityNetworkExposed": "Network still looks exposed",
+  "geoIdentityTimezone": "System timezone",
+  "geoIdentityOpenGeoMirror": "GeoMirror on GitHub",
+  "geoIdentityRestoreOsTimezone": "Restore previous OS timezone",
+  "geoIdentityRestoreOsTimezoneDesc": "Restore {timezone}",
+  "geoIdentityTimezoneRestored": "OS timezone restored to {timezone}",
+  "geoIdentityTimezoneMissing": "No exit timezone yet. Verify the network environment first.",
+  "geoIdentityTimezoneNothingToRestore": "No previous OS timezone saved.",
+  "geoIdentityTimezoneAndroidTip": "Android cannot change the system timezone without root. Open Settings → System → Date & time and pick a US zone that matches your exit.",
+  "geoIdentityCopyTerminalProxy": "Copy terminal proxy exports",
+  "geoIdentitySetupRunning": "Applying newbie setup…",
+  "geoIdentitySetupStarting": "Starting FlClash…",
+  "geoIdentitySetupVerifying": "Verifying network environment…",
+  "geoIdentitySetupTimezone": "Aligning OS timezone…",
+  "geoIdentitySetupDoneProtected": "Setup complete — network looks US-protected.",
+  "geoIdentitySetupDoneNeedUsNode": "Setup applied, but the exit is not US-protected yet. Select a US node, then tap Recheck.",
+  "geoIdentityCopyTerminalProxyShort": "Copy HTTP(S)_PROXY for terminals",
+  "geoIdentityOpenGeoMirrorShort": "Browser fingerprint alignment",
+  "geoIdentityShowAdvanced": "Show advanced",
+  "geoIdentityHideAdvanced": "Hide advanced",
+  "enableAutoSelect": "Create fallback auto group",
+  "enableAutoSelectCreateTip": "Most subscriptions already include url-test/fallback. None was found here—create a simple “FlClash Auto” fallback group? This switches overwrite to Custom; empty custom strategy groups become Auto + PROXY (nodes stay via include-all-proxies).",
+  "enableAutoSelectFailed": "Failed to create fallback auto group",
+  "restoreAutoSelect": "Restore auto",
+  "groupTypeUrlTest": "URLTest",
+  "groupTypeFallback": "Fallback",
+  "enableAutoSelectRestored": "Auto select restored for {group}",
+  "@enableAutoSelectRestored": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "enableAutoSelectCreated": "Created fallback auto group {group}. Select it under Proxies if needed.",
+  "@enableAutoSelectCreated": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupTitle": "Auto · {type}",
+  "@autoGroupTitle": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupCurrent": "Current node: {node}",
+  "@autoGroupCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupOverride": "Manual override: {node}",
+  "@autoGroupOverride": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "stickToRegion": "Stick to region",
+  "autoGroupStickyRegion": "Sticky region: {region}",
+  "@autoGroupStickyRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanes": "Strategy lanes",
+  "strategyLanesDesc": "Map common services to subscription strategies or override them",
+  "strategyLanesTip": "Each row is a common traffic type. Follow the subscription when it already has a strategy, or override with auto-select / a group / a node.",
+  "strategyLanesNeedStart": "Start FlClash to load strategy groups from the current profile.",
+  "strategyLanesNeedProfile": "Select a profile first.",
+  "strategyLanesLoadFailed": "Could not load profile strategies",
+  "strategyLanesEmpty": "No strategy groups found",
+  "strategyLanesEmptyDesc": "This profile has no selectable proxy groups yet. Use a subscription with rules, or pick Auto for a business lane below.",
+  "strategyLanesBusinessTitle": "Common services",
+  "strategyLanesExtraTitle": "Other subscription groups",
+  "strategyLanesApplied": "Strategy lanes applied",
+  "strategyLanesPartialApplied": "Applied, but some overrides were skipped (missing group or node)",
+  "strategyLaneFollowSubscription": "Follow subscription",
+  "strategyLaneFollowWithGroup": "Follow subscription ({group})",
+  "@strategyLaneFollowWithGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneFollowing": "Following subscription",
+  "strategyLaneOverridden": "Overridden",
+  "strategyLaneUncovered": "Subscription has no dedicated strategy — traffic uses the default / MATCH path",
+  "strategyLaneCurrent": "Current: {node}",
+  "@strategyLaneCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneEffective": "Effective target: {target}",
+  "@strategyLaneEffective": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanePolicyAuto": "FlClash auto-select",
+  "strategyLanePolicyGroup": "Group: {group}",
+  "@strategyLanePolicyGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanePolicyProxy": "Node: {node}",
+  "@strategyLanePolicyProxy": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneKindStreaming": "Streaming",
+  "strategyLaneKindAi": "AI",
+  "strategyLaneKindSocial": "Social",
+  "strategyLaneKindSearch": "Search",
+  "strategyLaneKindMessaging": "Messaging",
+  "strategyLaneKindGaming": "Gaming",
+  "strategyLaneKindProxy": "Proxy / select",
+  "strategyLaneKindOther": "Other strategies",
+  "strategyLaneTypeSelector": "Manual select",
+  "strategyLaneTypeLoadBalance": "Load balance",
+  "strategyLaneTypeRelay": "Relay",
+  "hideAdvanced": "Hide advanced",
+  "showAdvanced": "Show advanced",
+  "addTailscaleNode": "Add Tailscale node",
+  "editTailscaleNode": "Edit Tailscale node"
 }

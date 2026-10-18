@@ -17,9 +17,8 @@ import (
 	"go.yaml.in/yaml/v3"
 )
 
-// What makes a profile large stays in the Core; the overlay the host sends
-// back replaces every other section.
-var profileBaseSections = []string{"proxies", "proxy-groups", "sub-rules"}
+// Overlay prepends proxies and proxy-groups; sub-rules stay the profile's.
+var profileBaseSections = []string{"sub-rules"}
 
 func handleGetProfileBase(path string) (*ProfileBase, error) {
 	defer scheduleLoadMemoryRelease()
@@ -146,6 +145,15 @@ func mergeProfileBase(base *SetupBase) (*yaml.Node, error) {
 			setMappingValue(root, key, value)
 		}
 	}
+	for _, key := range []string{"proxies", "proxy-groups"} {
+		merged, err := prependList(mappingValue(root, key), mappingValue(profile, key))
+		if err != nil {
+			return nil, err
+		}
+		if merged != nil {
+			setMappingValue(root, key, merged)
+		}
+	}
 	rules, err := appendRules(mappingValue(root, "rules"), mappingValue(profile, "rules"))
 	if err != nil {
 		return nil, err
@@ -216,6 +224,24 @@ func setMappingValue(mapping *yaml.Node, key string, value *yaml.Node) {
 		&yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: key},
 		value,
 	)
+}
+
+func prependList(added, profile *yaml.Node) (*yaml.Node, error) {
+	added, profile = resolveAlias(added), resolveAlias(profile)
+	switch {
+	case profile == nil || isNull(profile):
+		if added == nil || isNull(added) {
+			return nil, nil
+		}
+		return added, nil
+	case added == nil || isNull(added) || (added.Kind == yaml.SequenceNode && len(added.Content) == 0):
+		return profile, nil
+	case added.Kind != yaml.SequenceNode || profile.Kind != yaml.SequenceNode:
+		return nil, fmt.Errorf("line %d: proxies and proxy-groups must be lists", profile.Line)
+	}
+	content := make([]*yaml.Node, 0, len(added.Content)+len(profile.Content))
+	content = append(append(content, added.Content...), profile.Content...)
+	return &yaml.Node{Kind: yaml.SequenceNode, Tag: "!!seq", Content: content}, nil
 }
 
 // The overlay's rules are the ones the host adds in front of the profile's.

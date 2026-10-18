@@ -8,6 +8,7 @@ import 'clash_config.dart';
 import 'common.dart';
 import 'core.dart';
 import 'profile.dart';
+import 'tailscale.dart';
 
 part 'generated/state.freezed.dart';
 part 'generated/state.g.dart';
@@ -232,6 +233,11 @@ abstract class MakeRealProfileState with _$MakeRealProfileState {
     @Default({}) Map<String, dynamic> injectedRuleProviders,
     String? matchTarget,
     @Default(false) bool safeMode,
+    @Default([]) List<TailscaleProxy> tailscaleProxies,
+    @Default([]) List<String> tailscaleRules,
+    @Default([]) List<String> tailscaleFakeIpFilters,
+    @Default([]) List<Map<String, dynamic>> strategyLaneGroups,
+    @Default([]) List<String> strategyLaneRules,
   }) = _MakeRealProfileState;
 }
 
