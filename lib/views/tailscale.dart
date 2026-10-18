@@ -102,9 +102,10 @@ class TailscaleView extends ConsumerWidget {
                     isAndroid
                         ? appLocalizations.tailscaleScenarioAndroidTitle
                         : appLocalizations.tailscaleScenarioDesktopTitle,
-                    style: AppTextStyle.subheadline
-                        .of(context)
-                        .copyWith(fontWeight: FontWeight.bold),
+                    style: AppTextStyle.subheadline.of(
+                      context,
+                      emphasized: true,
+                    ),
                   ),
                 ),
               ],
@@ -141,11 +142,8 @@ class TailscaleView extends ConsumerWidget {
             child: Text(
               '$number',
               style: AppTextStyle.caption1
-                  .of(context)
-                  .copyWith(
-                    color: context.colorScheme.onPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  .of(context, emphasized: true)
+                  .copyWith(color: context.colorScheme.onPrimary),
             ),
           ),
           const SizedBox(width: 12),
@@ -184,9 +182,7 @@ class TailscaleView extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Text(
                   appLocalizations.tailscaleGuideTitle,
-                  style: AppTextStyle.subheadline
-                      .of(context)
-                      .copyWith(fontWeight: FontWeight.bold),
+                  style: AppTextStyle.subheadline.of(context, emphasized: true),
                 ),
               ],
             ),
@@ -309,23 +305,13 @@ class TailscaleView extends ConsumerWidget {
       );
     }
     if (delay == 0) {
-      return SizedBox(
-        width: 14,
-        height: 14,
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          color: context.colorScheme.primary,
-        ),
-      );
+      return CommonCircleLoading(size: 14, color: context.colorScheme.primary);
     }
     return Text(
       delay > 0 ? '$delay ms' : appLocalizations.timeout,
       style: AppTextStyle.caption1
-          .of(context)
-          .copyWith(
-            color: context.colorScheme.delayColor(delay),
-            fontWeight: FontWeight.w600,
-          ),
+          .of(context, emphasized: true)
+          .copyWith(color: context.colorScheme.delayColor(delay)),
     );
   }
 
@@ -501,9 +487,10 @@ class TailscaleView extends ConsumerWidget {
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                     child: Text(
                       appLocalizations.tailscaleNodesTitle,
-                      style: AppTextStyle.subheadline
-                          .of(context)
-                          .copyWith(fontWeight: FontWeight.bold),
+                      style: AppTextStyle.subheadline.of(
+                        context,
+                        emphasized: true,
+                      ),
                     ),
                   ),
               ],

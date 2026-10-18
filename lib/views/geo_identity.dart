@@ -446,14 +446,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
             Row(
               children: [
                 if (_busy)
-                  SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: accent,
-                    ),
-                  )
+                  CommonCircleLoading(size: 20, color: accent)
                 else
                   GlyphIcon(icon, color: accent),
                 const SizedBox(width: 8),
@@ -461,8 +454,8 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
                   child: Text(
                     title,
                     style: AppTextStyle.subheadline
-                        .of(context)
-                        .copyWith(color: accent, fontWeight: FontWeight.w600),
+                        .of(context, emphasized: true)
+                        .copyWith(color: accent),
                   ),
                 ),
                 if (enabled && !_busy && !isStart)

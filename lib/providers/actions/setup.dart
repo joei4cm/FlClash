@@ -517,10 +517,15 @@ class SetupAction extends _$SetupAction {
     }
     final appSetting = ref.read(appSettingProvider);
     final tailscaleProps = ref.read(tailscaleSettingProvider);
-    final strategyGroups = isCustom
+    final hasStrategyPolicies = appSetting.strategyLanePolicies.isNotEmpty;
+    final strategyGroups = !hasStrategyPolicies
+        ? const <ProxyGroup>[]
+        : isCustom
         ? setupState.proxyGroups
         : await _profileGroups(profileId);
-    final strategyProxies = isCustom
+    final strategyProxies = !hasStrategyPolicies
+        ? const <String>{}
+        : isCustom
         ? setupState.appProxies.map((item) => item.name).toSet()
         : await _profileProxyNames(profileId);
     final strategyInjection = buildStrategyLaneInjection(

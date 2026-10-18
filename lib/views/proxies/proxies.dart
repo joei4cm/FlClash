@@ -48,7 +48,9 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
             if (confirmed != true || !context.mounted) {
               return;
             }
-            final result = await enableAutoSelectWithContainer(ref);
+            final AutoSelectResult result = await enableAutoSelectWithContainer(
+              ref,
+            );
             final message = switch (result.message) {
               'no_profile' => appLocalizations.nullProfileDesc,
               'create_failed' => appLocalizations.enableAutoSelectFailed,
