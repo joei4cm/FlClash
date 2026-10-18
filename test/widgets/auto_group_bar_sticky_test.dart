@@ -1,5 +1,3 @@
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/common/theme.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
@@ -25,7 +23,6 @@ void main() {
     const group = Group(
       name: 'Auto',
       type: GroupType.URLTest,
-      hidden: false,
       now: 'US-Node',
       all: [Proxy(name: 'US-Node', type: 'Shadowsocks')],
     );
@@ -39,17 +36,12 @@ void main() {
             ...GlobalMaterialLocalizations.delegates,
           ],
           supportedLocales: AppLocalizations.delegate.supportedLocales,
-          builder: (context, child) {
-            globalState.measure = Measure.of(context, 1);
-            globalState.theme = CommonTheme.of(context, 1);
-            return child!;
-          },
           home: const Scaffold(body: AutoGroupBar(group: group)),
         ),
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Stick to region'), findsOneWidget);
+    expect(find.text(AppLocalizations.current.stickToRegion), findsOneWidget);
   });
 }

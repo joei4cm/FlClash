@@ -586,26 +586,24 @@ StrategyLaneInjection buildStrategyLaneInjection({
 /// overwrite.
 ({List<ProxyGroup> groups, List<String> rules, Set<String> proxyNames})
 resolveStrategyLaneConfigInputs({
-  required OverwriteType overwriteType,
+  required bool customProfile,
   required List<ProxyGroup> subscriptionGroups,
   required List<Rule> subscriptionRules,
   required List<Proxy> subscriptionProxies,
   required List<ProxyGroup> customGroups,
   required List<Rule> customRules,
+  Set<String> customProxyNames = const {},
 }) {
-  final useCustomGroups =
-      overwriteType == OverwriteType.custom && customGroups.isNotEmpty;
-  final useCustomRules =
-      overwriteType == OverwriteType.custom && customRules.isNotEmpty;
-  final groups = useCustomGroups ? customGroups : subscriptionGroups;
-  final rules = useCustomRules
+  final groups = customProfile ? customGroups : subscriptionGroups;
+  final rules = customProfile
       ? customRules.map((item) => item.rawValue).toList(growable: false)
       : subscriptionRules.map((item) => item.rawValue).toList(growable: false);
   return (
     groups: groups,
     rules: rules,
     proxyNames: {
-      ...subscriptionProxies.map((item) => item.name),
+      if (customProfile) ...customProxyNames,
+      if (!customProfile) ...subscriptionProxies.map((item) => item.name),
       for (final group in groups) ...?group.proxies,
     },
   );

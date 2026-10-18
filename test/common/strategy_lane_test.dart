@@ -31,11 +31,11 @@ void main() {
       final discovery = discoverStrategyLane(
         preset: strategyLanePresetById(StrategyLaneId.ai)!,
         proxyGroups: [
-          ProxyGroup(
+          const ProxyGroup(
             id: 1,
             name: 'OpenAI',
             type: GroupType.Selector,
-            proxies: const ['US-01'],
+            proxies: ['US-01'],
           ),
         ],
         rules: const ['MATCH,PROXY'],
@@ -88,11 +88,11 @@ void main() {
         profileId: 1,
         policies: {key: 'group:Netflix'},
         proxyGroups: [
-          ProxyGroup(
+          const ProxyGroup(
             id: 2,
             name: 'Netflix',
             type: GroupType.Selector,
-            proxies: const ['US-01'],
+            proxies: ['US-01'],
           ),
         ],
         rules: const [],
@@ -220,11 +220,11 @@ void main() {
         profileId: 3,
         policies: {strategyLanePolicyKey(3, StrategyLaneId.ai): 'direct'},
         proxyGroups: [
-          ProxyGroup(
+          const ProxyGroup(
             id: 1,
             name: 'Netflix',
             type: GroupType.Selector,
-            proxies: const ['a'],
+            proxies: ['a'],
           ),
         ],
         rules: const ['GEOSITE,netflix,Netflix'],

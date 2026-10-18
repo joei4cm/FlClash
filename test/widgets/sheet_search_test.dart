@@ -1,10 +1,6 @@
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/icons/icons.dart';
-import 'package:fl_clash/models/models.dart';
-import 'package:fl_clash/widgets/inherited.dart';
-import 'package:fl_clash/widgets/scaffold.dart';
-import 'package:fl_clash/widgets/search_field.dart';
-import 'package:fl_clash/widgets/sheet.dart';
+import 'package:fl_clash/providers/app.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -54,6 +50,28 @@ void main() {
     expect(find.text('title'), findsOneWidget);
   });
 
+  testWidgets('a docked field leaves the close button at the trailing end', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      scaffold(
+        type: SheetType.bottomSheet,
+        body: const SizedBox(width: 600, height: 200),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final bar = find.byType(AppBar);
+    final close = find.descendant(
+      of: bar,
+      matching: find.byGlyph(AppGlyphs.close),
+    );
+    expect(close, findsOneWidget);
+    final rect = tester.getRect(bar);
+    expect(rect.width, 600);
+    expect(tester.getCenter(close).dx, greaterThan(rect.center.dx));
+  });
+
   testWidgets('a page and a side sheet keep the bar button', (tester) async {
     for (final type in [null, SheetType.page, SheetType.sideSheet]) {
       await tester.pumpWidget(scaffold(type: type));
@@ -71,25 +89,32 @@ void main() {
     }
   });
 
-  Future<void> openModalSheet(WidgetTester tester, {Widget? body}) async {
+  Future<void> openModalSheet(
+    WidgetTester tester, {
+    Widget? body,
+    bool glass = false,
+  }) async {
     await tester.pumpWidget(
-      TestApp(
-        wrapInProviderScope: true,
-        child: Builder(
-          builder: (context) => TextButton(
-            onPressed: () => showModalBottomSheet<void>(
-              context: context,
-              isScrollControlled: true,
-              builder: (_) => SheetProvider(
-                type: SheetType.bottomSheet,
-                child: CommonScaffold(
-                  title: 'title',
-                  searchState: AppBarSearchState(onSearch: queries.add),
-                  body: body ?? const SizedBox(height: 200),
+      LiquidGlassScope(
+        enabled: glass,
+        child: TestApp(
+          wrapInProviderScope: true,
+          child: Builder(
+            builder: (context) => TextButton(
+              onPressed: () => showModalBottomSheet<void>(
+                context: context,
+                isScrollControlled: true,
+                builder: (_) => SheetProvider(
+                  type: SheetType.bottomSheet,
+                  child: CommonScaffold(
+                    title: 'title',
+                    searchState: AppBarSearchState(onSearch: queries.add),
+                    body: body ?? const SizedBox(height: 200),
+                  ),
                 ),
               ),
+              child: const Text('open'),
             ),
-            child: const Text('open'),
           ),
         ),
       ),
@@ -126,11 +151,16 @@ void main() {
     final decoration = tester
         .widget<TextField>(find.byType(TextField))
         .decoration!;
-    final theme = Theme.of(tester.element(find.byType(TextField)));
-    final fill = decoration.fillColor ?? theme.inputDecorationTheme.fillColor;
+    final field = tester.element(find.byType(TextField));
+    final theme = Theme.of(field);
+    final inputTheme = InputDecorationTheme.of(field);
+    final fill = decoration.fillColor ?? inputTheme.fillColor;
 
-    expect(decoration.filled ?? theme.inputDecorationTheme.filled, isTrue);
-    expect(fill, theme.colorScheme.surfaceContainerHigh);
+    expect(decoration.filled ?? inputTheme.filled, isTrue);
+    expect(
+      fill,
+      SurfaceLevel.floatingOf(theme.colorScheme).colorOf(theme.colorScheme),
+    );
     expect(fill!.a, 1);
     // The dock itself paints nothing, so no band spans the sheet behind it.
     final dock = tester.widget<Material>(
@@ -144,14 +174,47 @@ void main() {
     expect(dock.type, MaterialType.transparency);
   });
 
-  testWidgets('a docked field is a pill', (tester) async {
+  testWidgets('a docked field stands on glass in place of its fill', (
+    tester,
+  ) async {
+    await openModalSheet(tester, glass: true);
+
+    expect(
+      find.ancestor(
+        of: find.byType(SearchField),
+        matching: find.byType(LiquidGlass),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      InputDecorationTheme.of(tester.element(find.byType(TextField))).filled,
+      isFalse,
+    );
+  });
+
+  testWidgets('a docked field is a pill that strokes only while focused', (
+    tester,
+  ) async {
     await openModalSheet(tester);
 
-    final theme = Theme.of(tester.element(find.byType(TextField)));
-    final border = theme.inputDecorationTheme.border;
+    final field = tester.element(find.byType(TextField));
+    final inputTheme = InputDecorationTheme.of(field);
+    final border = inputTheme.border;
+    final focused = inputTheme.focusedBorder;
 
     expect(border, isA<AppInputBorder>());
     expect((border! as AppInputBorder).borderRadius, AppRadius.full);
+    expect(border.borderSide, BorderSide.none);
+    expect(focused, isA<AppInputBorder>());
+    expect((focused! as AppInputBorder).borderRadius, AppRadius.full);
+    expect(focused.borderSide.color, Theme.of(field).colorScheme.primary);
+    final decorator = tester.widget<InputDecorator>(
+      find.byType(InputDecorator),
+    );
+    expect(
+      decorator.decoration.floatingLabelBehavior,
+      FloatingLabelBehavior.never,
+    );
   });
 
   testWidgets('a docked field clears the bottom safe area once', (
@@ -171,20 +234,43 @@ void main() {
     );
   });
 
-  testWidgets('a docked field stays above the keyboard', (tester) async {
-    tester.view.physicalSize = const Size(400, 900);
+  testWidgets('a fit sheet keeps its docked field above the keyboard', (
+    tester,
+  ) async {
+    const size = Size(400, 900);
+    tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.reset);
 
-    await openModalSheet(tester);
+    await tester.pumpWidget(
+      TestApp(
+        overrides: [viewSizeProvider.overrideWithBuild((_, _) => size)],
+        child: Builder(
+          builder: (context) => TextButton(
+            onPressed: () => showSheet<void>(
+              context: context,
+              builder: (_) => CommonScaffold(
+                title: 'title',
+                searchState: AppBarSearchState(onSearch: queries.add),
+                body: const SizedBox(height: 200),
+              ),
+            ),
+            child: const Text('open'),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
     expect(tester.getBottomLeft(find.byType(SearchField)).dy, lessThan(900));
 
     tester.view.viewInsets = const FakeViewPadding(bottom: 300);
-    addTearDown(tester.view.resetViewInsets);
     await tester.pumpAndSettle();
 
     expect(tester.getBottomLeft(find.byType(SearchField)).dy, lessThan(600));
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(seconds: 2));
   });
 
   testWidgets('a snap sheet keeps its docked field above the keyboard', (

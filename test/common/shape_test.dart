@@ -1,5 +1,4 @@
-import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/widgets/theme.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -44,5 +43,57 @@ void main() {
         reason: '$type',
       );
     }
+  });
+
+  testWidgets('tooltips keep Material colours on a superellipse', (
+    tester,
+  ) async {
+    Future<Decoration?> shownWith(ThemeData theme) async {
+      final tooltip = GlobalKey<TooltipState>();
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: Center(
+            child: Tooltip(
+              key: tooltip,
+              message: 'tip',
+              child: const Text('anchor'),
+            ),
+          ),
+        ),
+      );
+      tooltip.currentState!.ensureTooltipVisible();
+      await tester.pumpAndSettle();
+      return tester
+          .widget<Container>(
+            find
+                .ancestor(
+                  of: find.text('tip'),
+                  matching: find.byType(Container),
+                )
+                .first,
+          )
+          .decoration;
+    }
+
+    for (final brightness in Brightness.values) {
+      final material = await shownWith(ThemeData(brightness: brightness));
+      final app = await shownWith(
+        ThemeData(brightness: brightness).withAppShapes,
+      );
+      expect(
+        app,
+        isA<ShapeDecoration>()
+            .having((it) => it.shape, 'shape', AppShape.xs)
+            .having(
+              (it) => it.color,
+              'color',
+              (material! as BoxDecoration).color,
+            ),
+        reason: '$brightness',
+      );
+    }
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(seconds: 2));
   });
 }

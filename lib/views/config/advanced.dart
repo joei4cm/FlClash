@@ -1,13 +1,9 @@
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/views/config/dns.dart';
 import 'package:fl_clash/views/config/network.dart';
-import 'package:fl_clash/views/config/ntp.dart';
-import 'package:fl_clash/views/config/providers.dart';
 import 'package:fl_clash/views/config/scripts.dart';
-import 'package:fl_clash/widgets/list.dart';
-import 'package:fl_clash/widgets/scaffold.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'rules.dart';
@@ -18,7 +14,7 @@ class AdvancedConfigView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appLocalizations = context.appLocalizations;
-    final List<Widget> items = [
+    final items = [
       ListItem.open(
         title: Text(appLocalizations.network),
         leading: const GlyphIcon(AppGlyphs.key),
@@ -33,27 +29,10 @@ class AdvancedConfigView extends StatelessWidget {
         widget: const DnsView(),
       ),
       ListItem.open(
-        title: const Text('NTP'),
-        leading: const GlyphIcon(AppGlyphs.clock),
-        widget: const NtpView(),
-      ),
-      ListItem.open(
         title: Text(appLocalizations.addedRules),
         leading: const GlyphIcon(AppGlyphs.rules),
         widget: const AddedRulesView(),
       ),
-      if (feature.customProviders) ...[
-        ListItem.open(
-          title: Text(appLocalizations.proxyProviders),
-          leading: const GlyphIcon(AppGlyphs.proxies),
-          widget: const ClashProvidersView(kind: ProviderKind.proxy),
-        ),
-        ListItem.open(
-          title: Text(appLocalizations.ruleProviders),
-          leading: const GlyphIcon(AppGlyphs.resources),
-          widget: const ClashProvidersView(kind: ProviderKind.rule),
-        ),
-      ],
       ListItem.open(
         title: Text(appLocalizations.script),
         leading: const GlyphIcon(AppGlyphs.code),
@@ -66,7 +45,7 @@ class AdvancedConfigView extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
           horizontal: 16,
         ).copyWith(top: context.contentTopPadding, bottom: 16),
-        children: [generateSectionV3(items: items)],
+        children: [generateSection(items: items)],
       ),
     );
   }

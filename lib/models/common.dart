@@ -5,7 +5,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/icons/glyph.dart';
+import 'package:fl_clash/ui/icons/glyph.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -21,7 +21,6 @@ abstract class NavigationItem with _$NavigationItem {
     required Glyph glyph,
     required PageLabel label,
     required WidgetBuilder builder,
-    @Default(true) bool keep,
     String? path,
     @Default([NavigationItemMode.mobile, NavigationItemMode.desktop])
     List<NavigationItemMode> modes,
@@ -124,6 +123,20 @@ abstract class TrackerInfo with _$TrackerInfo {
   factory TrackerInfo.fromJson(Map<String, Object?> json) =>
       _$TrackerInfoFromJson(json);
 }
+
+/// Reads the Core's `getConnections` answer.
+List<TrackerInfo> trackerInfosOf(Object? data) {
+  final connections = data is Map ? data['connections'] : null;
+  if (connections is! List) {
+    return const [];
+  }
+  return [
+    for (final item in connections.whereType<Map>())
+      TrackerInfo.fromJson(Map<String, Object?>.from(item)),
+  ];
+}
+
+typedef RequestTraffic = ({int upload, int download});
 
 extension TrackerInfoExt on TrackerInfo {
   String get title {
@@ -276,6 +289,8 @@ extension DnsQueryExt on DnsQuery {
   bool get hasFailureRcode => rcode.isNotEmpty && rcode != 'NOERROR';
 
   bool get isFailed => error.isNotEmpty || hasFailureRcode;
+
+  String get summary => error.isNotEmpty ? error : answers.join(', ');
 
   List<String> get tags => [type, ...resultTags];
 
@@ -450,17 +465,6 @@ extension FileInfoFileExt on File {
 }
 
 @freezed
-abstract class VersionInfo with _$VersionInfo {
-  const factory VersionInfo({
-    @Default('') String clashName,
-    @Default('') String version,
-  }) = _VersionInfo;
-
-  factory VersionInfo.fromJson(Map<String, Object?> json) =>
-      _$VersionInfoFromJson(json);
-}
-
-@freezed
 abstract class Traffic with _$Traffic {
   const factory Traffic({@Default(0) num up, @Default(0) num down}) = _Traffic;
 
@@ -469,10 +473,6 @@ abstract class Traffic with _$Traffic {
 }
 
 extension TrafficExt on Traffic {
-  String get speedText {
-    return '↑ ${up.traffic.show}/s   ↓ ${down.traffic.show}/s';
-  }
-
   String get trayTitle {
     return '${up.shortTraffic.show}/s\n${down.shortTraffic.show}/s';
   }
@@ -505,11 +505,13 @@ abstract class Group with _$Group {
   factory Group.fromJson(Map<String, Object?> json) => _$GroupFromJson(json);
 }
 
+final _groupsByName = Expando<Map<String, Group>>();
+
 extension GroupsExt on List<Group> {
-  Group? getGroup(String groupName) {
-    final index = indexWhere((element) => element.name == groupName);
-    return index != -1 ? this[index] : null;
-  }
+  /// Indexed once per list, so a list must not change after its first lookup.
+  Group? getGroup(String groupName) => (_groupsByName[this] ??= {
+    for (final group in this) group.name: group,
+  })[groupName];
 }
 
 extension GroupExt on Group {
@@ -519,46 +521,12 @@ extension GroupExt on Group {
     if (type.isComputedSelected) {
       return realNow.isNotEmpty ? realNow : proxyName;
     }
-    return proxyName.isNotEmpty ? proxyName : realNow;
+    return proxyName.isNotEmpty && _isMember(proxyName) ? proxyName : realNow;
   }
-}
 
-@freezed
-abstract class ColorSchemes with _$ColorSchemes {
-  const factory ColorSchemes({
-    ColorScheme? lightColorScheme,
-    ColorScheme? darkColorScheme,
-  }) = _ColorSchemes;
-}
-
-extension ColorSchemesExt on ColorSchemes {
-  ColorScheme getColorSchemeForBrightness(
-    Brightness brightness,
-    DynamicSchemeVariant schemeVariant,
-  ) {
-    if (brightness == Brightness.dark) {
-      return darkColorScheme != null
-          ? ColorScheme.fromSeed(
-              seedColor: darkColorScheme!.primary,
-              brightness: Brightness.dark,
-              dynamicSchemeVariant: schemeVariant,
-            )
-          : ColorScheme.fromSeed(
-              seedColor: const Color(defaultPrimaryColor),
-              brightness: Brightness.dark,
-              dynamicSchemeVariant: schemeVariant,
-            );
-    }
-    return lightColorScheme != null
-        ? ColorScheme.fromSeed(
-            seedColor: lightColorScheme!.primary,
-            dynamicSchemeVariant: schemeVariant,
-          )
-        : ColorScheme.fromSeed(
-            seedColor: const Color(defaultPrimaryColor),
-            dynamicSchemeVariant: schemeVariant,
-          );
-  }
+  /// A saved pick outlives a subscription update that renames or drops it.
+  bool _isMember(String proxyName) =>
+      all.isEmpty || all.any((proxy) => proxy.name == proxyName);
 }
 
 @freezed
@@ -763,6 +731,8 @@ extension ScriptExt on Script {
 
   Future<String> get path async => appPath.getScriptPath(id.toString());
 
+  Future<FileInfo?> get fileInfo async => File(await path).getFileInfo();
+
   Future<String?> get content async => readTextFileTask(await path);
 
   Future<Script> save(String content) async {
@@ -778,59 +748,28 @@ extension ScriptExt on Script {
     final response = await request.getTextResponseForUrl(url!);
     return save(response.data ?? '');
   }
-
-  Future<Script> saveWithPath(String copyPath) async {
-    final file = File(await path);
-    if (!await file.exists()) {
-      await file.create(recursive: true);
-    }
-    await File(copyPath).copy(copyPath);
-    return copyWith(lastUpdateTime: DateTime.now());
-  }
 }
 
 @freezed
 abstract class ClashProvider with _$ClashProvider {
   const factory ClashProvider({
     required int id,
-    required ProviderKind kind,
     required String label,
     @Default('') String url,
-    RuleProviderBehavior? behavior,
-    RuleProviderFormat? format,
+    @Default(RuleProviderBehavior.classical) RuleProviderBehavior behavior,
+    @Default(RuleProviderFormat.yaml) RuleProviderFormat format,
     int? order,
   }) = _ClashProvider;
 
-  factory ClashProvider.create({
-    required ProviderKind kind,
-    required String label,
-    String url = '',
-  }) {
-    return ClashProvider(
-      id: snowflake.id,
-      kind: kind,
-      label: label,
-      url: url,
-      behavior: kind == ProviderKind.rule
-          ? RuleProviderBehavior.classical
-          : null,
-      format: kind == ProviderKind.rule ? RuleProviderFormat.yaml : null,
-    );
+  factory ClashProvider.create({required String label, String url = ''}) {
+    return ClashProvider(id: snowflake.id, label: label, url: url);
   }
 }
 
-RuleProviderFormat? ruleProviderFormatOf(String sourceName) {
-  final dot = sourceName.lastIndexOf('.');
-  if (dot <= 0) {
-    return null;
-  }
-  return switch (sourceName.substring(dot + 1).toLowerCase()) {
-    'mrs' => RuleProviderFormat.mrs,
-    'txt' || 'list' || 'conf' => RuleProviderFormat.text,
-    'yaml' || 'yml' => RuleProviderFormat.yaml,
-    _ => null,
-  };
-}
+typedef RuleSetInfo = ({
+  RuleProviderBehavior behavior,
+  RuleProviderFormat format,
+});
 
 extension ClashProviderExt on ClashProvider {
   /// Keyed by url so an edited url downloads afresh instead of reusing the
@@ -839,48 +778,175 @@ extension ClashProviderExt on ClashProvider {
 
   bool get isRemote => url.isNotEmpty;
 
+  String get updatingKey => 'rule_provider_$id';
+
   /// An mrs set is a zstd stream, which no text editor can round-trip.
   bool get isTextContent => format != RuleProviderFormat.mrs;
 
-  Future<String> get path => appPath.getProviderCachePath(kind, fileName);
+  /// [format] is the source's; classical rules have no mrs form.
+  bool get isCompiled =>
+      isTextContent && behavior != RuleProviderBehavior.classical;
+
+  Future<String> get path => appPath.getProviderCachePath(fileName);
+
+  Future<String> get compiledPath async => '${await path}.mrs';
+
+  Future<String> get corePath => isCompiled ? compiledPath : path;
+
+  Future<FileInfo?> get fileInfo async => File(await path).getFileInfo();
 
   Future<String?> get content async => readTextFileTask(await path);
 
-  Future<void> saveContent(List<int> bytes) async {
-    await File(await path).safeWriteAsBytes(bytes);
-  }
-
-  ClashProvider withFileFormat(String sourceName) {
-    return withFormat(
-      ruleProviderFormatOf(sourceName) ?? RuleProviderFormat.yaml,
-    );
-  }
-
-  /// The core takes mrs only under domain or ipcidr.
-  ClashProvider withFormat(RuleProviderFormat nextFormat) {
-    if (kind != ProviderKind.rule) {
-      return this;
-    }
-    final behaviors = nextFormat.behaviors;
-    return copyWith(
-      format: nextFormat,
-      behavior: behaviors.contains(behavior) ? behavior : behaviors.first,
-    );
+  ClashProvider withInfo(RuleSetInfo info) {
+    return copyWith(behavior: info.behavior, format: info.format);
   }
 
   Map<String, dynamic> definition(String path) {
-    final vehicle = isRemote
-        ? {'type': 'http', 'url': url, 'path': path}
-        : {'type': 'file', 'path': path};
-    return switch (kind) {
-      ProviderKind.proxy => {...vehicle},
-      ProviderKind.rule => {
-        ...vehicle,
-        'behavior': (behavior ?? RuleProviderBehavior.classical).name,
-        'format': (format ?? RuleProviderFormat.yaml).name,
-      },
+    return {
+      'type': 'file',
+      'path': path,
+      'behavior': behavior.name,
+      'format': isCompiled ? RuleProviderFormat.mrs.name : format.name,
     };
   }
+}
+
+@freezed
+abstract class IconSetIcon with _$IconSetIcon {
+  const factory IconSetIcon({required String name, required String url}) =
+      _IconSetIcon;
+
+  factory IconSetIcon.fromJson(Map<String, Object?> json) =>
+      _$IconSetIconFromJson(json);
+}
+
+final _iconLabels = Expando<String>();
+final _nonAlphanumeric = RegExp('[^a-z0-9]');
+
+extension IconSetIconExt on IconSetIcon {
+  String get label => _iconLabels[this] ??= name.fileStem.replaceAll('_', ' ');
+}
+
+String _compactIconName(String value) =>
+    value.toLowerCase().replaceAll(_nonAlphanumeric, '');
+
+typedef IconNameMatch = ({int index, int score, int length});
+
+typedef ScoredIcon = ({IconSetIcon icon, int score, int length});
+
+/// English only: a name with no Latin letters or digits matches nothing.
+List<IconNameMatch> matchIconNames(List<String> names, String target) {
+  final compactTarget = _compactIconName(target);
+  if (compactTarget.isEmpty) {
+    return const [];
+  }
+  final matches = <IconNameMatch>[];
+  for (final (index, name) in names.indexed) {
+    final compact = _compactIconName(name.fileStem);
+    if (compact.isEmpty) {
+      continue;
+    }
+    final score = switch (compact) {
+      _ when compact == compactTarget => 3,
+      _ when compact.length >= 3 && compactTarget.contains(compact) => 2,
+      _ when compactTarget.length >= 3 && compact.contains(compactTarget) => 1,
+      _ => 0,
+    };
+    if (score > 0) {
+      matches.add((index: index, score: score, length: compact.length));
+    }
+  }
+  return matches;
+}
+
+/// Keeps the first match of each image, in the order given, before ranking.
+List<IconSetIcon> rankIconMatches(
+  Iterable<ScoredIcon> matches, {
+  int limit = 24,
+}) {
+  final seen = <String>{};
+  final scored = [
+    for (final match in matches)
+      if (seen.add(match.icon.url)) match,
+  ];
+  mergeSort(
+    scored,
+    compare: (a, b) => a.score != b.score
+        ? b.score.compareTo(a.score)
+        : a.length.compareTo(b.length),
+  );
+  return scored.take(limit).map((item) => item.icon).toList();
+}
+
+extension IconSetIconsExt on List<IconSetIcon> {
+  List<ScoredIcon> scoredBy(List<IconNameMatch> matches) => [
+    for (final match in matches)
+      (icon: this[match.index], score: match.score, length: match.length),
+  ];
+
+  List<ScoredIcon> scoreFor(String name) =>
+      scoredBy(matchIconNames([for (final icon in this) icon.name], name));
+}
+
+@freezed
+abstract class IconSet with _$IconSet {
+  const factory IconSet({
+    required int id,
+    required String name,
+    @Default('') String url,
+    @Default([]) List<IconSetIcon> icons,
+    DateTime? lastUpdateTime,
+    int? order,
+  }) = _IconSet;
+}
+
+extension IconSetExt on IconSet {
+  bool get isRemote => url.isNotEmpty;
+
+  String get cover => icons.firstOrNull?.url ?? '';
+
+  String get updatingKey => 'icon_set_$id';
+}
+
+bool _isHttpUrl(String value) {
+  final uri = Uri.tryParse(value);
+  return uri != null &&
+      (uri.isScheme('http') || uri.isScheme('https')) &&
+      uri.host.isNotEmpty;
+}
+
+/// Reads the icon gallery format Quantumult X and Loon subscribe to:
+/// `{"name": ..., "icons": [{"name": ..., "url": ...}]}`.
+({String name, List<IconSetIcon> icons}) parseIconSet(String content) {
+  final document = json.decode(content);
+  if (document is! Map || document['icons'] is! List) {
+    throw const FormatException('Not an icon set');
+  }
+  final seen = <String>{};
+  final icons = <IconSetIcon>[];
+  for (final item in document['icons'] as List) {
+    if (item is! Map) {
+      continue;
+    }
+    final url = item['url'];
+    if (url is! String || !_isHttpUrl(url) || !seen.add(url)) {
+      continue;
+    }
+    final name = item['name'];
+    icons.add(
+      IconSetIcon(
+        name: name is String && name.trim().isNotEmpty
+            ? name.trim()
+            : url.urlFileName,
+        url: url,
+      ),
+    );
+  }
+  if (icons.isEmpty) {
+    throw const FormatException('An icon set without icons');
+  }
+  final name = document['name'];
+  return (name: name is String ? name.trim() : '', icons: icons);
 }
 
 @freezed
@@ -893,7 +959,8 @@ extension DelayStateExt on DelayState {
   int get priority {
     if (delay > 0) return 0;
     if (delay == 0) return 1;
-    return 2;
+    if (delay == delayTimedOutValue) return 2;
+    return 3;
   }
 
   int compareTo(DelayState other) {
@@ -915,14 +982,4 @@ abstract class UpdatingMessage with _$UpdatingMessage {
     required String label,
     required String message,
   }) = _UpdatingMessage;
-}
-
-@freezed
-abstract class IconButtonData with _$IconButtonData {
-  const factory IconButtonData({
-    required Glyph glyph,
-    required VoidCallback? onPressed,
-    String? tooltip,
-    @Default(false) bool isLoading,
-  }) = _IconButtonData;
 }

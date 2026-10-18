@@ -17,12 +17,13 @@ class SharedStateTest {
 
     @Test
     fun `setup params use the kebab-case spelling Flutter writes`() {
-        val json = """{"test-url":"https://example.test/204","selected-map":{"GLOBAL":"auto"}}"""
+        val json = """{"test-url":"https://example.test/204","selected-map":{"GLOBAL":"auto"},"skip-cert-verify":true}"""
 
         val params = gson.fromJson(json, SetupParams::class.java)
 
         assertEquals("https://example.test/204", params.testUrl)
         assertEquals(mapOf("GLOBAL" to "auto"), params.selectedMap)
+        assertTrue(params.skipCertVerify)
     }
 
     @Test
@@ -33,6 +34,7 @@ class SharedStateTest {
 
         assertTrue(encoded.contains("\"test-url\""))
         assertTrue(encoded.contains("\"selected-map\""))
+        assertTrue(encoded.contains("\"skip-cert-verify\""))
         assertTrue(!encoded.contains("testUrl"))
         assertTrue(!encoded.contains("selectedMap"))
     }
@@ -43,7 +45,6 @@ class SharedStateTest {
             {
               "startTip": "Starting",
               "stopTip": "Stopping",
-              "crashlytics": false,
               "currentProfileName": "Work",
               "stopText": "Halt",
               "onlyStatisticsProxy": true,
@@ -76,7 +77,6 @@ class SharedStateTest {
 
         assertEquals("Starting", state.startTip)
         assertEquals("Work", state.currentProfileName)
-        assertEquals(false, state.crashlytics)
         assertEquals(true, state.onlyStatisticsProxy)
         assertEquals(false, state.showStopAction)
         assertEquals(7890, state.vpnOptions?.port)
@@ -95,7 +95,6 @@ class SharedStateTest {
 
         assertEquals("FlClash", defaults.currentProfileName)
         assertEquals("Stop", defaults.stopText)
-        assertEquals(true, defaults.crashlytics)
         assertEquals(false, defaults.onlyStatisticsProxy)
         assertEquals(true, defaults.showStopAction)
         assertNull(defaults.vpnOptions)
@@ -112,7 +111,6 @@ class SharedStateTest {
         assertNotNull(state)
         assertEquals("Starting VPN...", state.startTip)
         assertEquals("FlClash", state.currentProfileName)
-        assertEquals(true, state.crashlytics)
         assertNull(state.vpnOptions)
         assertNull(state.setupParams)
     }

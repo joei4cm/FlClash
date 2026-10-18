@@ -5,11 +5,12 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/core/interface.dart';
 import 'package:fl_clash/core/method.dart';
-import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/pages/editor.dart';
 import 'package:fl_clash/providers/app.dart';
+import 'package:fl_clash/providers/core.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/views/proxies/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
@@ -18,10 +19,27 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' hide context;
 
+import '../helpers/context_menu.dart';
 import '../helpers/glyph_finders.dart';
 import '../helpers/test_app.dart';
+import '../plugins/code_forge/support.dart' show initEditorNative;
 
 class _MockCoreHandlerInterface extends Mock implements CoreHandlerInterface {}
+
+class _ProvidersSection extends ConsumerWidget {
+  const _ProvidersSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          ExternalProvidersSliver(providers: ref.watch(providersProvider)),
+        ],
+      ),
+    );
+  }
+}
 
 ExternalProvider _provider(
   String name, {
@@ -49,17 +67,15 @@ void main() {
   late _MockCoreHandlerInterface core;
   late Directory home;
 
-  setUpAll(() {
+  setUpAll(() async {
+    await initEditorNative();
     core = _MockCoreHandlerInterface();
-    CoreController.resetInstance();
-    CoreController.test(core);
     home = Directory.systemTemp.createTempSync('flclash-providers-');
   });
 
   setUp(() => reset(core));
 
   tearDownAll(() {
-    CoreController.resetInstance();
     if (home.existsSync()) home.deleteSync(recursive: true);
   });
 
@@ -77,7 +93,11 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [
+        coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+      ],
+    );
     addTearDown(container.dispose);
     globalState.container = container;
     container.read(viewSizeProvider.notifier).update((_) => size);
@@ -93,26 +113,25 @@ void main() {
     return container;
   }
 
-  Future<void> pump(WidgetTester tester, ProviderContainer container) async {
+  Future<void> pump(
+    WidgetTester tester,
+    ProviderContainer container, {
+    bool withStatusManager = false,
+  }) async {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const TestApp(child: ProvidersView()),
+        child: TestApp(
+          withStatusManager: withStatusManager,
+          child: const _ProvidersSection(),
+        ),
       ),
     );
     await tester.pumpAndSettle();
   }
 
   Future<void> openMenu(WidgetTester tester, String name) async {
-    await tester.tap(
-      find.descendant(
-        of: find.ancestor(
-          of: find.text(name),
-          matching: find.byType(DecorationListItem),
-        ),
-        matching: find.byGlyph(AppGlyphs.more),
-      ),
-    );
+    await rightClick(tester, find.text(name));
     await tester.pumpAndSettle();
   }
 
@@ -126,6 +145,14 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
   }
 
+  // The editor blinks its caret for as long as it is open, so a page holding
+  // it never settles.
+  Future<void> pumpTransitions(WidgetTester tester) async {
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+  }
+
   // Reading and writing the provider file runs on the real event loop,
   // outside fake-async, so pump in rounds until the flow it feeds arrives.
   Future<void> pumpUntil(
@@ -137,8 +164,9 @@ void main() {
       await tester.runAsync(
         () => Future<void>.delayed(const Duration(milliseconds: 20)),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
       if (finder.evaluate().isNotEmpty == found) {
+        await pumpTransitions(tester);
         return;
       }
     }
@@ -173,97 +201,101 @@ void main() {
     return tester.widget<EditorPage>(find.byType(EditorPage));
   }
 
-  testWidgets('splits providers into proxy and rule sections', (tester) async {
+  testWidgets('lists proxy and rule providers under one header', (
+    tester,
+  ) async {
     final container = containerFor(tester, [
       _provider('proxy-a'),
       _provider('rule-a', type: 'Rule'),
     ]);
     await pump(tester, container);
 
-    final l10n = currentAppLocalizations;
-    expect(find.text(l10n.proxies), findsOne);
-    expect(find.text(l10n.rules), findsOne);
+    expect(find.byType(ListHeader), findsOne);
+    expect(
+      find.widgetWithText(ListHeader, currentAppLocalizations.providers),
+      findsOne,
+    );
     expect(find.text('proxy-a'), findsOne);
     expect(find.text('rule-a'), findsOne);
     expect(tester.takeException(), null);
   });
 
-  testWidgets(
-    'renders virtualized list using CustomScrollView and SliverList',
-    (tester) async {
-      final providers = List.generate(50, (i) => _provider('proxy-$i'));
-      final container = containerFor(tester, providers);
-      await pump(tester, container);
+  testWidgets('builds only the rows in view', (tester) async {
+    final providers = List.generate(50, (i) => _provider('proxy-$i'));
+    final container = containerFor(tester, providers);
+    await pump(tester, container);
 
-      expect(find.byType(CustomScrollView), findsOneWidget);
-      expect(find.byType(SliverList), findsOneWidget);
-      expect(find.text('proxy-0'), findsOneWidget);
-      expect(find.text('proxy-49'), findsNothing);
-    },
-  );
+    expect(find.byType(SliverList), findsOneWidget);
+    expect(find.text('proxy-0'), findsOneWidget);
+    expect(find.text('proxy-49'), findsNothing);
+  });
 
-  testWidgets('shows typed provider counts in compact metadata chips', (
+  testWidgets('shows a subscription expiry beside the name', (tester) async {
+    final container = containerFor(tester, [
+      _provider('without-expiry'),
+      _provider(
+        'with-expiry',
+        subscriptionInfo: SubscriptionInfo(
+          total: 100,
+          expire: DateTime(2099).millisecondsSinceEpoch ~/ 1000,
+        ),
+      ),
+    ]);
+    await pump(tester, container);
+
+    expect(find.byType(ExpireChip), findsOne);
+    expect(
+      find.ancestor(
+        of: find.byType(ExpireChip),
+        matching: find.widgetWithText(ChipTitle, 'with-expiry'),
+      ),
+      findsOne,
+    );
+  });
+
+  testWidgets('puts the compact count below the name and the time at the end', (
     tester,
   ) async {
     final container = containerFor(tester, [
       _provider('proxy-with-count', count: 7),
       _provider('rule-with-count', type: 'Rule', count: 9),
-      _provider('proxy-without-count', count: 0),
+      _provider('proxy-with-many', count: 12345),
+      _provider('rule-with-many', type: 'Rule', count: 2500000),
     ]);
     await pump(tester, container);
 
     final l10n = currentAppLocalizations;
-    expect(find.text(l10n.proxiesCount(7)), findsOneWidget);
-    expect(find.text(l10n.rulesCount(9)), findsOneWidget);
-    expect(find.text(l10n.proxiesCount(0)), findsNothing);
-    expect(find.textContaining(' · '), findsNothing);
-    final countChip = find.ancestor(
-      of: find.text(l10n.proxiesCount(7)),
-      matching: find.byType(MetaChip),
+    final updated = DateTime.utc(2026, 1, 1).getLastUpdateTimeDesc(
+      tester.element(find.text('proxy-with-count')),
+      compact: true,
     );
-    expect(countChip, findsOneWidget);
-    expect(tester.getSize(countChip).height, lessThanOrEqualTo(20));
-    expect(
-      tester.getTopLeft(countChip).dy -
-          tester.getBottomLeft(find.text('proxy-with-count')).dy,
-      greaterThanOrEqualTo(4),
-    );
-    expect(
-      find.ancestor(
-        of: countChip,
-        matching: find.byWidgetPredicate(
-          (widget) =>
-              widget is Padding &&
-              widget.padding == const EdgeInsets.only(top: 4, bottom: 2),
-        ),
-      ),
-      findsOneWidget,
-    );
-    expect(find.byType(Chip), findsNothing);
-    final decoratedBox = find.descendant(
-      of: countChip,
-      matching: find.byType(DecoratedBox),
-    );
-    final decoration =
-        tester.widget<DecoratedBox>(decoratedBox).decoration as ShapeDecoration;
-    final padding = tester.widget<Padding>(
-      find.descendant(of: countChip, matching: find.byType(Padding)),
-    );
-    final colorScheme = Theme.of(tester.element(countChip)).colorScheme;
-    expect(decoration.color, colorScheme.surfaceContainerHighest);
-    expect(
-      decoration.shape,
-      AppShape.sm.copyWith(side: BorderSide(color: colorScheme.outlineVariant)),
-    );
-    expect(
-      padding.padding,
-      const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-    );
-    expect(
-      tester.widget<Text>(find.text(l10n.proxiesCount(7))).style?.color,
-      colorScheme.onSurfaceVariant,
-    );
-    expect(find.byType(MetaChip), findsNWidgets(5));
+    expect(find.text(updated), findsNWidgets(4));
+    for (final (name, count) in [
+      ('proxy-with-count', l10n.proxiesCount(7, '7')),
+      ('rule-with-count', l10n.rulesCount(9, '9')),
+      ('proxy-with-many', l10n.proxiesCount(12345, '12.3K')),
+      ('rule-with-many', l10n.rulesCount(2500000, '2.5M')),
+    ]) {
+      final row = find.ancestor(
+        of: find.text(name),
+        matching: find.byType(DecorationListItem),
+      );
+      final subtitle = find.descendant(of: row, matching: find.text(count));
+      final time = find.descendant(of: row, matching: find.text(updated));
+      expect(
+        tester.getTopLeft(subtitle).dy,
+        greaterThanOrEqualTo(tester.getBottomLeft(find.text(name)).dy),
+      );
+      expect(
+        tester.getTopLeft(time).dx,
+        greaterThan(tester.getTopRight(find.text(name)).dx),
+      );
+      expect(
+        tester.getCenter(time).dy,
+        moreOrLessEquals(tester.getCenter(row).dy, epsilon: 1),
+      );
+    }
+    expect(find.byType(TonalChip), findsNothing);
     expect(tester.takeException(), null);
   });
 
@@ -334,21 +366,23 @@ void main() {
     expect(find.byType(SubscriptionInfoDetailView), findsOne);
   });
 
-  testWidgets('replaces the more menu with a spinner while updating', (
+  testWidgets('shows a spinner and holds back the menu while updating', (
     tester,
   ) async {
     final provider = _provider('http-one');
     final container = containerFor(tester, [provider]);
     await pump(tester, container);
 
-    expect(find.byGlyph(AppGlyphs.more), findsOne);
+    expect(find.byType(CommonCircleLoading), findsNothing);
 
     final updating = container.read(updatingKeysProvider.notifier);
     updating.start(provider.updatingKey);
     await settleTrailing(tester);
+    await rightClick(tester, find.text('http-one'));
+    await settleTrailing(tester);
 
-    expect(find.byGlyph(AppGlyphs.more), findsNothing);
     expect(find.byType(CommonCircleLoading), findsOne);
+    expect(find.byType(CommonPopupMenu), findsNothing);
   });
 
   testWidgets('keeps loading state for virtualized offscreen rows', (
@@ -387,7 +421,7 @@ void main() {
     await tester.pump();
   });
 
-  testWidgets('the toolbar action refreshes every provider', (tester) async {
+  testWidgets('the header action refreshes every provider', (tester) async {
     final container = containerFor(tester, [
       _provider('proxy-a'),
       _provider('rule-a', type: 'Rule'),
@@ -411,17 +445,36 @@ void main() {
     await tester.tap(find.byGlyph(AppGlyphs.sync));
     await tester.pump();
 
-    expect(find.byType(CommonCircleLoading), findsOne);
+    final header = find.byType(ListHeader);
+    final pendingRow = find.ancestor(
+      of: find.text('proxy-a'),
+      matching: find.byType(DecorationListItem),
+    );
+    for (final pending in [header, pendingRow]) {
+      expect(
+        find.descendant(
+          of: pending,
+          matching: find.byType(CommonCircleLoading),
+        ),
+        findsOne,
+      );
+    }
+    await tester.tap(find.byTooltip(currentAppLocalizations.update));
+    await tester.pump();
 
     completer.complete('');
     await tester.pumpAndSettle();
     await tester.pump(const Duration(milliseconds: 700));
 
+    expect(find.byType(CommonCircleLoading), findsNothing);
+    expect(find.byGlyph(AppGlyphs.sync), findsOne);
     verify(() => core.updateExternalProvider('proxy-a')).called(1);
     verify(() => core.updateExternalProvider('rule-a')).called(1);
   });
 
-  testWidgets('the toolbar classifies Core request failures', (tester) async {
+  testWidgets('the header action classifies Core request failures', (
+    tester,
+  ) async {
     final container = containerFor(tester, [_provider('proxy-a')]);
     when(() => core.updateExternalProvider('proxy-a')).thenThrow(
       const CoreMethodException(
@@ -432,19 +485,20 @@ void main() {
     when(
       () => core.getProxies(),
     ).thenAnswer((_) async => const ProxiesData(proxies: {}, all: []));
-    await pump(tester, container);
+    await pump(tester, container, withStatusManager: true);
 
     await tester.tap(find.byGlyph(AppGlyphs.sync));
     await tester.pumpAndSettle();
 
+    final l10n = currentAppLocalizations;
     expect(
-      find.text(currentAppLocalizations.networkServerError(503)),
+      find.text(l10n.failedItem('proxy-a', l10n.networkServerError(503))),
       findsOneWidget,
     );
-    expect(find.text('503 Service Unavailable'), findsNothing);
+    expect(find.textContaining('503 Service Unavailable'), findsNothing);
+    expect(find.byType(AlertDialog), findsNothing);
 
-    await tester.tap(find.text(currentAppLocalizations.confirm));
-    await tester.pumpAndSettle();
+    await tester.pumpWidget(const SizedBox.shrink());
   });
 
   testWidgets('offers edit only for providers backed by a text file', (
@@ -467,6 +521,8 @@ void main() {
     await openMenuWithEdit(tester, 'with-file');
     expect(find.text(l10n.upload), findsOne);
     await closeMenu(tester);
+    expect(find.byGlyph(AppGlyphs.edit), findsNothing);
+    expect(find.byType(DisclosureIndicator), findsNothing);
 
     await openMenu(tester, 'compressed');
     expect(find.text(l10n.edit), findsNothing);
@@ -523,6 +579,40 @@ void main() {
     await tester.pump(const Duration(milliseconds: 700));
   });
 
+  testWidgets('a text-backed row previews on tap and edits from its menu', (
+    tester,
+  ) async {
+    final container = containerFor(tester, [
+      _provider('tapped', path: providerFile('tapped', 'payload:\n').path),
+      _provider('without-file'),
+    ]);
+    await pump(tester, container);
+    await openMenuWithEdit(tester, 'tapped');
+    await closeMenu(tester);
+    final loaded = find.byWidgetPredicate(
+      (widget) => widget is EditorView && widget.content == 'payload:\n',
+    );
+
+    await tester.tap(find.text('without-file'));
+    await tester.pumpAndSettle();
+    expect(find.byType(EditorPage), findsNothing);
+    expect(find.byTooltip(currentAppLocalizations.edit), findsNothing);
+
+    await tester.tap(find.text('tapped'));
+    await pumpUntil(tester, loaded);
+    expect(tester.widget<EditorPage>(find.byType(EditorPage)).onSave, isNull);
+    await tester.binding.handlePopRoute();
+    await pumpUntil(tester, find.byType(EditorPage), found: false);
+
+    await openMenu(tester, 'tapped');
+    await tester.tap(find.text(currentAppLocalizations.edit));
+    await pumpUntil(tester, loaded);
+    expect(
+      tester.widget<EditorPage>(find.byType(EditorPage)).onSave,
+      isNotNull,
+    );
+  });
+
   testWidgets('a rejected side-load keeps the editor open', (tester) async {
     final file = providerFile('rejected', 'payload:\n');
     final provider = _provider('rejected', path: file.path);
@@ -546,7 +636,7 @@ void main() {
 
     expect(find.text('invalid payload'), findsOneWidget);
     await tester.tap(find.text(currentAppLocalizations.confirm));
-    await tester.pumpAndSettle();
+    await pumpTransitions(tester);
     expect(find.byType(EditorPage), findsOneWidget);
     verifyNever(() => core.getExternalProvider('rejected'));
   });
@@ -565,10 +655,10 @@ void main() {
     expect(await editor.onPop!(context, 'leaving', 'payload:\n'), isTrue);
 
     final popped = editor.onPop!(context, 'leaving', 'payload: changed\n');
-    await tester.pumpAndSettle();
+    await pumpTransitions(tester);
     expect(find.text(currentAppLocalizations.saveChanges), findsOneWidget);
     await tester.tap(find.text(currentAppLocalizations.cancel));
-    await tester.pumpAndSettle();
+    await pumpTransitions(tester);
 
     expect(await popped, isTrue);
     expect(file.readAsStringSync(), 'payload:\n');
@@ -626,14 +716,12 @@ void main() {
     await tester.tap(find.text(currentAppLocalizations.sync));
     await settleTrailing(tester);
 
-    expect(find.byGlyph(AppGlyphs.more), findsNothing);
     expect(find.byType(CommonCircleLoading), findsOne);
 
     completer.complete('');
     await tester.pumpAndSettle();
     await tester.pump(const Duration(milliseconds: 700));
 
-    expect(find.byGlyph(AppGlyphs.more), findsOne);
     expect(find.byType(CommonCircleLoading), findsNothing);
   });
 }

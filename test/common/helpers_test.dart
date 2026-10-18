@@ -53,35 +53,16 @@ void main() {
       expect(getTimeText(125000), '00:02:05');
     });
 
-    test('formats hours under one day', () {
+    test('formats hours', () {
       expect(getTimeText(3661000), '01:01:01');
-      expect(getTimeText(23 * 3600 * 1000), '23:00:00');
     });
 
-    test('formats multi-day uptime without a 99/999 hour ceiling', () {
-      expect(
-        getTimeText(const Duration(days: 1).inMilliseconds),
-        '1d 00:00:00',
-      );
-      expect(
-        getTimeText(
-          const Duration(
-            days: 5,
-            hours: 12,
-            minutes: 3,
-            seconds: 4,
-          ).inMilliseconds,
-        ),
-        '5d 12:03:04',
-      );
-      expect(
-        getTimeText(const Duration(days: 42).inMilliseconds),
-        '42d 00:00:00',
-      );
-      expect(
-        getTimeText(const Duration(days: 400, hours: 2).inMilliseconds),
-        '400d 02:00:00',
-      );
+    test('formats three digit hours', () {
+      expect(getTimeText(100 * 3600 * 1000), '100:00:00');
+    });
+
+    test('caps at 999:59:59', () {
+      expect(getTimeText(1000 * 3600 * 1000), '999:59:59');
     });
   });
 
@@ -152,6 +133,12 @@ void main() {
     test('handles missing minor/patch', () {
       expect(compareVersions('1', '1.0.0'), 0);
     });
+
+    test('ignores a six-character release commit suffix', () {
+      expect(compareVersions('0.9.2_abcdef', '0.9.2'), 0);
+      expect(compareVersions('0.9.2_abcdef', '0.8.113'), greaterThan(0));
+      expect(compareVersions('0.9.3_abcdef', '0.9.2_123456'), greaterThan(0));
+    });
   });
 
   group('getViewMode', () {
@@ -187,6 +174,33 @@ void main() {
     });
   });
 
+  group('windowControlsOverPage', () {
+    test('a wide macOS window meets the traffic lights at its top left', () {
+      expect(
+        windowControlsOverPage(isMacOS: true, version: 15, isMobileView: false),
+        macOSTrafficLightsArea,
+      );
+    });
+
+    test('a window header or a native title bar keeps them off the page', () {
+      for (final (isMacOS, version, isMobileView) in [
+        (true, 15, true),
+        (true, 10, false),
+        (false, 11, false),
+      ]) {
+        expect(
+          windowControlsOverPage(
+            isMacOS: isMacOS,
+            version: version,
+            isMobileView: isMobileView,
+          ),
+          Size.zero,
+          reason: 'macOS=$isMacOS $version mobileView=$isMobileView',
+        );
+      }
+    });
+  });
+
   group('getProxiesColumns', () {
     test('minimum 2 columns', () {
       expect(getProxiesColumns(100, ProxiesLayout.standard), 2);
@@ -216,18 +230,23 @@ void main() {
     });
 
     test('scales with width', () {
-      expect(getProfilesColumns(270), 1);
+      expect(getProfilesColumns(300), 1);
       expect(getProfilesColumns(700), 2);
-      expect(getProfilesColumns(1300), 4);
+      expect(getProfilesColumns(960), 3);
+    });
+
+    test('caps at three columns', () {
+      expect(getProfilesColumns(1300), 3);
+      expect(getProfilesColumns(2400, spacing: 14), 3);
     });
 
     test('spacing costs a column at the breakpoint', () {
-      expect(getProfilesColumns(540), 2);
-      expect(getProfilesColumns(540, spacing: 14), 1);
+      expect(getProfilesColumns(600), 2);
+      expect(getProfilesColumns(600, spacing: 14), 1);
     });
 
-    test('fits two padded cards near 600px', () {
-      expect(getProfilesColumns(568, spacing: 14), 2);
+    test('fits two padded cards, not three, near 900 dp', () {
+      expect(getProfilesColumns(868, spacing: 12), 2);
     });
 
     test('every card keeps at least the minimum width', () {

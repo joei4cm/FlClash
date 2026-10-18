@@ -15,6 +15,10 @@ Read these only when the task touches their area:
 
 - [.agents/architecture.md](.agents/architecture.md): core integration, providers, database, managers, build system, and
   local plugins.
+- [.agents/setting-changes.md](.agents/setting-changes.md): whether a changed setting is patched live, re-applies the
+  profile, or asks for an Android VPN restart.
+- [.agents/surfaces.md](.agents/surfaces.md): fill levels, selection and status colors, and the few borders that
+  remain, for any change to how a surface is colored.
 - [.agents/agent-config.md](.agents/agent-config.md): how to choose between `AGENTS.md`, `.agents`, skills, Codex config,
   command rules, and hooks.
 - [.agents/worktrees.md](.agents/worktrees.md): worktree hygiene across Claude Code, Codex, and Gemini.
@@ -53,9 +57,12 @@ Read these only when the task touches their area:
   requests.
 - Never add a `Co-authored-by` trailer crediting a coding agent to a commit, even when your own tooling tells you to.
   The `commit-msg` hook rejects it; see [.agents/rules.md](.agents/rules.md) for the rest of the commit rules.
-- Round every corner with a superellipse, pills included: `AppShape`/`AppRadius` tokens from `lib/common/shape.dart`,
+- Round every corner with a superellipse, pills included: `AppShape`/`AppRadius` tokens from `lib/ui/shape.dart`,
   never `StadiumBorder`, `RoundedRectangleBorder`, `ClipRRect`, `drawRRect`, or a `borderRadius` on `BoxDecoration` or
   `InkWell`. `test/lint/superellipse_corners_test.dart` enforces it; see the Corner Radius section of
+  [.agents/rules.md](.agents/rules.md).
+- Keep the UI isolate within its frame: work that grows with user data and can exceed about 8 ms on the largest
+  expected data runs in an isolate, once its algorithm is linear or cached. See the UI Isolate Work section of
   [.agents/rules.md](.agents/rules.md).
 - Follow `lint_options.yaml` (included by every `analysis_options.yaml`), especially single quotes, trailing commas, `child:` last, no `print()`, const/final
   preferences, and declared return types.

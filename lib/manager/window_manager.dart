@@ -1,11 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/common/launch.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/models/config.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +18,11 @@ const _windowGeometryDelay = Duration(milliseconds: 120);
 class WindowManager extends ConsumerStatefulWidget {
   final Widget child;
 
-  const WindowManager({super.key, required this.child});
+  /// A request to quit from outside the window, such as SIGTERM from `kill`
+  /// or the session ending; exits like the tray's quit.
+  final Stream<ProcessSignal>? terminateSignals;
+
+  const WindowManager({super.key, this.terminateSignals, required this.child});
 
   @override
   ConsumerState<WindowManager> createState() => _WindowContainerState();
@@ -25,6 +31,7 @@ class WindowManager extends ConsumerStatefulWidget {
 class _WindowContainerState extends ConsumerState<WindowManager>
     with WindowListener {
   Timer? _windowGeometryTimer;
+  StreamSubscription<ProcessSignal>? _terminateSubscription;
   int _windowGeometryRevision = 0;
   int _windowBlurRevision = 0;
 
@@ -52,6 +59,9 @@ class _WindowContainerState extends ConsumerState<WindowManager>
       }
     }, fireImmediately: true);
     desktopWindow.addListener(this);
+    _terminateSubscription = widget.terminateSignals?.listen(
+      (_) => unawaited(onWindowShouldTerminate()),
+    );
   }
 
   Future<void> _applyWindowBlur(WindowBlurRequest request) async {
@@ -84,12 +94,6 @@ class _WindowContainerState extends ConsumerState<WindowManager>
   void onWindowClose() async {
     await ref.read(systemActionProvider.notifier).handleClose();
     super.onWindowClose();
-  }
-
-  @override
-  void onWindowFocus() {
-    super.onWindowFocus();
-    commonPrint.log('focus');
   }
 
   /// Another launch, or a Dock reopen, asked for the window.
@@ -182,13 +186,11 @@ class _WindowContainerState extends ConsumerState<WindowManager>
   void onWindowMinimize() async {
     _invalidateWindowGeometryCapture();
     ref.read(storeActionProvider.notifier).savePreferencesDebounce();
-    commonPrint.log('minimize');
     super.onWindowMinimize();
   }
 
   @override
   void onWindowRestore() {
-    commonPrint.log('restore');
     super.onWindowRestore();
     _scheduleWindowGeometryCapture();
   }
@@ -196,6 +198,7 @@ class _WindowContainerState extends ConsumerState<WindowManager>
   @override
   void dispose() {
     _invalidateWindowGeometryCapture();
+    unawaited(_terminateSubscription?.cancel());
     desktopWindow.removeListener(this);
     super.dispose();
   }
@@ -442,9 +445,7 @@ class WindowHeaderBar extends StatelessWidget {
     final colorScheme = context.colorScheme;
     return Material(
       color: translucent ? Colors.transparent : null,
-      shape: translucent
-          ? null
-          : Border(bottom: BorderSide(color: colorScheme.outlineVariant)),
+      shape: Border(bottom: Divider.createBorderSide(context)),
       child: SizedBox(
         height: height,
         child: Stack(
@@ -458,10 +459,10 @@ class WindowHeaderBar extends StatelessWidget {
                 onDoubleTap: onDoubleTap,
                 child: ColoredBox(
                   color: translucent
-                      ? colorScheme.surfaceContainer.withValues(
+                      ? colorScheme.chromeSurface.withValues(
                           alpha: kSidebarBlurOpacity,
                         )
-                      : colorScheme.surfaceContainerHighest,
+                      : colorScheme.chromeSurface,
                 ),
               ),
             ),

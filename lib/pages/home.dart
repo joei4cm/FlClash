@@ -1,15 +1,13 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/manager/app_manager.dart';
 import 'package:fl_clash/models/common.dart';
 import 'package:fl_clash/providers/providers.dart';
-import 'package:fl_clash/views/dashboard/widgets/start_button.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-typedef OnSelected = void Function(int index);
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -31,11 +29,6 @@ class HomePage extends ConsumerWidget {
                   .watch(currentNavigationItemsStateProvider)
                   .value;
               final isMobile = ref.watch(isMobileViewProvider);
-              final floating = ref.watch(
-                appSettingProvider.select(
-                  (state) => state.floatingNavigationBar,
-                ),
-              );
               return _HomePageView(
                 navigationItems: navigationItems,
                 pageBuilder: (_, index) {
@@ -44,7 +37,6 @@ class HomePage extends ConsumerWidget {
                     key: ValueKey(navigationItem.label),
                     item: navigationItem,
                     isMobile: isMobile,
-                    docked: isMobile && floating,
                     view: navigationItem.builder(context),
                   );
                 },
@@ -74,14 +66,8 @@ class _HomeShell extends ConsumerWidget {
     final floating = ref.watch(
       appSettingProvider.select((state) => state.floatingNavigationBar),
     );
-    final hasProfile = ref.watch(
-      profilesProvider.select((profiles) => profiles.isNotEmpty),
-    );
-    final isDashboard = ref.watch(
-      currentPageLabelProvider.select((label) => label == PageLabel.dashboard),
-    );
     return Material(
-      color: context.colorScheme.surface,
+      color: SurfaceLevel.page.colorOf(context.colorScheme),
       child: Column(
         children: [
           Expanded(
@@ -117,9 +103,6 @@ class _HomeShell extends ConsumerWidget {
                         onSelected: (index) {
                           _handleToPage(navigationItems[index].label, ref);
                         },
-                        trailing: hasProfile && isDashboard
-                            ? const StartButton()
-                            : null,
                       ),
                     ),
                   ),
@@ -196,23 +179,18 @@ class _NavigationPage extends StatelessWidget {
     super.key,
     required this.item,
     required this.isMobile,
-    required this.docked,
     required this.view,
   });
 
   final NavigationItem item;
   final bool isMobile;
-  final bool docked;
   final Widget view;
 
   @override
   Widget build(BuildContext context) {
-    final scopedView = PageFocusScope(
-      child: DockedPageScope(docked: docked, child: view),
-    );
+    final scopedView = PageFocusScope(child: view);
     final keptView = KeepScope(
       key: ValueKey(item.label),
-      keep: item.keep,
       child: isMobile
           ? scopedView
           : Navigator(
@@ -224,7 +202,7 @@ class _NavigationPage extends StatelessWidget {
     return Consumer(
       builder: (_, ref, child) {
         final isActive = ref.watch(
-          currentPageLabelProvider.select((label) => label == item.label),
+          shownPageLabelProvider.select((label) => label == item.label),
         );
         // A kept-alive page off screen still ticks its animations, and
         // each tick asks for a frame.
@@ -277,15 +255,24 @@ class _HomePageViewState extends ConsumerState<_HomePageView> {
   @override
   void didUpdateWidget(covariant _HomePageView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.navigationItems.length != widget.navigationItems.length) {
+    if (!listEquals(
+      _labelsOf(oldWidget.navigationItems),
+      _labelsOf(widget.navigationItems),
+    )) {
       _order = null;
       _updatePageController();
     }
   }
 
-  int get _pageIndex {
-    final pageLabel = ref.read(currentPageLabelProvider);
-    return widget.navigationItems.indexWhere((item) => item.label == pageLabel);
+  static List<PageLabel> _labelsOf(List<NavigationItem> items) => [
+    for (final item in items) item.label,
+  ];
+
+  int get _pageIndex => _indexOf(ref.read(currentPageLabelProvider));
+
+  int _indexOf(PageLabel pageLabel) {
+    final shown = shownPageLabelOf(pageLabel, widget.navigationItems);
+    return widget.navigationItems.indexWhere((item) => item.label == shown);
   }
 
   Future<void> _toPage(
@@ -295,9 +282,7 @@ class _HomePageViewState extends ConsumerState<_HomePageView> {
     if (!mounted) {
       return;
     }
-    final index = widget.navigationItems.indexWhere(
-      (item) => item.label == pageLabel,
-    );
+    final index = _indexOf(pageLabel);
     if (index == -1) {
       return;
     }
@@ -417,7 +402,8 @@ class _FadeTabPage extends StatelessWidget {
     return AnimatedBuilder(
       animation: controller,
       builder: (_, child) {
-        final delta = enabled ? _delta : 0.0;
+        final offset = _delta;
+        final delta = enabled ? offset : 0.0;
         return FractionalTranslation(
           translation: Offset(-delta, 0),
           child: Opacity(opacity: 1 - delta.abs(), child: child),
@@ -437,7 +423,7 @@ class HomeBackScopeContainer extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     return CommonPopScope(
       onPop: (context) async {
-        final pageLabel = ref.read(currentPageLabelProvider);
+        final pageLabel = ref.read(shownPageLabelProvider);
         final realContext =
             GlobalObjectKey(pageLabel).currentContext ?? context;
         final canPop = Navigator.canPop(realContext);

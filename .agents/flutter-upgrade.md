@@ -17,7 +17,7 @@ listed in the SDK's `CHANGELOG.md`.
   became the default desktop renderer, Intel (x86_64) Macs flicker across the whole window while scrolling or
   animating, and text can render garbled. Apple Silicon is not affected.
 - **Fix upstream:** landed on `main` before 2026-08-25 and verified on `3.48.0-1.0.pre-404`; it is not in any
-  3.47.x hotfix (checked through 3.47.5).
+  3.47.x hotfix (checked through 3.47.6).
 - **Workaround:** the release job for `macos-15-intel` (`arch: amd64`) runs
   `plutil -replace FLTEnableImpeller -bool NO macos/Runner/Info.plist` before `dart setup.dart`, so only the Intel
   DMG falls back to Skia. The checked-in `Info.plist` does not set the key, so local builds and the arm64 DMG keep
@@ -29,6 +29,26 @@ listed in the SDK's `CHANGELOG.md`.
   changelog lists #191538). Before dropping the step, build the Intel DMG without it and scroll the proxies and
   dashboard pages on an Intel Mac with its integrated GPU driving the built-in display; an external display can
   switch to the discrete GPU and hide the flicker.
+
+## Wrong-size back buffer on macOS
+
+- **Bug:** [flutter/flutter#185394](https://github.com/flutter/flutter/issues/185394). `removeSurfaceForSize:` in
+  the macOS engine's `FlutterSurfaceManager.mm` hands out the youngest idle cached surface without checking its size.
+  When the window flips between sizes while the window server still holds the previous surface, which dragging a
+  window edge back and forth does, a request for one size gets a surface of another. Impeller's Metal texture then
+  disagrees with its descriptor, the render target drops it, and `Canvas::SetupRenderPass` dereferences a null
+  texture on the raster thread. Debug builds log `The texture and its descriptor disagree about its size` and
+  `Store action needs resolve but no valid resolve texture specified` first; release builds just crash.
+- **Fix upstream:** [flutter/flutter#192522](https://github.com/flutter/flutter/pull/192522), still open; 3.47.6
+  ships the same `FlutterSurfaceManager.mm` as 3.47.4.
+- **Workaround:** `BackBufferCacheGuard` in the `window` plugin's
+  `macos/window/Sources/window/BackBufferCacheGuard.swift`, installed from `WindowPlugin.register`, replaces
+  `-[FlutterBackBufferCache removeSurfaceForSize:]` at runtime and answers nil when the cached surface is not the
+  requested size, so the engine allocates a new one. It does nothing if the engine no longer has that class or
+  selector.
+- **Remove when:** `FLUTTER_VERSION` moves to a stable that contains #192522 (check the SDK `CHANGELOG.md` for a
+  3.47.x cherry-pick). Before dropping it, run a debug build without the guard on that SDK and drag a window edge
+  back and forth for a minute; neither validation line may appear.
 
 ## Windows view visibility forwarded by the runner
 
@@ -71,3 +91,13 @@ listed in the SDK's `CHANGELOG.md`.
 - **Remove when:** the Linux engine reports minimized windows on Wayland, which needs GTK 4 or xdg-shell's
   `suspended` state. Check in a GNOME Wayland session without the workaround: minimizing from the caption button
   must log `AppLifecycleState.hidden`.
+
+## Liquid glass saves around the transform of a blurring layer
+
+- **Bug:** not filed upstream. On 3.47 Impeller scales a `saveLayer`'s image filter by a transform set inside the
+  layer that is still in effect when the layer is restored. A host's capture shrinks each pane's slot inside the
+  layer that blurs it, so its blur vanished at a quarter scale and spread half again as far at 1.5.
+- **Workaround:** `_LiquidGlassHostLayer._snapshot` sets each slot's transform inside a `save` of its own, and each
+  band's offset, restored before the layer is.
+- **Remove when:** without that `save`, the frosted-pane case of `test/widgets/liquid_glass_host_test.dart` passes
+  under `flutter test --enable-impeller`.

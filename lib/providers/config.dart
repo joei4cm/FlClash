@@ -62,22 +62,6 @@ class DavSetting extends _$DavSetting with AutoDisposeNotifierMixin {
 }
 
 @riverpod
-class OverrideDns extends _$OverrideDns with AutoDisposeNotifierMixin {
-  @override
-  bool build() {
-    return false;
-  }
-}
-
-@riverpod
-class OverrideNtp extends _$OverrideNtp with AutoDisposeNotifierMixin {
-  @override
-  bool build() {
-    return false;
-  }
-}
-
-@riverpod
 class HotKeyActions extends _$HotKeyActions with AutoDisposeNotifierMixin {
   @override
   List<HotKeyAction> build() {
@@ -104,19 +88,6 @@ class _PatchClashConfig extends _$PatchClashConfig
 }
 
 @riverpod
-class ExcludeSSIDs extends _$ExcludeSSIDs with AutoDisposeNotifierMixin {
-  @override
-  List<String> build() {
-    return [];
-  }
-}
-
-/// Aggregate Config for save/load and tests only.
-///
-/// UI and derived providers should watch leaf setting providers (with
-/// `.select` when possible) instead of this aggregate.
-
-@riverpod
 class TailscaleSetting extends _$TailscaleSetting
     with AutoDisposeNotifierMixin {
   @override
@@ -130,22 +101,6 @@ class TailscaleSetting extends _$TailscaleSetting
 
   void setBypassTraffic(bool bypassTraffic) {
     update((state) => state.copyWith(bypassTraffic: bypassTraffic));
-    // Keep Config → DNS → Fake IP Filter in sync with the toggle so the user
-    // can see the entries appear/disappear, and so override-DNS mode also
-    // picks them up without a separate hand edit.
-    ref.read(patchClashConfigProvider.notifier).update((state) {
-      final filters = List<String>.from(state.dns.fakeIpFilter);
-      if (bypassTraffic) {
-        for (final filter in tailscaleFakeIpFilters) {
-          if (!filters.contains(filter)) {
-            filters.add(filter);
-          }
-        }
-      } else {
-        filters.removeWhere(tailscaleFakeIpFilters.contains);
-      }
-      return state.copyWith.dns(fakeIpFilter: filters);
-    });
   }
 
   void addOrUpdate(TailscaleProxy proxy, {String? previousName}) {
@@ -211,6 +166,14 @@ class GeoIdentitySetting extends _$GeoIdentitySetting
   }
 }
 
+@riverpod
+class ExcludeSSIDs extends _$ExcludeSSIDs with AutoDisposeNotifierMixin {
+  @override
+  List<String> build() {
+    return [];
+  }
+}
+
 @Riverpod(name: 'configProvider')
 Config _config(Ref ref) {
   final appSettingProps = ref.watch(appSettingProvider);
@@ -220,8 +183,6 @@ Config _config(Ref ref) {
   final themeProps = ref.watch(themeSettingProvider);
   final currentProfileId = ref.watch(currentProfileIdProvider);
   final davProps = ref.watch(davSettingProvider);
-  final overrideDns = ref.watch(overrideDnsProvider);
-  final overrideNtp = ref.watch(overrideNtpProvider);
   final hotKeyActions = ref.watch(hotKeyActionsProvider);
   final proxiesStyleProps = ref.watch(proxiesStyleSettingProvider);
   final patchClashConfig = ref.watch(patchClashConfigProvider);
@@ -236,8 +197,6 @@ Config _config(Ref ref) {
     themeProps: themeProps,
     currentProfileId: currentProfileId,
     davProps: davProps,
-    overrideDns: overrideDns,
-    overrideNtp: overrideNtp,
     hotKeyActions: hotKeyActions,
     proxiesStyleProps: proxiesStyleProps,
     patchClashConfig: patchClashConfig,
@@ -255,12 +214,11 @@ void writeConfig(Ref ref, Config config) {
   ref.read(themeSettingProvider.notifier).value = config.themeProps;
   ref.read(currentProfileIdProvider.notifier).value = config.currentProfileId;
   ref.read(davSettingProvider.notifier).value = config.davProps;
-  ref.read(overrideDnsProvider.notifier).value = config.overrideDns;
-  ref.read(overrideNtpProvider.notifier).value = config.overrideNtp;
   ref.read(hotKeyActionsProvider.notifier).value = config.hotKeyActions;
   ref.read(proxiesStyleSettingProvider.notifier).value =
       config.proxiesStyleProps;
-  ref.read(patchClashConfigProvider.notifier).value = config.patchClashConfig;
+  ref.read(patchClashConfigProvider.notifier).value = config.patchClashConfig
+      .ensureControllerSecret();
   ref.read(excludeSSIDsProvider.notifier).value = config.excludeSSIDs;
   ref.read(tailscaleSettingProvider.notifier).value = config.tailscaleProps;
   ref.read(geoIdentitySettingProvider.notifier).value = config.geoIdentityProps;
@@ -277,8 +235,6 @@ List<Override> buildConfigOverrides(Config config) {
       (_, _) => config.currentProfileId,
     ),
     davSettingProvider.overrideWithBuild((_, _) => config.davProps),
-    overrideDnsProvider.overrideWithBuild((_, _) => config.overrideDns),
-    overrideNtpProvider.overrideWithBuild((_, _) => config.overrideNtp),
     hotKeyActionsProvider.overrideWithBuild((_, _) => config.hotKeyActions),
     proxiesStyleSettingProvider.overrideWithBuild(
       (_, _) => config.proxiesStyleProps,

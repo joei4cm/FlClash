@@ -14,32 +14,47 @@ extension DateTimeExtension on DateTime {
     return true;
   }
 
-  String getLastUpdateTimeDesc(BuildContext context) {
+  String getLastUpdateTimeDesc(BuildContext context, {bool compact = false}) {
     final appLocalizations = context.appLocalizations;
     if (year <= 1970) {
       return appLocalizations.unknown;
     }
+    final (yearsAgo, monthsAgo, daysAgo, hoursAgo, minutesAgo) = compact
+        ? (
+            appLocalizations.yearsAgoShort,
+            appLocalizations.monthsAgoShort,
+            appLocalizations.daysAgoShort,
+            appLocalizations.hoursAgoShort,
+            appLocalizations.minutesAgoShort,
+          )
+        : (
+            appLocalizations.yearsAgo,
+            appLocalizations.monthsAgo,
+            appLocalizations.daysAgo,
+            appLocalizations.hoursAgo,
+            appLocalizations.minutesAgo,
+          );
     final currentDateTime = DateTime.now();
     final difference = currentDateTime.difference(this);
     final days = difference.inDays;
     if (days >= 365) {
       final years = (days / 365).floor();
-      return appLocalizations.yearsAgo(years);
+      return yearsAgo(years);
     }
     if (days >= 30) {
       final months = (days / 30).floor();
-      return appLocalizations.monthsAgo(months);
+      return monthsAgo(months);
     }
     if (days >= 1) {
-      return appLocalizations.daysAgo(days);
+      return daysAgo(days);
     }
     final hours = difference.inHours;
     if (hours >= 1) {
-      return appLocalizations.hoursAgo(hours);
+      return hoursAgo(hours);
     }
     final minutes = difference.inMinutes;
     if (minutes >= 1) {
-      return appLocalizations.minutesAgo(minutes);
+      return minutesAgo(minutes);
     }
     return appLocalizations.justNow;
   }
@@ -62,26 +77,18 @@ String getDateStringLast2(int value) {
   return valueRaw.substring(valueRaw.length - 2);
 }
 
-/// Formats elapsed VPN/core uptime for the start button.
-///
-/// Under 24 hours: `HH:MM:SS`. 24 hours and above: `Nd HH:MM:SS`, so
-/// multi-day runs stay readable and are not clipped by a `999:59:59` /
-/// two-digit-hour ceiling.
 String getTimeText(int? timeStamp) {
   if (timeStamp == null) {
     return '00:00:00';
   }
-  final totalSeconds = timeStamp < 0 ? 0 : timeStamp ~/ 1000;
-  final days = totalSeconds ~/ Duration.secondsPerDay;
-  final hours =
-      (totalSeconds % Duration.secondsPerDay) ~/ Duration.secondsPerHour;
-  final minutes =
-      (totalSeconds % Duration.secondsPerHour) ~/ Duration.secondsPerMinute;
-  final seconds = totalSeconds % Duration.secondsPerMinute;
-  final clock =
-      '${getDateStringLast2(hours)}:${getDateStringLast2(minutes)}:${getDateStringLast2(seconds)}';
-  if (days <= 0) {
-    return clock;
+  final diff = timeStamp / 1000;
+  final inHours = (diff / 3600).floor();
+  if (inHours > 999) {
+    return '999:59:59';
   }
-  return '${days}d $clock';
+  final inMinutes = (diff / 60 % 60).floor();
+  final inSeconds = (diff % 60).floor();
+  final hoursText = inHours.toString().padLeft(2, '0');
+
+  return '$hoursText:${getDateStringLast2(inMinutes)}:${getDateStringLast2(inSeconds)}';
 }

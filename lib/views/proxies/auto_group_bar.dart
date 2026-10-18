@@ -1,5 +1,6 @@
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/ui/ui.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/auto_select_sticky.dart';
@@ -64,7 +65,7 @@ class AutoGroupBar extends ConsumerWidget {
         child: Row(
           children: [
             GlyphIcon(
-              AppGlyphs.themeAuto,
+              AppGlyphs.bolt,
               size: 18,
               color: context.colorScheme.onSecondaryContainer,
             ),
@@ -75,9 +76,11 @@ class AutoGroupBar extends ConsumerWidget {
                 children: [
                   Text(
                     l10n.autoGroupTitle(typeLabel),
-                    style: context.textTheme.labelLarge?.copyWith(
-                      color: context.colorScheme.onSecondaryContainer,
-                    ),
+                    style: AppTextStyle.subheadline
+                        .of(context)
+                        .copyWith(
+                          color: context.colorScheme.onSecondaryContainer,
+                        ),
                   ),
                   Text(
                     hasOverride
@@ -85,9 +88,14 @@ class AutoGroupBar extends ConsumerWidget {
                         : l10n.autoGroupCurrent(currentName),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: context.colorScheme.onSecondaryContainer.opacity80,
-                    ),
+                    style: AppTextStyle.footnote
+                        .of(context)
+                        .copyWith(
+                          color: context
+                              .colorScheme
+                              .onSecondaryContainer
+                              .opacity80,
+                        ),
                   ),
                   if (stickyEnabled &&
                       (stickyGeo != null || inferredGeo != null))
@@ -97,10 +105,14 @@ class AutoGroupBar extends ConsumerWidget {
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color:
-                            context.colorScheme.onSecondaryContainer.opacity80,
-                      ),
+                      style: AppTextStyle.footnote
+                          .of(context)
+                          .copyWith(
+                            color: context
+                                .colorScheme
+                                .onSecondaryContainer
+                                .opacity80,
+                          ),
                     ),
                 ],
               ),

@@ -7,6 +7,8 @@ import 'package:fl_clash/models/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../helpers/preferences.dart';
+
 const _sharedState = SharedState(
   stopTip: 'stop',
   startTip: 'start',
@@ -14,18 +16,16 @@ const _sharedState = SharedState(
   currentProfileName: 'profile',
   stopText: 'stopped',
   onlyStatisticsProxy: true,
-  crashlytics: false,
 );
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  SharedPreferences.setMockInitialValues({});
 
   late SharedPreferences store;
 
   setUp(() async {
+    await mockPreferences();
     store = await SharedPreferences.getInstance();
-    await store.clear();
   });
 
   group('version', () {
@@ -49,7 +49,6 @@ void main() {
       const config = Config(
         themeProps: defaultThemeProps,
         currentProfileId: 42,
-        overrideDns: true,
         excludeSSIDs: ['home'],
       );
 
@@ -58,7 +57,6 @@ void main() {
 
       expect(restored, isNotNull);
       expect(restored!.currentProfileId, 42);
-      expect(restored.overrideDns, isTrue);
       expect(restored.excludeSSIDs, ['home']);
     });
 

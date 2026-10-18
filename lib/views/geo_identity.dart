@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
@@ -460,10 +460,9 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
                 Expanded(
                   child: Text(
                     title,
-                    style: context.textTheme.titleSmall?.copyWith(
-                      color: accent,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTextStyle.subheadline
+                        .of(context)
+                        .copyWith(color: accent, fontWeight: FontWeight.w600),
                   ),
                 ),
                 if (enabled && !_busy && !isStart)
@@ -497,18 +496,18 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
               const SizedBox(height: 8),
               Text(
                 detail,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: context.colorScheme.onSurfaceVariant,
-                ),
+                style: AppTextStyle.footnote
+                    .of(context)
+                    .copyWith(color: context.colorScheme.onSurfaceVariant),
               ),
             ],
             if (_timezoneNote != null) ...[
               const SizedBox(height: 8),
               Text(
                 l10n.geoIdentityTimezoneAlignFailed(_timezoneNote!),
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: context.colorScheme.error,
-                ),
+                style: AppTextStyle.footnote
+                    .of(context)
+                    .copyWith(color: context.colorScheme.error),
               ),
             ],
           ],
@@ -577,9 +576,9 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
             child: Text(
               l10n.geoIdentityPurposeBody,
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: context.colorScheme.onSurfaceVariant,
-              ),
+              style: AppTextStyle.callout
+                  .of(context)
+                  .copyWith(color: context.colorScheme.onSurfaceVariant),
             ),
           ),
           ListItem.toggle(
@@ -600,14 +599,13 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
                 ),
               ),
             ),
-            dialogTitle: l10n.geoIdentityCaptureMode,
             options: GeoIdentityCaptureMode.values,
             value: ref.watch(
               geoIdentitySettingProvider.select((s) => s.captureMode),
             ),
             textBuilder: (mode) => _captureModeLabel(l10n, mode),
             onChanged: (mode) {
-              if (_busy || mode == null) {
+              if (_busy) {
                 return;
               }
               ref
@@ -620,9 +618,9 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: Text(
               l10n.geoIdentityHonestyLine,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: context.colorScheme.onSurfaceVariant,
-              ),
+              style: AppTextStyle.footnote
+                  .of(context)
+                  .copyWith(color: context.colorScheme.onSurfaceVariant),
             ),
           ),
           if (system.isAndroid && enabled)
@@ -630,9 +628,9 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Text(
                 l10n.geoIdentityTimezoneAndroidTip,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: context.colorScheme.onSurfaceVariant,
-                ),
+                style: AppTextStyle.footnote
+                    .of(context)
+                    .copyWith(color: context.colorScheme.onSurfaceVariant),
               ),
             ),
           const SizedBox(height: 8),

@@ -12,9 +12,18 @@ extension PackageInfoExtension on PackageInfo {
   ].join(' ');
 }
 
+final _releaseCommitSuffix = RegExp(r'_[0-9a-fA-F]{6}$');
+
+String _stripReleaseCommitSuffix(String version) =>
+    version.replaceFirst(_releaseCommitSuffix, '');
+
 int compareVersions(String version1, String version2) {
-  final List<String> v1 = version1.split('+')[0].split('.');
-  final List<String> v2 = version2.split('+')[0].split('.');
+  final List<String> v1 = _stripReleaseCommitSuffix(
+    version1.split('+')[0],
+  ).split('.');
+  final List<String> v2 = _stripReleaseCommitSuffix(
+    version2.split('+')[0],
+  ).split('.');
   final int major1 = int.parse(v1[0]);
   final int major2 = int.parse(v2[0]);
   if (major1 != major2) {

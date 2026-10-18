@@ -52,7 +52,47 @@ replaces the app's, so merge the ambient `XButtonTheme.of(context).style` into i
 does. `CircleBorder` and `BoxShape.circle` are fine for something that is always square.
 
 APIs that accept only a `Radius`, such as `ScrollbarThemeData.radius`, keep circular corners; supply the superellipse
-with an enclosing clip or shape where it shows.
+with an enclosing clip or shape where it shows. Framework widgets that paint their own circular corners with no shape or
+decoration to override, such as the `Switch` track, are left as Material draws them. Tooltips take theirs from
+`withAppShapes`, which sets `tooltipTheme.decoration`.
+
+### Typography
+
+Text sizes follow Apple's iOS Dynamic Type scale at its default size, on every platform. `AppTextStyle` in
+`lib/ui/typography.dart` holds its eleven styles, `largeTitle` to `caption2`, with Apple's leading and weights, plus two
+steps the scale lacks: `display` for a dashboard figure and `pageTitle` for an app bar. Take one with
+`AppTextStyle.body.of(context)`, pass `emphasized: true` for the scale's emphasized weight (bold for the titles,
+semibold for the rest), and change color or family with `copyWith`; a weight is either regular or emphasized. Text
+sized to the shape it marks, such as a letter scaled to its icon, comes from `AppTextStyle.custom`. The dashboard's
+roles (`DashboardText` in `lib/views/dashboard/style.dart`) are built on the same types. `ThemeData.withAppTypography`
+maps Material's `TextTheme` slots onto the scale so Material components follow it; app code never reads those slots.
+
+App bar titles sit at the leading edge in `pageTitle` on a root page and on any desktop page, at the leading edge in
+`headline` on a pushed page in the mobile view, and in the bar's centre in `headline` on a bottom sheet. A title widget,
+such as the editor's name field, stays at the leading edge. Past a back button a title keeps the bar's action inset
+clear of the button on either side.
+
+`test/lint/typography_test.dart` fails on `textTheme` anywhere in `lib/` but `typography.dart`, and on `fontSize:` or
+`fontWeight:` outside `lib/ui/`, except in the code editor, whose text follows the editor font-size setting.
+
+### Text Field Suggestions
+
+On Android, Flutter maps `enableSuggestions: false` to the visible-password input type, not only to "no suggestions"
+(`TextInputPlugin.inputTypeFromTextInputType` in the engine). Input methods then treat the field as a password: no
+clipboard panel, no Chinese layouts, and on some systems a secure keyboard. With the app's clipboard permission denied,
+that leaves no way to paste a link at all. Only the secret fields, `SecretTextFormField` and `FormRowSecretTextField`,
+ask for a password keyboard; a link, key, rule or regex field that should not be corrected sets `autocorrect: false`
+alone. `test/lint/text_field_suggestions_test.dart` fails on `enableSuggestions: false` or
+`TextInputType.visiblePassword` anywhere else in `lib/`.
+
+### Length Units
+
+Flutter lengths are logical pixels, the unit Android calls dp. Comments, test names, docs and reports give them in dp,
+as in `48 dp`, never px: a reader takes px for physical pixels and misjudges the size by the device pixel ratio. Write
+"physical pixel" in full where the code really works in them, as the hairline snapping in
+`lib/ui/list_row_separator.dart` and the Win32 frame metrics in `plugins/window` do; raster image sizes in
+`tool/` and CSS under `site/` keep px. `test/lint/length_unit_test.dart` fails on a number followed by px in `lib/`
+and `test/`.
 
 CI gates formatting: `dart format --output=none --set-exit-if-changed lib test
 tool plugins setup.dart` runs before `flutter analyze`.
@@ -91,11 +131,11 @@ judgment, and it lives in the rules below and in review. Whether comments are to
   that contains them. This does not need approval.
 - These are not comments and are exempt from every rule here, including the density count: analyzer and linter
   directives (`// ignore:`, `// ignore_for_file:`, `// coverage:ignore`), license and copyright headers,
-  code-generation markers, and comments inside vendored upstream code such as `lib/widgets/open_container.dart`.
+  code-generation markers, and comments inside vendored upstream code such as `lib/ui/open_container.dart`.
 
 ### Density
 
-`tool/check_comment_density.sh` fails a file whose added lines are more than 5% standalone comment lines, ignoring
+`tool/hooks/comment_density.sh` fails a file whose added lines are more than 5% standalone comment lines, ignoring
 diffs under 20 added lines so small edits are never caught. The number is calibrated on this repository's own history:
 healthy changes sit at or under 3.6%, while the core fix that prompted the gate ran 22.4%.
 
@@ -105,7 +145,7 @@ it is forked upstream code, not a house style.
 Three gates run the same script, and they do not have equal force. The `PostToolUse` hooks in `.claude/settings.json`
 and `.codex/config.toml` run after the tool and hand offending lines back as feedback; neither can undo the completed
 write. The `comment-density` pre-commit hook fails the commit, and it is the only hard gate that covers every tool.
-Behavior is pinned by `tool/check_comment_density_test.sh`, which CI runs directly.
+Behavior is pinned by `tool/hooks/comment_density_test.sh`, which CI runs through `tool/hooks/test.sh`.
 
 When a change genuinely warrants more, raise the ceiling for that run rather than working around it:
 `COMMENT_DENSITY_MAX=20 git commit`, or `SKIP=comment-density git commit` to step past it entirely.
@@ -123,7 +163,7 @@ how important it feels.
 - **A fact that is true only at one call site, and is not visible from that call site, is the one thing a comment does
   better than a test or a document.** Its value is being in the reader's line of sight at the moment of the edit.
   `lib/common/constant.dart` carries one: the delay-test concurrency cap is bound to `delayTestConcurrency` in
-  `core/common.go`, and whoever changes that number must see the constraint on the same screen. This is the case a
+  `core/delay.go`, and whoever changes that number must see the constraint on the same screen. This is the case a
   comment is for; the bar is that no test and no `.agents/` entry could hold the fact instead.
 
 Both failure directions are real. Moving a local constraint into `.agents/` hides it from the person editing the line;
@@ -140,10 +180,11 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
   a scope-specific cleanup API instead.
 - The desktop IPC socket in `plugins/rust_api` admits a Unix peer only when its effective uid is the app's own or root:
   the socket lives in `/tmp`, and the Core connects as root whenever it runs setuid for TUN or under the Linux Helper.
-  A launch mode that runs the Core as any other user has to widen `authorize_peer` in `ipc/platform.rs`, and Windows
+  A launch mode that runs the Core as any other user has to widen `admit` in `ipc/access.rs`, and Windows
   keeps its identity check on the Dart side, which compares the named-pipe peer PID with the Core it launched.
-- Keep the shared `CoreMethodCall`/`CoreMethodResponse` JSON envelope structurally identical across Dart, Go, JNI, and
-  desktop IPC. Do not double-encode `arguments`, `result`, or event batches.
+- Keep the shared `CoreMethodCall`/`CoreMethodResponse` JSON envelope structurally identical across Dart, Go, the
+  gomobile binding, and desktop IPC. Do not double-encode `arguments`, `result`, or event batches. A response whose
+  `file` is set was spilled to disk; a transport resolves it with `resolveSpilledResponse` before reading `result`.
 - `core/message.go` carries three event queues, and the split is load-bearing: state (loaded, geo-update,
   route-changed), priority (every other event), and bulk (log, request, DNS). Priority and bulk evict their own oldest
   entry under backpressure, except DNS, which enters the bulk queue through `enqueueState` so a lookup burst cannot push
@@ -151,19 +192,15 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
   `UpdatingAction` sweeps it as stale minutes later. Do not merge the tiers or give state eviction semantics. `enqueueState` drops silently on a full
   queue and must stay that way: reaching it means the host stopped reading, which `logDeliveryError` already reports,
   and reporting it from the message layer feeds the same batcher.
-- `jni_get_string` in `android/core/src/main/cpp/jni_helper.cpp` `malloc`s and hands ownership to Go, which frees through
-  `free_string_func`. `quickSetup` relies on that: it reads its `*C.char` arguments inside a goroutine, after the JNI
-  wrapper has already returned. Switching the wrapper to `GetStringUTFChars`/`ReleaseStringUTFChars`, or freeing on the
-  C side, turns that read into a use-after-free.
-- Go goroutines reach Java through `ATTACH_JNI()`, which attaches once with `AttachCurrentThreadAsDaemon` and detaches
-  from a `pthread_key` destructor at thread death. Do not restore a detach-per-call: `protect` runs once per outbound
-  socket and `onResult` once per event batch, and attach/detach takes ART's thread-list lock each time.
-- Every JNI call into Kotlin must be followed by `jni_clear_exception`. A pending exception left in place aborts the
-  process on the next JNI call on that thread, so a throw in `protect`/`resolveUid`/`resolvePackage`/`onResult` becomes a
-  crash in unrelated code. For the same reason every one of those wrappers checks its `tun_interface`/`invoke_interface`
-  for `nullptr` first: ART aborts on a call through a null object, and a callback released by `TunHandler.clear` while a
-  connection is still resolving is exactly that.
-- The Android bridge resolves an owner in two steps — `resolve_uid` then `resolve_package` — because mihomo fills
+- Every method of the callback interfaces in `core/mobile` (`TunHandler`, `ResultHandler`) returns an `error`. gobind
+  clears a Java exception and hands it to Go only for a method that declares one; otherwise the exception stays pending
+  and the next JNI call on that thread aborts the process, so a throw in `protect`/`resolveUid`/`resolvePackage`/
+  `onResult` would crash unrelated code. `core/mobile` turns the error into the answer the system gives when it will not
+  help: `false`, `-1`, or an empty package name.
+- `TunHandler`'s hooks in `core/lib.go` check `callbacks` under `th.mu` before every call. `clear` drops the callbacks
+  while connections may still be resolving, and a call through the nil interface panics on a mihomo goroutine, outside
+  every recovery.
+- The Android bridge resolves an owner in two steps — `ResolveUid` then `ResolvePackage` — because mihomo fills
   `metadata.Uid` from a procfs lookup that Android Q closed off. Collapsing them back into one call that returns only a
   package name is what left every connection reporting uid 0, so `UID` rules matched nothing.
 - The desktop delivery path in `core/server.go` must not report failures through `logError`. A log event is published to
@@ -182,10 +219,17 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
   the caller `null` (a `no_response` exception for message methods), and the sweep clears core-scope updating state
   minutes later. Only a half-written frame that fails outright desynchronizes the stream, and that is the one case
   `send` closes on.
-- Core method handlers in `core/hub.go` are synchronous. Anything that must not block the dispatcher is spawned by
-  `safeGo`/`safeGoDetached` in `core/method.go`, which recover; a bare `go` in a handler puts a panic outside every
-  recovery and kills the process, which on Android is the whole application. The `//export` entry points in
-  `core/lib.go` do not reach `handleMethodCall`, so each one carries its own recovery.
+- Core method handlers are plain functions that return their answer, registered in the `methodHandlers` table in
+  `core/method.go` through the adapter matching their shape. `dispatchMethodCall` already runs every call on its own
+  goroutine and `handleMethodCall` turns a panic into an `internal_error` answer, so a handler blocks for as long as its
+  work takes and never spawns a goroutine just to answer. Work that outlives the answer goes through `safeGo`, which
+  recovers; a bare `go` puts a panic outside every recovery and kills the process, which on Android is the whole
+  application. The exported Android entry points in `core/lib.go` do not reach `handleMethodCall`, so each one carries
+  its own recovery.
+- A handler fails by returning an `error`: a `*MethodError` travels as it is and anything else under `core_error`. The
+  exception is `withMessage`, for the methods whose result the host reads as a message that is empty on success
+  (`_invokeMessage` in `lib/core/interface.dart`): there a plain error becomes that message and only a `*MethodError`
+  fails the call. Moving a method between the two changes what Dart receives.
 - `dialer.DefaultSocketHook` and `process.DefaultPackageNameResolver` are installed exactly once, by `installHooks` in
   `core/lib.go`, and never cleared. mihomo checks `DefaultSocketHook` for nil once and dereferences it again when the
   socket is created (`component/dialer/socket_hook.go`), so clearing it while a dial is in flight calls a nil func
@@ -215,6 +259,10 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
   used to mean "testing", which let a result and the state of a test overwrite each other and left cards spinning
   forever when the Core restarted. The run owns its keys and releases them in a `finally`, so nothing depends on a
   reply arriving; core status leaving `connected` cancels every run in flight.
+- Some constants in `lib/common/constant.dart` mirror the Core and move with it. `delayTimedOutValue` is the `-1` that
+  `core/delay.go` reports for a delay test that ran out of time; any other negative value failed outright.
+  `downloadTimeoutDuration` matches mihomo's `resource.DefaultHttpTimeout`, which bounds the Core's provider downloads
+  end to end. `shareLinkSchemes` are the schemes mihomo's `ConvertsV2Ray` reads, less http(s), which is a subscription.
 - Anything on the mihomo side that is reached from both a user-triggered core method and mihomo's own background
   scheduler needs its in-flight guard on the FlClash side. `updater.UpdateMMDB` and its siblings have none — only the
   batch `UpdateGeoDatabases` does — and two concurrent runs close the mmap'd database twice, so `handleUpdateGeoData`
@@ -228,9 +276,10 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
 - Package `init` in the Android library runs while the `.so` is being loaded, so a panic there takes the application
   down before it can report anything. `platform/limit.go` arms an fd-pressure probe and degrades to never blocking when
   it cannot; keep that shape for anything else `init` sets up that correctness does not depend on.
-- Every `android && cgo` file in `core/` is compiled only by the NDK-backed CI step in the `go` job. Keep the build
-  constraints as `android && cgo` / `!(android && cgo)`: a bare `cgo` constraint makes `go build ./...` fail in `core/`
-  on any developer machine, because the files it pulls in need the NDK.
+- No file in `core/` uses cgo: the only C in the Android library is the glue gobind generates during `gomobile bind`.
+  Android-only files take `//go:build android` and desktop-only ones `!android`, so `GOOS=android CGO_ENABLED=0 go vet`
+  checks the Android side without an NDK. Keep it that way; cgo in `core/` puts the NDK back in front of that vet and of
+  `go build ./...` on every developer machine.
 
 ## Lifecycle Rules
 
@@ -241,15 +290,10 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
   failure (user stop, low memory, signal, package change), never create one, and its timestamp is consumed through
   `handledExitAt` so the same exit cannot be counted twice.
 - `BootGuard` is an Android-only mechanism and gates itself: on every other platform `evaluate`, `markRunning` and
-  `markClosed` return without touching preferences. The desktop has neither of the two attribution sources — no
-  `ApplicationExitInfo` equivalent and no Crashlytics toggle — so a bare sentinel there would read a window closed on
-  the disclaimer dialog, or a session ended by shutdown, as a failed launch. Keep the platform check inside the guard;
-  callers in `bootstrap.dart` and `SystemAction` stay unconditional.
-- `FirebaseCrashlytics.didCrashOnPreviousExecution()` corroborates a failure and must not trigger one. Its marker file is
-  cleared by a background initialization that `dataCollectionArbiter` blocks while collection is disabled, which is the
-  default here, so one real crash makes it return true on every later launch. That latch is what made the app clear the
-  selected profile on every cold start; it is also why the probe is only read when `crashlytics` is enabled, keeping
-  Firebase uninitialized until the user consents.
+  `markClosed` return without touching preferences. The desktop has no `ApplicationExitInfo` equivalent to attribute an
+  exit, so a bare sentinel there would read a window closed on the disclaimer dialog, or a session ended by shutdown,
+  as a failed launch. Keep the platform check inside the guard; callers in `bootstrap.dart` and `SystemAction` stay
+  unconditional.
 - Recovery is graded: the first failed launch only skips `initStatus`, and `currentProfileId` is cleared only from
   `crashRecoveryClearThreshold` consecutive failures on. Do not let a single interrupted launch write to the config.
 - Desktop process ownership belongs to `DesktopCoreLifecycle`; do not start/kill `FlClashCore` from providers, widgets,
@@ -257,7 +301,12 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
 - `CoreController.close()` and platform `close()` implementations are terminal and idempotent. Application shutdown must
   stay centralized in `SystemAction`/`SystemExitCoordinator`.
 - Android start/stop MethodChannel calls are optimistic UI commands. Keep latest-wins arbitration in native
-  `ServiceState`; do not add a Flutter completion callback that creates a second lifecycle owner.
+  `ServiceState`; do not add a Flutter completion callback that creates a second lifecycle owner. What flows back is
+  the revision-stamped `stopped` report, which Flutter mirrors with `setRunning(false)` and never answers with a
+  decision of its own.
+- Android `RunState` is derived in `ServiceStateMachine.publish`; do not assign it from a transition step, and do not
+  add a second "is it running" field beside `ServiceController.runtime`. Every divergence between the tile and the
+  service so far came from a copy that one path forgot to update.
 - Android service callbacks are not automatically user intent. Route explicit Quick Settings, Always-on VPN, and revoke
   actions through `ServiceState` and keep `ServiceController` as the sole binding/run-time owner.
 - Every `BroadcastReceiver.goAsync()` path must finish its `PendingResult` exactly once. A watchdog may release the
@@ -278,9 +327,11 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
   declares desired state through one `Tray.show(TraySpec)` call and must not add platform branches to work around
   ordering. Platform branches in `lib/common/tray.dart` are only for deliberate product differences (macOS speed title
   and group submenus); query `Tray.instance.capabilities` for ability differences.
-- Every native `show` returns whether the tray now reflects the payload, and reports `false` instead of showing a broken
+- Every native `show` returns whether the tray accepted the payload, and reports `false` instead of showing a broken
   icon. `Tray` caches the payload signature only on `true`, so a rejected `show` is retried by the next update rather
-  than suppressed until restart. Any test that mocks the `tray` channel must return `true` from `show`.
+  than suppressed until restart. Windows accepts a payload the shell refused, as at sign-in, and retries the icon
+  natively until it lands, so `Tray` still treats it as visible and `hide` reaches native to delete an add that may
+  have landed. Any test that mocks the `tray` channel must return `true` from `show`.
 - Reading the Wi-Fi SSID is opt-in work, not ambient state. `ConnectivityManager` reads it only while `excludeSSIDs` is
   non-empty, because that list is its only consumer through `suspendProvider`, and the read costs a blocking platform
   call plus a location permission on Android and macOS. A second consumer must widen that gate, not drop it.
@@ -294,16 +345,40 @@ leaving a repo-wide policy as a comment reaches only the reader of that one file
   outstanding exception: `WlanQueryInterface` still runs inline, since replying off-thread there needs a window-message
   hop that the plugin API does not provide.
 - The delayed DNS re-check `NetworkObserveModule.onLosing` posts is deliberately left un-deduplicated. The runnable
-  re-reads `networkInfos` and does nothing when `onLost` already dropped the network, `updateDns` returns early when the
-  resolved list is unchanged, and `stop()` clears the handler queue, so a network that reports `onLosing` repeatedly
-  costs one comparison per event. Holding the pending `Runnable` to `removeCallbacks` it changes no behaviour and adds
+  re-reads `networkInfos` and does nothing when `onLost` already dropped the network, `updateDns` calls into the Core
+  only when the resolved list or the preferred network changed, and `stop()` clears the handler queue, so a network that
+  reports `onLosing` repeatedly costs two comparisons per event. Holding the pending `Runnable` to `removeCallbacks` it changes no behaviour and adds
   state that has to stay in sync with the map.
+
+## UI Isolate Work
+
+Everything the UI isolate runs synchronously shares a frame with build, layout and paint: 16 ms at 60 Hz, 8 ms at
+120 Hz. Computation may take as long as it needs anywhere else, so this rule is about where work runs, not how much of
+it there is.
+
+- Work that grows with the user's data (profiles, rules, proxies, groups, dialers, icons, connections) and can take
+  more than about 8 ms on the largest data the app expects runs in an isolate, through `compute` or `Isolate.run`.
+  Thousands of rules or proxies and hundreds of groups are in that range. `makeRealProfileTask` in
+  `lib/common/task.dart` and the backup tasks in `lib/common/backup.dart` are the existing shape.
+- Make the algorithm linear or cached first. Work superlinear in that data, such as a walk of the whole graph per
+  item, a scan of every group per group, or a list copy per inserted element, is a defect on any isolate; moving it
+  only hides the cost until the data outgrows the move.
+- Sending data to an isolate copies it on the sending isolate, so hand the task the smallest input it reads. A value
+  the UI reads synchronously, such as a sync provider watched in `build`, becomes an async provider with a loading
+  state rather than a blocking call.
+- drift runs SQL on its own isolate but maps rows into models on the caller's, so a watched query over a large table
+  costs the UI isolate on every emission, and any write to that table makes it emit again.
+- Bounded work stays where it is: a provider recompute that reuses a cache, a single-item update, a search filter over
+  a list sized for scrolling.
+- Decide on measurements taken at the expected maximum. A `flutter test` probe that counts provider recomputes, times
+  the provider body and hooks `debugOnRebuildDirtyWidget` shows what reruns and how it scales; its JIT timings are not
+  device numbers, so a case near the line is settled with a profile build. No gate checks this rule.
 
 ## Testing Rules
 
 The `core/` directory is excluded from automated coverage accounting. Do not add coverage instrumentation or coverage
 collection for code under `core/`. CI still runs `CGO_ENABLED=0 go test .` and `go vet .` to compile/check the Go wrapper,
-plus an NDK-backed `GOOS=android` vet that covers the `android && cgo` files the first two exclude; verify cross-language
+plus a `GOOS=android` vet that covers the `android` files the first two exclude; verify cross-language
 protocol behavior through shared Dart contract tests under `test/core/` and native platform build checks.
 
 A Go test in `core/` that reaches `sendMessage` — directly, or through `handleStartLog` or `updater.GeoUpdateHook` —
@@ -326,7 +401,31 @@ land.
 Prefer `coreHandlerProvider.overrideWithValue(CoreController.scoped(fake))` over `CoreController.test(fake)` in new and
 touched tests. `CoreController.test` claims the process-wide singleton, which makes a global read and a provider read
 resolve to the same fake, so it cannot fail on a call site that still reaches for the global. A test that does claim
-the singleton calls `CoreController.resetInstance()` in `tearDown`.
+the singleton calls `CoreController.resetInstance()` in `tearDown`. It also only reaches the global `coreController`
+when nothing has read it yet: that is a top-level `final`, bound to whichever instance existed at the first read, which
+in a shared isolate is another file's.
+
+### Shared Test Isolate
+
+`tool/test.dart` imports many test files into one entrypoint, so process-wide state outlives the file that set it, and
+every file's `main()` runs before any test of the entrypoint does. Keep `main()` to declarations and
+`TestWidgetsFlutterBinding.ensureInitialized()`: a mock installed there is replaced by the next file's before a test
+sees it. Set up what the tests need in `setUp` or `setUpAll` instead, from the helpers that rebind the singletons:
+
+- `appPath` resolves its directories once per process. Point them at a test's directory with `await useAppPaths(dir)`
+  from `test/helpers/app_paths.dart`, not with a `PathProviderPlatform` fake, which only works while nothing has asked
+  `appPath` yet.
+- `preferences` opens its store once per process. Use `await mockPreferences(values)` from
+  `test/helpers/preferences.dart` rather than `SharedPreferences.setMockInitialValues` alone, which leaves `preferences`
+  on the store it already opened.
+
+Both cache the resolved value, not the future that produced it. A future completed in one test's fake-async zone runs
+its listeners in that zone, so a later test that awaits it never resumes. Await the helpers outside `testWidgets`
+bodies for the same reason.
+
+A test that only passes in a fresh isolate is leaning on a global it did not set up: `database_test.dart` once caught
+its write failures only because `currentAppLocalizations` threw before anything had loaded them. The script reruns such
+a file alone so it cannot fail the run, and lists it; fix it where it reads the global.
 
 Construct the Android lib handler with `CoreLib.scoped(fakeService)`. The `service` global is gated on `Platform.isAndroid`
 and is therefore null on every test host, so a `CoreLib()` built from it silently takes the null-service fallback on every
@@ -378,9 +477,7 @@ answers `isMaximized`/`isAlwaysOnTop` with a bool.
 Auto-dispose providers need a container-level hold before a test reads them back. `proxyGroupProvider`, `ruleProvider`,
 `itemsProvider` and friends mix in `AutoDisposeNotifierMixin`, so a `container.read` that no widget is currently watching
 rebuilds the provider from its override and silently discards whatever the code under test wrote. Add
-`container.listen(theProvider, (_, _) {})` in the harness, as `overwrite_stage_flow_test.dart` does. The staging flow also
-re-arms its debounce when it clears the stage, so drain it (`pump` past the duration, then unmount) or the binding fails
-the test on a pending timer.
+`container.listen(theProvider, (_, _) {})` in the harness, as `test/providers/action_test.dart` does for `scriptsProvider`.
 
 A field that constructs its own `ValueNotifier`, `TextEditingController`, `ScrollController`, `FocusNode`, `TabController`,
 `PageController`, `AnimationController` or `StreamController` must be released in the same file.
@@ -411,6 +508,17 @@ A public top-level declaration that nothing outside its own file references is d
 `final appPath = AppPath()` singletons next to them — appear nowhere else, counting generated code as a consumer (a
 riverpod notifier is reached through its generated provider) and barrels as neither. Files publishing only extensions or
 typedefs are skipped: those are reached through the types they attach to, never by name.
+
+`CommonScaffold` adds the height of its docked search to `BottomInsetScope` around its body, so a page that reads
+`BottomInsetScope.of(context)` with the context it builds the scaffold from gets the inset without it, and the end of
+its content stays under the search field. Read it below the scaffold,
+inside `body: Builder(builder: (context) => ...)`. `test/lint/scaffold_bottom_inset_test.dart` enforces this by
+scanning `lib/`.
+
+Every reorderable list builds its drag proxy with `commonProxyDecorator`, which tells `DecorationListItem` it is lifted:
+the row drops its separator and rounds from its corners in the run to a card of its own as it lifts, and back as it
+drops. A list without it lifts a middle row with square edges. `test/lint/reorder_proxy_decorator_test.dart` enforces
+this by scanning `lib/`.
 
 A `State.dispose()` override must not await before `super.dispose()`. `StatefulElement.unmount` calls `dispose()` and then
 immediately asserts that `super.dispose()` already ran, so an `await` defers the call past the assert and every teardown
@@ -446,7 +554,7 @@ failure, disposal, and any timer boundary that changes visible state.
 ## Commit Messages
 
 Subjects follow Conventional Commits and are enforced by the `commit-msg` hook in `.pre-commit-config.yaml`, which runs
-`tool/check_commit_msg.sh`:
+`tool/hooks/commit_msg.sh`:
 
 ```text
 <type>[(scope)][!]: <description>
@@ -503,6 +611,25 @@ Changelog: Per-profile override scripts
 carries a `Changelog:` trailer. Commits missing a trailer reuse their subject; for `feat`, `fix` and `perf` the hook
 says so without blocking.
 
+## Migrations
+
+An upgrade starts from the last release, not from the previous development build. Before writing a legacy reader, a
+data move, or a test for one, check that the state it reads shipped: `git tag --contains <commit>` on the commit that
+introduced it, or `git show <tag>:<path>` for the file as the release had it. A state that only ever existed between
+two releases gets no migration; a development install holding it may lose that setting or fall back to its default.
+
+A release that resets or rewrites settings, instead of reading their old shape, adds a step to `_upgrades` in
+`lib/common/migration.dart` under the next `upgradeVersion`. A step takes and returns the `Config`, runs once on an
+install that already had settings, and never on a new one. Leave `currentVersion` for changes to the stored format:
+backups carry it, and an older app refuses a backup stamped newer than its own, so bumping it for a reset would strand
+backups between devices on different releases.
+
+The database takes one migration step per release. The newest step in `lib/database/database.dart` has not shipped
+while `schemaVersion` at the last release tag is below its number; a schema change then goes into that step, raising
+`schemaVersion` and the step's condition together so a development install runs the step again, instead of adding a
+step of its own. Every operation in it checks the shape it finds, a missing table or column or a column under its old
+name, so it can run again on a database that went through part of it. Its tests start from the released shape.
+
 ## Generated Code
 
 Do not manually edit generated files under:
@@ -511,6 +638,7 @@ Do not manually edit generated files under:
 - `lib/models/generated/`
 - `lib/providers/generated/`
 - `lib/database/generated/`
+- `lib/ui/generated/`
 - `lib/l10n/intl/`
 
 After schema, model, or provider changes, run build generation and include focused tests when behavior changes.
@@ -524,13 +652,12 @@ l10n paths for that reason. It is harmless because the file only needs `Locale`,
 human writes takes Material from `material_ui`; `cupertino_ui` is banned outright and
 survives only as a transitive dependency of `material_ui`.
 
-Strings live in `arb/intl_{en,zh_CN,ja,ru}.arb` — flat JSON, no `@` metadata. Add a key to all four, then regenerate with
+Strings live in `arb/intl_{en,zh_CN,ja,ru,fr,es,ko}.arb` — flat JSON, no `@` metadata. Add a key to all seven, then regenerate with
 `dart run intl_utils:generate`, which rewrites `lib/l10n/`. A key present in only some locales silently falls back to
 English at runtime, so add the translation rather than leaving it out.
 
-Some labels are not reached through the generated `AppLocalizations` getters at all. `Intl.message(<runtime string>)`
-builds the key from an enum name or a stored string — `action_${HotAction.name}`, `${DynamicSchemeVariant.name}Scheme`,
-`NavigationItem.description`. The analyzer sees nothing, and a failed lookup returns the key itself, so a stale key ships
-as `routeMode_config` in the UI rather than throwing. `test/lint/dynamic_message_key_test.dart` expands those families
-from the real enums and fails when a derived key is missing from any locale; every `Intl.message` site in `lib` must be
-registered there, so a new dynamic key cannot be added without also declaring what builds it.
+Labels for enum values go through the exhaustive switches in `lib/common/l10n_labels.dart`, never
+`Intl.message(<runtime string>)`. A key built from an enum name or a stored string is invisible to the analyzer, and a
+failed lookup returns the key itself, so a stale key ships as `routeMode_config` in the UI rather than throwing.
+`test/lint/dynamic_message_key_test.dart` fails on any `Intl.message(` in `lib` outside the generated code, and checks
+that every locale carries the same keys and has a display name.

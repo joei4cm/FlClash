@@ -1,11 +1,8 @@
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/features.dart';
-import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/models/clash_config.dart';
-import 'package:fl_clash/models/common.dart';
-import 'package:fl_clash/models/state.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,8 +32,9 @@ class _AddedRulesViewState extends ConsumerState<AddedRulesView> {
   }
 
   Future<void> _handleAddOrUpdate([Rule? rule]) async {
-    final res = await dialogs.showCommonDialog<Rule>(
-      child: AddOrEditRuleDialog(rule: rule),
+    final res = await showFormSheet<Rule>(
+      context: context,
+      builder: (_) => RuleForm(rule: rule),
     );
     if (res == null || !mounted) {
       return;
@@ -44,10 +42,9 @@ class _AddedRulesViewState extends ConsumerState<AddedRulesView> {
     ref.read(globalRulesProvider.notifier).put(res);
   }
 
-  void _handleQuickAdd() {
+  void _handleQuickActions() {
     showSheet<void>(
       context: context,
-      props: const SheetProps(isScrollControlled: true),
       builder: (_) =>
           RulePresetSheet(onAdd: ref.read(globalRulesProvider.notifier).putAll),
     );
@@ -77,6 +74,8 @@ class _AddedRulesViewState extends ConsumerState<AddedRulesView> {
       message: TextSpan(
         text: appLocalizations.deleteMultipTip(appLocalizations.rule),
       ),
+      destructive: true,
+      confirmText: appLocalizations.delete,
     );
     if (res != true || !mounted) {
       return;
@@ -112,33 +111,29 @@ class _AddedRulesViewState extends ConsumerState<AddedRulesView> {
       ),
     ];
     return CommonPopScope(
-      onPop: (_) {
-        if (selectedRules.isNotEmpty) {
-          ref.read(itemsProvider(_key).notifier).value = {};
-          return false;
-        }
-        Navigator.of(context).pop();
-        return false;
-      },
-
+      onPop: isSelecting
+          ? (_) {
+              ref.read(itemsProvider(_key).notifier).value = {};
+              return false;
+            }
+          : null,
       child: CommonScaffold(
         title: appLocalizations.addedRules,
         searchState: AppBarSearchState(onSearch: _handleSearch),
         actions: [
           if (!isSelecting)
-            FilledButton.tonal(
-              onPressed: () {
-                _handleAddOrUpdate();
-              },
-              child: Text(appLocalizations.add),
+            IconButton(
+              tooltip: appLocalizations.add,
+              onPressed: _handleAddOrUpdate,
+              icon: const GlyphIcon(AppGlyphs.addCircle),
             ),
         ],
         iconActions: [
           if (!isSelecting)
             IconButtonData(
-              glyph: AppGlyphs.bolt,
-              onPressed: _handleQuickAdd,
-              tooltip: appLocalizations.quickAdd,
+              glyph: AppGlyphs.rulePresets,
+              onPressed: _handleQuickActions,
+              tooltip: appLocalizations.quickActions,
             ),
         ],
         selectionActions: isSelecting ? selectionActions : const [],
@@ -150,33 +145,45 @@ class _AddedRulesViewState extends ConsumerState<AddedRulesView> {
             label: appLocalizations.nullTip(appLocalizations.rule),
             illustration: NullStatusIllustration.rules,
           ),
-          child: isSearching
-              ? ListView.builder(
-                  padding: _listPadding,
-                  itemBuilder: (_, index) =>
-                      _buildRuleItem(rules, index, selectedRules),
-                  itemExtent: ruleItemHeight,
-                  itemCount: rules.length,
-                )
-              : ReorderableList(
-                  padding: _listPadding,
-                  itemBuilder: (_, index) =>
-                      ReorderableDelayedDragStartListener(
-                        key: ObjectKey(rules[index]),
-                        index: index,
-                        child: _buildRuleItem(rules, index, selectedRules),
-                      ),
-                  itemExtent: ruleItemHeight,
-                  itemCount: rules.length,
-                  onReorderItem: ref.read(globalRulesProvider.notifier).order,
-                ),
+          child: Builder(
+            builder: (context) => isSearching
+                ? ListView.builder(
+                    padding: _listPadding(context),
+                    itemBuilder: (_, index) =>
+                        _buildRuleItem(rules, index, selectedRules),
+                    itemExtent: ruleItemHeight,
+                    itemCount: rules.length,
+                  )
+                : ReorderableList(
+                    padding: _listPadding(context),
+                    itemBuilder: (_, index) =>
+                        ReorderableDelayedDragStartListener(
+                          key: ObjectKey(rules[index]),
+                          index: index,
+                          child: _buildRuleItem(rules, index, selectedRules),
+                        ),
+                    proxyDecorator: (child, index, animation) =>
+                        commonProxyDecorator(
+                          _buildRuleItem(rules, index, selectedRules),
+                          index,
+                          animation,
+                        ),
+                    itemExtent: ruleItemHeight,
+                    itemCount: rules.length,
+                    onReorderItem: ref.read(globalRulesProvider.notifier).order,
+                  ),
+          ),
         ),
       ),
     );
   }
 
-  EdgeInsets get _listPadding =>
-      const EdgeInsets.all(16).copyWith(top: context.contentTopPadding);
+  EdgeInsets _listPadding(BuildContext context) => EdgeInsets.fromLTRB(
+    16,
+    context.contentTopPadding,
+    16,
+    16 + BottomInsetScope.of(context),
+  );
 
   Widget _buildRuleItem(List<Rule> rules, int index, Set<dynamic> selected) {
     final rule = rules[index];

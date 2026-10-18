@@ -9,12 +9,49 @@ part of '../core.dart';
 _SetupParams _$SetupParamsFromJson(Map<String, dynamic> json) => _SetupParams(
   selectedMap: Map<String, String>.from(json['selected-map'] as Map),
   testUrl: json['test-url'] as String,
+  skipCertVerify: json['skip-cert-verify'] as bool? ?? false,
+  base: json['base'] == null
+      ? null
+      : SetupBase.fromJson(json['base'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$SetupParamsToJson(_SetupParams instance) =>
     <String, dynamic>{
       'selected-map': instance.selectedMap,
       'test-url': instance.testUrl,
+      'skip-cert-verify': instance.skipCertVerify,
+      'base': ?instance.base,
+    };
+
+_SetupBase _$SetupBaseFromJson(Map<String, dynamic> json) => _SetupBase(
+  path: json['path'] as String,
+  overlay: json['overlay'] as String,
+);
+
+Map<String, dynamic> _$SetupBaseToJson(_SetupBase instance) =>
+    <String, dynamic>{'path': instance.path, 'overlay': instance.overlay};
+
+_ProfileBase _$ProfileBaseFromJson(Map<String, dynamic> json) => _ProfileBase(
+  config: json['config'] as Map<String, dynamic>,
+  digest: json['digest'] as String,
+  matchRules:
+      (json['match-rules'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      const [],
+  proxies: (json['proxies'] as num?)?.toInt() ?? 0,
+  proxyGroups: (json['proxy-groups'] as num?)?.toInt() ?? 0,
+  rules: (json['rules'] as num?)?.toInt() ?? 0,
+);
+
+Map<String, dynamic> _$ProfileBaseToJson(_ProfileBase instance) =>
+    <String, dynamic>{
+      'config': instance.config,
+      'digest': instance.digest,
+      'match-rules': instance.matchRules,
+      'proxies': instance.proxies,
+      'proxy-groups': instance.proxyGroups,
+      'rules': instance.rules,
     };
 
 _UpdateParams _$UpdateParamsFromJson(Map<String, dynamic> json) =>
@@ -34,6 +71,7 @@ _UpdateParams _$UpdateParamsFromJson(Map<String, dynamic> json) =>
         _$ExternalControllerStatusEnumMap,
         json['external-controller'],
       ),
+      secret: json['secret'] as String? ?? '',
       unifiedDelay: json['unified-delay'] as bool,
       authentication:
           (json['authentication'] as List<dynamic>?)
@@ -47,11 +85,12 @@ _UpdateParams _$UpdateParamsFromJson(Map<String, dynamic> json) =>
             (k, e) => MapEntry(k, e as String),
           ) ??
           const {},
+      skipCertVerify: json['skip-cert-verify'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$UpdateParamsToJson(_UpdateParams instance) =>
     <String, dynamic>{
-      'tun': instance.tun,
+      'tun': _tunCoreJson(instance.tun),
       'mixed-port': instance.mixedPort,
       'allow-lan': instance.allowLan,
       'find-process-mode': _$FindProcessModeEnumMap[instance.findProcessMode]!,
@@ -61,11 +100,13 @@ Map<String, dynamic> _$UpdateParamsToJson(_UpdateParams instance) =>
       'tcp-concurrent': instance.tcpConcurrent,
       'external-controller':
           _$ExternalControllerStatusEnumMap[instance.externalController]!,
+      'secret': instance.secret,
       'unified-delay': instance.unifiedDelay,
       'authentication': instance.authentication,
       'geo-auto-update': instance.geoAutoUpdate,
       'geo-update-interval': instance.geoUpdateInterval,
       'geox-url': instance.geoXUrl,
+      'skip-cert-verify': instance.skipCertVerify,
     };
 
 const _$FindProcessModeEnumMap = {
@@ -111,6 +152,8 @@ _VpnOptions _$VpnOptionsFromJson(Map<String, dynamic> json) => _VpnOptions(
           ?.map((e) => e as String)
           .toList() ??
       const [],
+  mtu: (json['mtu'] as num?)?.toInt() ?? 0,
+  congestionController: json['congestionController'] as String? ?? '',
 );
 
 Map<String, dynamic> _$VpnOptionsToJson(_VpnOptions instance) =>
@@ -125,6 +168,8 @@ Map<String, dynamic> _$VpnOptionsToJson(_VpnOptions instance) =>
       'bypassDomain': instance.bypassDomain,
       'stack': instance.stack,
       'routeAddress': instance.routeAddress,
+      'mtu': instance.mtu,
+      'congestionController': instance.congestionController,
     };
 
 _InitParams _$InitParamsFromJson(Map<String, dynamic> json) => _InitParams(
@@ -177,19 +222,6 @@ Map<String, dynamic> _$RouteSnapshotToJson(_RouteSnapshot instance) =>
       'picks': instance.picks,
     };
 
-_UpdateGeoDataParams _$UpdateGeoDataParamsFromJson(Map<String, dynamic> json) =>
-    _UpdateGeoDataParams(
-      geoType: json['geo-type'] as String,
-      geoName: json['geo-name'] as String,
-    );
-
-Map<String, dynamic> _$UpdateGeoDataParamsToJson(
-  _UpdateGeoDataParams instance,
-) => <String, dynamic>{
-  'geo-type': instance.geoType,
-  'geo-name': instance.geoName,
-};
-
 _CoreEvent _$CoreEventFromJson(Map<String, dynamic> json) => _CoreEvent(
   type: $enumDecode(_$CoreEventTypeEnumMap, json['type']),
   data: json['data'],
@@ -205,28 +237,13 @@ const _$CoreEventTypeEnumMap = {
   CoreEventType.log: 'log',
   CoreEventType.delay: 'delay',
   CoreEventType.request: 'request',
+  CoreEventType.requestTraffic: 'requestTraffic',
   CoreEventType.dns: 'dns',
   CoreEventType.loaded: 'loaded',
   CoreEventType.crash: 'crash',
   CoreEventType.geoUpdate: 'geoUpdate',
   CoreEventType.routeChanged: 'routeChanged',
-};
-
-_InvokeMessage _$InvokeMessageFromJson(Map<String, dynamic> json) =>
-    _InvokeMessage(
-      type: $enumDecode(_$InvokeMessageTypeEnumMap, json['type']),
-      data: json['data'],
-    );
-
-Map<String, dynamic> _$InvokeMessageToJson(_InvokeMessage instance) =>
-    <String, dynamic>{
-      'type': _$InvokeMessageTypeEnumMap[instance.type]!,
-      'data': instance.data,
-    };
-
-const _$InvokeMessageTypeEnumMap = {
-  InvokeMessageType.protect: 'protect',
-  InvokeMessageType.process: 'process',
+  CoreEventType.dialerLoop: 'dialerLoop',
 };
 
 _Delay _$DelayFromJson(Map<String, dynamic> json) => _Delay(
@@ -392,32 +409,6 @@ Map<String, dynamic> _$CoreMemoryStatsToJson(_CoreMemoryStats instance) =>
       'stackInuse': instance.stackInuse,
       'runtimeOther': instance.runtimeOther,
     };
-
-_Now _$NowFromJson(Map<String, dynamic> json) =>
-    _Now(name: json['name'] as String, value: json['value'] as String);
-
-Map<String, dynamic> _$NowToJson(_Now instance) => <String, dynamic>{
-  'name': instance.name,
-  'value': instance.value,
-};
-
-_ProviderSubscriptionInfo _$ProviderSubscriptionInfoFromJson(
-  Map<String, dynamic> json,
-) => _ProviderSubscriptionInfo(
-  upload: (json['UPLOAD'] as num?)?.toInt() ?? 0,
-  download: (json['DOWNLOAD'] as num?)?.toInt() ?? 0,
-  total: (json['TOTAL'] as num?)?.toInt() ?? 0,
-  expire: (json['EXPIRE'] as num?)?.toInt() ?? 0,
-);
-
-Map<String, dynamic> _$ProviderSubscriptionInfoToJson(
-  _ProviderSubscriptionInfo instance,
-) => <String, dynamic>{
-  'UPLOAD': instance.upload,
-  'DOWNLOAD': instance.download,
-  'TOTAL': instance.total,
-  'EXPIRE': instance.expire,
-};
 
 _ExternalProvider _$ExternalProviderFromJson(Map<String, dynamic> json) =>
     _ExternalProvider(

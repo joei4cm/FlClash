@@ -6,6 +6,15 @@ typedef DynamicColorSeeds = ({
   Color accentColor,
 });
 
+extension DynamicColorSeedsExt on DynamicColorSeeds {
+  Color seedOf(Brightness brightness) =>
+      switch (brightness) {
+        Brightness.light => lightSeed,
+        Brightness.dark => darkSeed,
+      } ??
+      accentColor;
+}
+
 @Riverpod(keepAlive: true)
 class DynamicColor extends _$DynamicColor {
   @override
@@ -38,7 +47,7 @@ ColorScheme genColorScheme(
     themeSettingProvider.select(
       (state) => (
         primaryColor: state.primaryColor,
-        schemeVariant: state.schemeVariant,
+        colorStyle: state.colorStyle,
         pureBlack: state.pureBlack,
       ),
     ),
@@ -47,19 +56,41 @@ ColorScheme genColorScheme(
   final Color seedColor;
   if (color == null &&
       (ignoreConfig == true || themeSetting.primaryColor == null)) {
-    final seed = switch (brightness) {
-      Brightness.light => dynamicColor.lightSeed,
-      Brightness.dark => dynamicColor.darkSeed,
-    };
-    seedColor = seed ?? dynamicColor.accentColor;
+    seedColor = dynamicColor.seedOf(brightness);
   } else {
     seedColor = color ?? Color(themeSetting.primaryColor!);
   }
-  return ColorScheme.fromSeed(
-    seedColor: seedColor,
-    brightness: brightness,
-    dynamicSchemeVariant: themeSetting.schemeVariant,
-  ).toPureBlack(pureBlack ?? themeSetting.pureBlack);
+  return _cachedColorScheme(
+    seedColor,
+    brightness,
+    themeSetting.colorStyle,
+    pureBlack ?? themeSetting.pureBlack,
+  );
+}
+
+const _maxCachedColorSchemes = 64;
+
+final _colorSchemes = <(Color, Brightness, ColorStyle, bool), ColorScheme>{};
+
+ColorScheme _cachedColorScheme(
+  Color seedColor,
+  Brightness brightness,
+  ColorStyle style,
+  bool pureBlack,
+) {
+  final key = (seedColor, brightness, style, pureBlack);
+  final colorScheme =
+      _colorSchemes.remove(key) ??
+      seededColorScheme(
+        seedColor: seedColor,
+        brightness: brightness,
+        style: style,
+      ).toPureBlack(pureBlack);
+  _colorSchemes[key] = colorScheme;
+  if (_colorSchemes.length > _maxCachedColorSchemes) {
+    _colorSchemes.remove(_colorSchemes.keys.first);
+  }
+  return colorScheme;
 }
 
 typedef WindowBlurRequest = ({bool enabled, Brightness brightness, Color tint});

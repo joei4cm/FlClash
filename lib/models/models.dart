@@ -7,5 +7,6 @@ export 'core.dart';
 export 'geo_identity.dart';
 export 'ip_quality.dart';
 export 'profile.dart';
+export 'references.dart';
 export 'state.dart';
 export 'tailscale.dart';

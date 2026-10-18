@@ -1,9 +1,9 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/views/about.dart';
 import 'package:fl_clash/views/access.dart';
 import 'package:fl_clash/views/backup_and_restore.dart';
@@ -13,10 +13,11 @@ import 'package:fl_clash/views/hotkey.dart';
 import 'package:fl_clash/views/strategy_lanes.dart';
 import 'package:fl_clash/views/tailscale.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/advanced.dart';
+import 'config/custom_resources.dart';
 import 'developer.dart';
 import 'disclaimer.dart';
 import 'theme.dart';
@@ -38,20 +39,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
     );
   }
 
-  Widget _buildNavigationMenu(List<NavigationItem> navigationItems) {
-    return Column(
-      children: [
-        for (final navigationItem in navigationItems) ...[
-          _buildNavigationMenuItem(navigationItem),
-          navigationItems.last != navigationItem
-              ? const Divider(height: 0)
-              : Container(),
-        ],
-      ],
-    );
-  }
-
-  List<Widget> _getOtherList(bool enableDeveloperMode) {
+  Widget _getOtherList(bool enableDeveloperMode) {
     return generateSection(
       title: context.appLocalizations.other,
       items: [
@@ -62,20 +50,17 @@ class _ToolViewState extends ConsumerState<ToolsView> {
     );
   }
 
-  List<Widget> _getFeatureList() {
+  Widget _getFeatureList() {
     return generateSection(
       title: context.appLocalizations.features,
-      items: [
-        const _TailscaleItem(),
-        const _GeoIdentityItem(),
-        const _StrategyLanesItem(),
-      ],
+      items: const [_TailscaleItem(), _GeoIdentityItem(), _StrategyLanesItem()],
     );
   }
 
-  List<Widget> _getSettingList() {
+  Widget _getSettingList() {
+    final appLocalizations = context.appLocalizations;
     return generateSection(
-      title: context.appLocalizations.settings,
+      title: appLocalizations.settings,
       items: [
         const _LocaleItem(),
         const _ThemeItem(),
@@ -83,17 +68,21 @@ class _ToolViewState extends ConsumerState<ToolsView> {
         if (system.isDesktop) const _HotkeyItem(),
         if (system.isAndroid) const _AccessItem(),
         const _AdvancedConfigItem(),
+        const _CustomResourcesItem(),
         const _GeneralItem(),
       ],
+      footer: [
+        if (system.isAndroid) appLocalizations.accessControlDesc,
+        appLocalizations.advancedConfigDesc,
+        appLocalizations.customProfileResourcesDesc,
+      ].join('\n'),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final appSetting = ref.watch(
-      appSettingProvider.select(
-        (state) => (locale: state.locale, developerMode: state.developerMode),
-      ),
+    final developerMode = ref.watch(
+      appSettingProvider.select((state) => state.developerMode),
     );
     final items = [
       Consumer(
@@ -102,27 +91,29 @@ class _ToolViewState extends ConsumerState<ToolsView> {
           if (state.navigationItems.isEmpty) {
             return Container();
           }
-          return Column(
-            children: [
-              ListHeader(title: context.appLocalizations.more),
-              _buildNavigationMenu(state.navigationItems),
-            ],
+          return generateSection(
+            title: context.appLocalizations.more,
+            items: state.navigationItems.map(_buildNavigationMenuItem),
           );
         },
       ),
-      ..._getFeatureList(),
-      ..._getSettingList(),
-      ..._getOtherList(appSetting.developerMode),
+      _getFeatureList(),
+      _getSettingList(),
+      _getOtherList(developerMode),
     ];
     return CommonScaffold(
       title: context.appLocalizations.tools,
-      body: ListView.builder(
-        key: toolsStoreKey,
-        itemCount: items.length,
-        itemBuilder: (_, index) => items[index],
-        padding: EdgeInsets.only(
-          top: context.appBarInset,
-          bottom: 20 + BottomInsetScope.of(context),
+      body: Builder(
+        builder: (context) => ListView.builder(
+          key: toolsStoreKey,
+          itemCount: items.length,
+          itemBuilder: (_, index) => items[index],
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: context.appBarInset,
+            bottom: 20 + BottomInsetScope.of(context),
+          ),
         ),
       ),
     );
@@ -146,8 +137,6 @@ class _LocaleItem extends ConsumerWidget {
     return ListItem<Locale?>.options(
       leading: const GlyphIcon(AppGlyphs.language),
       title: Text(context.appLocalizations.language),
-      subtitle: Text(_getLocaleString(context, currentLocale)),
-      dialogTitle: context.appLocalizations.language,
       options: [null, ...AppLocalizations.delegate.supportedLocales],
       onChanged: (Locale? locale) {
         ref
@@ -168,7 +157,6 @@ class _ThemeItem extends StatelessWidget {
     return ListItem.open(
       leading: const GlyphIcon(AppGlyphs.paintbrush),
       title: Text(context.appLocalizations.theme),
-      subtitle: Text(context.appLocalizations.themeDesc),
       widget: const ThemeView(),
     );
   }
@@ -182,7 +170,6 @@ class _BackupItem extends StatelessWidget {
     return ListItem.open(
       leading: const GlyphIcon(AppGlyphs.cloudSync),
       title: Text(context.appLocalizations.backupAndRestore),
-      subtitle: Text(context.appLocalizations.backupAndRestoreDesc),
       widget: const BackupAndRestore(),
     );
   }
@@ -209,7 +196,6 @@ class _AccessItem extends StatelessWidget {
     return ListItem.open(
       leading: const GlyphIcon(AppGlyphs.appsList),
       title: Text(context.appLocalizations.accessControl),
-      subtitle: Text(context.appLocalizations.accessControlDesc),
       widget: const AccessView(),
     );
   }
@@ -236,8 +222,46 @@ class _AdvancedConfigItem extends StatelessWidget {
     return ListItem.open(
       leading: const GlyphIcon(AppGlyphs.wrench),
       title: Text(context.appLocalizations.advancedConfig),
-      subtitle: Text(context.appLocalizations.advancedConfigDesc),
       widget: const AdvancedConfigView(),
+    );
+  }
+}
+
+class _CustomResourcesItem extends StatelessWidget {
+  const _CustomResourcesItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListItem.open(
+      leading: const GlyphIcon(AppGlyphs.customize),
+      title: Text(context.appLocalizations.customProfileResources),
+      widget: const CustomResourcesView(),
+    );
+  }
+}
+
+class _DisclaimerItem extends StatelessWidget {
+  const _DisclaimerItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListItem.open(
+      leading: const GlyphIcon(AppGlyphs.gavel),
+      title: Text(context.appLocalizations.disclaimer),
+      widget: const DisclaimerView(),
+    );
+  }
+}
+
+class _InfoItem extends StatelessWidget {
+  const _InfoItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListItem.open(
+      leading: const GlyphIcon(AppGlyphs.info),
+      title: Text(context.appLocalizations.about),
+      widget: const AboutView(),
     );
   }
 }
@@ -280,32 +304,6 @@ class _StrategyLanesItem extends StatelessWidget {
       title: Text(context.appLocalizations.strategyLanes),
       subtitle: Text(context.appLocalizations.strategyLanesDesc),
       widget: const StrategyLanesView(),
-    );
-  }
-}
-
-class _DisclaimerItem extends StatelessWidget {
-  const _DisclaimerItem();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListItem.open(
-      leading: const GlyphIcon(AppGlyphs.gavel),
-      title: Text(context.appLocalizations.disclaimer),
-      widget: const DisclaimerView(),
-    );
-  }
-}
-
-class _InfoItem extends StatelessWidget {
-  const _InfoItem();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListItem.open(
-      leading: const GlyphIcon(AppGlyphs.info),
-      title: Text(context.appLocalizations.about),
-      widget: const AboutView(),
     );
   }
 }

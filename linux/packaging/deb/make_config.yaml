@@ -10,8 +10,6 @@ installed_size: 6604
 essential: false
 icon: ./assets/images/icon.png
 
-startup_wm_class: com.follow.clash
-
 dependencies:
   - libayatana-appindicator3-1
   - libsecret-1-0
@@ -41,3 +39,5 @@ categories:
   - Network
 
 startup_notify: true
+
+startup_wm_class: com.follow.clash

@@ -139,10 +139,9 @@ void main() {
   });
 
   group('TrafficExt', () {
-    test('formats speed, tray title, and total speed', () {
+    test('formats tray title and total speed', () {
       const traffic = Traffic(up: 1024, down: 2048);
 
-      expect(traffic.speedText, '↑ 1KB/s   ↓ 2KB/s');
       expect(traffic.trayTitle, '1 KB/s\n2 KB/s');
       expect(traffic.speed, 3072);
     });
@@ -278,6 +277,58 @@ void main() {
       expect(success.isError, isFalse);
       expect(error.isSuccess, isFalse);
       expect(error.isError, isTrue);
+    });
+  });
+
+  group('parseIconSet', () {
+    test('reads the name and icons of a gallery subscription', () {
+      final parsed = parseIconSet(
+        '{"name": " Qure ", "description": "x", "icons": ['
+        '{"name": "Hong_Kong.png", "url": "https://example.com/hk.png"},'
+        '{"url": "https://example.com/Japan.svg?raw=true"}'
+        ']}',
+      );
+
+      expect(parsed.name, 'Qure');
+      expect(parsed.icons, const [
+        IconSetIcon(name: 'Hong_Kong.png', url: 'https://example.com/hk.png'),
+        IconSetIcon(
+          name: 'Japan.svg',
+          url: 'https://example.com/Japan.svg?raw=true',
+        ),
+      ]);
+      expect(parsed.icons.first.label, 'Hong Kong');
+    });
+
+    test('drops entries without an http url and repeated urls', () {
+      final parsed = parseIconSet(
+        '{"icons": ['
+        '{"name": "a", "url": "https://example.com/a.png"},'
+        '{"name": "again", "url": "https://example.com/a.png"},'
+        '{"name": "ftp", "url": "ftp://example.com/b.png"},'
+        '{"name": "relative", "url": "c.png"},'
+        '{"name": "missing"},'
+        '"https://example.com/d.png"'
+        ']}',
+      );
+
+      expect(parsed.name, isEmpty);
+      expect(parsed.icons.map((icon) => icon.name), ['a']);
+    });
+
+    test('rejects documents that are not icon sets', () {
+      for (final content in [
+        'not json',
+        '[]',
+        '{"name": "x"}',
+        '{"icons": [{"name": "x", "url": "file:///x.png"}]}',
+      ]) {
+        expect(
+          () => parseIconSet(content),
+          throwsFormatException,
+          reason: content,
+        );
+      }
     });
   });
 }

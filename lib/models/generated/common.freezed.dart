@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NavigationItem {
 
- Glyph get glyph; PageLabel get label; WidgetBuilder get builder; bool get keep; String? get path; List<NavigationItemMode> get modes;
+ Glyph get glyph; PageLabel get label; WidgetBuilder get builder; String? get path; List<NavigationItemMode> get modes;
 /// Create a copy of NavigationItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $NavigationItemCopyWith<NavigationItem> get copyWith => _$NavigationItemCopyWith
 @override
 bool operator ==(Object other) {
   final _this = this as NavigationItem;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NavigationItem&&(identical(other.glyph, _this.glyph) || other.glyph == _this.glyph)&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.builder, _this.builder) || other.builder == _this.builder)&&(identical(other.keep, _this.keep) || other.keep == _this.keep)&&(identical(other.path, _this.path) || other.path == _this.path)&&const DeepCollectionEquality().equals(other.modes, _this.modes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NavigationItem&&(identical(other.glyph, _this.glyph) || other.glyph == _this.glyph)&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.builder, _this.builder) || other.builder == _this.builder)&&(identical(other.path, _this.path) || other.path == _this.path)&&const DeepCollectionEquality().equals(other.modes, _this.modes));
 }
 
 
 @override
 int get hashCode {
   final _this = this as NavigationItem;
-  return Object.hash(runtimeType,_this.glyph,_this.label,_this.builder,_this.keep,_this.path,const DeepCollectionEquality().hash(_this.modes));
+  return Object.hash(runtimeType,_this.glyph,_this.label,_this.builder,_this.path,const DeepCollectionEquality().hash(_this.modes));
 }
 
 @override
 String toString() {
   final _this = this as NavigationItem;
-  return 'NavigationItem(glyph: ${_this.glyph}, label: ${_this.label}, builder: ${_this.builder}, keep: ${_this.keep}, path: ${_this.path}, modes: ${_this.modes})';
+  return 'NavigationItem(glyph: ${_this.glyph}, label: ${_this.label}, builder: ${_this.builder}, path: ${_this.path}, modes: ${_this.modes})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $NavigationItemCopyWith<$Res>  {
   factory $NavigationItemCopyWith(NavigationItem value, $Res Function(NavigationItem) _then) = _$NavigationItemCopyWithImpl;
 @useResult
 $Res call({
- Glyph glyph, PageLabel label, WidgetBuilder builder, bool keep, String? path, List<NavigationItemMode> modes
+ Glyph glyph, PageLabel label, WidgetBuilder builder, String? path, List<NavigationItemMode> modes
 });
 
 
@@ -68,13 +68,12 @@ class _$NavigationItemCopyWithImpl<$Res>
 
 /// Create a copy of NavigationItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? glyph = null,Object? label = null,Object? builder = null,Object? keep = null,Object? path = freezed,Object? modes = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? glyph = null,Object? label = null,Object? builder = null,Object? path = freezed,Object? modes = null,}) {
   return _then(NavigationItem(
 glyph: null == glyph ? _self.glyph : glyph // ignore: cast_nullable_to_non_nullable
 as Glyph,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as PageLabel,builder: null == builder ? _self.builder : builder // ignore: cast_nullable_to_non_nullable
-as WidgetBuilder,keep: null == keep ? _self.keep : keep // ignore: cast_nullable_to_non_nullable
-as bool,path: freezed == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
+as WidgetBuilder,path: freezed == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
 as String?,modes: null == modes ? _self.modes : modes // ignore: cast_nullable_to_non_nullable
 as List<NavigationItemMode>,
   ));
@@ -161,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Glyph glyph,  PageLabel label,  WidgetBuilder builder,  bool keep,  String? path,  List<NavigationItemMode> modes)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Glyph glyph,  PageLabel label,  WidgetBuilder builder,  String? path,  List<NavigationItemMode> modes)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NavigationItem() when $default != null:
-return $default(_that.glyph,_that.label,_that.builder,_that.keep,_that.path,_that.modes);case _:
+return $default(_that.glyph,_that.label,_that.builder,_that.path,_that.modes);case _:
   return orElse();
 
 }
@@ -182,10 +181,10 @@ return $default(_that.glyph,_that.label,_that.builder,_that.keep,_that.path,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Glyph glyph,  PageLabel label,  WidgetBuilder builder,  bool keep,  String? path,  List<NavigationItemMode> modes)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Glyph glyph,  PageLabel label,  WidgetBuilder builder,  String? path,  List<NavigationItemMode> modes)  $default,) {final _that = this;
 switch (_that) {
 case _NavigationItem():
-return $default(_that.glyph,_that.label,_that.builder,_that.keep,_that.path,_that.modes);case _:
+return $default(_that.glyph,_that.label,_that.builder,_that.path,_that.modes);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +201,10 @@ return $default(_that.glyph,_that.label,_that.builder,_that.keep,_that.path,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Glyph glyph,  PageLabel label,  WidgetBuilder builder,  bool keep,  String? path,  List<NavigationItemMode> modes)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Glyph glyph,  PageLabel label,  WidgetBuilder builder,  String? path,  List<NavigationItemMode> modes)?  $default,) {final _that = this;
 switch (_that) {
 case _NavigationItem() when $default != null:
-return $default(_that.glyph,_that.label,_that.builder,_that.keep,_that.path,_that.modes);case _:
+return $default(_that.glyph,_that.label,_that.builder,_that.path,_that.modes);case _:
   return null;
 
 }
@@ -217,13 +216,12 @@ return $default(_that.glyph,_that.label,_that.builder,_that.keep,_that.path,_tha
 
 
 class _NavigationItem implements NavigationItem {
-  const _NavigationItem({required this.glyph, required this.label, required this.builder, this.keep = true, this.path,  List<NavigationItemMode> modes = const [NavigationItemMode.mobile, NavigationItemMode.desktop]}): _modes = modes;
+  const _NavigationItem({required this.glyph, required this.label, required this.builder, this.path,  List<NavigationItemMode> modes = const [NavigationItemMode.mobile, NavigationItemMode.desktop]}): _modes = modes;
   
 
 @override final  Glyph glyph;
 @override final  PageLabel label;
 @override final  WidgetBuilder builder;
-@override@JsonKey() final  bool keep;
 @override final  String? path;
  final  List<NavigationItemMode> _modes;
 @override@JsonKey() List<NavigationItemMode> get modes {
@@ -243,18 +241,18 @@ _$NavigationItemCopyWith<_NavigationItem> get copyWith => __$NavigationItemCopyW
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NavigationItem&&(identical(other.glyph, glyph) || other.glyph == glyph)&&(identical(other.label, label) || other.label == label)&&(identical(other.builder, builder) || other.builder == builder)&&(identical(other.keep, keep) || other.keep == keep)&&(identical(other.path, path) || other.path == path)&&const DeepCollectionEquality().equals(other.modes, _modes));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NavigationItem&&(identical(other.glyph, glyph) || other.glyph == glyph)&&(identical(other.label, label) || other.label == label)&&(identical(other.builder, builder) || other.builder == builder)&&(identical(other.path, path) || other.path == path)&&const DeepCollectionEquality().equals(other.modes, _modes));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,glyph,label,builder,keep,path,const DeepCollectionEquality().hash(_modes));
+    return Object.hash(runtimeType,glyph,label,builder,path,const DeepCollectionEquality().hash(_modes));
 }
 
 @override
 String toString() {
-    return 'NavigationItem(glyph: $glyph, label: $label, builder: $builder, keep: $keep, path: $path, modes: $modes)';
+    return 'NavigationItem(glyph: $glyph, label: $label, builder: $builder, path: $path, modes: $modes)';
 }
 
 
@@ -265,7 +263,7 @@ abstract mixin class _$NavigationItemCopyWith<$Res> implements $NavigationItemCo
   factory _$NavigationItemCopyWith(_NavigationItem value, $Res Function(_NavigationItem) _then) = __$NavigationItemCopyWithImpl;
 @override @useResult
 $Res call({
- Glyph glyph, PageLabel label, WidgetBuilder builder, bool keep, String? path, List<NavigationItemMode> modes
+ Glyph glyph, PageLabel label, WidgetBuilder builder, String? path, List<NavigationItemMode> modes
 });
 
 
@@ -282,13 +280,12 @@ class __$NavigationItemCopyWithImpl<$Res>
 
 /// Create a copy of NavigationItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? glyph = null,Object? label = null,Object? builder = null,Object? keep = null,Object? path = freezed,Object? modes = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? glyph = null,Object? label = null,Object? builder = null,Object? path = freezed,Object? modes = null,}) {
   return _then(_NavigationItem(
 glyph: null == glyph ? _self.glyph : glyph // ignore: cast_nullable_to_non_nullable
 as Glyph,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as PageLabel,builder: null == builder ? _self.builder : builder // ignore: cast_nullable_to_non_nullable
-as WidgetBuilder,keep: null == keep ? _self.keep : keep // ignore: cast_nullable_to_non_nullable
-as bool,path: freezed == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
+as WidgetBuilder,path: freezed == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
 as String?,modes: null == modes ? _self._modes : modes // ignore: cast_nullable_to_non_nullable
 as List<NavigationItemMode>,
   ));
@@ -3203,279 +3200,6 @@ as DateTime?,
 
 
 /// @nodoc
-mixin _$VersionInfo {
-
- String get clashName; String get version;
-/// Create a copy of VersionInfo
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$VersionInfoCopyWith<VersionInfo> get copyWith => _$VersionInfoCopyWithImpl<VersionInfo>(this as VersionInfo, _$identity);
-
-  /// Serializes this VersionInfo to a JSON map.
-  Map<String, dynamic> toJson();
-
-
-@override
-bool operator ==(Object other) {
-  final _this = this as VersionInfo;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is VersionInfo&&(identical(other.clashName, _this.clashName) || other.clashName == _this.clashName)&&(identical(other.version, _this.version) || other.version == _this.version));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode {
-  final _this = this as VersionInfo;
-  return Object.hash(runtimeType,_this.clashName,_this.version);
-}
-
-@override
-String toString() {
-  final _this = this as VersionInfo;
-  return 'VersionInfo(clashName: ${_this.clashName}, version: ${_this.version})';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $VersionInfoCopyWith<$Res>  {
-  factory $VersionInfoCopyWith(VersionInfo value, $Res Function(VersionInfo) _then) = _$VersionInfoCopyWithImpl;
-@useResult
-$Res call({
- String clashName, String version
-});
-
-
-
-
-}
-/// @nodoc
-class _$VersionInfoCopyWithImpl<$Res>
-    implements $VersionInfoCopyWith<$Res> {
-  _$VersionInfoCopyWithImpl(this._self, this._then);
-
-  final VersionInfo _self;
-  final $Res Function(VersionInfo) _then;
-
-/// Create a copy of VersionInfo
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? clashName = null,Object? version = null,}) {
-  return _then(VersionInfo(
-clashName: null == clashName ? _self.clashName : clashName // ignore: cast_nullable_to_non_nullable
-as String,version: null == version ? _self.version : version // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-}
-
-
-/// Adds pattern-matching-related methods to [VersionInfo].
-extension VersionInfoPatterns on VersionInfo {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _VersionInfo value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _VersionInfo() when $default != null:
-return $default(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _VersionInfo value)  $default,){
-final _that = this;
-switch (_that) {
-case _VersionInfo():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _VersionInfo value)?  $default,){
-final _that = this;
-switch (_that) {
-case _VersionInfo() when $default != null:
-return $default(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String clashName,  String version)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _VersionInfo() when $default != null:
-return $default(_that.clashName,_that.version);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String clashName,  String version)  $default,) {final _that = this;
-switch (_that) {
-case _VersionInfo():
-return $default(_that.clashName,_that.version);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String clashName,  String version)?  $default,) {final _that = this;
-switch (_that) {
-case _VersionInfo() when $default != null:
-return $default(_that.clashName,_that.version);case _:
-  return null;
-
-}
-}
-
-}
-
-/// @nodoc
-@JsonSerializable()
-
-class _VersionInfo implements VersionInfo {
-  const _VersionInfo({this.clashName = '', this.version = ''});
-  factory _VersionInfo.fromJson(Map<String, dynamic> json) => _$VersionInfoFromJson(json);
-
-@override@JsonKey() final  String clashName;
-@override@JsonKey() final  String version;
-
-/// Create a copy of VersionInfo
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$VersionInfoCopyWith<_VersionInfo> get copyWith => __$VersionInfoCopyWithImpl<_VersionInfo>(this, _$identity);
-
-@override
-Map<String, dynamic> toJson() {
-  return _$VersionInfoToJson(this, );
-}
-
-@override
-bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _VersionInfo&&(identical(other.clashName, clashName) || other.clashName == clashName)&&(identical(other.version, version) || other.version == version));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode {
-    return Object.hash(runtimeType,clashName,version);
-}
-
-@override
-String toString() {
-    return 'VersionInfo(clashName: $clashName, version: $version)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$VersionInfoCopyWith<$Res> implements $VersionInfoCopyWith<$Res> {
-  factory _$VersionInfoCopyWith(_VersionInfo value, $Res Function(_VersionInfo) _then) = __$VersionInfoCopyWithImpl;
-@override @useResult
-$Res call({
- String clashName, String version
-});
-
-
-
-
-}
-/// @nodoc
-class __$VersionInfoCopyWithImpl<$Res>
-    implements _$VersionInfoCopyWith<$Res> {
-  __$VersionInfoCopyWithImpl(this._self, this._then);
-
-  final _VersionInfo _self;
-  final $Res Function(_VersionInfo) _then;
-
-/// Create a copy of VersionInfo
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? clashName = null,Object? version = null,}) {
-  return _then(_VersionInfo(
-clashName: null == clashName ? _self.clashName : clashName // ignore: cast_nullable_to_non_nullable
-as String,version: null == version ? _self.version : version // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
-}
-
-
-/// @nodoc
 mixin _$Traffic {
 
  num get up; num get down;
@@ -4302,273 +4026,6 @@ as bool?,testUrl: freezed == testUrl ? _self.testUrl : testUrl // ignore: cast_n
 as String?,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,
-  ));
-}
-
-
-}
-
-/// @nodoc
-mixin _$ColorSchemes {
-
- ColorScheme? get lightColorScheme; ColorScheme? get darkColorScheme;
-/// Create a copy of ColorSchemes
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$ColorSchemesCopyWith<ColorSchemes> get copyWith => _$ColorSchemesCopyWithImpl<ColorSchemes>(this as ColorSchemes, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  final _this = this as ColorSchemes;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ColorSchemes&&(identical(other.lightColorScheme, _this.lightColorScheme) || other.lightColorScheme == _this.lightColorScheme)&&(identical(other.darkColorScheme, _this.darkColorScheme) || other.darkColorScheme == _this.darkColorScheme));
-}
-
-
-@override
-int get hashCode {
-  final _this = this as ColorSchemes;
-  return Object.hash(runtimeType,_this.lightColorScheme,_this.darkColorScheme);
-}
-
-@override
-String toString() {
-  final _this = this as ColorSchemes;
-  return 'ColorSchemes(lightColorScheme: ${_this.lightColorScheme}, darkColorScheme: ${_this.darkColorScheme})';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $ColorSchemesCopyWith<$Res>  {
-  factory $ColorSchemesCopyWith(ColorSchemes value, $Res Function(ColorSchemes) _then) = _$ColorSchemesCopyWithImpl;
-@useResult
-$Res call({
- ColorScheme? lightColorScheme, ColorScheme? darkColorScheme
-});
-
-
-
-
-}
-/// @nodoc
-class _$ColorSchemesCopyWithImpl<$Res>
-    implements $ColorSchemesCopyWith<$Res> {
-  _$ColorSchemesCopyWithImpl(this._self, this._then);
-
-  final ColorSchemes _self;
-  final $Res Function(ColorSchemes) _then;
-
-/// Create a copy of ColorSchemes
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? lightColorScheme = freezed,Object? darkColorScheme = freezed,}) {
-  return _then(ColorSchemes(
-lightColorScheme: freezed == lightColorScheme ? _self.lightColorScheme : lightColorScheme // ignore: cast_nullable_to_non_nullable
-as ColorScheme?,darkColorScheme: freezed == darkColorScheme ? _self.darkColorScheme : darkColorScheme // ignore: cast_nullable_to_non_nullable
-as ColorScheme?,
-  ));
-}
-
-}
-
-
-/// Adds pattern-matching-related methods to [ColorSchemes].
-extension ColorSchemesPatterns on ColorSchemes {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ColorSchemes value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _ColorSchemes() when $default != null:
-return $default(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ColorSchemes value)  $default,){
-final _that = this;
-switch (_that) {
-case _ColorSchemes():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ColorSchemes value)?  $default,){
-final _that = this;
-switch (_that) {
-case _ColorSchemes() when $default != null:
-return $default(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ColorScheme? lightColorScheme,  ColorScheme? darkColorScheme)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _ColorSchemes() when $default != null:
-return $default(_that.lightColorScheme,_that.darkColorScheme);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ColorScheme? lightColorScheme,  ColorScheme? darkColorScheme)  $default,) {final _that = this;
-switch (_that) {
-case _ColorSchemes():
-return $default(_that.lightColorScheme,_that.darkColorScheme);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ColorScheme? lightColorScheme,  ColorScheme? darkColorScheme)?  $default,) {final _that = this;
-switch (_that) {
-case _ColorSchemes() when $default != null:
-return $default(_that.lightColorScheme,_that.darkColorScheme);case _:
-  return null;
-
-}
-}
-
-}
-
-/// @nodoc
-
-
-class _ColorSchemes implements ColorSchemes {
-  const _ColorSchemes({this.lightColorScheme, this.darkColorScheme});
-  
-
-@override final  ColorScheme? lightColorScheme;
-@override final  ColorScheme? darkColorScheme;
-
-/// Create a copy of ColorSchemes
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$ColorSchemesCopyWith<_ColorSchemes> get copyWith => __$ColorSchemesCopyWithImpl<_ColorSchemes>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ColorSchemes&&(identical(other.lightColorScheme, lightColorScheme) || other.lightColorScheme == lightColorScheme)&&(identical(other.darkColorScheme, darkColorScheme) || other.darkColorScheme == darkColorScheme));
-}
-
-
-@override
-int get hashCode {
-    return Object.hash(runtimeType,lightColorScheme,darkColorScheme);
-}
-
-@override
-String toString() {
-    return 'ColorSchemes(lightColorScheme: $lightColorScheme, darkColorScheme: $darkColorScheme)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$ColorSchemesCopyWith<$Res> implements $ColorSchemesCopyWith<$Res> {
-  factory _$ColorSchemesCopyWith(_ColorSchemes value, $Res Function(_ColorSchemes) _then) = __$ColorSchemesCopyWithImpl;
-@override @useResult
-$Res call({
- ColorScheme? lightColorScheme, ColorScheme? darkColorScheme
-});
-
-
-
-
-}
-/// @nodoc
-class __$ColorSchemesCopyWithImpl<$Res>
-    implements _$ColorSchemesCopyWith<$Res> {
-  __$ColorSchemesCopyWithImpl(this._self, this._then);
-
-  final _ColorSchemes _self;
-  final $Res Function(_ColorSchemes) _then;
-
-/// Create a copy of ColorSchemes
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? lightColorScheme = freezed,Object? darkColorScheme = freezed,}) {
-  return _then(_ColorSchemes(
-lightColorScheme: freezed == lightColorScheme ? _self.lightColorScheme : lightColorScheme // ignore: cast_nullable_to_non_nullable
-as ColorScheme?,darkColorScheme: freezed == darkColorScheme ? _self.darkColorScheme : darkColorScheme // ignore: cast_nullable_to_non_nullable
-as ColorScheme?,
   ));
 }
 
@@ -5949,7 +5406,7 @@ as int?,
 /// @nodoc
 mixin _$ClashProvider {
 
- int get id; ProviderKind get kind; String get label; String get url; RuleProviderBehavior? get behavior; RuleProviderFormat? get format; int? get order;
+ int get id; String get label; String get url; RuleProviderBehavior get behavior; RuleProviderFormat get format; int? get order;
 /// Create a copy of ClashProvider
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -5961,20 +5418,20 @@ $ClashProviderCopyWith<ClashProvider> get copyWith => _$ClashProviderCopyWithImp
 @override
 bool operator ==(Object other) {
   final _this = this as ClashProvider;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClashProvider&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.kind, _this.kind) || other.kind == _this.kind)&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.behavior, _this.behavior) || other.behavior == _this.behavior)&&(identical(other.format, _this.format) || other.format == _this.format)&&(identical(other.order, _this.order) || other.order == _this.order));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClashProvider&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.behavior, _this.behavior) || other.behavior == _this.behavior)&&(identical(other.format, _this.format) || other.format == _this.format)&&(identical(other.order, _this.order) || other.order == _this.order));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ClashProvider;
-  return Object.hash(runtimeType,_this.id,_this.kind,_this.label,_this.url,_this.behavior,_this.format,_this.order);
+  return Object.hash(runtimeType,_this.id,_this.label,_this.url,_this.behavior,_this.format,_this.order);
 }
 
 @override
 String toString() {
   final _this = this as ClashProvider;
-  return 'ClashProvider(id: ${_this.id}, kind: ${_this.kind}, label: ${_this.label}, url: ${_this.url}, behavior: ${_this.behavior}, format: ${_this.format}, order: ${_this.order})';
+  return 'ClashProvider(id: ${_this.id}, label: ${_this.label}, url: ${_this.url}, behavior: ${_this.behavior}, format: ${_this.format}, order: ${_this.order})';
 }
 
 
@@ -5985,7 +5442,7 @@ abstract mixin class $ClashProviderCopyWith<$Res>  {
   factory $ClashProviderCopyWith(ClashProvider value, $Res Function(ClashProvider) _then) = _$ClashProviderCopyWithImpl;
 @useResult
 $Res call({
- int id, ProviderKind kind, String label, String url, RuleProviderBehavior? behavior, RuleProviderFormat? format, int? order
+ int id, String label, String url, RuleProviderBehavior behavior, RuleProviderFormat format, int? order
 });
 
 
@@ -6002,15 +5459,14 @@ class _$ClashProviderCopyWithImpl<$Res>
 
 /// Create a copy of ClashProvider
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? kind = null,Object? label = null,Object? url = null,Object? behavior = freezed,Object? format = freezed,Object? order = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? label = null,Object? url = null,Object? behavior = null,Object? format = null,Object? order = freezed,}) {
   return _then(ClashProvider(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,kind: null == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
-as ProviderKind,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
+as int,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
-as String,behavior: freezed == behavior ? _self.behavior : behavior // ignore: cast_nullable_to_non_nullable
-as RuleProviderBehavior?,format: freezed == format ? _self.format : format // ignore: cast_nullable_to_non_nullable
-as RuleProviderFormat?,order: freezed == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
+as String,behavior: null == behavior ? _self.behavior : behavior // ignore: cast_nullable_to_non_nullable
+as RuleProviderBehavior,format: null == format ? _self.format : format // ignore: cast_nullable_to_non_nullable
+as RuleProviderFormat,order: freezed == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
@@ -6096,10 +5552,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  ProviderKind kind,  String label,  String url,  RuleProviderBehavior? behavior,  RuleProviderFormat? format,  int? order)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String label,  String url,  RuleProviderBehavior behavior,  RuleProviderFormat format,  int? order)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ClashProvider() when $default != null:
-return $default(_that.id,_that.kind,_that.label,_that.url,_that.behavior,_that.format,_that.order);case _:
+return $default(_that.id,_that.label,_that.url,_that.behavior,_that.format,_that.order);case _:
   return orElse();
 
 }
@@ -6117,10 +5573,10 @@ return $default(_that.id,_that.kind,_that.label,_that.url,_that.behavior,_that.f
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  ProviderKind kind,  String label,  String url,  RuleProviderBehavior? behavior,  RuleProviderFormat? format,  int? order)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String label,  String url,  RuleProviderBehavior behavior,  RuleProviderFormat format,  int? order)  $default,) {final _that = this;
 switch (_that) {
 case _ClashProvider():
-return $default(_that.id,_that.kind,_that.label,_that.url,_that.behavior,_that.format,_that.order);case _:
+return $default(_that.id,_that.label,_that.url,_that.behavior,_that.format,_that.order);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -6137,10 +5593,10 @@ return $default(_that.id,_that.kind,_that.label,_that.url,_that.behavior,_that.f
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  ProviderKind kind,  String label,  String url,  RuleProviderBehavior? behavior,  RuleProviderFormat? format,  int? order)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String label,  String url,  RuleProviderBehavior behavior,  RuleProviderFormat format,  int? order)?  $default,) {final _that = this;
 switch (_that) {
 case _ClashProvider() when $default != null:
-return $default(_that.id,_that.kind,_that.label,_that.url,_that.behavior,_that.format,_that.order);case _:
+return $default(_that.id,_that.label,_that.url,_that.behavior,_that.format,_that.order);case _:
   return null;
 
 }
@@ -6152,15 +5608,14 @@ return $default(_that.id,_that.kind,_that.label,_that.url,_that.behavior,_that.f
 
 
 class _ClashProvider implements ClashProvider {
-  const _ClashProvider({required this.id, required this.kind, required this.label, this.url = '', this.behavior, this.format, this.order});
+  const _ClashProvider({required this.id, required this.label, this.url = '', this.behavior = RuleProviderBehavior.classical, this.format = RuleProviderFormat.yaml, this.order});
   
 
 @override final  int id;
-@override final  ProviderKind kind;
 @override final  String label;
 @override@JsonKey() final  String url;
-@override final  RuleProviderBehavior? behavior;
-@override final  RuleProviderFormat? format;
+@override@JsonKey() final  RuleProviderBehavior behavior;
+@override@JsonKey() final  RuleProviderFormat format;
 @override final  int? order;
 
 /// Create a copy of ClashProvider
@@ -6173,18 +5628,18 @@ _$ClashProviderCopyWith<_ClashProvider> get copyWith => __$ClashProviderCopyWith
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClashProvider&&(identical(other.id, id) || other.id == id)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.label, label) || other.label == label)&&(identical(other.url, url) || other.url == url)&&(identical(other.behavior, behavior) || other.behavior == behavior)&&(identical(other.format, format) || other.format == format)&&(identical(other.order, order) || other.order == order));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClashProvider&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.url, url) || other.url == url)&&(identical(other.behavior, behavior) || other.behavior == behavior)&&(identical(other.format, format) || other.format == format)&&(identical(other.order, order) || other.order == order));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,kind,label,url,behavior,format,order);
+    return Object.hash(runtimeType,id,label,url,behavior,format,order);
 }
 
 @override
 String toString() {
-    return 'ClashProvider(id: $id, kind: $kind, label: $label, url: $url, behavior: $behavior, format: $format, order: $order)';
+    return 'ClashProvider(id: $id, label: $label, url: $url, behavior: $behavior, format: $format, order: $order)';
 }
 
 
@@ -6195,7 +5650,7 @@ abstract mixin class _$ClashProviderCopyWith<$Res> implements $ClashProviderCopy
   factory _$ClashProviderCopyWith(_ClashProvider value, $Res Function(_ClashProvider) _then) = __$ClashProviderCopyWithImpl;
 @override @useResult
 $Res call({
- int id, ProviderKind kind, String label, String url, RuleProviderBehavior? behavior, RuleProviderFormat? format, int? order
+ int id, String label, String url, RuleProviderBehavior behavior, RuleProviderFormat format, int? order
 });
 
 
@@ -6212,15 +5667,572 @@ class __$ClashProviderCopyWithImpl<$Res>
 
 /// Create a copy of ClashProvider
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? kind = null,Object? label = null,Object? url = null,Object? behavior = freezed,Object? format = freezed,Object? order = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? label = null,Object? url = null,Object? behavior = null,Object? format = null,Object? order = freezed,}) {
   return _then(_ClashProvider(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,kind: null == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
-as ProviderKind,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
+as int,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
-as String,behavior: freezed == behavior ? _self.behavior : behavior // ignore: cast_nullable_to_non_nullable
-as RuleProviderBehavior?,format: freezed == format ? _self.format : format // ignore: cast_nullable_to_non_nullable
-as RuleProviderFormat?,order: freezed == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
+as String,behavior: null == behavior ? _self.behavior : behavior // ignore: cast_nullable_to_non_nullable
+as RuleProviderBehavior,format: null == format ? _self.format : format // ignore: cast_nullable_to_non_nullable
+as RuleProviderFormat,order: freezed == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
+as int?,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$IconSetIcon {
+
+ String get name; String get url;
+/// Create a copy of IconSetIcon
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$IconSetIconCopyWith<IconSetIcon> get copyWith => _$IconSetIconCopyWithImpl<IconSetIcon>(this as IconSetIcon, _$identity);
+
+  /// Serializes this IconSetIcon to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as IconSetIcon;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is IconSetIcon&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.url, _this.url) || other.url == _this.url));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as IconSetIcon;
+  return Object.hash(runtimeType,_this.name,_this.url);
+}
+
+@override
+String toString() {
+  final _this = this as IconSetIcon;
+  return 'IconSetIcon(name: ${_this.name}, url: ${_this.url})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $IconSetIconCopyWith<$Res>  {
+  factory $IconSetIconCopyWith(IconSetIcon value, $Res Function(IconSetIcon) _then) = _$IconSetIconCopyWithImpl;
+@useResult
+$Res call({
+ String name, String url
+});
+
+
+
+
+}
+/// @nodoc
+class _$IconSetIconCopyWithImpl<$Res>
+    implements $IconSetIconCopyWith<$Res> {
+  _$IconSetIconCopyWithImpl(this._self, this._then);
+
+  final IconSetIcon _self;
+  final $Res Function(IconSetIcon) _then;
+
+/// Create a copy of IconSetIcon
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? url = null,}) {
+  return _then(IconSetIcon(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [IconSetIcon].
+extension IconSetIconPatterns on IconSetIcon {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _IconSetIcon value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _IconSetIcon() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _IconSetIcon value)  $default,){
+final _that = this;
+switch (_that) {
+case _IconSetIcon():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _IconSetIcon value)?  $default,){
+final _that = this;
+switch (_that) {
+case _IconSetIcon() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String url)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _IconSetIcon() when $default != null:
+return $default(_that.name,_that.url);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String url)  $default,) {final _that = this;
+switch (_that) {
+case _IconSetIcon():
+return $default(_that.name,_that.url);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String url)?  $default,) {final _that = this;
+switch (_that) {
+case _IconSetIcon() when $default != null:
+return $default(_that.name,_that.url);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _IconSetIcon implements IconSetIcon {
+  const _IconSetIcon({required this.name, required this.url});
+  factory _IconSetIcon.fromJson(Map<String, dynamic> json) => _$IconSetIconFromJson(json);
+
+@override final  String name;
+@override final  String url;
+
+/// Create a copy of IconSetIcon
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$IconSetIconCopyWith<_IconSetIcon> get copyWith => __$IconSetIconCopyWithImpl<_IconSetIcon>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$IconSetIconToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _IconSetIcon&&(identical(other.name, name) || other.name == name)&&(identical(other.url, url) || other.url == url));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,name,url);
+}
+
+@override
+String toString() {
+    return 'IconSetIcon(name: $name, url: $url)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$IconSetIconCopyWith<$Res> implements $IconSetIconCopyWith<$Res> {
+  factory _$IconSetIconCopyWith(_IconSetIcon value, $Res Function(_IconSetIcon) _then) = __$IconSetIconCopyWithImpl;
+@override @useResult
+$Res call({
+ String name, String url
+});
+
+
+
+
+}
+/// @nodoc
+class __$IconSetIconCopyWithImpl<$Res>
+    implements _$IconSetIconCopyWith<$Res> {
+  __$IconSetIconCopyWithImpl(this._self, this._then);
+
+  final _IconSetIcon _self;
+  final $Res Function(_IconSetIcon) _then;
+
+/// Create a copy of IconSetIcon
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? url = null,}) {
+  return _then(_IconSetIcon(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$IconSet {
+
+ int get id; String get name; String get url; List<IconSetIcon> get icons; DateTime? get lastUpdateTime; int? get order;
+/// Create a copy of IconSet
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$IconSetCopyWith<IconSet> get copyWith => _$IconSetCopyWithImpl<IconSet>(this as IconSet, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as IconSet;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is IconSet&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.url, _this.url) || other.url == _this.url)&&const DeepCollectionEquality().equals(other.icons, _this.icons)&&(identical(other.lastUpdateTime, _this.lastUpdateTime) || other.lastUpdateTime == _this.lastUpdateTime)&&(identical(other.order, _this.order) || other.order == _this.order));
+}
+
+
+@override
+int get hashCode {
+  final _this = this as IconSet;
+  return Object.hash(runtimeType,_this.id,_this.name,_this.url,const DeepCollectionEquality().hash(_this.icons),_this.lastUpdateTime,_this.order);
+}
+
+@override
+String toString() {
+  final _this = this as IconSet;
+  return 'IconSet(id: ${_this.id}, name: ${_this.name}, url: ${_this.url}, icons: ${_this.icons}, lastUpdateTime: ${_this.lastUpdateTime}, order: ${_this.order})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $IconSetCopyWith<$Res>  {
+  factory $IconSetCopyWith(IconSet value, $Res Function(IconSet) _then) = _$IconSetCopyWithImpl;
+@useResult
+$Res call({
+ int id, String name, String url, List<IconSetIcon> icons, DateTime? lastUpdateTime, int? order
+});
+
+
+
+
+}
+/// @nodoc
+class _$IconSetCopyWithImpl<$Res>
+    implements $IconSetCopyWith<$Res> {
+  _$IconSetCopyWithImpl(this._self, this._then);
+
+  final IconSet _self;
+  final $Res Function(IconSet) _then;
+
+/// Create a copy of IconSet
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? url = null,Object? icons = null,Object? lastUpdateTime = freezed,Object? order = freezed,}) {
+  return _then(IconSet(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,icons: null == icons ? _self.icons : icons // ignore: cast_nullable_to_non_nullable
+as List<IconSetIcon>,lastUpdateTime: freezed == lastUpdateTime ? _self.lastUpdateTime : lastUpdateTime // ignore: cast_nullable_to_non_nullable
+as DateTime?,order: freezed == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
+as int?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [IconSet].
+extension IconSetPatterns on IconSet {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _IconSet value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _IconSet() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _IconSet value)  $default,){
+final _that = this;
+switch (_that) {
+case _IconSet():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _IconSet value)?  $default,){
+final _that = this;
+switch (_that) {
+case _IconSet() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String name,  String url,  List<IconSetIcon> icons,  DateTime? lastUpdateTime,  int? order)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _IconSet() when $default != null:
+return $default(_that.id,_that.name,_that.url,_that.icons,_that.lastUpdateTime,_that.order);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String name,  String url,  List<IconSetIcon> icons,  DateTime? lastUpdateTime,  int? order)  $default,) {final _that = this;
+switch (_that) {
+case _IconSet():
+return $default(_that.id,_that.name,_that.url,_that.icons,_that.lastUpdateTime,_that.order);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String name,  String url,  List<IconSetIcon> icons,  DateTime? lastUpdateTime,  int? order)?  $default,) {final _that = this;
+switch (_that) {
+case _IconSet() when $default != null:
+return $default(_that.id,_that.name,_that.url,_that.icons,_that.lastUpdateTime,_that.order);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _IconSet implements IconSet {
+  const _IconSet({required this.id, required this.name, this.url = '',  List<IconSetIcon> icons = const [], this.lastUpdateTime, this.order}): _icons = icons;
+  
+
+@override final  int id;
+@override final  String name;
+@override@JsonKey() final  String url;
+ final  List<IconSetIcon> _icons;
+@override@JsonKey() List<IconSetIcon> get icons {
+  if (_icons is EqualUnmodifiableListView) return _icons;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_icons);
+}
+
+@override final  DateTime? lastUpdateTime;
+@override final  int? order;
+
+/// Create a copy of IconSet
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$IconSetCopyWith<_IconSet> get copyWith => __$IconSetCopyWithImpl<_IconSet>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _IconSet&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.url, url) || other.url == url)&&const DeepCollectionEquality().equals(other.icons, _icons)&&(identical(other.lastUpdateTime, lastUpdateTime) || other.lastUpdateTime == lastUpdateTime)&&(identical(other.order, order) || other.order == order));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,id,name,url,const DeepCollectionEquality().hash(_icons),lastUpdateTime,order);
+}
+
+@override
+String toString() {
+    return 'IconSet(id: $id, name: $name, url: $url, icons: $icons, lastUpdateTime: $lastUpdateTime, order: $order)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$IconSetCopyWith<$Res> implements $IconSetCopyWith<$Res> {
+  factory _$IconSetCopyWith(_IconSet value, $Res Function(_IconSet) _then) = __$IconSetCopyWithImpl;
+@override @useResult
+$Res call({
+ int id, String name, String url, List<IconSetIcon> icons, DateTime? lastUpdateTime, int? order
+});
+
+
+
+
+}
+/// @nodoc
+class __$IconSetCopyWithImpl<$Res>
+    implements _$IconSetCopyWith<$Res> {
+  __$IconSetCopyWithImpl(this._self, this._then);
+
+  final _IconSet _self;
+  final $Res Function(_IconSet) _then;
+
+/// Create a copy of IconSet
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? url = null,Object? icons = null,Object? lastUpdateTime = freezed,Object? order = freezed,}) {
+  return _then(_IconSet(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,icons: null == icons ? _self._icons : icons // ignore: cast_nullable_to_non_nullable
+as List<IconSetIcon>,lastUpdateTime: freezed == lastUpdateTime ? _self.lastUpdateTime : lastUpdateTime // ignore: cast_nullable_to_non_nullable
+as DateTime?,order: freezed == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
@@ -6756,279 +6768,6 @@ class __$UpdatingMessageCopyWithImpl<$Res>
 label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,
-  ));
-}
-
-
-}
-
-/// @nodoc
-mixin _$IconButtonData {
-
- Glyph get glyph; VoidCallback? get onPressed; String? get tooltip; bool get isLoading;
-/// Create a copy of IconButtonData
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$IconButtonDataCopyWith<IconButtonData> get copyWith => _$IconButtonDataCopyWithImpl<IconButtonData>(this as IconButtonData, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  final _this = this as IconButtonData;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is IconButtonData&&(identical(other.glyph, _this.glyph) || other.glyph == _this.glyph)&&(identical(other.onPressed, _this.onPressed) || other.onPressed == _this.onPressed)&&(identical(other.tooltip, _this.tooltip) || other.tooltip == _this.tooltip)&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading));
-}
-
-
-@override
-int get hashCode {
-  final _this = this as IconButtonData;
-  return Object.hash(runtimeType,_this.glyph,_this.onPressed,_this.tooltip,_this.isLoading);
-}
-
-@override
-String toString() {
-  final _this = this as IconButtonData;
-  return 'IconButtonData(glyph: ${_this.glyph}, onPressed: ${_this.onPressed}, tooltip: ${_this.tooltip}, isLoading: ${_this.isLoading})';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $IconButtonDataCopyWith<$Res>  {
-  factory $IconButtonDataCopyWith(IconButtonData value, $Res Function(IconButtonData) _then) = _$IconButtonDataCopyWithImpl;
-@useResult
-$Res call({
- Glyph glyph, VoidCallback? onPressed, String? tooltip, bool isLoading
-});
-
-
-
-
-}
-/// @nodoc
-class _$IconButtonDataCopyWithImpl<$Res>
-    implements $IconButtonDataCopyWith<$Res> {
-  _$IconButtonDataCopyWithImpl(this._self, this._then);
-
-  final IconButtonData _self;
-  final $Res Function(IconButtonData) _then;
-
-/// Create a copy of IconButtonData
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? glyph = null,Object? onPressed = freezed,Object? tooltip = freezed,Object? isLoading = null,}) {
-  return _then(IconButtonData(
-glyph: null == glyph ? _self.glyph : glyph // ignore: cast_nullable_to_non_nullable
-as Glyph,onPressed: freezed == onPressed ? _self.onPressed : onPressed // ignore: cast_nullable_to_non_nullable
-as VoidCallback?,tooltip: freezed == tooltip ? _self.tooltip : tooltip // ignore: cast_nullable_to_non_nullable
-as String?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,
-  ));
-}
-
-}
-
-
-/// Adds pattern-matching-related methods to [IconButtonData].
-extension IconButtonDataPatterns on IconButtonData {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _IconButtonData value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _IconButtonData() when $default != null:
-return $default(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _IconButtonData value)  $default,){
-final _that = this;
-switch (_that) {
-case _IconButtonData():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _IconButtonData value)?  $default,){
-final _that = this;
-switch (_that) {
-case _IconButtonData() when $default != null:
-return $default(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Glyph glyph,  VoidCallback? onPressed,  String? tooltip,  bool isLoading)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _IconButtonData() when $default != null:
-return $default(_that.glyph,_that.onPressed,_that.tooltip,_that.isLoading);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Glyph glyph,  VoidCallback? onPressed,  String? tooltip,  bool isLoading)  $default,) {final _that = this;
-switch (_that) {
-case _IconButtonData():
-return $default(_that.glyph,_that.onPressed,_that.tooltip,_that.isLoading);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Glyph glyph,  VoidCallback? onPressed,  String? tooltip,  bool isLoading)?  $default,) {final _that = this;
-switch (_that) {
-case _IconButtonData() when $default != null:
-return $default(_that.glyph,_that.onPressed,_that.tooltip,_that.isLoading);case _:
-  return null;
-
-}
-}
-
-}
-
-/// @nodoc
-
-
-class _IconButtonData implements IconButtonData {
-  const _IconButtonData({required this.glyph, required this.onPressed, this.tooltip, this.isLoading = false});
-  
-
-@override final  Glyph glyph;
-@override final  VoidCallback? onPressed;
-@override final  String? tooltip;
-@override@JsonKey() final  bool isLoading;
-
-/// Create a copy of IconButtonData
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$IconButtonDataCopyWith<_IconButtonData> get copyWith => __$IconButtonDataCopyWithImpl<_IconButtonData>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _IconButtonData&&(identical(other.glyph, glyph) || other.glyph == glyph)&&(identical(other.onPressed, onPressed) || other.onPressed == onPressed)&&(identical(other.tooltip, tooltip) || other.tooltip == tooltip)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
-}
-
-
-@override
-int get hashCode {
-    return Object.hash(runtimeType,glyph,onPressed,tooltip,isLoading);
-}
-
-@override
-String toString() {
-    return 'IconButtonData(glyph: $glyph, onPressed: $onPressed, tooltip: $tooltip, isLoading: $isLoading)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$IconButtonDataCopyWith<$Res> implements $IconButtonDataCopyWith<$Res> {
-  factory _$IconButtonDataCopyWith(_IconButtonData value, $Res Function(_IconButtonData) _then) = __$IconButtonDataCopyWithImpl;
-@override @useResult
-$Res call({
- Glyph glyph, VoidCallback? onPressed, String? tooltip, bool isLoading
-});
-
-
-
-
-}
-/// @nodoc
-class __$IconButtonDataCopyWithImpl<$Res>
-    implements _$IconButtonDataCopyWith<$Res> {
-  __$IconButtonDataCopyWithImpl(this._self, this._then);
-
-  final _IconButtonData _self;
-  final $Res Function(_IconButtonData) _then;
-
-/// Create a copy of IconButtonData
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? glyph = null,Object? onPressed = freezed,Object? tooltip = freezed,Object? isLoading = null,}) {
-  return _then(_IconButtonData(
-glyph: null == glyph ? _self.glyph : glyph // ignore: cast_nullable_to_non_nullable
-as Glyph,onPressed: freezed == onPressed ? _self.onPressed : onPressed // ignore: cast_nullable_to_non_nullable
-as VoidCallback?,tooltip: freezed == tooltip ? _self.tooltip : tooltip // ignore: cast_nullable_to_non_nullable
-as String?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,
   ));
 }
 

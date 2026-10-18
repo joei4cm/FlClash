@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:animations/animations.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
@@ -11,22 +10,34 @@ import 'package:url_launcher/url_launcher.dart';
 class Dialogs {
   Dialogs._();
 
-  BuildContext get _context => rootNavigatorKey.currentContext!;
+  // Focus sits in the route the user acts in, so an alert raised from a form
+  // sheet, or a page pushed inside one, opens over it, beside the navigation
+  // as the sheet sits.
+  BuildContext get _context {
+    var context = FocusManager.instance.primaryFocus?.context;
+    while (context != null) {
+      final route = ModalRoute.of(context);
+      if (route is AlertHostRoute) {
+        final host = route.navigator;
+        if (host != null && host.mounted) {
+          return host.context;
+        }
+        break;
+      }
+      context = route?.navigator?.context;
+    }
+    return rootNavigatorKey.currentContext!;
+  }
 
   Future<T?> showCommonDialog<T>({
     required Widget child,
     BuildContext? context,
     bool? dismissible,
   }) async {
-    final host = context ?? _context;
-    return showModal<T>(
-      useRootNavigator: false,
-      context: host,
-      configuration: FadeScaleTransitionConfiguration(
-        barrierColor: host.colorScheme.modalScrim,
-        barrierDismissible: dismissible ?? true,
-      ),
-      builder: (_) => child,
+    return showFloatingDialog<T>(
+      context: context ?? _context,
+      child: child,
+      dismissible: dismissible ?? true,
     );
   }
 
@@ -38,6 +49,7 @@ class Dialogs {
     String? cancelText,
     bool cancelable = true,
     bool? dismissible,
+    bool destructive = false,
   }) async {
     return showCommonDialog<bool>(
       context: context,
@@ -47,6 +59,7 @@ class Dialogs {
           final appLocalizations = context.appLocalizations;
           return CommonDialog(
             title: title ?? appLocalizations.tip,
+            destructive: destructive,
             actions: [
               if (cancelable)
                 TextButton(
@@ -62,18 +75,9 @@ class Dialogs {
                 child: Text(confirmText ?? appLocalizations.confirm),
               ),
             ],
-            child: Container(
-              width: 300,
-              constraints: const BoxConstraints(maxHeight: 200),
-              child: SingleChildScrollView(
-                child: SelectableText.rich(
-                  TextSpan(
-                    style: Theme.of(context).textTheme.labelLarge,
-                    children: [message],
-                  ),
-                  style: const TextStyle(overflow: TextOverflow.visible),
-                ),
-              ),
+            child: SelectableText.rich(
+              TextSpan(children: [message]),
+              style: const TextStyle(overflow: TextOverflow.visible),
             ),
           );
         },
@@ -81,33 +85,10 @@ class Dialogs {
     );
   }
 
-  Future<bool?> showAllUpdatingMessagesDialog(
-    List<UpdatingMessage> messages,
-  ) async {
-    return showCommonDialog<bool>(
-      child: Builder(
-        builder: (context) {
-          final appLocalizations = context.appLocalizations;
-          return CommonDialog(
-            backgroundColor: context.colorScheme.surfaceContainerLow,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            title: appLocalizations.tip,
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: Text(appLocalizations.confirm),
-              ),
-            ],
-            child: generateSectionV3(
-              items: messages.map(
-                (message) => _UpdatingMessageItem(message: message),
-              ),
-            ),
-          );
-        },
-      ),
+  Future<void> showFailureDetails(List<UpdatingMessage> failures) {
+    return showSheet(
+      context: _context,
+      builder: (_) => _FailureDetailsSheet(failures: failures),
     );
   }
 
@@ -132,20 +113,28 @@ class Dialogs {
     );
   }
 
-  Future<({String label, String url})?> showNamedUrlInput({
-    required String title,
-    String label = '',
-    String url = '',
-    FormFieldValidator<String>? labelValidator,
-    FormFieldValidator<String>? urlValidator,
-  }) {
-    return showCommonDialog<({String label, String url})>(
-      child: NamedUrlDialog(
+  Future<String?> showPasswordInput({required String title}) {
+    return showCommonDialog<String>(
+      child: InputDialog(
         title: title,
-        label: label,
-        url: url,
-        labelValidator: labelValidator,
-        urlValidator: urlValidator,
+        value: '',
+        labelText: currentAppLocalizations.password,
+        obscureText: true,
+      ),
+    );
+  }
+
+  Future<String?> showAgeSecretKeyInput() {
+    final appLocalizations = currentAppLocalizations;
+    return showCommonDialog<String>(
+      child: InputDialog(
+        title: appLocalizations.ageEncryptedProfile,
+        value: '',
+        labelText: appLocalizations.ageSecretKey,
+        obscureText: true,
+        validator: (value) => value == null || value.trim().isEmpty
+            ? appLocalizations.emptyTip(appLocalizations.ageSecretKey)
+            : null,
       ),
     );
   }
@@ -162,6 +151,30 @@ class Dialogs {
     );
   }
 
+  void showFailures(List<UpdatingMessage> failures) {
+    final appLocalizations = currentAppLocalizations;
+    switch (failures) {
+      case []:
+        return;
+      case [final failure]:
+        showNotifier(
+          appLocalizations.failedItem(failure.label, failure.message),
+          level: MessageLevel.error,
+        );
+      default:
+        showNotifier(
+          appLocalizations.failedCount(failures.length),
+          level: MessageLevel.error,
+          actionState: MessageActionState(
+            actionText: appLocalizations.view,
+            action: () {
+              unawaited(showFailureDetails(failures));
+            },
+          ),
+        );
+    }
+  }
+
   Future<void> openUrl(String url) async {
     final res = await showMessage(
       message: TextSpan(text: url),
@@ -175,23 +188,45 @@ class Dialogs {
   }
 }
 
-class _UpdatingMessageItem extends StatelessWidget {
-  final UpdatingMessage message;
+class _FailureDetailsSheet extends StatelessWidget {
+  final List<UpdatingMessage> failures;
 
-  const _UpdatingMessageItem({required this.message});
+  const _FailureDetailsSheet({required this.failures});
 
   @override
   Widget build(BuildContext context) {
-    return DecorationListItem(
-      minVerticalPadding: 12,
-      title: TooltipText(
-        text: Text(message.label, maxLines: 1, overflow: TextOverflow.ellipsis),
-      ),
-      subtitle: TooltipText(
-        text: Text(
-          message.message,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
+    final labelsByMessage = <String, List<String>>{};
+    for (final failure in failures) {
+      (labelsByMessage[failure.message] ??= []).add(failure.label);
+    }
+    final groups = labelsByMessage.entries.toList();
+    return CommonScaffold(
+      title: context.appLocalizations.errorDetails,
+      body: SelectionArea(
+        child: ListView.separated(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+          ).copyWith(top: context.contentTopPadding, bottom: 20),
+          itemCount: groups.length,
+          separatorBuilder: (_, _) => SizedBox(height: 24.mAp(context)),
+          itemBuilder: (_, index) {
+            final MapEntry(key: message, value: labels) = groups[index];
+            return generateSection(
+              items: [
+                for (final label in labels)
+                  DecorationListItem(
+                    title: TooltipText(
+                      text: Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+              ],
+              footer: message,
+            );
+          },
         ),
       ),
     );

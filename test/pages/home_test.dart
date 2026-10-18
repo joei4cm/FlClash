@@ -1,6 +1,6 @@
+import 'package:fl_clash/common/app_localizations.dart';
 import 'package:fl_clash/common/app_ports.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/manager/app_manager.dart';
 import 'package:fl_clash/manager/theme_manager.dart';
@@ -9,6 +9,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/pages/home.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/views/config/general.dart';
 import 'package:fl_clash/views/tools.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -137,22 +138,22 @@ void main() {
       final colorScheme = Theme.of(
         tester.element(find.byType(AppSidebarContainer)),
       ).colorScheme;
-      expect(sidebarContainer.color, colorScheme.surfaceContainer);
-
-      final sidebarEdge = tester.widget<Material>(
+      expect(sidebarContainer.color, SurfaceLevel.page.colorOf(colorScheme));
+      final sidebarSurface = tester.widget<Material>(
         find
-            .descendant(
-              of: find.byType(AppSidebarContainer),
-              matching: find.byWidgetPredicate(
-                (widget) =>
-                    widget is Material && widget.shape is BorderDirectional,
-              ),
+            .ancestor(
+              of: find.byType(NavigationSidebar),
+              matching: find.byType(Material),
             )
             .first,
       );
+      expect(sidebarSurface.color, colorScheme.chromeSurface);
+      expect(sidebarSurface.color, isNot(sidebarContainer.color));
       expect(
-        (sidebarEdge.shape! as BorderDirectional).end.color,
-        colorScheme.outlineVariant,
+        (sidebarSurface.shape! as BorderDirectional).end,
+        Divider.createBorderSide(
+          tester.element(find.byType(NavigationSidebar)),
+        ),
       );
 
       await tester.tap(find.text('count: 0'));
@@ -738,7 +739,71 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('a non-floating bottom bar leaves pages undocked', (
+  testWidgets('a page that leaves the navigation hands the screen to the '
+      'first one until it returns', (tester) async {
+    tester.view.physicalSize = const Size(500, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    NavigationItem item(Glyph glyph, PageLabel label) => NavigationItem(
+      glyph: glyph,
+      label: label,
+      builder: (_) => Builder(
+        builder: (context) => Text(
+          'page:${label.name} active:${PageActivityScope.isActiveOf(context)}',
+        ),
+      ),
+    );
+    final dashboard = item(AppGlyphs.dashboard, PageLabel.dashboard);
+    final proxies = item(AppGlyphs.proxies, PageLabel.proxies);
+    final profiles = item(AppGlyphs.profiles, PageLabel.profiles);
+    final container = ProviderContainer(
+      overrides: [
+        navigationItemsStateProvider.overrideWith(
+          (ref) =>
+              NavigationItemsState(value: ref.watch(_navigationItemsProvider)),
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+    globalState.container = container;
+    container.read(viewSizeProvider.notifier).value = const Size(500, 800);
+    final items = container.read(_navigationItemsProvider.notifier)
+      ..set([dashboard, proxies, profiles]);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const TestApp(includeNavigatorKey: false, child: HomePage()),
+      ),
+    );
+    await tester.pump();
+    await tester.tap(_glyph(AppGlyphs.proxies));
+    await tester.pumpAndSettle();
+
+    int selectedIndex() => tester
+        .widget<FloatingNavigationBar>(find.byType(FloatingNavigationBar))
+        .selectedIndex;
+
+    expect(selectedIndex(), 1);
+    expect(find.text('page:proxies active:true'), findsOneWidget);
+
+    items.set([dashboard, profiles]);
+    await tester.pumpAndSettle();
+    expect(selectedIndex(), 0);
+    expect(find.text('page:dashboard active:true'), findsOneWidget);
+    expect(find.textContaining('page:profiles'), findsNothing);
+    expect(container.read(currentPageLabelProvider), PageLabel.proxies);
+
+    items.set([dashboard, proxies, profiles]);
+    await tester.pumpAndSettle();
+    expect(selectedIndex(), 1);
+    expect(find.text('page:proxies active:true'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a non-floating bottom bar leaves the page no bottom inset', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(500, 800);
@@ -748,10 +813,8 @@ void main() {
 
     Widget page(String label) {
       return Builder(
-        builder: (context) => Text(
-          'page:$label docked:${DockedPageScope.of(context)} '
-          'inset:${BottomInsetScope.of(context)}',
-        ),
+        builder: (context) =>
+            Text('page:$label inset:${BottomInsetScope.of(context)}'),
       );
     }
 
@@ -791,7 +854,7 @@ void main() {
     await tester.pump();
     expect(find.byType(FloatingNavigationBar), findsNothing);
     expect(find.byType(NavigationBar), findsOneWidget);
-    expect(find.text('page:dashboard docked:false inset:0.0'), findsOneWidget);
+    expect(find.text('page:dashboard inset:0.0'), findsOneWidget);
 
     await tester.tap(_glyph(AppGlyphs.tools));
     await tester.pumpAndSettle();
@@ -807,7 +870,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(NavigationBar), findsNothing);
     expect(find.byType(FloatingNavigationBar), findsOneWidget);
-    expect(find.textContaining('page:tools docked:true'), findsOneWidget);
+    expect(find.textContaining('page:tools inset:'), findsOneWidget);
+    expect(find.text('page:tools inset:0.0'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -1133,6 +1197,74 @@ void main() {
     expect(find.byType(TextField), findsNothing);
   });
 
+  testWidgets('a desktop page left open reopens in the mobile layout', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final results = <String?>[];
+    final container = ProviderContainer(
+      overrides: [
+        navigationItemsStateProvider.overrideWithValue(
+          NavigationItemsState(
+            value: [
+              NavigationItem(
+                glyph: AppGlyphs.dashboard,
+                label: PageLabel.dashboard,
+                builder: (_) => _PageOpener(
+                  key: const GlobalObjectKey(PageLabel.dashboard),
+                  onClosed: results.add,
+                ),
+              ),
+              NavigationItem(
+                glyph: AppGlyphs.tools,
+                label: PageLabel.tools,
+                builder: (_) => const SizedBox.shrink(),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+    globalState.container = container;
+    container.read(viewSizeProvider.notifier).value = const Size(1200, 800);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const TestApp(includeNavigatorKey: false, child: HomePage()),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('Open page'));
+    await tester.pumpAndSettle();
+    expect(
+      ModalRoute.of(tester.element(find.text('Sub page'))),
+      isA<CommonDesktopRoute<String>>(),
+    );
+
+    tester.view.physicalSize = const Size(500, 800);
+    container.read(viewSizeProvider.notifier).value = const Size(500, 800);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sub page'), findsOneWidget);
+    final reopened = tester.element(find.text('Sub page'));
+    expect(ModalRoute.of(reopened), isA<CommonRoute<String>>());
+    expect(results, isEmpty);
+
+    Navigator.of(reopened).pop('done');
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sub page'), findsNothing);
+    expect(results, ['done']);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'desktop tabbing past page content does not scroll the PageView',
     (tester) async {
@@ -1235,6 +1367,7 @@ class _ThemeManagedTestApp extends StatelessWidget {
       navigatorKey: globalState.navigatorKey,
       localizationsDelegates: const [
         AppLocalizations.delegate,
+        AppUiLocalizations.delegate,
         ...GlobalMaterialLocalizations.delegates,
       ],
       supportedLocales: AppLocalizations.delegate.supportedLocales,
@@ -1295,6 +1428,41 @@ class _NestedSearchLauncher extends StatelessWidget {
       ),
     );
   }
+}
+
+class _PageOpener extends StatelessWidget {
+  final ValueChanged<String?> onClosed;
+
+  const _PageOpener({super.key, required this.onClosed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: FilledButton(
+        onPressed: () async {
+          onClosed(
+            await BaseNavigator.push<String>(
+              context,
+              const Scaffold(body: Center(child: Text('Sub page'))),
+            ),
+          );
+        },
+        child: const Text('Open page'),
+      ),
+    );
+  }
+}
+
+final _navigationItemsProvider =
+    NotifierProvider<_NavigationItems, List<NavigationItem>>(
+      _NavigationItems.new,
+    );
+
+class _NavigationItems extends Notifier<List<NavigationItem>> {
+  @override
+  List<NavigationItem> build() => const [];
+
+  void set(List<NavigationItem> items) => state = items;
 }
 
 class _HomeTestProfiles extends Profiles {

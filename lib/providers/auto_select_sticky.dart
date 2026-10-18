@@ -7,13 +7,8 @@ import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Geo-aware recovery for url-test / fallback groups.
-///
-/// Flutter does **not** own continuous selection. Core url-test/fallback keeps
-/// picking. This policy only nudges when the current node is unhealthy and a
-/// known-healthy node exists in the preferred region — without writing
-/// `selectedMap` (which would lock auto mode) and without closing all
-/// connections (which felt like random disconnects).
+/// Nudges an unhealthy url-test/fallback node toward a healthy preferred-region
+/// node. Does not write selectedMap and does not close connections.
 class AutoSelectSticky {
   AutoSelectSticky._();
 
@@ -21,7 +16,6 @@ class AutoSelectSticky {
 
   static Duration cooldown = const Duration(seconds: 60);
 
-  /// Test-only.
   static void debugResetCooldown() => _lastSwitchAtByGroup.clear();
 
   static Future<void> enforce(Ref ref, List<Group> groups) async {
@@ -44,7 +38,6 @@ class AutoSelectSticky {
       if (!group.type.isComputedSelected) {
         continue;
       }
-      // Strategy-lane managed url-test groups should keep include-all behavior.
       if (group.name.startsWith('FlClash-')) {
         continue;
       }

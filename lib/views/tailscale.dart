@@ -1,5 +1,5 @@
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/widgets/widgets.dart';
@@ -102,9 +102,9 @@ class TailscaleView extends ConsumerWidget {
                     isAndroid
                         ? appLocalizations.tailscaleScenarioAndroidTitle
                         : appLocalizations.tailscaleScenarioDesktopTitle,
-                    style: context.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: AppTextStyle.subheadline
+                        .of(context)
+                        .copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -114,9 +114,9 @@ class TailscaleView extends ConsumerWidget {
               isAndroid
                   ? appLocalizations.tailscaleScenarioAndroidBody
                   : appLocalizations.tailscaleScenarioDesktopBody,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: context.colorScheme.onSurfaceVariant,
-              ),
+              style: AppTextStyle.footnote
+                  .of(context)
+                  .copyWith(color: context.colorScheme.onSurfaceVariant),
             ),
           ],
         ),
@@ -140,17 +140,19 @@ class TailscaleView extends ConsumerWidget {
             ),
             child: Text(
               '$number',
-              style: context.textTheme.labelSmall?.copyWith(
-                color: context.colorScheme.onPrimary,
-                fontWeight: FontWeight.bold,
-              ),
+              style: AppTextStyle.caption1
+                  .of(context)
+                  .copyWith(
+                    color: context.colorScheme.onPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(top: 2),
-              child: Text(text, style: context.textTheme.bodyMedium),
+              child: Text(text, style: AppTextStyle.callout.of(context)),
             ),
           ),
         ],
@@ -182,9 +184,9 @@ class TailscaleView extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Text(
                   appLocalizations.tailscaleGuideTitle,
-                  style: context.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: AppTextStyle.subheadline
+                      .of(context)
+                      .copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -235,9 +237,9 @@ class TailscaleView extends ConsumerWidget {
             const SizedBox(height: 4),
             Text(
               appLocalizations.tailscaleTestTip,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: context.colorScheme.onSurfaceVariant,
-              ),
+              style: AppTextStyle.footnote
+                  .of(context)
+                  .copyWith(color: context.colorScheme.onSurfaceVariant),
             ),
           ],
         ),
@@ -287,7 +289,7 @@ class TailscaleView extends ConsumerWidget {
           Expanded(
             child: Text(
               message,
-              style: context.textTheme.bodySmall?.copyWith(color: color),
+              style: AppTextStyle.footnote.of(context).copyWith(color: color),
             ),
           ),
         ],
@@ -301,9 +303,9 @@ class TailscaleView extends ConsumerWidget {
     if (delay == null) {
       return Text(
         appLocalizations.tailscaleNotTested,
-        style: context.textTheme.labelSmall?.copyWith(
-          color: context.colorScheme.onSurfaceVariant,
-        ),
+        style: AppTextStyle.caption1
+            .of(context)
+            .copyWith(color: context.colorScheme.onSurfaceVariant),
       );
     }
     if (delay == 0) {
@@ -318,10 +320,12 @@ class TailscaleView extends ConsumerWidget {
     }
     return Text(
       delay > 0 ? '$delay ms' : appLocalizations.timeout,
-      style: context.textTheme.labelSmall?.copyWith(
-        color: context.colorScheme.delayColor(delay),
-        fontWeight: FontWeight.w600,
-      ),
+      style: AppTextStyle.caption1
+          .of(context)
+          .copyWith(
+            color: context.colorScheme.delayColor(delay),
+            fontWeight: FontWeight.w600,
+          ),
     );
   }
 
@@ -363,7 +367,7 @@ class TailscaleView extends ConsumerWidget {
             onPressed: () {
               _handleTest(context, ref, proxy);
             },
-            icon: const GlyphIcon(AppGlyphs.networkCheck),
+            icon: const GlyphIcon(AppGlyphs.speed),
           ),
           IconButton(
             tooltip: appLocalizations.delete,
@@ -497,9 +501,9 @@ class TailscaleView extends ConsumerWidget {
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                     child: Text(
                       appLocalizations.tailscaleNodesTitle,
-                      style: context.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: AppTextStyle.subheadline
+                          .of(context)
+                          .copyWith(fontWeight: FontWeight.bold),
                     ),
                   ),
               ],
@@ -641,7 +645,7 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
   }) {
     return SwitchListTile(
       contentPadding: EdgeInsets.zero,
-      title: Text(label, style: context.textTheme.bodyLarge),
+      title: Text(label, style: AppTextStyle.body.of(context)),
       value: value,
       onChanged: onChanged,
     );

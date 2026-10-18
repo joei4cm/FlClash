@@ -4,32 +4,18 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart';
-import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:yaml/yaml.dart';
 
-class _FakePathProvider extends PathProviderPlatform {
-  _FakePathProvider(this.root);
-
-  final String root;
-
-  @override
-  Future<String?> getTemporaryPath() async => root;
-
-  @override
-  Future<String?> getApplicationSupportPath() async => root;
-
-  @override
-  Future<String?> getApplicationCachePath() async => root;
-}
+import '../helpers/app_paths.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late Directory root;
 
-  setUpAll(() {
+  setUpAll(() async {
     root = Directory.systemTemp.createTempSync('path_test');
-    PathProviderPlatform.instance = _FakePathProvider(root.path);
+    await useAppPaths(root);
   });
 
   tearDownAll(() {
@@ -63,8 +49,6 @@ void main() {
           },
         },
         realPatchConfig: const PatchClashConfig(),
-        overrideDns: false,
-        overrideNtp: false,
         appendSystemDns: false,
         proxyGroups: const [],
         rules: const [],
@@ -112,8 +96,6 @@ void main() {
           },
         },
         realPatchConfig: const PatchClashConfig(),
-        overrideDns: false,
-        overrideNtp: false,
         appendSystemDns: false,
         proxyGroups: const [],
         rules: const [],
@@ -150,8 +132,6 @@ void main() {
           },
         },
         realPatchConfig: const PatchClashConfig(),
-        overrideDns: false,
-        overrideNtp: false,
         appendSystemDns: false,
         proxyGroups: const [],
         rules: const [],

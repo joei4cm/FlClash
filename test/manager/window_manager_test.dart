@@ -1,14 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:fl_clash/common/app_localizations.dart';
 import 'package:fl_clash/common/app_ports.dart';
 import 'package:fl_clash/common/feature.dart';
-import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/manager/window_manager.dart';
 import 'package:fl_clash/models/config.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -142,11 +143,19 @@ void main() {
     container.dispose();
   });
 
-  Future<WindowListener> pumpWindowManager(WidgetTester tester) async {
+  Future<WindowListener> pumpWindowManager(
+    WidgetTester tester, {
+    Stream<ProcessSignal>? terminateSignals,
+  }) async {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const MaterialApp(home: WindowManager(child: SizedBox.shrink())),
+        child: MaterialApp(
+          home: WindowManager(
+            terminateSignals: terminateSignals,
+            child: const SizedBox.shrink(),
+          ),
+        ),
       ),
     );
     await tester.pump();
@@ -184,6 +193,22 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(_RecordingSystemAction.calls, ['exit']);
+  });
+
+  testWidgets('a terminate signal exits like a terminate request', (
+    tester,
+  ) async {
+    final signals = StreamController<ProcessSignal>();
+    addTearDown(signals.close);
+    await pumpWindowManager(tester, terminateSignals: signals.stream);
+
+    signals.add(ProcessSignal.sigterm);
+    await tester.pumpAndSettle();
+
+    expect(_RecordingSystemAction.calls, ['exit']);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    expect(signals.hasListener, isFalse);
   });
 
   testWidgets('moving the window records its new position', (tester) async {

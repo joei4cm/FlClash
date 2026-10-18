@@ -1,54 +1,27 @@
 import 'dart:io';
 
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/common/theme.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/profiles/edit.dart';
+import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-class _FakePathProvider extends PathProviderPlatform {
-  final String root;
-
-  _FakePathProvider(this.root);
-
-  @override
-  Future<String?> getTemporaryPath() async => root;
-
-  @override
-  Future<String?> getApplicationSupportPath() async => root;
-
-  @override
-  Future<String?> getApplicationCachePath() async => root;
-}
+import '../helpers/app_paths.dart';
+import '../helpers/test_app.dart';
+import '../helpers/test_profiles.dart';
 
 /// The edit page disposes the profile by scheduling an auto-apply; keep that a
 /// no-op so the setup machinery never runs in a widget test.
 class _NoopSetupAction extends SetupAction {
   @override
   void autoApplyProfile() {}
-}
-
-class _RenameConflictProfilesAction extends ProfilesAction {
-  final put = <Profile>[];
-
-  @override
-  Future<({List<Profile> renameIn, List<Profile> conflicts})> providerRename(
-    Profile previous,
-    Profile next,
-  ) async =>
-      (renameIn: const <Profile>[], conflicts: [Profile.normal(label: 'Work')]);
-
-  @override
-  void putProfile(Profile profile, {Iterable<int> renameIn = const []}) =>
-      put.add(profile);
 }
 
 Profile _urlProfile() =>
@@ -92,13 +65,12 @@ Future<FocusNode> pumpEditProfile(
         navigatorKey: globalState.navigatorKey,
         localizationsDelegates: const [
           AppLocalizations.delegate,
+          AppUiLocalizations.delegate,
           ...GlobalMaterialLocalizations.delegates,
         ],
         supportedLocales: AppLocalizations.delegate.supportedLocales,
         builder: (context, child) {
-          globalState.measure = Measure.of(context, 1);
-          globalState.theme = CommonTheme.of(context, 1);
-          return child!;
+          return wrapAppScopes(context, child!);
         },
         home: Scaffold(
           body: Column(
@@ -111,7 +83,6 @@ Future<FocusNode> pumpEditProfile(
                       child: Builder(
                         builder: (context) => Scaffold(
                           body: EditProfileView(
-                            context: context,
                             profile: profile ?? _urlProfile(),
                           ),
                         ),
@@ -148,9 +119,9 @@ bool _isTextFieldFocused() {
 void main() {
   late Directory tempDir;
 
-  setUpAll(() {
+  setUpAll(() async {
     tempDir = Directory.systemTemp.createTempSync('edit_profile_focus_test');
-    PathProviderPlatform.instance = _FakePathProvider(tempDir.path);
+    await useAppPaths(tempDir);
   });
 
   tearDownAll(() {
@@ -177,26 +148,59 @@ void main() {
     expect(find.byTooltip('Save'), findsOneWidget);
   });
 
-  testWidgets('a name a user subscription already has is not saved', (
+  testWidgets(
+    'the profile file row shows its size and update time without chips',
+    (tester) async {
+      await pumpEditProfile(tester);
+      final row = find.widgetWithText(
+        DecorationListItem,
+        currentAppLocalizations.profile,
+      );
+      for (var i = 0; i < 20 && row.evaluate().isEmpty; i++) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 20)),
+        );
+        await tester.pump(const Duration(milliseconds: 400));
+      }
+      expect(row, findsOneWidget);
+      expect(
+        find.descendant(of: row, matching: find.byType(LastUpdateTimeText)),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: row, matching: find.text(0.traffic.show)),
+        findsOneWidget,
+      );
+      expect(find.byType(MetaChip), findsNothing);
+    },
+  );
+
+  testWidgets('saving with auto update off ignores an emptied interval', (
     tester,
   ) async {
-    final action = _RenameConflictProfilesAction();
+    final profile = _urlProfile();
     await pumpEditProfile(
       tester,
-      overrides: [profilesActionProvider.overrideWith(() => action)],
+      profile: profile,
+      overrides: [
+        profilesProvider.overrideWith(() => TestProfiles([profile])),
+      ],
+    );
+    final interval = find.byWidgetPredicate(
+      (widget) =>
+          widget is TextField &&
+          widget.controller?.text == '${profile.autoUpdateDuration.inMinutes}',
     );
 
-    await tester.enterText(
-      find.widgetWithText(TextFormField, currentAppLocalizations.name),
-      'Taken',
-    );
-    await tester.tap(find.byTooltip(currentAppLocalizations.save));
-    await tester.pumpAndSettle();
+    await tester.enterText(interval, '');
+    await tester.tap(find.byType(Switch));
+    await tester.pump();
+    await tester.tap(find.byTooltip('Save'));
+    await tester.pump();
 
-    expect(
-      find.textContaining('subscriptions of Work already have Taken'),
-      findsOneWidget,
-    );
-    expect(action.put, isEmpty);
+    expect(tester.takeException(), isNull);
+    final saved = globalState.container.read(profilesProvider).single;
+    expect(saved.autoUpdate, isFalse);
+    expect(saved.autoUpdateDuration, profile.autoUpdateDuration);
   });
 }

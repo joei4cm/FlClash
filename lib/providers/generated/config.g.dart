@@ -372,108 +372,6 @@ abstract class _$DavSetting extends $Notifier<DAVProps?> {
   }
 }
 
-@ProviderFor(OverrideDns)
-final overrideDnsProvider = OverrideDnsProvider._();
-
-final class OverrideDnsProvider extends $NotifierProvider<OverrideDns, bool> {
-  OverrideDnsProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'overrideDnsProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$overrideDnsHash();
-
-  @$internal
-  @override
-  OverrideDns create() => OverrideDns();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
-  }
-}
-
-String _$overrideDnsHash() => r'3d49994fa23389530643e8c80e588a58f14eec92';
-
-abstract class _$OverrideDns extends $Notifier<bool> {
-  bool build();
-  @$mustCallSuper
-  @override
-  WhenComplete runBuild() {
-    final ref = this.ref as $Ref<bool, bool>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<bool, bool>,
-              bool,
-              Object?,
-              Object?
-            >;
-    return element.handleCreate(ref, build);
-  }
-}
-
-@ProviderFor(OverrideNtp)
-final overrideNtpProvider = OverrideNtpProvider._();
-
-final class OverrideNtpProvider extends $NotifierProvider<OverrideNtp, bool> {
-  OverrideNtpProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'overrideNtpProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$overrideNtpHash();
-
-  @$internal
-  @override
-  OverrideNtp create() => OverrideNtp();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
-  }
-}
-
-String _$overrideNtpHash() => r'9ff34d39ed6adf60ce1a059edad8784f15fe5591';
-
-abstract class _$OverrideNtp extends $Notifier<bool> {
-  bool build();
-  @$mustCallSuper
-  @override
-  WhenComplete runBuild() {
-    final ref = this.ref as $Ref<bool, bool>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<bool, bool>,
-              bool,
-              Object?,
-              Object?
-            >;
-    return element.handleCreate(ref, build);
-  }
-}
-
 @ProviderFor(HotKeyActions)
 final hotKeyActionsProvider = HotKeyActionsProvider._();
 
@@ -631,76 +529,11 @@ abstract class _$PatchClashConfig extends $Notifier<PatchClashConfig> {
   }
 }
 
-@ProviderFor(ExcludeSSIDs)
-final excludeSSIDsProvider = ExcludeSSIDsProvider._();
-
-final class ExcludeSSIDsProvider
-    extends $NotifierProvider<ExcludeSSIDs, List<String>> {
-  ExcludeSSIDsProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'excludeSSIDsProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$excludeSSIDsHash();
-
-  @$internal
-  @override
-  ExcludeSSIDs create() => ExcludeSSIDs();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<String> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<List<String>>(value),
-    );
-  }
-}
-
-String _$excludeSSIDsHash() => r'a67805c76b58d19da1656783f4514111d6bf4e35';
-
-abstract class _$ExcludeSSIDs extends $Notifier<List<String>> {
-  List<String> build();
-  @$mustCallSuper
-  @override
-  WhenComplete runBuild() {
-    final ref = this.ref as $Ref<List<String>, List<String>>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<List<String>, List<String>>,
-              List<String>,
-              Object?,
-              Object?
-            >;
-    return element.handleCreate(ref, build);
-  }
-}
-
-/// Aggregate Config for save/load and tests only.
-///
-/// UI and derived providers should watch leaf setting providers (with
-/// `.select` when possible) instead of this aggregate.
-
 @ProviderFor(TailscaleSetting)
 final tailscaleSettingProvider = TailscaleSettingProvider._();
 
-/// Aggregate Config for save/load and tests only.
-///
-/// UI and derived providers should watch leaf setting providers (with
-/// `.select` when possible) instead of this aggregate.
 final class TailscaleSettingProvider
     extends $NotifierProvider<TailscaleSetting, TailscaleProps> {
-  /// Aggregate Config for save/load and tests only.
-  ///
-  /// UI and derived providers should watch leaf setting providers (with
-  /// `.select` when possible) instead of this aggregate.
   TailscaleSettingProvider._()
     : super(
         from: null,
@@ -728,12 +561,7 @@ final class TailscaleSettingProvider
   }
 }
 
-String _$tailscaleSettingHash() => r'0671fd8714eec5eafdf6f51ffae54abe45b66e69';
-
-/// Aggregate Config for save/load and tests only.
-///
-/// UI and derived providers should watch leaf setting providers (with
-/// `.select` when possible) instead of this aggregate.
+String _$tailscaleSettingHash() => r'25f453682b8d2f01d0b7fad7d7595b379771325f';
 
 abstract class _$TailscaleSetting extends $Notifier<TailscaleProps> {
   TailscaleProps build();
@@ -806,6 +634,58 @@ abstract class _$GeoIdentitySetting extends $Notifier<GeoIdentityProps> {
   }
 }
 
+@ProviderFor(ExcludeSSIDs)
+final excludeSSIDsProvider = ExcludeSSIDsProvider._();
+
+final class ExcludeSSIDsProvider
+    extends $NotifierProvider<ExcludeSSIDs, List<String>> {
+  ExcludeSSIDsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'excludeSSIDsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$excludeSSIDsHash();
+
+  @$internal
+  @override
+  ExcludeSSIDs create() => ExcludeSSIDs();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<String> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<String>>(value),
+    );
+  }
+}
+
+String _$excludeSSIDsHash() => r'a67805c76b58d19da1656783f4514111d6bf4e35';
+
+abstract class _$ExcludeSSIDs extends $Notifier<List<String>> {
+  List<String> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<List<String>, List<String>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<String>, List<String>>,
+              List<String>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(_config)
 final configProvider = _ConfigProvider._();
 
@@ -844,4 +724,4 @@ final class _ConfigProvider extends $FunctionalProvider<Config, Config, Config>
   }
 }
 
-String _$_configHash() => r'89278080dec4501a8e50597c6f0c20888496a7a8';
+String _$_configHash() => r'f671b6dbff607fbdd323741aebdd17c1dedf6ce7';

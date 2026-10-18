@@ -1,102 +1,86 @@
 # Changelog
 
-## v0.8.113 (2026-10-07)
+## v0.9.2 (2026-10-18)
 
 **Features**
 
-- Rebuild production on upstream/main 0.8.99 with fork features (31243df)
-- Rebuild production on upstream/main with fork features (59ad1ea)
-- Weaken auto-select in favor of subscription strategies (b38c4ce)
-
-## v0.8.111 (2026-08-29)
-
-**Features**
-
-- **strategy-lanes** Usable business routing with inject overrides (34a16ae)
-- Add strategy lanes UI to override subscription outlets (0e6b5ee)
+- Tailscale, geo identity, strategy lanes, and sticky auto-select on upstream 0.9.1, with update checks on joei4cm/FlClash (b3ba319)
 
 **Bug Fixes**
 
-- **strategy-lanes** Address bugbot findings (b44de99)
-- **strategy-lanes** Harden apply, discovery, and inject safety (070e412)
+- Update checks accept release tags like v0.9.2_abcdef (e5ac559)
 
-## v0.8.110 (2026-08-29)
+## v0.9.1 (2026-10-17)
 
-**Features**
+**Breaking Changes**
 
-- **geo-identity** Add traffic capture mode setting (05319d1)
-- **script** Run profile scripts on QuickJS through rust_api (30f6eac)
-
-**Bug Fixes**
-
-- **rust_api** Import StreamCommon for Windows peer_creds (8ec4dcf)
-- **auto-select** Reference AutoSelectDecision for dead-file lint (7b855a7)
-- **test** Drop network_test incompatible with Flutter 3.44.4 (2b62cdb)
-- **auto-select** Stop sticky flapping and connection drops (d760686)
-- **android,windows,macos** Platform fixes for VPN, system proxy, and startup (ae8b25b)
-- Harden security, config, backup, and the release tooling (74aa46b)
-
-## v0.8.107 (2026-08-16)
-
-Internal improvements only.
-
-## v0.8.105 (2026-08-03)
+- **network** Desktop TUN keys follow the profile unless picked; changed values carry over (cb08088)
 
 **Features**
 
-- **ux** Tailscale advanced collapse, Features section, ARB prune (12c28ea)
+- **l10n** French, Spanish and Korean translations (f43755c)
+- **android** No more Firebase analytics or crash reporting (bc72bba)
+- **network** Per-key desktop TUN settings; system proxy and tray fixes (cb08088)
+- **theme** Redesigned theme colors and color styles (5eafd7a)
+- **dashboard** A redesigned dashboard around the current exit (9bd258f)
+- **profiles** Profile-detail resources and include-all in custom groups (0bac500)
+- **proxies** Proxy groups as cards, group tabs as chips (2ea52fd)
+- **views** Sortable tables for connections, requests and DNS (da6fb0a)
+- **ui** Optional two-tier Liquid Glass and slide-to-pick menus (7c9627f)
+- **ui** iOS-style surfaces, alerts and sheets; clearer TV focus (9bd2286)
 
 **Bug Fixes**
 
-- Harden delay tests and core event dispatch (32220f5)
-- Connections push, Geo/Tailscale polish, fix TASK.md (5b9e9cd)
-- **ux** Honest Geo status and Tailscale setup edges (2917702)
+- **ui** Fix pasting and Chinese input in text fields (5607f70)
+- **core** Large profiles no longer crash; downloads trust core CAs (5984c16)
 
 **Performance**
 
-- Finish leftover P2 tasks and geo model cleanup (b1a3b89)
-- FixedList notify, delay batches, prefs skip, tray/access (40c37db)
-- Cut traffic IPC, list rebuilds, and find-process default (e3da592)
+- **android** Smoother Android UI while the proxy is busy (2201c19)
 
-## v0.8.101 (2026-07-25)
+## v0.9.0 (2026-10-14)
 
-Internal improvements only.
+**Breaking Changes**
 
-## v0.8.100 (2026-07-25)
+- **views** DNS and NTP override toggles are removed; picked keys apply to every profile (491fae1)
+- **database** Custom overwrites are removed; rebuild them as custom profiles (1677024)
 
 **Features**
 
-- **geo-identity** Tailscale-style one-click checklist for newbies (914fd48)
-- **geo-identity** Help Claude Code via OS timezone and terminal proxy (2b244dd)
-- **geo-identity** Verify network undercover via FuckClaude API (b53a1c2)
-- **tools** Add Geo identity guide for US AI exit consistency (ba81e57)
+- **views** Per-key DNS, NTP, sniffer and TUN settings (491fae1)
+- **profiles** Custom profiles (3abda78)
+- **ui** Stacked sheets, context menus and a sort mode (8c43053)
+- **providers** DNS, Hosts and ports apply without a restart (532ebf0)
+- **android** Launcher shortcuts and one-step on-demand access (d3fa225)
+- **core** Share link import and mrs rule sets (2fa2f7f)
+- **editor** Editor word wrap and snippets (e131675)
+- **dashboard** More dashboard cards (e62afb7)
+- **views** Hide timed-out nodes and search every list (8378c70)
+- **ui** Sidebar, floating dock and drag to go back (841d603)
+- **ui** New app glyphs, empty states and theme page (ee6a497)
+- **overwrite** Invalid override warnings and rule presets (46fb7fe)
+- **config** DNS query log and per-key DNS/NTP overrides (a390a42)
+- **core** Proxied service checks and outbound IP risk (8068e68)
+- **platform** Tray hotkeys, node delays and a delay test (1e97716)
+- **ui** Rework the app UI and refresh the localization (26cfbaf)
+- **app** Rework the app layer and window handling, and add proxy authentication (aaf934c)
+- **desktop** Rework the desktop runners, packaging, and native build (c0fcbc0)
+- **android** Rework the Android VPN service and lifecycle handling (ae29f38)
+- **plugins** Rework the desktop plugins and add the Helper service and Rust bridge (adf715f)
+- **core** Rework the core IPC and process lifecycle (c6eaa0a)
 
 **Bug Fixes**
 
-- **test** Update config overrides count for geo identity (f85855d)
-
-## v0.8.99 (2026-07-25)
-
-**Features**
-
-- **tailscale** Friendlier setup guide and one-tap connection test (42f91cc)
-
-## v0.8.98 (2026-07-24)
-
-**Features**
-
-- **tailscale** Sync Fake IP Filter with bypass toggle (5e6fce1)
-
-**Bug Fixes**
-
-- **tailscale** Exclude control plane from fake-IP DNS on bypass (8f0631b)
-
-## v0.8.97 (2026-07-24)
-
-**Features**
-
-- **tailscale** One-click bypass + per-node route destinations (89cdc0d)
-- **tailscale** Add in-app guide and a prominent add-node button (e069682)
+- **database** Unreadable settings no longer block startup or restores (1677024)
+- **desktop** Windows and Linux desktop fixes (94a25f4)
+- **core,helper** The elevated Core only answers its owner (d780cb8)
+- **core** A changed resource link is now used by the next sync and by auto update (ff23f30)
+- **core** DNS lookups no longer fail on networks that report no DNS servers (e55f6d1)
+- **proxies** Smaller icons in icon-only group headers (786a6ab)
+- **core,android** Push notifications reconnect in Doze (1e9955d)
+- **backup,database** Restores never apply halfway (bee8f24)
+- **resources** Refresh the geo file size and time after an update finishes (c5bf5bd)
+- **core** Keep the core running while Windows sleeps with the app suspended (60f371a)
 
 <!-- changelog:frozen -->
 <!-- Entries below predate the structured pipeline. Their wording is kept as written; only the heading and list style were normalized. -->

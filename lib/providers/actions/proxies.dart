@@ -113,7 +113,6 @@ class ProxiesAction extends _$ProxiesAction {
 
   Future<void> updateGroups() async {
     try {
-      commonPrint.log('updateGroups');
       final groups = await retry(
         task: () async {
           final sortType = ref.read(
@@ -243,6 +242,13 @@ class ProxiesAction extends _$ProxiesAction {
               .start(provider.updatingKey, scope: UpdatingScope.core)
         : null;
     try {
+      final clashProvidersAction = ref.read(
+        clashProvidersActionProvider.notifier,
+      );
+      final ruleSet = await clashProvidersAction.remoteProviderOf(provider);
+      if (ruleSet != null && !await clashProvidersAction.syncRemote(ruleSet)) {
+        return '';
+      }
       final message = await _core.updateExternalProvider(
         providerName: provider.name,
       );
@@ -307,7 +313,10 @@ class ProxiesAction extends _$ProxiesAction {
     ref.read(sortNumProvider.notifier).add();
   }
 
-  Future<void> delayTestPageGroup(String groupName) async {
+  Future<void> delayTestPageGroup(
+    String groupName, {
+    bool matchSearch = true,
+  }) async {
     final group = ref.read(groupsProvider).getGroup(groupName);
     if (group == null) {
       return;
@@ -317,7 +326,9 @@ class ProxiesAction extends _$ProxiesAction {
       return;
     }
     try {
-      final query = SearchQuery(ref.read(queryProvider(QueryTag.proxies)));
+      final query = SearchQuery(
+        matchSearch ? ref.read(queryProvider(QueryTag.proxies)) : '',
+      );
       await delayTest(
         group.all.whereMatches(query, (proxy) => proxy.searchFields).toList(),
         group.testUrl,

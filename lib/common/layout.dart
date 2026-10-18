@@ -2,9 +2,10 @@ import 'dart:math';
 import 'dart:ui' show Size;
 
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/ui/ui.dart';
+import 'package:flutter/widgets.dart' show BuildContext;
 
 import 'constant.dart';
-import 'num.dart';
 
 double getWindowHeaderHeight({required bool isDesktop, required bool isMacOS}) {
   if (!isDesktop) return 0;
@@ -49,6 +50,17 @@ Size windowControlsOverSidebar({required bool isMacOS, required int version}) {
   return isMacOS && version > 10 ? macOSTrafficLightsArea : Size.zero;
 }
 
+/// The mobile view holds the traffic lights in its window header, so only a
+/// page filling a wider window meets them.
+Size windowControlsOverPage({
+  required bool isMacOS,
+  required int version,
+  required bool isMobileView,
+}) {
+  if (isMobileView) return Size.zero;
+  return windowControlsOverSidebar(isMacOS: isMacOS, version: version);
+}
+
 int getProxiesColumns(double viewWidth, ProxiesLayout proxiesLayout) {
   final columns = max((viewWidth / 250).ceil(), 2);
   return switch (proxiesLayout) {
@@ -58,9 +70,15 @@ int getProxiesColumns(double viewWidth, ProxiesLayout proxiesLayout) {
   };
 }
 
-double get cardSpacing => 12.mAp;
+double cardSpacingOf(BuildContext context, ViewMode viewMode) =>
+    switch (viewMode) {
+      ViewMode.mobile => 8.0,
+      ViewMode.laptop => 12.0,
+      ViewMode.desktop => 16.0,
+    }.mAp(context);
 
-const profileItemMinWidth = 270.0;
+const profileItemMinWidth = 300.0;
+const _profilesMaxColumns = 3;
 
 int getProfilesColumns(
   double viewWidth, {
@@ -68,5 +86,5 @@ int getProfilesColumns(
   double minItemWidth = profileItemMinWidth,
 }) {
   final columns = (viewWidth + spacing) / (minItemWidth + spacing);
-  return max(columns.floor(), 1);
+  return columns.floor().clamp(1, _profilesMaxColumns);
 }

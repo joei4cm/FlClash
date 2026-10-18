@@ -1,7 +1,13 @@
+import 'package:fl_clash/common/app_localizations.dart';
 import 'package:fl_clash/l10n/l10n.dart';
-import 'package:fl_clash/widgets/null_status.dart';
+import 'package:fl_clash/providers/app.dart';
+import 'package:fl_clash/ui/null_status.dart';
+import 'package:fl_clash/ui/paged_sheet.dart';
+import 'package:fl_clash/ui/sheet.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+
+import '../helpers/test_app.dart';
 
 const _reducedMotion = MediaQueryData(disableAnimations: true);
 
@@ -9,18 +15,24 @@ Widget _switcher({
   required bool isEmpty,
   bool isLoading = false,
   bool isSearching = false,
+  String? loadingLabel,
+  String label = 'Nothing here',
   MediaQueryData? mediaQuery,
 }) {
   final switcher = NullStatusSwitcher(
     isLoading: isLoading,
     isEmpty: isEmpty,
     isSearching: isSearching,
-    nullStatus: const NullStatus(label: 'Nothing here'),
+    loadingStatus: loadingLabel == null
+        ? null
+        : NullStatus(label: loadingLabel),
+    nullStatus: NullStatus(label: label),
     child: const Text('content', key: ValueKey('content')),
   );
   return MaterialApp(
     localizationsDelegates: const [
       AppLocalizations.delegate,
+      AppUiLocalizations.delegate,
       ...GlobalMaterialLocalizations.delegates,
     ],
     supportedLocales: AppLocalizations.delegate.supportedLocales,
@@ -171,6 +183,44 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets('skips its own fade while its sheet is still sliding in', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      TestApp(
+        overrides: [
+          viewSizeProvider.overrideWithBuild((_, _) => const Size(400, 900)),
+        ],
+        child: Builder(
+          builder: (context) => TextButton(
+            onPressed: () => showSheet<void>(
+              context: context,
+              props: nestedPagedSheetProps,
+              builder: (_) => NestedPagedSheet(
+                builder: (_) => const NullStatus(label: 'Nothing here'),
+              ),
+            ),
+            child: const Text('open'),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('open'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(find.byType(NullStatus), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(NullStatus),
+        matching: find.byType(FadeTransition),
+      ),
+      findsNothing,
+    );
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('skips the entrance fade under reduced motion', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
@@ -208,6 +258,54 @@ void main() {
     expect(find.text('Nothing here'), findsNothing);
     expect(find.byKey(const ValueKey('content')), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a first load done within a route transition shows no status', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _switcher(isEmpty: true, isLoading: true, loadingLabel: 'Loading'),
+    );
+    await tester.pump(const Duration(milliseconds: 350));
+    expect(find.byType(NullStatus), findsNothing);
+
+    await tester.pumpWidget(_switcher(isEmpty: false, loadingLabel: 'Loading'));
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.byType(NullStatus), findsNothing);
+    expect(find.byKey(const ValueKey('content')), findsOneWidget);
+  });
+
+  testWidgets('a first load that outlasts a route transition shows its '
+      'loading status until the content arrives', (tester) async {
+    await tester.pumpWidget(
+      _switcher(isEmpty: true, isLoading: true, loadingLabel: 'Loading'),
+    );
+    await tester.pump(const Duration(milliseconds: 350));
+    expect(find.text('Loading'), findsNothing);
+
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text('Loading'), findsOneWidget);
+    expect(find.byKey(const ValueKey('content')), findsNothing);
+
+    await tester.pumpWidget(_switcher(isEmpty: false, loadingLabel: 'Loading'));
+    await tester.pumpAndSettle();
+    expect(find.text('Loading'), findsNothing);
+    expect(find.byKey(const ValueKey('content')), findsOneWidget);
+  });
+
+  testWidgets('a first load that finds nothing leaves the loading status for '
+      'the empty one', (tester) async {
+    await tester.pumpWidget(
+      _switcher(isEmpty: true, isLoading: true, loadingLabel: 'Loading'),
+    );
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('Loading'), findsOneWidget);
+
+    await tester.pumpWidget(_switcher(isEmpty: true, loadingLabel: 'Loading'));
+    await tester.pumpAndSettle();
+    expect(find.text('Loading'), findsNothing);
+    expect(find.text('Nothing here'), findsOneWidget);
   });
 
   testWidgets('a search that matches nothing has its own empty state', (

@@ -2,13 +2,7 @@ import 'dart:io';
 
 import 'package:fl_clash/common/system.dart';
 
-/// Host-level helpers for Claude Code / terminal geo identity.
-///
-/// Claude Code reads the **OS timezone** (not GeoMirror). Terminal traffic is
-/// captured by TUN/VPN automatically; with system-proxy-only mode, Node often
-/// needs explicit `HTTP(S)_PROXY` exports pointed at FlClash's mixed port.
 abstract final class GeoIdentityHost {
-  /// Common IANA → Windows `tzutil` display names for US exits.
   static const windowsTimezoneNames = <String, String>{
     'America/Los_Angeles': 'Pacific Standard Time',
     'America/Vancouver': 'Pacific Standard Time',
@@ -24,7 +18,6 @@ abstract final class GeoIdentityHost {
     'Etc/GMT': 'UTC',
   };
 
-  /// Build shell exports so Claude Code / Node honor FlClash in system-proxy mode.
   static String buildTerminalProxyExports({
     required int mixedPort,
     String host = '127.0.0.1',
@@ -43,7 +36,6 @@ abstract final class GeoIdentityHost {
     ].join('\n');
   }
 
-  /// PowerShell equivalents for Windows terminals.
   static String buildTerminalProxyExportsPowerShell({
     required int mixedPort,
     String host = '127.0.0.1',
@@ -104,8 +96,6 @@ abstract final class GeoIdentityHost {
     return null;
   }
 
-  /// Apply an IANA timezone on desktop hosts. Returns null on success, else an
-  /// error / manual-command hint.
   static Future<String?> setOsTimezone(String ianaTimezone) async {
     final timezone = ianaTimezone.trim();
     if (timezone.isEmpty) {
@@ -163,7 +153,6 @@ abstract final class GeoIdentityHost {
     return 'unsupported-platform';
   }
 
-  /// True when [timezone] is a known Claude Code China-timezone hit.
   static bool isClaudeCodeChinaTimezone(String? timezone) {
     if (timezone == null || timezone.isEmpty) {
       return false;

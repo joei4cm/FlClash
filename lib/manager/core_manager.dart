@@ -49,16 +49,38 @@ class _CoreContainerState extends ConsumerState<CoreManager>
         ref.read(setupActionProvider.notifier).updateConfigDebounce();
       }
     });
+    ref.listenManual(setupPatchProvider, (prev, next) {
+      if (prev != next) {
+        ref
+            .read(setupActionProvider.notifier)
+            .applyProfileDebounce(silence: true);
+      }
+    });
     ref.listenManual(appSettingProvider.select((state) => state.openLogs), (
       prev,
       next,
     ) {
-      if (next) {
-        _core.startLog();
-      } else {
-        _core.stopLog();
+      if (prev != next) {
+        _syncLogStream();
+      }
+    });
+    // Every Core process starts without a log stream.
+    ref.listenManual(coreStatusProvider, (prev, next) {
+      if (next == CoreStatus.connected && prev != CoreStatus.connected) {
+        _syncLogStream();
       }
     }, fireImmediately: true);
+  }
+
+  void _syncLogStream() {
+    if (ref.read(coreStatusProvider) != CoreStatus.connected) {
+      return;
+    }
+    if (ref.read(appSettingProvider).openLogs) {
+      _core.startLog();
+    } else {
+      _core.stopLog();
+    }
   }
 
   @override
@@ -92,10 +114,30 @@ class _CoreContainerState extends ConsumerState<CoreManager>
   }
 
   @override
+  void onDialerLoop(String proxyName) {
+    throttler.call(
+      FunctionTag.dialerLoopNotifier,
+      () => dialogs.showNotifier(
+        currentAppLocalizations.dialerProxyLoopStopped(proxyName),
+        level: MessageLevel.error,
+      ),
+      duration: const Duration(seconds: 3),
+      fire: true,
+    );
+    super.onDialerLoop(proxyName);
+  }
+
+  @override
   void onRequest(TrackerInfo trackerInfo) async {
     ref.read(requestsProvider.notifier).addRequest(trackerInfo);
     ref.read(requestCountProvider.notifier).update((count) => count + 1);
     super.onRequest(trackerInfo);
+  }
+
+  @override
+  void onRequestTraffic(Map<String, RequestTraffic> traffic) {
+    ref.read(requestsProvider.notifier).updateTraffic(traffic);
+    super.onRequestTraffic(traffic);
   }
 
   @override

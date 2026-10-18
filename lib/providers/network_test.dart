@@ -8,9 +8,6 @@ import 'package:fl_clash/providers/database.dart';
 import 'package:fl_clash/providers/state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-const flClashAutoGroupName = 'FlClash Auto';
-const flClashProxyGroupName = 'PROXY';
-
 class AutoSelectResult {
   final bool enabledExisting;
   final bool createdGroups;
@@ -25,11 +22,6 @@ class AutoSelectResult {
   });
 }
 
-/// Restores existing url-test/fallback selection, or creates a simple
-/// overwrite url-test group when the subscription has none (fallback only).
-///
-/// On upstream/dev, service probing lives in core `service_check` /
-/// `service_status`; this helper only covers auto-select fallback UX.
 Future<AutoSelectResult> enableAutoSelectWithContainer(WidgetRef ref) async {
   final groups = ref.read(groupsProvider);
   final existingAuto = groups.cast<Group?>().firstWhere(
@@ -86,12 +78,6 @@ Future<AutoSelectResult> enableAutoSelectWithContainer(WidgetRef ref) async {
     type: GroupType.Selector,
     proxies: [flClashAutoGroupName, 'DIRECT', 'REJECT'],
   );
-
-  if (profile.overwriteType != OverwriteType.custom) {
-    ref
-        .read(profilesProvider.notifier)
-        .put(profile.copyWith(overwriteType: OverwriteType.custom));
-  }
 
   // Replace empty custom groups with a minimal Auto + PROXY setup. If the
   // user already authored custom groups, only ensure FlClash Auto exists.

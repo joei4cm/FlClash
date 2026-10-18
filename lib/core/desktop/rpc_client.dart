@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/event.dart';
 import 'package:fl_clash/core/method.dart';
+import 'package:fl_clash/core/spill.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
@@ -17,6 +18,9 @@ const _maxTimeoutExtension = 3;
 const _maxExtensionGrace = Duration(seconds: 30);
 
 const _connectTimeout = Duration(seconds: 10);
+
+final _requestEncoder = JsonUtf8Encoder();
+final _frameDecoder = utf8.decoder.fuse(json.decoder);
 
 abstract interface class CoreRpcChannel {
   Future<T?> invoke<T>({
@@ -31,7 +35,8 @@ abstract interface class CoreRpcChannel {
 final class CoreRpcClient implements CoreRpcChannel {
   final DesktopCoreTransport transport;
   final Duration extensionGrace;
-  final Map<String, Completer<Object?>> _pending = {};
+  final Map<String, ({Completer<Object?> completer, CoreMethod method})>
+  _pending = {};
   late final StreamSubscription<Uint8List> _frameSubscription;
   late final StreamSubscription<DesktopTransportEvent> _eventSubscription;
 
@@ -72,7 +77,7 @@ final class CoreRpcClient implements CoreRpcChannel {
     }
     final id = '${++_methodCallId}';
     final completer = Completer<Object?>();
-    _pending[id] = completer;
+    _pending[id] = (completer: completer, method: method);
     final requestTimeout = timeout ?? const Duration(minutes: 3);
     final stopwatch = Stopwatch()..start();
     try {
@@ -83,17 +88,14 @@ final class CoreRpcClient implements CoreRpcChannel {
       if (completer.isCompleted) {
         return await completer.future as T?;
       }
-      final sendTimeout = requestTimeout - stopwatch.elapsed;
-      if (sendTimeout <= Duration.zero) {
+      if (stopwatch.elapsed >= requestTimeout) {
         throw TimeoutException('Core method ${method.name} timed out');
       }
-      await transport
-          .send(
-            json.encode(
-              CoreMethodCall(id: id, method: method, arguments: arguments),
-            ),
-          )
-          .timeout(sendTimeout);
+      transport.send(
+        _requestEncoder.convert(
+          CoreMethodCall(id: id, method: method, arguments: arguments),
+        ),
+      );
       return await _awaitResponse(
             method: method,
             completer: completer,
@@ -163,14 +165,14 @@ final class CoreRpcClient implements CoreRpcChannel {
 
   void _removePending(String id, Completer<Object?> completer) {
     final removed = _pending.remove(id);
-    if (identical(removed, completer) && !completer.isCompleted) {
+    if (identical(removed?.completer, completer) && !completer.isCompleted) {
       completer.complete(null);
     }
   }
 
   void _handleFrame(Uint8List frame) {
     try {
-      final decoded = json.decode(utf8.decode(frame));
+      final decoded = _frameDecoder.convert(frame);
       if (decoded is! Map) {
         throw const FormatException('Core transport data is not an object');
       }
@@ -208,8 +210,26 @@ final class CoreRpcClient implements CoreRpcChannel {
       ..reset()
       ..start();
     final id = response.id;
-    final completer = id == null ? null : _pending.remove(id);
-    if (completer == null || completer.isCompleted) {
+    final pending = id == null ? null : _pending.remove(id);
+    final completer = pending?.completer;
+    if (pending == null || completer == null || completer.isCompleted) {
+      unawaited(discardSpilledResponse(response));
+      return;
+    }
+    if (response.file != null) {
+      unawaited(
+        resolveSpilledResponse(
+          response,
+          method: pending.method,
+        ).then((resolved) => _complete(completer, resolved)),
+      );
+      return;
+    }
+    _complete(completer, response);
+  }
+
+  void _complete(Completer<Object?> completer, CoreMethodResponse response) {
+    if (completer.isCompleted) {
       return;
     }
     final error = response.error;
@@ -256,7 +276,9 @@ final class CoreRpcClient implements CoreRpcChannel {
   }
 
   void _failPending(CoreMethodException error) {
-    final completers = _pending.values.toList(growable: false);
+    final completers = [
+      for (final pending in _pending.values) pending.completer,
+    ];
     _pending.clear();
     for (final completer in completers) {
       if (!completer.isCompleted) {

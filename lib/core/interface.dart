@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 
 import 'desktop/model.dart';
@@ -23,11 +24,29 @@ mixin CoreInterface {
 
   Future<String> validateConfig(String path);
 
+  Future<String> decryptConfig(String path, String ageSecretKey);
+
   Future<List<String>> validateProxies(List<Map<String, dynamic>> proxies);
+
+  Future<List<String>> validateFilters(List<String> filters);
+
+  Future<List<Map<String, dynamic>>> convertProxies(String path);
+
+  Future<List<String>> encodeShareLinks(List<Map<String, dynamic>> proxies);
+
+  Future<List<List<Map<String, dynamic>>>> decodeShareLinks(List<String> lines);
 
   Future<Map<String, dynamic>> getConfig(String path);
 
+  Future<ProfileBase> getProfileBase(String path);
+
+  Future<Map<String, dynamic>> getProfileOutbounds(String path);
+
+  Future<String> buildProfile(SetupBase base);
+
   Future<String> dumpRuleSet(String path);
+
+  Future<RuleSetInfo> compileRuleSet(String name, {String url = ''});
 
   Future<Delay?> asyncTestDelay(String url, String proxyName);
 
@@ -168,6 +187,14 @@ abstract class CoreHandlerInterface with CoreInterface {
   }
 
   @override
+  Future<String> decryptConfig(String path, String ageSecretKey) async {
+    return _invokeMessage(
+      method: CoreMethod.decryptConfig,
+      arguments: {'path': path, 'age-secret-key': ageSecretKey},
+    );
+  }
+
+  @override
   Future<List<String>> validateProxies(
     List<Map<String, dynamic>> proxies,
   ) async {
@@ -182,6 +209,73 @@ abstract class CoreHandlerInterface with CoreInterface {
       );
     }
     return data.map((item) => item?.toString() ?? '').toList();
+  }
+
+  @override
+  Future<List<String>> validateFilters(List<String> filters) async {
+    final data = await _invokeMethod<List<dynamic>>(
+      method: CoreMethod.validateFilters,
+      arguments: filters,
+    );
+    if (data == null || data.length != filters.length) {
+      throw CoreMethodException(
+        code: 'no_response',
+        message: 'Core did not answer ${CoreMethod.validateFilters.name}',
+      );
+    }
+    return data.map((item) => item?.toString() ?? '').toList();
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> convertProxies(String path) async {
+    final data = await _invokeMethod<List<dynamic>>(
+      method: CoreMethod.convertProxies,
+      arguments: path,
+    );
+    return [
+      for (final item in data ?? const [])
+        if (item is Map) Map<String, dynamic>.from(item),
+    ];
+  }
+
+  @override
+  Future<List<String>> encodeShareLinks(
+    List<Map<String, dynamic>> proxies,
+  ) async {
+    final data = await _invokeMethod<List<dynamic>>(
+      method: CoreMethod.encodeShareLinks,
+      arguments: proxies,
+    );
+    if (data == null || data.length != proxies.length) {
+      throw CoreMethodException(
+        code: 'no_response',
+        message: 'Core did not answer ${CoreMethod.encodeShareLinks.name}',
+      );
+    }
+    return data.map((item) => item?.toString() ?? '').toList();
+  }
+
+  @override
+  Future<List<List<Map<String, dynamic>>>> decodeShareLinks(
+    List<String> lines,
+  ) async {
+    final data = await _invokeMethod<List<dynamic>>(
+      method: CoreMethod.decodeShareLinks,
+      arguments: lines,
+    );
+    if (data == null || data.length != lines.length) {
+      throw CoreMethodException(
+        code: 'no_response',
+        message: 'Core did not answer ${CoreMethod.decodeShareLinks.name}',
+      );
+    }
+    return [
+      for (final line in data)
+        [
+          for (final item in line is List ? line : const [])
+            if (item is Map) Map<String, dynamic>.from(item),
+        ],
+    ];
   }
 
   @override
@@ -208,6 +302,51 @@ abstract class CoreHandlerInterface with CoreInterface {
   }
 
   @override
+  Future<ProfileBase> getProfileBase(String path) async {
+    final result = await _invokeMethod<Map<String, dynamic>>(
+      method: CoreMethod.getProfileBase,
+      arguments: path,
+    );
+    if (result == null) {
+      throw const CoreMethodException(
+        code: 'empty_result',
+        message: 'Core returned an empty profile base',
+      );
+    }
+    return ProfileBase.fromJson(result);
+  }
+
+  @override
+  Future<Map<String, dynamic>> getProfileOutbounds(String path) async {
+    final result = await _invokeMethod<Map<String, dynamic>>(
+      method: CoreMethod.getProfileOutbounds,
+      arguments: path,
+    );
+    if (result == null) {
+      throw const CoreMethodException(
+        code: 'empty_result',
+        message: 'Core returned no outbounds',
+      );
+    }
+    return result;
+  }
+
+  @override
+  Future<String> buildProfile(SetupBase base) async {
+    final result = await _invokeMethod<String>(
+      method: CoreMethod.buildProfile,
+      arguments: base.toJson(),
+    );
+    if (result == null || result.isEmpty) {
+      throw const CoreMethodException(
+        code: 'empty_result',
+        message: 'Core returned no built profile',
+      );
+    }
+    return result;
+  }
+
+  @override
   Future<String> setupConfig(SetupParams setupParams) async {
     return _invokeMessage(
       method: CoreMethod.setupConfig,
@@ -218,6 +357,24 @@ abstract class CoreHandlerInterface with CoreInterface {
   @override
   Future<String> dumpRuleSet(String path) async {
     return _invokeMessage(method: CoreMethod.dumpRuleSet, arguments: path);
+  }
+
+  @override
+  Future<RuleSetInfo> compileRuleSet(String name, {String url = ''}) async {
+    final data = await _invokeMethod<Map<String, dynamic>>(
+      method: CoreMethod.compileRuleSet,
+      arguments: {'name': name, 'url': url},
+    );
+    if (data == null) {
+      throw const CoreMethodException(
+        code: 'no_response',
+        message: 'Core did not answer compileRuleSet',
+      );
+    }
+    return (
+      behavior: RuleProviderBehavior.values.byName(data['behavior'] as String),
+      format: RuleProviderFormat.values.byName(data['format'] as String),
+    );
   }
 
   @override
@@ -313,17 +470,8 @@ abstract class CoreHandlerInterface with CoreInterface {
 
   @override
   Future<List<TrackerInfo>> getConnections() async {
-    final data = await _invokeMethod<Map<String, dynamic>>(
-      method: CoreMethod.getConnections,
-    );
-    final connections = data?['connections'];
-    if (connections is! List) {
-      return [];
-    }
-    return connections
-        .whereType<Map>()
-        .map((item) => TrackerInfo.fromJson(Map<String, Object?>.from(item)))
-        .toList();
+    final data = await _invokeMethod<Object>(method: CoreMethod.getConnections);
+    return data is List<TrackerInfo> ? data : trackerInfosOf(data);
   }
 
   @override
@@ -376,18 +524,25 @@ abstract class CoreHandlerInterface with CoreInterface {
   }
 
   @override
-  FutureOr<void> resetTraffic() {
-    _invokeMethod(method: CoreMethod.resetTraffic);
-  }
+  FutureOr<void> resetTraffic() => _invokeUnobserved(CoreMethod.resetTraffic);
 
   @override
-  FutureOr<void> startLog() {
-    _invokeMethod(method: CoreMethod.startLog);
-  }
+  FutureOr<void> startLog() => _invokeUnobserved(CoreMethod.startLog);
 
   @override
-  FutureOr<void> stopLog() {
-    _invokeMethod<bool>(method: CoreMethod.stopLog);
+  FutureOr<void> stopLog() => _invokeUnobserved(CoreMethod.stopLog);
+
+  /// For calls whose callers never wait on them, so a Core that is gone or
+  /// restarting cannot surface as an unhandled asynchronous error.
+  Future<void> _invokeUnobserved(CoreMethod method) async {
+    try {
+      await _invokeMethod<Object?>(method: method);
+    } catch (error) {
+      commonPrint.log(
+        '${method.name} failed: $error',
+        logLevel: coreFailureLogLevel(error),
+      );
+    }
   }
 
   @override

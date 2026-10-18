@@ -75,22 +75,33 @@ class CommonAction extends _$CommonAction {
 
   Future<bool> autoCheckUpdate() async {
     if (!ref.read(appSettingProvider).autoCheckUpdate) return false;
-    final res = await request.checkForUpdate();
+    final Map<String, dynamic>? res;
+    try {
+      res = await request.checkForUpdate();
+    } catch (error) {
+      commonPrint.log(
+        'checkForUpdate failed: ${compactError(error)}',
+        logLevel: LogLevel.warning,
+      );
+      return false;
+    }
     await checkUpdateResultHandle(data: res);
     return res != null;
   }
 
   TextSpan _releaseSpan(BuildContext context, String tagName, String? body) {
-    final textTheme = context.textTheme;
     final version = parseReleaseChangelog(body);
     return TextSpan(
       text: '$tagName \n',
-      style: textTheme.headlineSmall,
+      style: AppTextStyle.title2.of(context),
       children: version == null
           ? [
-              TextSpan(text: '\n', style: textTheme.bodyMedium),
+              TextSpan(text: '\n', style: AppTextStyle.subheadline.of(context)),
               for (final submit in parseReleaseBody(body))
-                TextSpan(text: '- $submit \n', style: textTheme.bodyMedium),
+                TextSpan(
+                  text: '- $submit \n',
+                  style: AppTextStyle.subheadline.of(context),
+                ),
             ]
           : _changelogSpans(context, version),
     );
@@ -100,20 +111,24 @@ class CommonAction extends _$CommonAction {
     BuildContext context,
     ChangelogVersion version,
   ) {
-    final textTheme = context.textTheme;
     return [
       for (final group in version.visibleGroups) ...[
         TextSpan(
           text:
               '\n${changelogGroupTitle(currentAppLocalizations, group.type)}\n',
-          style: textTheme.labelLarge?.copyWith(
-            color: group.type == ChangelogType.breaking
-                ? context.colorScheme.error
-                : context.colorScheme.primary,
-          ),
+          style: AppTextStyle.subheadline
+              .of(context, emphasized: true)
+              .copyWith(
+                color: group.type == ChangelogType.breaking
+                    ? context.colorScheme.error
+                    : context.colorScheme.primary,
+              ),
         ),
         for (final entry in group.entries)
-          TextSpan(text: '• ${entry.text}\n', style: textTheme.bodyMedium),
+          TextSpan(
+            text: '• ${entry.text}\n',
+            style: AppTextStyle.subheadline.of(context),
+          ),
       ],
     ];
   }

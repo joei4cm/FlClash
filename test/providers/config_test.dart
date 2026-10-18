@@ -125,17 +125,6 @@ void main() {
     });
   });
 
-  group('OverrideDns provider', () {
-    test('default is false', () {
-      expect(container.read(overrideDnsProvider), false);
-    });
-
-    test('can toggle on', () {
-      container.read(overrideDnsProvider.notifier).update((_) => true);
-      expect(container.read(overrideDnsProvider), true);
-    });
-  });
-
   group('ExcludeSSIDs provider', () {
     test('reorders with final insertion index semantics', () {
       container
@@ -178,7 +167,7 @@ void main() {
   group('ProxiesStyleSetting provider', () {
     test('default values', () {
       final value = container.read(proxiesStyleSettingProvider);
-      expect(value.type, ProxiesType.tab);
+      expect(value.type, ProxiesType.list);
     });
 
     test('can update state', () {
@@ -194,121 +183,6 @@ void main() {
     });
   });
 
-  group('TailscaleSetting provider', () {
-    test('default is disabled with no nodes', () {
-      final value = container.read(tailscaleSettingProvider);
-      expect(value.enable, false);
-      expect(value.proxies, isEmpty);
-    });
-
-    test('setEnable toggles the feature without touching nodes', () {
-      final notifier = container.read(tailscaleSettingProvider.notifier);
-      notifier.addOrUpdate(const TailscaleProxy(name: 'ts-node'));
-      notifier.setEnable(true);
-      final value = container.read(tailscaleSettingProvider);
-      expect(value.enable, true);
-      expect(value.proxies.length, 1);
-    });
-
-    test('setBypassTraffic toggles bypass independently of enable', () {
-      final notifier = container.read(tailscaleSettingProvider.notifier);
-      notifier.setBypassTraffic(true);
-      final value = container.read(tailscaleSettingProvider);
-      expect(value.bypassTraffic, true);
-      expect(value.enable, false);
-    });
-
-    test('setBypassTraffic adds and removes DNS fake-ip filters', () {
-      final notifier = container.read(tailscaleSettingProvider.notifier);
-      notifier.setBypassTraffic(true);
-      expect(
-        container.read(patchClashConfigProvider).dns.fakeIpFilter,
-        containsAll(tailscaleFakeIpFilters),
-      );
-
-      notifier.setBypassTraffic(false);
-      final filters = container.read(patchClashConfigProvider).dns.fakeIpFilter;
-      for (final filter in tailscaleFakeIpFilters) {
-        expect(filters, isNot(contains(filter)));
-      }
-    });
-
-    test('setBypassTraffic preserves unrelated fake-ip filters', () {
-      container
-          .read(patchClashConfigProvider.notifier)
-          .update(
-            (state) =>
-                state.copyWith.dns(fakeIpFilter: ['*.lan', 'custom.example']),
-          );
-      final notifier = container.read(tailscaleSettingProvider.notifier);
-      notifier.setBypassTraffic(true);
-      notifier.setBypassTraffic(false);
-      expect(container.read(patchClashConfigProvider).dns.fakeIpFilter, [
-        '*.lan',
-        'custom.example',
-      ]);
-    });
-
-    test('addOrUpdate appends a new node', () {
-      container
-          .read(tailscaleSettingProvider.notifier)
-          .addOrUpdate(const TailscaleProxy(name: 'ts-node'));
-      final value = container.read(tailscaleSettingProvider);
-      expect(value.proxies.length, 1);
-      expect(value.proxies.first.name, 'ts-node');
-    });
-
-    test('addOrUpdate replaces a node with the same name', () {
-      final notifier = container.read(tailscaleSettingProvider.notifier);
-      notifier.addOrUpdate(const TailscaleProxy(name: 'ts-node'));
-      notifier.addOrUpdate(
-        const TailscaleProxy(name: 'ts-node', authKey: 'new-key'),
-      );
-      final value = container.read(tailscaleSettingProvider);
-      expect(value.proxies.length, 1);
-      expect(value.proxies.first.authKey, 'new-key');
-    });
-
-    test('addOrUpdate renames without duplicating', () {
-      final notifier = container.read(tailscaleSettingProvider.notifier);
-      notifier.addOrUpdate(const TailscaleProxy(name: 'old-name'));
-      notifier.addOrUpdate(
-        const TailscaleProxy(name: 'new-name', authKey: 'key'),
-        previousName: 'old-name',
-      );
-      final value = container.read(tailscaleSettingProvider);
-      expect(value.proxies.length, 1);
-      expect(value.proxies.first.name, 'new-name');
-      expect(value.proxies.first.authKey, 'key');
-    });
-
-    test('remove deletes a node by name', () {
-      final notifier = container.read(tailscaleSettingProvider.notifier);
-      notifier.addOrUpdate(const TailscaleProxy(name: 'ts-node'));
-      notifier.remove('ts-node');
-      expect(container.read(tailscaleSettingProvider).proxies, isEmpty);
-    });
-  });
-
-  group('GeoIdentitySetting provider', () {
-    test('default is disabled with US Accept-Language on', () {
-      final value = container.read(geoIdentitySettingProvider);
-      expect(value.enable, false);
-      expect(value.useUsAcceptLanguage, true);
-      expect(value.previousOsTimezone, isNull);
-      expect(value.appliedOsTimezone, isNull);
-    });
-
-    test('setEnable and setUseUsAcceptLanguage update independently', () {
-      final notifier = container.read(geoIdentitySettingProvider.notifier);
-      notifier.setEnable(true);
-      notifier.setUseUsAcceptLanguage(false);
-      final value = container.read(geoIdentitySettingProvider);
-      expect(value.enable, true);
-      expect(value.useUsAcceptLanguage, false);
-    });
-  });
-
   group('configProvider (composite)', () {
     test('composes all sub-providers with defaults', () {
       final config = container.read(configProvider);
@@ -317,19 +191,13 @@ void main() {
       expect(config.vpnProps.enable, true);
       expect(config.networkProps.systemProxy, true);
       expect(config.currentProfileId, null);
-      expect(config.overrideDns, false);
       expect(config.hotKeyActions, isEmpty);
       expect(config.patchClashConfig, const PatchClashConfig());
       expect(config.excludeSSIDs, isEmpty);
-      expect(config.tailscaleProps.enable, false);
-      expect(config.tailscaleProps.proxies, isEmpty);
-      expect(config.geoIdentityProps.enable, false);
-      expect(config.geoIdentityProps.useUsAcceptLanguage, true);
     });
 
     test('reflects updated sub-provider values', () {
       container.read(currentProfileIdProvider.notifier).update((_) => 99);
-      container.read(overrideDnsProvider.notifier).update((_) => true);
       container
           .read(patchClashConfigProvider.notifier)
           .update((_) => const PatchClashConfig(mixedPort: 7890));
@@ -339,40 +207,44 @@ void main() {
 
       final config = container.read(configProvider);
       expect(config.currentProfileId, 99);
-      expect(config.overrideDns, true);
       expect(config.patchClashConfig.mixedPort, 7890);
       expect(config.excludeSSIDs, ['Office Wi-Fi']);
     });
   });
 
+  group('writeConfig', () {
+    test('never leaves a restored open controller without a secret', () {
+      final ref = container.read(Provider<Ref>((ref) => ref));
+
+      writeConfig(
+        ref,
+        const Config(
+          themeProps: ThemeProps(),
+          patchClashConfig: PatchClashConfig(
+            externalController: ExternalControllerStatus.open,
+          ),
+        ),
+      );
+
+      expect(container.read(patchClashConfigProvider).secret, hasLength(32));
+    });
+  });
+
   group('buildConfigOverrides', () {
     test('produces correct overrides', () {
-      const config = Config(
-        themeProps: ThemeProps(),
-        currentProfileId: 7,
-        overrideDns: true,
-        overrideNtp: true,
-        geoIdentityProps: GeoIdentityProps(enable: true),
-      );
+      const config = Config(themeProps: ThemeProps(), currentProfileId: 7);
       final overrides = buildConfigOverrides(config);
-      expect(overrides.length, 15);
+      expect(overrides.length, 11);
 
       final overrideContainer = ProviderContainer(overrides: overrides);
       addTearDown(overrideContainer.dispose);
 
       expect(overrideContainer.read(currentProfileIdProvider), 7);
-      expect(overrideContainer.read(overrideDnsProvider), true);
-      expect(overrideContainer.read(overrideNtpProvider), true);
       expect(
         overrideContainer.read(patchClashConfigProvider),
         config.patchClashConfig,
       );
       expect(overrideContainer.read(excludeSSIDsProvider), config.excludeSSIDs);
-      expect(overrideContainer.read(geoIdentitySettingProvider).enable, true);
-      expect(
-        overrideContainer.read(geoIdentitySettingProvider).useUsAcceptLanguage,
-        true,
-      );
       expect(
         overrideContainer.read(appSettingProvider).onlyStatisticsProxy,
         false,

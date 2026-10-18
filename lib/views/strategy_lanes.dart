@@ -1,5 +1,5 @@
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/icons/icons.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
@@ -125,22 +125,21 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
     }
     final policies = ref.read(appSettingProvider).strategyLanePolicies;
     final testUrl = ref.read(appSettingProvider).testUrl;
-    final overwriteType =
-        ref.read(currentProfileProvider)?.overwriteType ??
-        OverwriteType.standard;
+    final customProfile =
+        ref.read(currentProfileProvider)?.type == ProfileType.custom;
     final clash = ref.read(clashConfigProvider(profileId)).value;
-    if (clash == null) {
+    if (clash == null && !customProfile) {
       return const StrategyLaneInjection();
     }
     final customGroups =
         ref.read(proxyGroupsProvider(profileId)).value ?? const <ProxyGroup>[];
     final customRules =
-        ref.read(profileCustomRulesProvider(profileId)).value ?? const <Rule>[];
+        ref.read(profileRulesProvider(profileId)).value ?? const <Rule>[];
     final inputs = resolveStrategyLaneConfigInputs(
-      overwriteType: overwriteType,
-      subscriptionGroups: clash.proxyGroups,
-      subscriptionRules: clash.rules,
-      subscriptionProxies: clash.proxies,
+      customProfile: customProfile,
+      subscriptionGroups: clash?.proxyGroups ?? const [],
+      subscriptionRules: clash?.rules ?? const [],
+      subscriptionProxies: clash?.proxies ?? const [],
       customGroups: customGroups,
       customRules: customRules,
     );
@@ -151,6 +150,32 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
       rules: inputs.rules,
       testUrl: testUrl,
       availableProxyNames: inputs.proxyNames,
+    );
+  }
+
+  Future<String?> _pickOption({
+    required String title,
+    required List<String> options,
+    required String value,
+    required String Function(String value) textBuilder,
+  }) {
+    return showSheet<String>(
+      context: context,
+      builder: (context) => CommonScaffold(
+        title: title,
+        body: ListView(
+          children: [
+            for (final option in options)
+              ListItem(
+                title: Text(textBuilder(option)),
+                trailing: option == value
+                    ? const GlyphIcon(AppGlyphs.check)
+                    : null,
+                onTap: () => Navigator.of(context).pop(option),
+              ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -169,16 +194,14 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
       for (final proxy in proxies) 'proxy:${proxy.name}',
     ];
     final current = row.policy.encode();
-    final selected = await dialogs.showCommonDialog<String>(
-      child: OptionsDialog<String>(
-        title: _laneLabel(l10n, row.id),
-        options: options,
-        value: options.contains(current) ? current : 'follow',
-        textBuilder: (value) {
-          final policy = StrategyLanePolicy.parse(value);
-          return _policyLabel(l10n, policy, row.discovery);
-        },
-      ),
+    final selected = await _pickOption(
+      title: _laneLabel(l10n, row.id),
+      options: options,
+      value: options.contains(current) ? current : 'follow',
+      textBuilder: (value) {
+        final policy = StrategyLanePolicy.parse(value);
+        return _policyLabel(l10n, policy, row.discovery);
+      },
     );
     if (selected == null || !mounted) {
       return;
@@ -218,9 +241,9 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
     final selectedMap = ref.watch(
       currentProfileProvider.select((state) => state?.selectedMap ?? {}),
     );
-    final overwriteType = ref.watch(
+    final customProfile = ref.watch(
       currentProfileProvider.select(
-        (state) => state?.overwriteType ?? OverwriteType.standard,
+        (state) => state?.type == ProfileType.custom,
       ),
     );
     final customGroups = profileId == null
@@ -229,8 +252,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
               const <ProxyGroup>[]);
     final customRules = profileId == null
         ? const <Rule>[]
-        : (ref.watch(profileCustomRulesProvider(profileId)).value ??
-              const <Rule>[]);
+        : (ref.watch(profileRulesProvider(profileId)).value ?? const <Rule>[]);
 
     final clashAsync = profileId == null
         ? null
@@ -260,7 +282,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
               ),
               data: (clashConfig) {
                 final inputs = resolveStrategyLaneConfigInputs(
-                  overwriteType: overwriteType,
+                  customProfile: customProfile,
                   subscriptionGroups: clashConfig.proxyGroups,
                   subscriptionRules: clashConfig.rules,
                   subscriptionProxies: clashConfig.proxies,
@@ -301,9 +323,11 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
                     child: Text(
                       l10n.strategyLanesTip,
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: context.colorScheme.onSurfaceVariant,
-                      ),
+                      style: AppTextStyle.callout
+                          .of(context)
+                          .copyWith(
+                            color: context.colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ),
                   if (_busy)
@@ -314,7 +338,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
                       ),
                       child: LinearProgressIndicator(),
                     ),
-                  ...generateSection(
+                  generateSection(
                     title: l10n.strategyLanesBusinessTitle,
                     items: [
                       for (final row in rows)
@@ -349,7 +373,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
                     ],
                   ),
                   if (extras.isNotEmpty)
-                    ...generateSection(
+                    generateSection(
                       title: l10n.strategyLanesExtraTitle,
                       items: [
                         for (final group in extras)
@@ -409,9 +433,6 @@ class _ExtraGroupItem extends StatelessWidget {
       ...group.outlets,
     ];
     final options = <String>[_followSentinel, ...outlets];
-    final selected = group.hasOverride
-        ? (group.overrideOutlet ?? _followSentinel)
-        : _followSentinel;
 
     return ListItem(
       leading: GlyphIcon(
@@ -421,13 +442,21 @@ class _ExtraGroupItem extends StatelessWidget {
       subtitle: Text('$overrideLabel\n$currentLabel'),
       trailing: const GlyphIcon(AppGlyphs.chevronForward),
       onTap: () async {
-        final value = await dialogs.showCommonDialog<String>(
-          child: OptionsDialog<String>(
+        final value = await showSheet<String>(
+          context: context,
+          builder: (context) => CommonScaffold(
             title: group.groupName,
-            options: options,
-            value: selected,
-            textBuilder: (option) =>
-                option == _followSentinel ? followLabel : option,
+            body: ListView(
+              children: [
+                for (final option in options)
+                  ListItem(
+                    title: Text(
+                      option == _followSentinel ? followLabel : option,
+                    ),
+                    onTap: () => Navigator.of(context).pop(option),
+                  ),
+              ],
+            ),
           ),
         );
         if (value == null) {
