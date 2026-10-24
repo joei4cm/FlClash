@@ -114,7 +114,7 @@ class ProxiesAction extends _$ProxiesAction {
 
   Future<void> updateGroups() async {
     try {
-      ref.read(groupsProvider.notifier).value = await retry(
+      final groups = await retry(
         task: () async {
           final sortType = ref.read(
             proxiesStyleSettingProvider.select((state) => state.sortType),
@@ -143,6 +143,9 @@ class ProxiesAction extends _$ProxiesAction {
         },
         retryIf: (res) => res.isEmpty,
       );
+      final typedGroups = List<Group>.from(groups);
+      ref.read(groupsProvider.notifier).value = typedGroups;
+      await AutoSelectSticky.enforce(ref, typedGroups);
     } catch (e) {
       // The Core failure path already runs inside the retry task above; a
       // throw here only means ref.read hit a disposed container or the
@@ -175,15 +178,19 @@ class ProxiesAction extends _$ProxiesAction {
     _scheduleDelayFlush();
   }
 
-  Future<void> changeProxy({
+  Future<bool> changeProxy({
     required String groupName,
     required String proxyName,
+    bool persistOverride = true,
+    bool? closeConnections,
   }) async {
     final profilesAction = ref.read(profilesActionProvider.notifier);
     final rollbackName =
         _pendingSelectedRollback.remove(groupName) ??
         _currentSelectedName(groupName);
-    profilesAction.updateCurrentSelectedMap(groupName, proxyName);
+    if (persistOverride) {
+      profilesAction.updateCurrentSelectedMap(groupName, proxyName);
+    }
     final ChangeProxyResult result;
     try {
       result = await _core.changeProxy(
@@ -197,18 +204,22 @@ class ProxiesAction extends _$ProxiesAction {
         'changeProxy($groupName -> $proxyName) failed: $error',
         logLevel: coreFailureLogLevel(error),
       );
-      profilesAction.updateCurrentSelectedMap(groupName, rollbackName);
+      if (persistOverride) {
+        profilesAction.updateCurrentSelectedMap(groupName, rollbackName);
+      }
       dialogs.showNotifier(
         currentAppLocalizations.changeProxyFailedTip,
         level: MessageLevel.error,
       );
-      return;
+      return false;
     }
     if (!result.changed) {
-      return;
+      return true;
     }
+    final shouldClose =
+        closeConnections ?? ref.read(appSettingProvider).closeConnections;
     try {
-      if (ref.read(appSettingProvider).closeConnections) {
+      if (shouldClose) {
         await _core.closeConnections();
       } else {
         await _core.resetConnections();
@@ -219,6 +230,7 @@ class ProxiesAction extends _$ProxiesAction {
         logLevel: coreFailureLogLevel(error),
       );
     }
+    return true;
   }
 
   Future<String> updateProvider(

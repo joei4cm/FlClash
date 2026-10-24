@@ -1,0 +1,297 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of '../geo_identity.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format off
+T _$identity<T>(T value) => value;
+
+/// @nodoc
+mixin _$GeoIdentityProps {
+
+ bool get enable; bool get useUsAcceptLanguage; GeoIdentityCaptureMode get captureMode; String? get previousOsTimezone; String? get appliedOsTimezone;
+/// Create a copy of GeoIdentityProps
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$GeoIdentityPropsCopyWith<GeoIdentityProps> get copyWith => _$GeoIdentityPropsCopyWithImpl<GeoIdentityProps>(this as GeoIdentityProps, _$identity);
+
+  /// Serializes this GeoIdentityProps to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as GeoIdentityProps;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GeoIdentityProps&&(identical(other.enable, _this.enable) || other.enable == _this.enable)&&(identical(other.useUsAcceptLanguage, _this.useUsAcceptLanguage) || other.useUsAcceptLanguage == _this.useUsAcceptLanguage)&&(identical(other.captureMode, _this.captureMode) || other.captureMode == _this.captureMode)&&(identical(other.previousOsTimezone, _this.previousOsTimezone) || other.previousOsTimezone == _this.previousOsTimezone)&&(identical(other.appliedOsTimezone, _this.appliedOsTimezone) || other.appliedOsTimezone == _this.appliedOsTimezone));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as GeoIdentityProps;
+  return Object.hash(runtimeType,_this.enable,_this.useUsAcceptLanguage,_this.captureMode,_this.previousOsTimezone,_this.appliedOsTimezone);
+}
+
+@override
+String toString() {
+  final _this = this as GeoIdentityProps;
+  return 'GeoIdentityProps(enable: ${_this.enable}, useUsAcceptLanguage: ${_this.useUsAcceptLanguage}, captureMode: ${_this.captureMode}, previousOsTimezone: ${_this.previousOsTimezone}, appliedOsTimezone: ${_this.appliedOsTimezone})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $GeoIdentityPropsCopyWith<$Res>  {
+  factory $GeoIdentityPropsCopyWith(GeoIdentityProps value, $Res Function(GeoIdentityProps) _then) = _$GeoIdentityPropsCopyWithImpl;
+@useResult
+$Res call({
+ bool enable, bool useUsAcceptLanguage, GeoIdentityCaptureMode captureMode, String? previousOsTimezone, String? appliedOsTimezone
+});
+
+
+
+
+}
+/// @nodoc
+class _$GeoIdentityPropsCopyWithImpl<$Res>
+    implements $GeoIdentityPropsCopyWith<$Res> {
+  _$GeoIdentityPropsCopyWithImpl(this._self, this._then);
+
+  final GeoIdentityProps _self;
+  final $Res Function(GeoIdentityProps) _then;
+
+/// Create a copy of GeoIdentityProps
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? enable = null,Object? useUsAcceptLanguage = null,Object? captureMode = null,Object? previousOsTimezone = freezed,Object? appliedOsTimezone = freezed,}) {
+  return _then(GeoIdentityProps(
+enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
+as bool,useUsAcceptLanguage: null == useUsAcceptLanguage ? _self.useUsAcceptLanguage : useUsAcceptLanguage // ignore: cast_nullable_to_non_nullable
+as bool,captureMode: null == captureMode ? _self.captureMode : captureMode // ignore: cast_nullable_to_non_nullable
+as GeoIdentityCaptureMode,previousOsTimezone: freezed == previousOsTimezone ? _self.previousOsTimezone : previousOsTimezone // ignore: cast_nullable_to_non_nullable
+as String?,appliedOsTimezone: freezed == appliedOsTimezone ? _self.appliedOsTimezone : appliedOsTimezone // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [GeoIdentityProps].
+extension GeoIdentityPropsPatterns on GeoIdentityProps {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _GeoIdentityProps value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _GeoIdentityProps() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _GeoIdentityProps value)  $default,){
+final _that = this;
+switch (_that) {
+case _GeoIdentityProps():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _GeoIdentityProps value)?  $default,){
+final _that = this;
+switch (_that) {
+case _GeoIdentityProps() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  bool useUsAcceptLanguage,  GeoIdentityCaptureMode captureMode,  String? previousOsTimezone,  String? appliedOsTimezone)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _GeoIdentityProps() when $default != null:
+return $default(_that.enable,_that.useUsAcceptLanguage,_that.captureMode,_that.previousOsTimezone,_that.appliedOsTimezone);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  bool useUsAcceptLanguage,  GeoIdentityCaptureMode captureMode,  String? previousOsTimezone,  String? appliedOsTimezone)  $default,) {final _that = this;
+switch (_that) {
+case _GeoIdentityProps():
+return $default(_that.enable,_that.useUsAcceptLanguage,_that.captureMode,_that.previousOsTimezone,_that.appliedOsTimezone);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  bool useUsAcceptLanguage,  GeoIdentityCaptureMode captureMode,  String? previousOsTimezone,  String? appliedOsTimezone)?  $default,) {final _that = this;
+switch (_that) {
+case _GeoIdentityProps() when $default != null:
+return $default(_that.enable,_that.useUsAcceptLanguage,_that.captureMode,_that.previousOsTimezone,_that.appliedOsTimezone);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _GeoIdentityProps implements GeoIdentityProps {
+  const _GeoIdentityProps({this.enable = false, this.useUsAcceptLanguage = true, this.captureMode = GeoIdentityCaptureMode.auto, this.previousOsTimezone, this.appliedOsTimezone});
+  factory _GeoIdentityProps.fromJson(Map<String, dynamic> json) => _$GeoIdentityPropsFromJson(json);
+
+@override@JsonKey() final  bool enable;
+@override@JsonKey() final  bool useUsAcceptLanguage;
+@override@JsonKey() final  GeoIdentityCaptureMode captureMode;
+@override final  String? previousOsTimezone;
+@override final  String? appliedOsTimezone;
+
+/// Create a copy of GeoIdentityProps
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$GeoIdentityPropsCopyWith<_GeoIdentityProps> get copyWith => __$GeoIdentityPropsCopyWithImpl<_GeoIdentityProps>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$GeoIdentityPropsToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _GeoIdentityProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.useUsAcceptLanguage, useUsAcceptLanguage) || other.useUsAcceptLanguage == useUsAcceptLanguage)&&(identical(other.captureMode, captureMode) || other.captureMode == captureMode)&&(identical(other.previousOsTimezone, previousOsTimezone) || other.previousOsTimezone == previousOsTimezone)&&(identical(other.appliedOsTimezone, appliedOsTimezone) || other.appliedOsTimezone == appliedOsTimezone));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,enable,useUsAcceptLanguage,captureMode,previousOsTimezone,appliedOsTimezone);
+}
+
+@override
+String toString() {
+    return 'GeoIdentityProps(enable: $enable, useUsAcceptLanguage: $useUsAcceptLanguage, captureMode: $captureMode, previousOsTimezone: $previousOsTimezone, appliedOsTimezone: $appliedOsTimezone)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$GeoIdentityPropsCopyWith<$Res> implements $GeoIdentityPropsCopyWith<$Res> {
+  factory _$GeoIdentityPropsCopyWith(_GeoIdentityProps value, $Res Function(_GeoIdentityProps) _then) = __$GeoIdentityPropsCopyWithImpl;
+@override @useResult
+$Res call({
+ bool enable, bool useUsAcceptLanguage, GeoIdentityCaptureMode captureMode, String? previousOsTimezone, String? appliedOsTimezone
+});
+
+
+
+
+}
+/// @nodoc
+class __$GeoIdentityPropsCopyWithImpl<$Res>
+    implements _$GeoIdentityPropsCopyWith<$Res> {
+  __$GeoIdentityPropsCopyWithImpl(this._self, this._then);
+
+  final _GeoIdentityProps _self;
+  final $Res Function(_GeoIdentityProps) _then;
+
+/// Create a copy of GeoIdentityProps
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? enable = null,Object? useUsAcceptLanguage = null,Object? captureMode = null,Object? previousOsTimezone = freezed,Object? appliedOsTimezone = freezed,}) {
+  return _then(_GeoIdentityProps(
+enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
+as bool,useUsAcceptLanguage: null == useUsAcceptLanguage ? _self.useUsAcceptLanguage : useUsAcceptLanguage // ignore: cast_nullable_to_non_nullable
+as bool,captureMode: null == captureMode ? _self.captureMode : captureMode // ignore: cast_nullable_to_non_nullable
+as GeoIdentityCaptureMode,previousOsTimezone: freezed == previousOsTimezone ? _self.previousOsTimezone : previousOsTimezone // ignore: cast_nullable_to_non_nullable
+as String?,appliedOsTimezone: freezed == appliedOsTimezone ? _self.appliedOsTimezone : appliedOsTimezone // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+// dart format on

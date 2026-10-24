@@ -9,6 +9,7 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'auto_group_bar.dart';
 import 'card.dart';
 import 'common.dart';
 import 'group_tabs.dart';
@@ -253,36 +254,47 @@ class ProxyGroupView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final proxies = group.all;
-    return CommonScrollBar(
-      controller: controller,
-      thumbVisibility: true,
-      child: GridView.builder(
-        key: _getPageStorageKey(ref),
-        controller: controller,
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          bottom: 16 + context.bottomInset,
+    return Column(
+      children: [
+        if (group.type.isComputedSelected)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: AutoGroupBar(group: group),
+          ),
+        Expanded(
+          child: CommonScrollBar(
+            controller: controller,
+            thumbVisibility: true,
+            child: GridView.builder(
+              key: _getPageStorageKey(ref),
+              controller: controller,
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: 16 + context.bottomInset,
+              ),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: columns,
+                mainAxisSpacing: proxyGridSpacing,
+                crossAxisSpacing: 8,
+                mainAxisExtent: getItemHeight(cardType),
+              ),
+              itemCount: proxies.length,
+              addAutomaticKeepAlives: false,
+              itemBuilder: (_, index) {
+                final proxy = proxies[index];
+                return ProxyCard(
+                  testUrl: group.testUrl,
+                  groupType: group.type,
+                  type: cardType,
+                  proxy: proxy,
+                  groupName: group.name,
+                );
+              },
+            ),
+          ),
         ),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: columns,
-          mainAxisSpacing: proxyGridSpacing,
-          crossAxisSpacing: 8,
-          mainAxisExtent: getItemHeight(cardType),
-        ),
-        itemCount: proxies.length,
-        addAutomaticKeepAlives: false,
-        itemBuilder: (_, index) {
-          final proxy = proxies[index];
-          return ProxyCard(
-            testUrl: group.testUrl,
-            groupType: group.type,
-            type: cardType,
-            proxy: proxy,
-            groupName: group.name,
-          );
-        },
-      ),
+      ],
     );
   }
 }

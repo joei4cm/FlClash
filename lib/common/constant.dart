@@ -121,7 +121,13 @@ const systemDnsRecordKey = 'system_dns_record';
 const bootRecordKey = 'boot_record';
 const appliedConfigMd5Key = 'applied_config_md5';
 const defaultSystemDnsFallback = '223.5.5.5';
-const repository = 'chen08209/FlClash';
+const repository = 'joei4cm/FlClash';
+
+/// Fallback url-test group created when a profile has none of its own.
+const flClashAutoGroupName = 'FlClash Auto';
+
+/// Selector that points at [flClashAutoGroupName] for that fallback.
+const flClashProxyGroupName = 'PROXY';
 const maxMobileWidth = 600;
 const maxLaptopWidth = 840;
 const defaultTestUrl = 'https://www.gstatic.com/generate_204';

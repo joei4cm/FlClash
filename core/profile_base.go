@@ -17,9 +17,8 @@ import (
 	"go.yaml.in/yaml/v3"
 )
 
-// What makes a profile large stays in the Core; the overlay the host sends
-// back replaces every other section.
-var profileBaseSections = []string{"proxies", "proxy-groups", "sub-rules"}
+// Overlay prepends proxies and proxy-groups; sub-rules stay the profile's.
+var profileBaseSections = []string{"sub-rules"}
 
 func handleGetProfileBase(path string) (*ProfileBase, error) {
 	defer scheduleLoadMemoryRelease()
@@ -59,7 +58,11 @@ func handleGetProfileOutbounds(path string) (*ProfileOutbounds, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &ProfileOutbounds{Proxies: outboundsOf(raw.Proxy), ProxyGroups: outboundsOf(raw.ProxyGroup)}, nil
+	return &ProfileOutbounds{
+		Proxies:     outboundsOf(raw.Proxy),
+		ProxyGroups: groupOutboundsOf(raw.ProxyGroup),
+		Rules:       routingRulesOf(raw.Rule),
+	}, nil
 }
 
 func outboundsOf(mappings []map[string]any) []ProfileOutbound {
@@ -70,6 +73,55 @@ func outboundsOf(mappings []map[string]any) []ProfileOutbound {
 		outbounds = append(outbounds, ProfileOutbound{Name: name, Type: kind})
 	}
 	return outbounds
+}
+
+func groupOutboundsOf(mappings []map[string]any) []ProfileOutbound {
+	outbounds := make([]ProfileOutbound, 0, len(mappings))
+	for _, mapping := range mappings {
+		name, _ := mapping["name"].(string)
+		kind, _ := mapping["type"].(string)
+		outbounds = append(outbounds, ProfileOutbound{
+			Name:    name,
+			Type:    kind,
+			Proxies: stringList(mapping["proxies"]),
+		})
+	}
+	return outbounds
+}
+
+func stringList(value any) []string {
+	items, ok := value.([]any)
+	if !ok {
+		return nil
+	}
+	names := make([]string, 0, len(items))
+	for _, item := range items {
+		name, ok := item.(string)
+		if ok && name != "" {
+			names = append(names, name)
+		}
+	}
+	if len(names) == 0 {
+		return nil
+	}
+	return names
+}
+
+// routingRulesOf keeps the kinds strategy-lane discovery reads. The rest of a
+// subscription stays in the Core.
+func routingRulesOf(rules []string) []string {
+	kept := make([]string, 0)
+	for _, rule := range rules {
+		kind, _, _ := strings.Cut(rule, ",")
+		switch strings.ToUpper(strings.TrimSpace(kind)) {
+		case "GEOSITE", "DOMAIN", "DOMAIN-SUFFIX", "DOMAIN-KEYWORD", "RULE-SET":
+			kept = append(kept, rule)
+		}
+	}
+	if len(kept) == 0 {
+		return nil
+	}
+	return kept
 }
 
 // The merged config goes to the spill directory, so the host reads it as text
@@ -146,6 +198,15 @@ func mergeProfileBase(base *SetupBase) (*yaml.Node, error) {
 			setMappingValue(root, key, value)
 		}
 	}
+	for _, key := range []string{"proxies", "proxy-groups"} {
+		merged, err := prependList(mappingValue(root, key), mappingValue(profile, key))
+		if err != nil {
+			return nil, err
+		}
+		if merged != nil {
+			setMappingValue(root, key, merged)
+		}
+	}
 	rules, err := appendRules(mappingValue(root, "rules"), mappingValue(profile, "rules"))
 	if err != nil {
 		return nil, err
@@ -216,6 +277,24 @@ func setMappingValue(mapping *yaml.Node, key string, value *yaml.Node) {
 		&yaml.Node{Kind: yaml.ScalarNode, Tag: "!!str", Value: key},
 		value,
 	)
+}
+
+func prependList(added, profile *yaml.Node) (*yaml.Node, error) {
+	added, profile = resolveAlias(added), resolveAlias(profile)
+	switch {
+	case profile == nil || isNull(profile):
+		if added == nil || isNull(added) {
+			return nil, nil
+		}
+		return added, nil
+	case added == nil || isNull(added) || (added.Kind == yaml.SequenceNode && len(added.Content) == 0):
+		return profile, nil
+	case added.Kind != yaml.SequenceNode || profile.Kind != yaml.SequenceNode:
+		return nil, fmt.Errorf("line %d: proxies and proxy-groups must be lists", profile.Line)
+	}
+	content := make([]*yaml.Node, 0, len(added.Content)+len(profile.Content))
+	content = append(append(content, added.Content...), profile.Content...)
+	return &yaml.Node{Kind: yaml.SequenceNode, Tag: "!!seq", Content: content}, nil
 }
 
 // The overlay's rules are the ones the host adds in front of the profile's.

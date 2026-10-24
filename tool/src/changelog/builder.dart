@@ -149,12 +149,35 @@ String markdownHead(String content) {
 /// a version missing from `changelog.json` outright would otherwise pass and
 /// only surface at the end of the release, when `render` finds no notes for the
 /// tag being published.
+///
+/// A tag older than every recorded version already shipped. `main` contains
+/// those releases, and the structured file starts at the newest line.
 List<String> missingReleaseTags(Changelog recorded, Changelog derived) {
   final known = <String>{for (final version in recorded.versions) version.tag};
-  return <String>[
-    for (final version in derived.versions)
-      if (!known.contains(version.tag)) version.tag,
-  ];
+  VersionTag? oldestRecorded;
+  for (final version in recorded.versions) {
+    final parsed = VersionTag.tryParse(version.tag);
+    if (parsed == null) {
+      continue;
+    }
+    if (oldestRecorded == null || parsed.compareTo(oldestRecorded) < 0) {
+      oldestRecorded = parsed;
+    }
+  }
+  final missing = <String>[];
+  for (final version in derived.versions) {
+    if (known.contains(version.tag)) {
+      continue;
+    }
+    final parsed = VersionTag.tryParse(version.tag);
+    if (parsed != null &&
+        oldestRecorded != null &&
+        parsed.compareTo(oldestRecorded) < 0) {
+      continue;
+    }
+    missing.add(version.tag);
+  }
+  return missing;
 }
 
 String encodeChangelog(Changelog changelog) =>

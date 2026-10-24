@@ -27,8 +27,8 @@ Options:
   -h, --help         Show this help.
 
 Examples:
-  tool/release.sh pre --push          # v0.8.97-pre.1, notes rendered by CI
-  tool/release.sh stable --push       # v0.8.97 with a chore(release) commit
+  tool/release.sh pre --push          # v0.8.97-pre.1_abcdef, notes rendered by CI
+  tool/release.sh stable --push       # v0.8.97_abcdef with a chore(release) commit
 EOF
 }
 
@@ -76,6 +76,10 @@ pubspec_version() {
   sed -n 's/^version: \([0-9]*\.[0-9]*\.[0-9]*\).*/\1/p' pubspec.yaml
 }
 
+version_is_tagged() {
+  git tag --list "v$1" "v$1_*" | grep -Eq "^v$1(_[0-9a-fA-F]{6})?$"
+}
+
 if ! git diff --quiet || ! git diff --cached --quiet; then
   die "working tree has uncommitted changes; commit or stash them first"
 fi
@@ -93,7 +97,7 @@ current="$(pubspec_version)"
 bumped=0
 if [[ -n "$want_version" ]]; then
   version="$want_version"
-elif git rev-parse -q --verify "refs/tags/v$current" >/dev/null; then
+elif version_is_tagged "$current"; then
   IFS='.' read -r vmaj vmin vpat <<<"$current"
   version="$vmaj.$vmin.$((vpat + 1))"
   echo "pubspec is at $current, which is already tagged; targeting $version"
@@ -101,7 +105,7 @@ else
   version="$current"
 fi
 
-git rev-parse -q --verify "refs/tags/v$version" >/dev/null &&
+version_is_tagged "$version" &&
   die "v$version is already tagged; pass --version with the next one"
 
 if [[ "$version" != "$current" ]]; then
@@ -110,7 +114,8 @@ fi
 
 if [[ "$mode" == "pre" ]]; then
   last="$(git tag --list "v$version-pre.*" |
-    sed -n "s/^v$version-pre\.\([0-9]*\)$/\1/p" | sort -n | tail -1)"
+    sed -n "s/^v$version-pre\.\([0-9]*\)\(_[0-9a-fA-F]\{6\}\)\?$/\1/p" |
+    sort -n | tail -1)"
   tag="v$version-pre.$(((${last:-0}) + 1))"
 else
   tag="v$version"
@@ -126,7 +131,7 @@ if [[ "$mode" == "pre" ]]; then
   echo "publishes : build artifacts + Telegram only, no GitHub release"
 else
   echo "changelog : CHANGELOG.md + changelog.json regenerated and committed"
-  echo "publishes : GitHub release with artifacts, SHA256SUMS, Homebrew cask"
+  echo "publishes : GitHub release with artifacts and SHA256SUMS"
 fi
 echo "push      : $([[ $do_push == 1 ]] && echo yes || echo 'no (printed at the end)')"
 echo
@@ -195,6 +200,8 @@ else
   committed=1
 fi
 
+sha="$(git rev-parse HEAD | cut -c1-6)"
+tag="${tag}_${sha}"
 git tag "$tag"
 echo "tagged $tag at $(git rev-parse --short HEAD)"
 

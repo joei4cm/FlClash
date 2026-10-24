@@ -92,10 +92,12 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
       };
     } else if (extendType == ExtendType.standard) {
       addedRules = await database.rulesDao.queryAddedRules(profileId).get();
+      proxyGroups = await _fallbackProxyGroups(profileId);
     } else if (extendType == ExtendType.script) {
       script = scriptId == null
           ? null
           : await database.scriptsDao.get(scriptId).getSingleOrNull();
+      proxyGroups = await _fallbackProxyGroups(profileId);
     }
   }
   return SetupState(
@@ -117,6 +119,16 @@ Future<SetupState> setupState(Ref ref, int? profileId) async {
         ? profile?.matchTarget
         : null,
   );
+}
+
+Future<List<ProxyGroup>> _fallbackProxyGroups(int profileId) async {
+  final stored = await database.proxyGroupsDao.query(profileId).get();
+  return [
+    for (final group in stored)
+      if (group.name == flClashAutoGroupName ||
+          group.name == flClashProxyGroupName)
+        group,
+  ];
 }
 
 /// Subscription profiles double as proxy providers for custom profiles.

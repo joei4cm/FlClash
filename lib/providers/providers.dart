@@ -3,6 +3,7 @@ export 'app.dart';
 export 'config.dart';
 export 'core.dart';
 export 'database.dart';
+export 'network_test.dart';
 export 'on_demand.dart';
 export 'route_state.dart';
 export 'state.dart';

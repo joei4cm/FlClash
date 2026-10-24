@@ -7,6 +7,22 @@ class ProfilesAction extends _$ProfilesAction {
   @override
   void build() {}
 
+  void clearCurrentSelectedMap(String groupName) {
+    final currentProfile = ref.read(currentProfileProvider);
+    if (currentProfile == null) {
+      return;
+    }
+    final previous = currentProfile.selectedMap[groupName];
+    if (previous == null || previous.isEmpty) {
+      return;
+    }
+    final selectedMap = Map<String, String>.from(currentProfile.selectedMap)
+      ..[groupName] = '';
+    ref
+        .read(profilesProvider.notifier)
+        .put(currentProfile.copyWith(selectedMap: selectedMap));
+  }
+
   void updateCurrentSelectedMap(String groupName, String proxyName) {
     final currentProfile = ref.read(currentProfileProvider);
     if (currentProfile != null &&

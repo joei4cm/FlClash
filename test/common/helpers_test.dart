@@ -133,6 +133,12 @@ void main() {
     test('handles missing minor/patch', () {
       expect(compareVersions('1', '1.0.0'), 0);
     });
+
+    test('ignores a six-character release commit suffix', () {
+      expect(compareVersions('0.9.2_abcdef', '0.9.2'), 0);
+      expect(compareVersions('0.9.2_abcdef', '0.8.113'), greaterThan(0));
+      expect(compareVersions('0.9.3_abcdef', '0.9.2_123456'), greaterThan(0));
+    });
   });
 
   group('getViewMode', () {

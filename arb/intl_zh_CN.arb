@@ -963,5 +963,334 @@
   "preferred": "首选",
   "addToLocalProxies": "添加到本地代理",
   "addedToLocalProxies": "已将 {name} 添加到本地代理",
-  "alreadyInLocalProxies": "本地代理中已有 {name}"
+  "alreadyInLocalProxies": "本地代理中已有 {name}",
+  "serviceCheck": "检测",
+  "serviceCheckedAt": "检测于 {time}",
+  "linkDesc": "通过订阅链接或代理分享链接获取配置文件",
+  "fileDesc": "直接上传配置文件",
+  "selected": "已选择",
+  "sidebarBlur": "侧边栏背景模糊",
+  "hideTimeoutProxiesDesc": "不显示上次延迟测试超时的代理",
+  "accessControlSettings": "访问控制设置",
+  "customProfileDesc": "基于应用代理和其他配置组建策略组与规则",
+  "networkDetection": "网络检测",
+  "themeDesc": "设置深色模式，调整色彩",
+  "override": "覆写",
+  "autoLaunchDesc": "跟随系统自启动",
+  "urlDesc": "通过URL获取配置文件",
+  "importFromURL": "从URL导入",
+  "excludeDesc": "应用在后台时，从最近任务中隐藏应用",
+  "expand": "标准",
+  "shrink": "紧凑",
+  "min": "最小",
+  "vpnTip": "重启VPN后改变生效",
+  "behavior": "行为",
+  "format": "格式",
+  "overrideDns": "覆写DNS",
+  "overrideNtp": "覆写NTP",
+  "disclaimerCrashlyticsTitle": "Firebase Crashlytics（崩溃分析）",
+  "disclaimerCrashlyticsContent": "应用发生崩溃时，自动上传崩溃报告。\n\n收集内容：崩溃堆栈与错误信息、崩溃发生时间、应用版本与构建号、设备品牌与型号、Android 系统版本、屏幕方向、剩余内存与存储空间、设备是否已 root，以及一个随安装生成、重装后即重置的随机安装标识。\n\n用途：仅用于定位和修复崩溃问题。\n\n你可以在“工具 > 常规 > 崩溃分析”中随时关闭。",
+  "disclaimerAnalyticsTitle": "Firebase Analytics（使用统计）",
+  "disclaimerAnalyticsContent": "随 Firebase 自动收集基础的应用使用统计。\n\n收集内容：首次启动、应用打开与会话时长、应用更新等基础事件，应用实例标识，设备型号、系统版本、系统语言，以及由 IP 地址推断的国家或地区级大致位置。\n\n用途：仅用于了解活跃设备数、版本分布与系统兼容情况。开发者不会将这些数据用于广告，不会出售，也不会与你的订阅或配置相关联。",
+  "disclaimerDataProcessingContent": "上述数据由 Google 代为处理和存储，可能被传输至你所在国家或地区以外（如美国）的服务器，并受 Google 隐私政策与 Firebase 隐私和安全说明约束。崩溃报告最多保留 90 天，统计数据按 Firebase 的默认策略保留。",
+  "disclaimerAndroidOnly": "仅 Android",
+  "disclaimerGooglePrivacy": "Google 隐私政策",
+  "disclaimerFirebasePrivacy": "Firebase 隐私和安全说明",
+  "routeMode": "路由模式",
+  "routeModeBypassPrivate": "绕过私有路由地址",
+  "routeModeConfig": "使用配置",
+  "selectedCountTitle": "已选择 {count} 项",
+  "ruleName": "规则名称",
+  "subRule": "子规则",
+  "colorSchemes": "配色方案",
+  "palette": "调色板",
+  "tonalSpotScheme": "调性点缀",
+  "fidelityScheme": "高保真",
+  "neutralScheme": "中性",
+  "vibrantScheme": "活力",
+  "expressiveScheme": "表现力",
+  "contentScheme": "内容主题",
+  "rainbowScheme": "彩虹",
+  "fruitSaladScheme": "果缤纷",
+  "dataCollectionTip": "数据收集说明",
+  "dataCollectionContent": "本应用使用 Firebase Crashlytics 收集崩溃信息以改进应用稳定性。\n收集的数据包括设备信息和崩溃详情，不包含个人敏感数据。\n您可以在设置中关闭此功能。",
+  "crashlytics": "崩溃分析",
+  "crashlyticsTip": "开启后，应用崩溃时自动上传不包含敏感信息的崩溃日志",
+  "overrideMode": "覆写模式",
+  "quickAdd": "快捷添加",
+  "overrideScript": "覆写脚本",
+  "overwriteTypeCustom": "自定义",
+  "overwriteTypeCustomDesc": "自定义模式，支持完全自定义修改代理、策略组以及规则",
+  "backupAndRestoreDesc": "通过WebDAV或者文件同步数据",
+  "proxyGroupNameDuplicate": "策略组名称重复",
+  "dataChangedSave": "检测到数据有更改，是否保存",
+  "selectProxyProviders": "选择代理集",
+  "proxyFilter": "节点过滤器",
+  "excludeProxyFilter": "排除节点过滤器",
+  "excludeType": "排除类型",
+  "selectProxies": "选择代理",
+  "selectSubRule": "请选择子规则",
+  "includeAllProxyProviders": "包含所有代理集",
+  "includeAllProxyProvidersTip": "开启后包含本配置的全部代理集：订阅自带的，以及任一策略组引用的配置和应用代理集",
+  "addProxyProviders": "添加代理集",
+  "includeAllProxies": "包含所有代理",
+  "includeAllProxiesTip": "引入不包含策略组的所有代理，可在下方额外添加策略组",
+  "proxiesEmpty": "代理为空",
+  "addProxies": "添加代理",
+  "confirmOverwriteTip": "确定后将会覆盖已有数据",
+  "configDataDetected": "检测到配置中存在数据",
+  "quickFill": "一键填入",
+  "noRecords": "暂无记录",
+  "subRuleEmpty": "子规则为空",
+  "proxyProvidersNotEmpty": "代理集不能为空",
+  "subRuleNotEmpty": "子规则不能为空",
+  "proxyProvidersEmpty": "代理集为空",
+  "batteryOptimizationStatusTip": "由于系统限制，运行状态下无法正确获取电池优化状态",
+  "geoOptions": "Geo 选项",
+  "geoAutoUpdate": "自动更新",
+  "geoAutoUpdateInterval": "自动更新间隔",
+  "geoAutoUpdateIntervalTip": "自动更新间隔必须大于0",
+  "hoursCount": "{count} 小时",
+  "addWidget": "添加组件",
+  "proxyNode": "代理节点",
+  "proxyDefinition": "完整配置",
+  "proxyDefinitionNotMap": "配置必须是包含 name 和 type 的 YAML 映射",
+  "customProxiesEmpty": "未添加自定义代理，沿用配置文件自身的代理",
+  "overwriteIssueEmptyName": "名称为空",
+  "overwriteIssueReservedName": "{name} 是内置策略名，不能在此使用",
+  "overwriteIssueDuplicateName": "名称 {name} 已被其他代理或策略组使用",
+  "overwriteIssueCoreRejected": "内核无法解析该代理：{message}",
+  "overwriteIssueMissingProxies": "以下代理或策略不存在：{names}",
+  "overwriteIssueMissingProviders": "以下代理集不存在：{names}",
+  "overwriteIssueNoProxySource": "未选择任何代理或代理集，内核会拒绝该策略组",
+  "overwriteIssueGroupLoop": "策略组之间存在循环引用：{path}",
+  "overwriteIssuesSummary": "{count} 项存在问题，应用覆写可能失败",
+  "overwriteIssueSubscriptionGroupMissingProxies": "配置文件自身的策略组引用了自定义代理中已没有的代理：{names}",
+  "providerSourceSubscription": "订阅",
+  "providerRenameShadowed": "{profiles} 的订阅里已有 {label}，改名后这些配置会改用订阅里的那个，请换一个名称",
+  "features": "功能",
+  "tailscale": "Tailscale",
+  "tailscaleDesc": "管理 Tailscale 出站节点",
+  "tailscaleEnable": "启用 Tailscale",
+  "tailscaleEnableDesc": "将 Tailscale 节点作为出站注入。关闭后 Tailscale 将不再处理流量，普通流量不受影响。",
+  "tailscaleEmptyTip": "暂无 Tailscale 节点。添加一个即可让流量经由你的 tailnet 转发。",
+  "tailscaleAuthKey": "认证密钥",
+  "tailscaleHostname": "主机名",
+  "tailscaleControlUrl": "控制服务器地址",
+  "tailscaleStateDir": "状态目录",
+  "tailscaleEphemeral": "临时节点",
+  "tailscaleUdp": "UDP 转发",
+  "tailscaleAcceptRoutes": "接受路由",
+  "tailscaleExitNode": "出口节点",
+  "tailscaleExitNodeAllowLanAccess": "允许通过出口节点访问局域网",
+  "tailscaleNameExistsTip": "已存在同名节点",
+  "tailscaleGuideTitle": "Tailscale 使用说明",
+  "tailscaleAuthKeyHint": "来自 Tailscale 管理后台 → 设置 → Keys，用于对节点进行认证。",
+  "tailscaleHostnameHint": "可选。在 tailnet 中显示的设备名称。",
+  "tailscaleControlUrlHint": "可选。仅用于自建控制服务器（如 Headscale）。",
+  "tailscaleStateDirHint": "可选。用于持久化 Tailscale 状态的目录。",
+  "tailscaleExitNodeHint": "可选。tailnet 出口节点的 IP 或名称，用于转发全部流量。",
+  "tailscaleBypass": "保持 Tailscale 流量直连",
+  "tailscaleRoutes": "路由目标",
+  "tailscaleRoutesHint": "经由该节点转发的域名或 IP，每行一个（例如你家用电脑的 Tailscale IP 或 MagicDNS 名称）。",
+  "tailscaleScenarioAndroidTitle": "Android 客户端设置",
+  "tailscaleScenarioAndroidBody": "请只保留 FlClash 作为 VPN。不要同时开启 Tailscale 应用的 VPN（Android 同一时间只允许一个）。在下方添加内置 Tailscale 节点，并把家里的设备填入“路由目标”。",
+  "tailscaleScenarioDesktopTitle": "桌面 / 主机设置",
+  "tailscaleScenarioDesktopBody": "可以同时运行 FlClash 与正式的 Tailscale 应用。请开启“保持 Tailscale 流量直连”，避免 FlClash 劫持 Tailscale 控制面或 fake-IP DNS。",
+  "tailscaleAndroidStep1": "在 Tailscale 管理后台（设置 → Keys）获取认证密钥。",
+  "tailscaleAndroidStep2": "添加节点，粘贴认证密钥，并在“路由目标”中填入家里设备的 IP 或 MagicDNS 名称。",
+  "tailscaleAndroidStep3": "打开“启用 Tailscale”。除非本机也安装了 Tailscale 应用，否则请关闭“保持 Tailscale 流量直连”。",
+  "tailscaleAndroidStep4": "启动 FlClash VPN，然后点击节点旁的测速按钮检查连接。",
+  "tailscaleDesktopStep1": "如果这台电脑同时运行 Tailscale 应用/服务，请开启“保持 Tailscale 流量直连”。",
+  "tailscaleDesktopStep2": "可选：用认证密钥添加一个内置 Tailscale 节点，让 FlClash 将选定流量经由 tailnet 转发。",
+  "tailscaleDesktopStep3": "在“路由目标”中填写目标（家里的 IP / MagicDNS），然后打开“启用 Tailscale”。",
+  "tailscaleDesktopStep4": "启动 FlClash，然后点击节点旁的测速按钮确认连接是否正常。",
+  "tailscaleBypassRecommended": "在已安装 Tailscale 应用/服务的桌面上建议开启。会自动管理直连规则与 Fake IP Filter。",
+  "tailscaleBypassAndroidHint": "Android 上通常保持关闭。仅当本机也安装了 Tailscale 应用时再开启。",
+  "tailscaleStatusDisabled": "Tailscale 已关闭 — 节点不会注入到运行配置中。",
+  "tailscaleStatusNoNodes": "已启用，但还没有节点。请先添加一个节点。",
+  "tailscaleStatusNeedStart": "节点已就绪。请先启动 FlClash VPN，再点击测速。",
+  "tailscaleStatusReady": "已有 {count} 个节点。点击节点旁的测速按钮检查连通性。",
+  "tailscaleStatusNeedRoutes": "已添加节点，但还没有路由目标 — 在填写路由之前流量不会自动匹配（或请手动选择该节点）。",
+  "tailscaleBypassNudge": "本机可能已安装 Tailscale — 建议开启“Tailscale 流量直连”，避免 Fake IP / 控制面被劫持。",
+  "tailscaleShowSetupGuide": "设置指南",
+  "tailscaleEnableBypassAction": "开启",
+  "tailscaleNameHelper": "代理列表中的出站名称。重命名会改变选中项与延迟测试的对应关系。",
+  "tailscaleTestNeedEnable": "请先打开“启用 Tailscale”再测试。",
+  "tailscaleTestNeedStart": "请先启动 FlClash VPN 再测试连接。",
+  "tailscaleTestNode": "测试连接",
+  "tailscaleNotTested": "未测试",
+  "tailscaleNoRoutes": "无路由目标",
+  "tailscaleRoutesCount": "{count} 个路由目标",
+  "tailscaleNodesTitle": "节点",
+  "tailscaleTestTip": "点击节点旁的测速按钮，检查 Tailscale 出站是否能拨号。显示延迟表示连接正常；显示超时请检查认证密钥、“启用”开关，以及 FlClash VPN 是否已启动。",
+  "geoIdentity": "地理身份",
+  "geoIdentityDesc": "一个开关完成美区出口掩护",
+  "geoIdentityPurposeBody": "开启后，FlClash 会接管流量并检查出口是否适合美区 AI 工具。浏览器页面指纹仍可能需要 GeoMirror。",
+  "geoIdentityProtectToggleDesc": "接管流量、尽量对齐桌面时区，并验证出口",
+  "geoIdentityNetworkGood": "网络看起来已就绪",
+  "geoIdentityNetworkBad": "出口还不是美国 — 先选美区节点，再点重新检查",
+  "geoIdentityOffStatus": "地理身份保护已关闭",
+  "geoIdentityTurningOff": "正在关闭…",
+  "geoIdentityRecheck": "重新检测",
+  "geoIdentityPendingCheck": "保护已开启 — 等待网络检查",
+  "geoIdentityCheckCancelled": "网络检测已取消",
+  "geoIdentityHonestyLine": "这里覆盖出口 IP 与探测语言。浏览器字体/定位仍需 GeoMirror；Claude Code 仍需匹配的系统时区（以及 TUN 或代理环境变量）。",
+  "geoIdentityTimezoneAlignFailed": "无法对齐系统时区（{detail}）",
+  "geoIdentityProtectEnable": "启用地理身份保护",
+  "geoIdentityCaptureMode": "流量接管方式",
+  "geoIdentityCaptureModeAuto": "自动 — 不改当前配置；若未接管则默认开 TUN",
+  "geoIdentityCaptureModeTun": "仅虚拟网卡（TUN）",
+  "geoIdentityCaptureModeSystemProxy": "仅系统代理",
+  "geoIdentityCaptureModeBoth": "系统代理 + 虚拟网卡",
+  "geoIdentityUsAcceptLanguage": "用美区 Accept-Language 探测",
+  "geoIdentityNeedStart": "请先启动 FlClash，再验证网络环境。",
+  "geoIdentityCheckFailed": "网络检测失败",
+  "geoIdentityNetworkExposed": "网络仍可能暴露",
+  "geoIdentityTimezone": "系统时区",
+  "geoIdentityOpenGeoMirror": "GeoMirror（GitHub）",
+  "geoIdentityRestoreOsTimezone": "恢复之前的系统时区",
+  "geoIdentityRestoreOsTimezoneDesc": "恢复为 {timezone}",
+  "geoIdentityTimezoneRestored": "系统时区已恢复为 {timezone}",
+  "geoIdentityTimezoneMissing": "还没有出口时区。请先验证网络环境。",
+  "geoIdentityTimezoneNothingToRestore": "没有可恢复的先前系统时区。",
+  "geoIdentityTimezoneAndroidTip": "Android 无 root 时无法由应用改系统时区。请打开 设置 → 系统 → 日期和时间，选择与出口一致的美区时区。",
+  "geoIdentityCopyTerminalProxy": "复制终端代理环境变量",
+  "geoIdentitySetupRunning": "正在应用新手设置…",
+  "geoIdentitySetupStarting": "正在启动 FlClash…",
+  "geoIdentitySetupVerifying": "正在验证网络环境…",
+  "geoIdentitySetupTimezone": "正在对齐系统时区…",
+  "geoIdentitySetupDoneProtected": "设置完成 — 网络看起来已受美区保护。",
+  "geoIdentitySetupDoneNeedUsNode": "设置已应用，但出口尚未受保护。请选择美区节点，然后点重新检查。",
+  "geoIdentityCopyTerminalProxyShort": "复制终端用的 HTTP(S)_PROXY",
+  "geoIdentityOpenGeoMirrorShort": "浏览器指纹对齐",
+  "geoIdentityShowAdvanced": "显示高级选项",
+  "geoIdentityHideAdvanced": "隐藏高级选项",
+  "enableAutoSelect": "创建备用自动组",
+  "enableAutoSelectCreateTip": "多数机场订阅已自带 url-test/fallback。当前配置未发现这类策略组——是否创建简单的 “FlClash Auto” 备用自动组？这会将覆写切换为自定义；若自定义策略组为空则用 Auto + PROXY 替代（节点仍通过 include-all-proxies 保留）。",
+  "enableAutoSelectFailed": "创建备用自动组失败",
+  "restoreAutoSelect": "恢复自动",
+  "groupTypeUrlTest": "自动测速",
+  "groupTypeFallback": "故障转移",
+  "enableAutoSelectRestored": "已恢复 {group} 的自动选优",
+  "@enableAutoSelectRestored": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "enableAutoSelectCreated": "已创建备用自动组 {group}。如需可在代理页选中它。",
+  "@enableAutoSelectCreated": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupTitle": "自动 · {type}",
+  "@autoGroupTitle": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupCurrent": "当前节点：{node}",
+  "@autoGroupCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupOverride": "手动覆盖：{node}",
+  "@autoGroupOverride": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "stickToRegion": "锁定地区",
+  "autoGroupStickyRegion": "锁定地区：{region}",
+  "@autoGroupStickyRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanes": "策略分流",
+  "strategyLanesDesc": "把常用业务映射到订阅策略，或用 UI 覆写出口",
+  "strategyLanesTip": "每一行是一类常见流量。订阅已有策略时可跟随；也可以改成自动测速、指定策略组或节点。",
+  "strategyLanesNeedStart": "请先启动 FlClash，以加载当前配置中的策略组。",
+  "strategyLanesNeedProfile": "请先选择一个配置。",
+  "strategyLanesLoadFailed": "无法加载配置中的策略",
+  "strategyLanesEmpty": "未找到策略组",
+  "strategyLanesEmptyDesc": "当前配置尚无可选策略组。可使用带规则的订阅，或在下方业务行选择自动测速。",
+  "strategyLanesBusinessTitle": "常用业务",
+  "strategyLanesExtraTitle": "订阅中的其他策略组",
+  "strategyLanesApplied": "策略分流已应用",
+  "strategyLanesPartialApplied": "已应用，但部分覆写被跳过（策略组或节点不存在）",
+  "strategyLaneFollowSubscription": "跟随订阅",
+  "strategyLaneFollowWithGroup": "跟随订阅（{group}）",
+  "@strategyLaneFollowWithGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneFollowing": "跟随订阅",
+  "strategyLaneOverridden": "已覆写",
+  "strategyLaneUncovered": "订阅未覆盖该业务 — 流量走默认 / MATCH",
+  "strategyLaneCurrent": "当前：{node}",
+  "@strategyLaneCurrent": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneEffective": "实际目标：{target}",
+  "@strategyLaneEffective": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanePolicyAuto": "FlClash 自动测速",
+  "strategyLanePolicyGroup": "策略组：{group}",
+  "@strategyLanePolicyGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLanePolicyProxy": "节点：{node}",
+  "@strategyLanePolicyProxy": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      }
+    }
+  },
+  "strategyLaneKindStreaming": "流媒体",
+  "strategyLaneKindAi": "AI",
+  "strategyLaneKindSocial": "社交",
+  "strategyLaneKindSearch": "搜索",
+  "strategyLaneKindMessaging": "即时通讯",
+  "strategyLaneKindGaming": "游戏",
+  "strategyLaneKindProxy": "代理 / 选择",
+  "strategyLaneKindOther": "其他策略",
+  "strategyLaneTypeSelector": "手动选择",
+  "strategyLaneTypeLoadBalance": "负载均衡",
+  "strategyLaneTypeRelay": "中继",
+  "hideAdvanced": "隐藏高级选项",
+  "showAdvanced": "显示高级选项",
+  "addTailscaleNode": "添加 Tailscale 节点",
+  "editTailscaleNode": "编辑 Tailscale 节点"
 }

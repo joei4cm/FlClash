@@ -138,7 +138,7 @@ final class SetupPatchProvider
   }
 }
 
-String _$setupPatchHash() => r'283e94846903bafab1c22985b6f90d4c0e2a4697';
+String _$setupPatchHash() => r'd09fb41d40ced4cd47c9131fe55e983e35128724';
 
 @ProviderFor(trayState)
 final trayStateProvider = TrayStateProvider._();
@@ -355,6 +355,55 @@ final class GetHotKeyActionFamily extends $Family
   @override
   String toString() => r'getHotKeyActionProvider';
 }
+
+@ProviderFor(autoSetSystemDnsState)
+final autoSetSystemDnsStateProvider = AutoSetSystemDnsStateProvider._();
+
+final class AutoSetSystemDnsStateProvider
+    extends
+        $FunctionalProvider<
+          ({bool autoSetSystemDns, bool tunReady}),
+          ({bool autoSetSystemDns, bool tunReady}),
+          ({bool autoSetSystemDns, bool tunReady})
+        >
+    with $Provider<({bool autoSetSystemDns, bool tunReady})> {
+  AutoSetSystemDnsStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'autoSetSystemDnsStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$autoSetSystemDnsStateHash();
+
+  @$internal
+  @override
+  $ProviderElement<({bool autoSetSystemDns, bool tunReady})> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  ({bool autoSetSystemDns, bool tunReady}) create(Ref ref) {
+    return autoSetSystemDnsState(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(({bool autoSetSystemDns, bool tunReady}) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride:
+          $SyncValueProvider<({bool autoSetSystemDns, bool tunReady})>(value),
+    );
+  }
+}
+
+String _$autoSetSystemDnsStateHash() =>
+    r'946d2425782cbfaed5e98ee4b2bfdbe6979db178';
 
 @ProviderFor(shouldPatchSystemDns)
 final shouldPatchSystemDnsProvider = ShouldPatchSystemDnsProvider._();
@@ -3498,7 +3547,7 @@ final class SetupStateProvider
   }
 }
 
-String _$setupStateHash() => r'eef9f0d2ec0ecb6196c699b1e2c2a73d922f8964';
+String _$setupStateHash() => r'6571472be8288b8119453000d301e3b7f0cd051e';
 
 final class SetupStateFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<SetupState>, int?> {
