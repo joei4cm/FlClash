@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.4 (2026-10-24)
+
+**Features**
+
+- Tailscale, geo identity, strategy lanes, and sticky auto-select on upstream 0.9.2, with update checks on joei4cm/FlClash (3afd1da)
+
 ## v0.9.2 (2026-10-24)
 
 **Features**
