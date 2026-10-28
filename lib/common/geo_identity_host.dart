@@ -97,13 +97,24 @@ abstract final class GeoIdentityHost {
     return null;
   }
 
-  static Future<String?> setOsTimezone(String ianaTimezone) async {
+  /// Remote/API-suggested zones must be in [windowsTimezoneNames] (US/UTC).
+  static bool isAllowedElevatedTimezone(String ianaTimezone) {
+    return windowsTimezoneNames.containsKey(ianaTimezone.trim());
+  }
+
+  static Future<String?> setOsTimezone(
+    String ianaTimezone, {
+    bool restrictToElevatedAllowlist = true,
+  }) async {
     final timezone = ianaTimezone.trim();
     if (timezone.isEmpty) {
       return 'empty timezone';
     }
     if (!isValidIanaTimezoneId(timezone)) {
       return 'invalid-timezone';
+    }
+    if (restrictToElevatedAllowlist && !isAllowedElevatedTimezone(timezone)) {
+      return 'unsupported-timezone';
     }
     if (system.isAndroid) {
       return 'android-unsupported';

@@ -756,6 +756,15 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
                     controller: _stateDirController,
                     label: appLocalizations.tailscaleStateDir,
                     helperText: appLocalizations.tailscaleStateDirHint,
+                    validator: (value) {
+                      final dir = value?.trim() ?? '';
+                      if (dir.isEmpty || isSafeTailscaleStateDir(dir)) {
+                        return null;
+                      }
+                      return appLocalizations.emptyTip(
+                        appLocalizations.tailscaleStateDir,
+                      );
+                    },
                   ),
                   _buildTextField(
                     controller: _exitNodeController,

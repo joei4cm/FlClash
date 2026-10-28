@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:fl_clash/common/clash_identifiers.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -8,6 +11,82 @@ part 'generated/tailscale.g.dart';
 const tailscaleProxyType = 'tailscale';
 
 const defaultTailscaleProps = TailscaleProps();
+
+const _authKeyFormatVersion = 'v1';
+const _authKeyNonceLength = 16;
+const _authKeyObfuscationMask = <int>[
+  0x5a,
+  0xc3,
+  0x19,
+  0xe8,
+  0x47,
+  0x91,
+  0x2d,
+  0x76,
+  0xb0,
+  0x0f,
+  0xdc,
+  0x63,
+  0xa5,
+  0x3e,
+  0x88,
+  0xf1,
+];
+
+// Accidental plain-text disclosure only — not a security boundary.
+String _encodeTailscaleAuthKey(String authKey) {
+  if (authKey.isEmpty) {
+    return '';
+  }
+  final random = Random.secure();
+  final nonce = List<int>.generate(
+    _authKeyNonceLength,
+    (_) => random.nextInt(256),
+    growable: false,
+  );
+  final keyBytes = utf8.encode(authKey);
+  final obfuscated = List<int>.generate(
+    keyBytes.length,
+    (index) =>
+        keyBytes[index] ^
+        nonce[index % nonce.length] ^
+        _authKeyObfuscationMask[index % _authKeyObfuscationMask.length],
+    growable: false,
+  );
+  return [
+    _authKeyFormatVersion,
+    base64UrlEncode(nonce),
+    base64UrlEncode(obfuscated),
+  ].join('.');
+}
+
+String _decodeTailscaleAuthKey(String? value) {
+  if (value == null || value.isEmpty) {
+    return '';
+  }
+  final parts = value.split('.');
+  if (parts.length != 3 || parts[0] != _authKeyFormatVersion) {
+    return value;
+  }
+  try {
+    final nonce = base64Url.decode(parts[1]);
+    final obfuscated = base64Url.decode(parts[2]);
+    if (nonce.length != _authKeyNonceLength) {
+      return '';
+    }
+    final keyBytes = List<int>.generate(
+      obfuscated.length,
+      (index) =>
+          obfuscated[index] ^
+          nonce[index % nonce.length] ^
+          _authKeyObfuscationMask[index % _authKeyObfuscationMask.length],
+      growable: false,
+    );
+    return utf8.decode(keyBytes);
+  } on FormatException {
+    return '';
+  }
+}
 
 @freezed
 abstract class TailscaleProps with _$TailscaleProps {
@@ -111,11 +190,15 @@ extension TailscalePropsExt on TailscaleProps {
       bypassTraffic ? tailscaleFakeIpFilters : const <String>[];
 }
 
-@freezed
+@Freezed(toStringOverride: false)
 abstract class TailscaleProxy with _$TailscaleProxy {
+  const TailscaleProxy._();
+
   const factory TailscaleProxy({
     required String name,
-    @Default('') String authKey,
+    @JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey)
+    @Default('')
+    String authKey,
     @Default('') String hostname,
     @Default('') String controlUrl,
     @Default('') String stateDir,
@@ -129,6 +212,13 @@ abstract class TailscaleProxy with _$TailscaleProxy {
 
   factory TailscaleProxy.fromJson(Map<String, Object?> json) =>
       _$TailscaleProxyFromJson(json);
+
+  @override
+  String toString() =>
+      'TailscaleProxy(name: $name, authKey: ***, hostname: $hostname, '
+      'controlUrl: $controlUrl, stateDir: $stateDir, ephemeral: $ephemeral, '
+      'udp: $udp, acceptRoutes: $acceptRoutes, exitNode: $exitNode, '
+      'exitNodeAllowLanAccess: $exitNodeAllowLanAccess, routes: $routes)';
 }
 
 extension TailscaleProxyExt on TailscaleProxy {
@@ -143,8 +233,9 @@ extension TailscaleProxyExt on TailscaleProxy {
     if (authKey.trim().isNotEmpty) {
       map['auth-key'] = authKey.trim();
     }
-    if (hostname.trim().isNotEmpty) {
-      map['hostname'] = hostname.trim();
+    final host = hostname.trim();
+    if (host.isNotEmpty && isSafeClashField(host)) {
+      map['hostname'] = host;
     }
     final control = controlUrl.trim();
     if (control.isNotEmpty && isSafeTailscaleControlUrl(control)) {
@@ -163,8 +254,9 @@ extension TailscaleProxyExt on TailscaleProxy {
     if (acceptRoutes) {
       map['accept-routes'] = true;
     }
-    if (exitNode.trim().isNotEmpty) {
-      map['exit-node'] = exitNode.trim();
+    final node = exitNode.trim();
+    if (node.isNotEmpty && isSafeClashField(node)) {
+      map['exit-node'] = node;
       map['exit-node-allow-lan-access'] = exitNodeAllowLanAccess;
     }
     return map;

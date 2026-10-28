@@ -27,7 +27,9 @@ Map<String, dynamic> _$TailscalePropsToJson(_TailscaleProps instance) =>
 _TailscaleProxy _$TailscaleProxyFromJson(Map<String, dynamic> json) =>
     _TailscaleProxy(
       name: json['name'] as String,
-      authKey: json['authKey'] as String? ?? '',
+      authKey: json['authKey'] == null
+          ? ''
+          : _decodeTailscaleAuthKey(json['authKey'] as String?),
       hostname: json['hostname'] as String? ?? '',
       controlUrl: json['controlUrl'] as String? ?? '',
       stateDir: json['stateDir'] as String? ?? '',
@@ -46,7 +48,7 @@ _TailscaleProxy _$TailscaleProxyFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$TailscaleProxyToJson(_TailscaleProxy instance) =>
     <String, dynamic>{
       'name': instance.name,
-      'authKey': instance.authKey,
+      'authKey': _encodeTailscaleAuthKey(instance.authKey),
       'hostname': instance.hostname,
       'controlUrl': instance.controlUrl,
       'stateDir': instance.stateDir,

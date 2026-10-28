@@ -298,7 +298,7 @@ as List<TailscaleProxy>,
 /// @nodoc
 mixin _$TailscaleProxy {
 
- String get name; String get authKey; String get hostname; String get controlUrl; String get stateDir; bool get ephemeral; bool get udp; bool get acceptRoutes; String get exitNode; bool get exitNodeAllowLanAccess; List<String> get routes;
+ String get name;@JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey) String get authKey; String get hostname; String get controlUrl; String get stateDir; bool get ephemeral; bool get udp; bool get acceptRoutes; String get exitNode; bool get exitNodeAllowLanAccess; List<String> get routes;
 /// Create a copy of TailscaleProxy
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -322,11 +322,6 @@ int get hashCode {
   return Object.hash(runtimeType,_this.name,_this.authKey,_this.hostname,_this.controlUrl,_this.stateDir,_this.ephemeral,_this.udp,_this.acceptRoutes,_this.exitNode,_this.exitNodeAllowLanAccess,const DeepCollectionEquality().hash(_this.routes));
 }
 
-@override
-String toString() {
-  final _this = this as TailscaleProxy;
-  return 'TailscaleProxy(name: ${_this.name}, authKey: ${_this.authKey}, hostname: ${_this.hostname}, controlUrl: ${_this.controlUrl}, stateDir: ${_this.stateDir}, ephemeral: ${_this.ephemeral}, udp: ${_this.udp}, acceptRoutes: ${_this.acceptRoutes}, exitNode: ${_this.exitNode}, exitNodeAllowLanAccess: ${_this.exitNodeAllowLanAccess}, routes: ${_this.routes})';
-}
 
 
 }
@@ -336,7 +331,7 @@ abstract mixin class $TailscaleProxyCopyWith<$Res>  {
   factory $TailscaleProxyCopyWith(TailscaleProxy value, $Res Function(TailscaleProxy) _then) = _$TailscaleProxyCopyWithImpl;
 @useResult
 $Res call({
- String name, String authKey, String hostname, String controlUrl, String stateDir, bool ephemeral, bool udp, bool acceptRoutes, String exitNode, bool exitNodeAllowLanAccess, List<String> routes
+ String name,@JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey) String authKey, String hostname, String controlUrl, String stateDir, bool ephemeral, bool udp, bool acceptRoutes, String exitNode, bool exitNodeAllowLanAccess, List<String> routes
 });
 
 
@@ -451,7 +446,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String authKey,  String hostname,  String controlUrl,  String stateDir,  bool ephemeral,  bool udp,  bool acceptRoutes,  String exitNode,  bool exitNodeAllowLanAccess,  List<String> routes)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name, @JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey)  String authKey,  String hostname,  String controlUrl,  String stateDir,  bool ephemeral,  bool udp,  bool acceptRoutes,  String exitNode,  bool exitNodeAllowLanAccess,  List<String> routes)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TailscaleProxy() when $default != null:
 return $default(_that.name,_that.authKey,_that.hostname,_that.controlUrl,_that.stateDir,_that.ephemeral,_that.udp,_that.acceptRoutes,_that.exitNode,_that.exitNodeAllowLanAccess,_that.routes);case _:
@@ -472,7 +467,7 @@ return $default(_that.name,_that.authKey,_that.hostname,_that.controlUrl,_that.s
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String authKey,  String hostname,  String controlUrl,  String stateDir,  bool ephemeral,  bool udp,  bool acceptRoutes,  String exitNode,  bool exitNodeAllowLanAccess,  List<String> routes)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name, @JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey)  String authKey,  String hostname,  String controlUrl,  String stateDir,  bool ephemeral,  bool udp,  bool acceptRoutes,  String exitNode,  bool exitNodeAllowLanAccess,  List<String> routes)  $default,) {final _that = this;
 switch (_that) {
 case _TailscaleProxy():
 return $default(_that.name,_that.authKey,_that.hostname,_that.controlUrl,_that.stateDir,_that.ephemeral,_that.udp,_that.acceptRoutes,_that.exitNode,_that.exitNodeAllowLanAccess,_that.routes);case _:
@@ -492,7 +487,7 @@ return $default(_that.name,_that.authKey,_that.hostname,_that.controlUrl,_that.s
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String authKey,  String hostname,  String controlUrl,  String stateDir,  bool ephemeral,  bool udp,  bool acceptRoutes,  String exitNode,  bool exitNodeAllowLanAccess,  List<String> routes)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name, @JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey)  String authKey,  String hostname,  String controlUrl,  String stateDir,  bool ephemeral,  bool udp,  bool acceptRoutes,  String exitNode,  bool exitNodeAllowLanAccess,  List<String> routes)?  $default,) {final _that = this;
 switch (_that) {
 case _TailscaleProxy() when $default != null:
 return $default(_that.name,_that.authKey,_that.hostname,_that.controlUrl,_that.stateDir,_that.ephemeral,_that.udp,_that.acceptRoutes,_that.exitNode,_that.exitNodeAllowLanAccess,_that.routes);case _:
@@ -506,12 +501,12 @@ return $default(_that.name,_that.authKey,_that.hostname,_that.controlUrl,_that.s
 /// @nodoc
 @JsonSerializable()
 
-class _TailscaleProxy implements TailscaleProxy {
-  const _TailscaleProxy({required this.name, this.authKey = '', this.hostname = '', this.controlUrl = '', this.stateDir = '', this.ephemeral = false, this.udp = false, this.acceptRoutes = false, this.exitNode = '', this.exitNodeAllowLanAccess = false,  List<String> routes = const []}): _routes = routes;
+class _TailscaleProxy extends TailscaleProxy {
+  const _TailscaleProxy({required this.name, @JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey) this.authKey = '', this.hostname = '', this.controlUrl = '', this.stateDir = '', this.ephemeral = false, this.udp = false, this.acceptRoutes = false, this.exitNode = '', this.exitNodeAllowLanAccess = false,  List<String> routes = const []}): _routes = routes,super._();
   factory _TailscaleProxy.fromJson(Map<String, dynamic> json) => _$TailscaleProxyFromJson(json);
 
 @override final  String name;
-@override@JsonKey() final  String authKey;
+@override@JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey) final  String authKey;
 @override@JsonKey() final  String hostname;
 @override@JsonKey() final  String controlUrl;
 @override@JsonKey() final  String stateDir;
@@ -550,10 +545,6 @@ int get hashCode {
     return Object.hash(runtimeType,name,authKey,hostname,controlUrl,stateDir,ephemeral,udp,acceptRoutes,exitNode,exitNodeAllowLanAccess,const DeepCollectionEquality().hash(_routes));
 }
 
-@override
-String toString() {
-    return 'TailscaleProxy(name: $name, authKey: $authKey, hostname: $hostname, controlUrl: $controlUrl, stateDir: $stateDir, ephemeral: $ephemeral, udp: $udp, acceptRoutes: $acceptRoutes, exitNode: $exitNode, exitNodeAllowLanAccess: $exitNodeAllowLanAccess, routes: $routes)';
-}
 
 
 }
@@ -563,7 +554,7 @@ abstract mixin class _$TailscaleProxyCopyWith<$Res> implements $TailscaleProxyCo
   factory _$TailscaleProxyCopyWith(_TailscaleProxy value, $Res Function(_TailscaleProxy) _then) = __$TailscaleProxyCopyWithImpl;
 @override @useResult
 $Res call({
- String name, String authKey, String hostname, String controlUrl, String stateDir, bool ephemeral, bool udp, bool acceptRoutes, String exitNode, bool exitNodeAllowLanAccess, List<String> routes
+ String name,@JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey) String authKey, String hostname, String controlUrl, String stateDir, bool ephemeral, bool udp, bool acceptRoutes, String exitNode, bool exitNodeAllowLanAccess, List<String> routes
 });
 
 

@@ -179,23 +179,41 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     return report;
   }
 
-  Future<String?> _alignOsTimezoneIfNeeded() async {
+  Future<void> _applySuggestedOsTimezone({bool notify = false}) async {
     if (system.isAndroid) {
-      return null;
+      return;
     }
-    final target = _report?.timezone;
+    final l10n = context.appLocalizations;
+    final target = _report?.timezone?.trim();
     if (target == null || target.isEmpty) {
-      return context.appLocalizations.geoIdentityTimezoneMissing;
+      if (notify && mounted) {
+        context.showNotifier(l10n.geoIdentityTimezoneMissing);
+      }
+      return;
     }
+    if (!GeoIdentityHost.isAllowedElevatedTimezone(target)) {
+      if (notify && mounted) {
+        context.showNotifier(l10n.geoIdentityTimezoneAlignFailed(target));
+      }
+      return;
+    }
+    setState(() => _busy = true);
     final previous =
         await GeoIdentityHost.readOsTimezoneId() ??
         ref.read(geoIdentitySettingProvider).previousOsTimezone;
     final error = await GeoIdentityHost.setOsTimezone(target);
     if (!mounted) {
-      return error;
+      return;
     }
+    setState(() {
+      _busy = false;
+      _timezoneNote = error;
+    });
     if (error != null) {
-      return error;
+      if (notify) {
+        context.showNotifier(l10n.geoIdentityTimezoneAlignFailed(error));
+      }
+      return;
     }
     ref
         .read(geoIdentitySettingProvider.notifier)
@@ -203,7 +221,9 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
           previousOsTimezone: previous,
           appliedOsTimezone: target,
         );
-    return null;
+    if (notify) {
+      context.showNotifier(l10n.geoIdentityTimezoneRestored(target));
+    }
   }
 
   Future<void> _restoreOsTimezoneIfNeeded({bool notify = false}) async {
@@ -219,7 +239,10 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       }
       return;
     }
-    final error = await GeoIdentityHost.setOsTimezone(previous);
+    final error = await GeoIdentityHost.setOsTimezone(
+      previous,
+      restrictToElevatedAllowlist: false,
+    );
     if (error == null && mounted) {
       ref.read(geoIdentitySettingProvider.notifier).clearTimezoneHistory();
       setState(() => _timezoneNote = null);
@@ -306,14 +329,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
         return;
       }
 
-      if (system.isDesktop) {
-        setState(() => _statusMessage = l10n.geoIdentitySetupTimezone);
-        final timezoneError = await _alignOsTimezoneIfNeeded();
-        if (timezoneError != null && mounted) {
-          setState(() => _timezoneNote = timezoneError);
-        }
-      }
-
+      // Protect-on must not elevate from a remote timezone suggestion.
       if (!_hasVirtualNicCapture) {
         await _copyTerminalProxyExports(notify: false);
       }
@@ -327,6 +343,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
         _statusMessage = report == null
             ? (_statusMessage ?? l10n.geoIdentityCheckFailed)
             : _messageForReport(report);
+        _timezoneNote = null;
       });
       if (protected) {
         context.showNotifier(l10n.geoIdentitySetupDoneProtected);
@@ -337,11 +354,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       } else {
         context.showNotifier(l10n.geoIdentityNetworkExposed);
       }
-      if (_timezoneNote != null) {
-        context.showNotifier(
-          l10n.geoIdentityTimezoneAlignFailed(_timezoneNote!),
-        );
-      } else if (_copiedProxyExports) {
+      if (_copiedProxyExports) {
         context.showNotifier(l10n.copySuccess);
       }
     } catch (e) {
@@ -532,6 +545,26 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
               dialogs.openUrl(GeoIdentityLinks.geoMirror);
             },
           ),
+          if (!system.isAndroid)
+            Builder(
+              builder: (context) {
+                final suggested = _report?.timezone?.trim();
+                final canApply =
+                    suggested != null &&
+                    suggested.isNotEmpty &&
+                    GeoIdentityHost.isAllowedElevatedTimezone(suggested);
+                return ListItem(
+                  leading: const GlyphIcon(AppGlyphs.clock),
+                  title: Text(l10n.geoIdentityTimezone),
+                  subtitle: Text(
+                    canApply ? suggested : l10n.geoIdentityTimezoneMissing,
+                  ),
+                  onTap: _busy || !canApply
+                      ? null
+                      : () => _applySuggestedOsTimezone(notify: true),
+                );
+              },
+            ),
           if (!system.isAndroid && previous != null && previous.isNotEmpty)
             ListItem(
               leading: const GlyphIcon(AppGlyphs.reset),

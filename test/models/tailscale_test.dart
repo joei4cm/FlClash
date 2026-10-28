@@ -58,6 +58,33 @@ void main() {
       expect(proxy.toOutboundJson().containsKey('control-url'), isFalse);
     });
 
+    test('rejects private and metadata control-url hosts', () {
+      for (final url in [
+        'https://127.0.0.1',
+        'https://10.0.0.8',
+        'https://192.168.0.1',
+        'https://169.254.169.254',
+        'https://localhost',
+      ]) {
+        final json = TailscaleProxy(
+          name: 'ts-node',
+          controlUrl: url,
+        ).toOutboundJson();
+        expect(json.containsKey('control-url'), isFalse, reason: url);
+      }
+    });
+
+    test('omits unsafe hostname and exit-node fields', () {
+      const proxy = TailscaleProxy(
+        name: 'ts-node',
+        hostname: 'bad,host',
+        exitNode: 'bad\nnode',
+      );
+      final json = proxy.toOutboundJson();
+      expect(json.containsKey('hostname'), isFalse);
+      expect(json.containsKey('exit-node'), isFalse);
+    });
+
     test('omits false boolean flags', () {
       const proxy = TailscaleProxy(name: 'ts-node');
       final json = proxy.toOutboundJson();
@@ -110,6 +137,29 @@ void main() {
         jsonDecode(jsonEncode(proxy.toJson())) as Map<String, Object?>,
       );
       expect(restored, proxy);
+    });
+
+    test('persists authKey obfuscated and hides it from toString', () {
+      const proxy = TailscaleProxy(
+        name: 'ts-node',
+        authKey: 'tskey-auth-secret',
+      );
+      final encoded = proxy.toJson();
+      expect(encoded['authKey'], isNot(equals('tskey-auth-secret')));
+      expect(encoded['authKey'], startsWith('v1.'));
+      expect(proxy.toString(), isNot(contains('tskey-auth-secret')));
+      expect(proxy.toString(), contains('authKey: ***'));
+      expect(
+        TailscaleProxy.fromJson(Map<String, Object?>.from(encoded)).authKey,
+        'tskey-auth-secret',
+      );
+      expect(
+        TailscaleProxy.fromJson({
+          'name': 'legacy',
+          'authKey': 'plain-legacy-key',
+        }).authKey,
+        'plain-legacy-key',
+      );
     });
   });
 

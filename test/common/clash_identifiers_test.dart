@@ -41,6 +41,10 @@ void main() {
         isSafeTailscaleControlUrl('https://controlplane.tailscale.com'),
         isTrue,
       );
+      expect(
+        isSafeTailscaleControlUrl('https://headscale.example.com'),
+        isTrue,
+      );
     });
 
     test('rejects non-https and credentialed URLs', () {
@@ -50,6 +54,21 @@ void main() {
         isFalse,
       );
       expect(isSafeTailscaleControlUrl('not a url'), isFalse);
+    });
+
+    test('rejects private, loopback, and metadata hosts', () {
+      expect(isSafeTailscaleControlUrl('https://127.0.0.1'), isFalse);
+      expect(isSafeTailscaleControlUrl('https://localhost'), isFalse);
+      expect(isSafeTailscaleControlUrl('https://10.0.0.1'), isFalse);
+      expect(isSafeTailscaleControlUrl('https://192.168.1.1'), isFalse);
+      expect(isSafeTailscaleControlUrl('https://172.16.5.1'), isFalse);
+      expect(isSafeTailscaleControlUrl('https://169.254.169.254'), isFalse);
+      expect(
+        isSafeTailscaleControlUrl('https://metadata.google.internal'),
+        isFalse,
+      );
+      expect(isSafeTailscaleControlUrl('https://foo.local'), isFalse);
+      expect(isSafeTailscaleControlUrl('https://[::1]'), isFalse);
     });
   });
 
