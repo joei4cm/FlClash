@@ -475,42 +475,51 @@ class SetupAction extends _$SetupAction {
     }
   }
 
-  Future<List<ProxyGroup>> _profileGroups(int profileId) async {
+  /// One Core round-trip for strategy-lane inject: groups + leaf proxy names.
+  Future<({List<ProxyGroup> groups, Set<String> proxyNames})>
+  _profileOutboundsSummary(int profileId) async {
     final raw = await _core.getProfileOutbounds(profileId);
-    final groups = raw['proxy-groups'];
-    if (groups is! List) {
-      return const [];
-    }
+    final groupsRaw = raw['proxy-groups'];
     final parsed = <ProxyGroup>[];
-    for (final item in groups) {
-      if (item is! Map) {
-        continue;
+    if (groupsRaw is List) {
+      for (final item in groupsRaw) {
+        if (item is! Map) {
+          continue;
+        }
+        final name = item['name']?.toString() ?? '';
+        if (name.isEmpty) {
+          continue;
+        }
+        final GroupType groupType;
+        try {
+          groupType = GroupType.parse(item['type']?.toString() ?? '');
+        } catch (_) {
+          continue;
+        }
+        final members = item['proxies'];
+        parsed.add(
+          ProxyGroup(
+            id: 0,
+            name: name,
+            type: groupType,
+            proxies: members is List
+                ? [
+                    for (final member in members)
+                      if (member != null) member.toString(),
+                  ]
+                : null,
+          ),
+        );
       }
-      final name = item['name']?.toString() ?? '';
-      if (name.isEmpty) {
-        continue;
-      }
-      final GroupType groupType;
-      try {
-        groupType = GroupType.parse(item['type']?.toString() ?? '');
-      } catch (_) {
-        continue;
-      }
-      parsed.add(ProxyGroup(id: 0, name: name, type: groupType));
     }
-    return parsed;
-  }
-
-  Future<Set<String>> _profileProxyNames(int profileId) async {
-    final raw = await _core.getProfileOutbounds(profileId);
     final proxies = raw['proxies'];
-    if (proxies is! List) {
-      return const {};
-    }
-    return {
-      for (final item in proxies)
-        if (item is Map && item['name'] != null) item['name'].toString(),
-    };
+    final proxyNames = proxies is! List
+        ? const <String>{}
+        : {
+            for (final item in proxies)
+              if (item is Map && item['name'] != null) item['name'].toString(),
+          };
+    return (groups: parsed, proxyNames: proxyNames);
   }
 
   /// With a base, [BuiltProfile.yaml] is only the overlay the Core applies.
@@ -558,17 +567,23 @@ class SetupAction extends _$SetupAction {
     }
     final appSetting = ref.read(appSettingProvider);
     final tailscaleProps = ref.read(tailscaleSettingProvider);
-    final hasStrategyPolicies = appSetting.strategyLanePolicies.isNotEmpty;
-    final strategyGroups = !hasStrategyPolicies
-        ? const <ProxyGroup>[]
-        : isCustom
-        ? setupState.proxyGroups
-        : await _profileGroups(profileId);
-    final strategyProxies = !hasStrategyPolicies
-        ? const <String>{}
-        : isCustom
-        ? setupState.appProxies.map((item) => item.name).toSet()
-        : await _profileProxyNames(profileId);
+    final needsStrategy = profileHasStrategyLaneOverrides(
+      appSetting.strategyLanePolicies,
+      profileId,
+    );
+    final List<ProxyGroup> strategyGroups;
+    final Set<String> strategyProxies;
+    if (!needsStrategy) {
+      strategyGroups = const [];
+      strategyProxies = const {};
+    } else if (isCustom) {
+      strategyGroups = setupState.proxyGroups;
+      strategyProxies = setupState.appProxies.map((item) => item.name).toSet();
+    } else {
+      final summary = await _profileOutboundsSummary(profileId);
+      strategyGroups = summary.groups;
+      strategyProxies = summary.proxyNames;
+    }
     final strategyInjection = buildStrategyLaneInjection(
       profileId: profileId,
       policies: appSetting.strategyLanePolicies,

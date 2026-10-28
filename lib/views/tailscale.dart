@@ -744,6 +744,13 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
                     controller: _controlUrlController,
                     label: appLocalizations.tailscaleControlUrl,
                     helperText: appLocalizations.tailscaleControlUrlHint,
+                    validator: (value) {
+                      final url = value?.trim() ?? '';
+                      if (url.isEmpty || isSafeTailscaleControlUrl(url)) {
+                        return null;
+                      }
+                      return appLocalizations.invalidLinkTip;
+                    },
                   ),
                   _buildTextField(
                     controller: _stateDirController,

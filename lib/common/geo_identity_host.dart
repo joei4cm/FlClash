@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fl_clash/common/clash_identifiers.dart';
 import 'package:fl_clash/common/system.dart';
 
 abstract final class GeoIdentityHost {
@@ -101,6 +102,9 @@ abstract final class GeoIdentityHost {
     if (timezone.isEmpty) {
       return 'empty timezone';
     }
+    if (!isValidIanaTimezoneId(timezone)) {
+      return 'invalid-timezone';
+    }
     if (system.isAndroid) {
       return 'android-unsupported';
     }
@@ -124,10 +128,16 @@ abstract final class GeoIdentityHost {
         return 'timedatectl set-timezone $timezone';
       }
       if (system.isMacOS) {
-        final escaped = timezone.replaceAll('"', '\\"');
+        // Pass the zone as an osascript argv item and quote it in AppleScript so
+        // a remote API value cannot break out of the elevated shell string.
         final result = await Process.run('osascript', [
           '-e',
-          'do shell script "systemsetup -settimezone $escaped" with administrator privileges',
+          'on run argv',
+          '-e',
+          'do shell script "systemsetup -settimezone " & quoted form of item 1 of argv with administrator privileges',
+          '-e',
+          'end run',
+          timezone,
         ]);
         if (result.exitCode == 0) {
           return null;

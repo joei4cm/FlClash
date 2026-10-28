@@ -1,3 +1,4 @@
+import 'package:fl_clash/common/clash_identifiers.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'generated/tailscale.freezed.dart';
@@ -58,21 +59,27 @@ const tailscaleBypassRules = <String>[
   'DOMAIN-SUFFIX,ts.net,DIRECT',
 ];
 
-String buildTailscaleRouteRule(String dest, String target) {
+/// Builds a Clash rule CSV cell. Returns null when [dest] or [target] would
+/// split or corrupt the rule string.
+String? buildTailscaleRouteRule(String dest, String target) {
   final value = dest.trim();
+  final routeTarget = target.trim();
+  if (!isSafeClashField(value) || !isSafeClashField(routeTarget)) {
+    return null;
+  }
   final isV6 = value.contains(':');
   if (value.contains('/')) {
     final type = isV6 ? 'IP-CIDR6' : 'IP-CIDR';
-    return '$type,$value,$target,no-resolve';
+    return '$type,$value,$routeTarget,no-resolve';
   }
   final isV4 = RegExp(r'^\d{1,3}(\.\d{1,3}){3}$').hasMatch(value);
   if (isV4) {
-    return 'IP-CIDR,$value/32,$target,no-resolve';
+    return 'IP-CIDR,$value/32,$routeTarget,no-resolve';
   }
   if (isV6) {
-    return 'IP-CIDR6,$value/128,$target,no-resolve';
+    return 'IP-CIDR6,$value/128,$routeTarget,no-resolve';
   }
-  return 'DOMAIN-SUFFIX,$value,$target';
+  return 'DOMAIN-SUFFIX,$value,$routeTarget';
 }
 
 extension TailscalePropsExt on TailscaleProps {
@@ -87,7 +94,10 @@ extension TailscalePropsExt on TailscaleProps {
           if (dest.trim().isEmpty) {
             continue;
           }
-          rules.add(buildTailscaleRouteRule(dest, proxy.name.trim()));
+          final rule = buildTailscaleRouteRule(dest, proxy.name.trim());
+          if (rule != null) {
+            rules.add(rule);
+          }
         }
       }
     }
@@ -122,7 +132,8 @@ abstract class TailscaleProxy with _$TailscaleProxy {
 }
 
 extension TailscaleProxyExt on TailscaleProxy {
-  bool get isValid => name.trim().isNotEmpty;
+  /// Name must be a single Clash CSV/YAML field; commas and controls are out.
+  bool get isValid => isSafeClashField(name);
 
   Map<String, dynamic> toOutboundJson() {
     final map = <String, dynamic>{
@@ -135,11 +146,13 @@ extension TailscaleProxyExt on TailscaleProxy {
     if (hostname.trim().isNotEmpty) {
       map['hostname'] = hostname.trim();
     }
-    if (controlUrl.trim().isNotEmpty) {
-      map['control-url'] = controlUrl.trim();
+    final control = controlUrl.trim();
+    if (control.isNotEmpty && isSafeTailscaleControlUrl(control)) {
+      map['control-url'] = control;
     }
-    if (stateDir.trim().isNotEmpty) {
-      map['state-dir'] = stateDir.trim();
+    final dir = stateDir.trim();
+    if (dir.isNotEmpty && isSafeTailscaleStateDir(dir)) {
+      map['state-dir'] = dir;
     }
     if (ephemeral) {
       map['ephemeral'] = true;
