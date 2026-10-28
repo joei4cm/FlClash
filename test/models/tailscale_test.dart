@@ -285,9 +285,7 @@ void main() {
           ),
         ],
       );
-      expect(props.buildInjectedRules(), [
-        'DOMAIN-SUFFIX,home.ts.net,ts-node',
-      ]);
+      expect(props.buildInjectedRules(), ['DOMAIN-SUFFIX,home.ts.net,ts-node']);
     });
   });
 

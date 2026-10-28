@@ -193,11 +193,7 @@ void main() {
         profileId: 1,
         policies: {key: 'group:evil,DIRECT'},
         proxyGroups: const [
-          ProxyGroup(
-            id: 1,
-            name: 'evil,DIRECT',
-            type: GroupType.Selector,
-          ),
+          ProxyGroup(id: 1, name: 'evil,DIRECT', type: GroupType.Selector),
         ],
         rules: const [],
         testUrl: 'https://www.gstatic.com/generate_204',

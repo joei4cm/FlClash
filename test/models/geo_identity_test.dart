@@ -87,15 +87,10 @@ void main() {
 
     test('rejects timezone ids that are not IANA before elevating', () async {
       expect(
-        await GeoIdentityHost.setOsTimezone(
-          'America/Los_Angeles; rm -rf /',
-        ),
+        await GeoIdentityHost.setOsTimezone('America/Los_Angeles; rm -rf /'),
         'invalid-timezone',
       );
-      expect(
-        await GeoIdentityHost.setOsTimezone(r'$(id)'),
-        'invalid-timezone',
-      );
+      expect(await GeoIdentityHost.setOsTimezone(r'$(id)'), 'invalid-timezone');
       expect(await GeoIdentityHost.setOsTimezone(''), 'empty timezone');
     });
   });

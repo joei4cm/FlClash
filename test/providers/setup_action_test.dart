@@ -1661,7 +1661,9 @@ void main() {
         when(
           () => core.getProfileBase(any()),
         ).thenAnswer((_) async => const ProfileBase(config: {}, digest: 'd'));
-        when(() => core.buildProfile(any())).thenAnswer((_) async => 'spill.yaml');
+        when(
+          () => core.buildProfile(any()),
+        ).thenAnswer((_) async => 'spill.yaml');
         final scoped = ProviderContainer(
           overrides: [
             profilesProvider.overrideWith(() => TestProfiles([profile])),
