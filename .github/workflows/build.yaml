@@ -442,9 +442,27 @@ jobs:
           curl -fsSL --retry 3 -o "$bundle" "https://curl.se/ca/$CA_BUNDLE"
           echo "$CA_BUNDLE_SHA256  $bundle" | sha256sum -c -
 
+      # proxy.golang.org occasionally returns HTTP/2 INTERNAL_ERROR mid-zip; warm the
+      # module cache with retries so Setup does not fail the whole release matrix.
+      - name: Prefetch Go modules
+        shell: bash
+        working-directory: core
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+        run: |
+          for i in 1 2 3 4 5; do
+            if go mod download; then
+              exit 0
+            fi
+            echo "go mod download failed (attempt $i); retrying..." >&2
+            sleep $((i * 20))
+          done
+          exit 1
+
       - name: Setup
         env:
           ANDROID_NDK_HOME: ${{ steps.build-ndk.outputs.ndk-path }}
+          GOPROXY: https://proxy.golang.org,direct
         run: dart setup.dart ${{ matrix.platform }} ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
 
       - name: Upload
