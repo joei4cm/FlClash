@@ -721,7 +721,3 @@ jobs:
           mapfile -t files < <(compgen -G './dist/*' || true)
           test "${#files[@]}" -gt 0
           gh release upload "$TAG" "${files[@]}" --clobber
-          {
-            cd ./dist
-            sha256sum ./*
-          } | gh release upload "$TAG" - --clobber --name SHA256SUMS-macos-arm64 || true
