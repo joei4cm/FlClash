@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.5 (2026-10-28)
+
+**Bug Fixes**
+
+- **security** Harden geo timezone elevation, Tailscale and strategy-lane rule injection, and outbound-summary memory caps (dc0a3d4)
+
 ## v0.9.4 (2026-10-24)
 
 **Features**
