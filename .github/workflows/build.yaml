@@ -740,6 +740,9 @@ jobs:
        needs.build-macos-arm64-retry-2.result == 'success')
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Download macOS arm64
         uses: actions/download-artifact@v4
         with:
@@ -751,8 +754,10 @@ jobs:
         if: ${{ env.IS_STABLE == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
           TAG: ${{ github.ref_name }}
         run: |
-          mapfile -t files < <(compgen -G './dist/*' || true)
+          mapfile -t files < <(find ./dist -type f ! -name '.*' | sort)
           test "${#files[@]}" -gt 0
+          printf 'Attaching %s\n' "${files[@]}"
           gh release upload "$TAG" "${files[@]}" --clobber
