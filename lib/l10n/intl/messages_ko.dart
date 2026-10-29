@@ -1393,6 +1393,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "outbound": MessageLookupByLibrary.simpleMessage("아웃바운드"),
     "outboundExit": MessageLookupByLibrary.simpleMessage("출구"),
     "outboundIp": MessageLookupByLibrary.simpleMessage("아웃바운드 IP"),
+    "outboundLocation": MessageLookupByLibrary.simpleMessage("출구 위치"),
+    "outboundLocationApproximate": MessageLookupByLibrary.simpleMessage(
+      "핀은 국가 코드 기준의 대략 위치입니다. 출구 탐지가 좌표를 반환하면 도시가 표시됩니다.",
+    ),
+    "outboundLocationCoordinates": MessageLookupByLibrary.simpleMessage("좌표"),
+    "outboundLocationCountry": MessageLookupByLibrary.simpleMessage("국가/지역"),
+    "outboundLocationLocality": MessageLookupByLibrary.simpleMessage("지역"),
+    "outboundLocationUnknown": MessageLookupByLibrary.simpleMessage(
+      "이 출구의 지도 위치가 아직 없습니다",
+    ),
     "outboundMode": MessageLookupByLibrary.simpleMessage("아웃바운드 모드"),
     "override": MessageLookupByLibrary.simpleMessage("Override"),
     "overrideDestination": MessageLookupByLibrary.simpleMessage("대상 덮어쓰기"),

@@ -531,14 +531,47 @@ extension GroupExt on Group {
 
 @freezed
 abstract class IpInfo with _$IpInfo {
-  const factory IpInfo({required String ip, required String countryCode}) =
-      _IpInfo;
+  const IpInfo._();
+
+  const factory IpInfo({
+    required String ip,
+    required String countryCode,
+    String? city,
+    String? region,
+    double? latitude,
+    double? longitude,
+  }) = _IpInfo;
+
+  bool get hasCoordinates =>
+      latitude != null &&
+      longitude != null &&
+      latitude!.isFinite &&
+      longitude!.isFinite;
+
+  /// City / region line for the map sheet, e.g. `Mountain View, California`.
+  String? get localityLabel {
+    final parts = <String>[
+      if (city != null && city!.trim().isNotEmpty) city!.trim(),
+      if (region != null &&
+          region!.trim().isNotEmpty &&
+          region!.trim().toLowerCase() != city?.trim().toLowerCase())
+        region!.trim(),
+    ];
+    if (parts.isEmpty) {
+      return null;
+    }
+    return parts.join(', ');
+  }
 
   static IpInfo fromIpInfoIoJson(Map<String, dynamic> json) {
     return switch (json) {
       {'ip': final String ip, 'country': final String country} => IpInfo(
         ip: ip,
         countryCode: country,
+        city: _optionalString(json['city']),
+        region: _optionalString(json['region']),
+        latitude: _latLonPair(json['loc'])?.$1,
+        longitude: _latLonPair(json['loc'])?.$2,
       ),
       _ => throw const FormatException('invalid json'),
     };
@@ -547,7 +580,14 @@ abstract class IpInfo with _$IpInfo {
   static IpInfo fromGeoJsJson(Map<String, dynamic> json) {
     return switch (json) {
       {'ip': final String ip, 'country_code': final String countryCode} =>
-        IpInfo(ip: ip, countryCode: countryCode),
+        IpInfo(
+          ip: ip,
+          countryCode: countryCode,
+          city: _optionalString(json['city']),
+          region: _optionalString(json['region']),
+          latitude: _optionalDouble(json['latitude']),
+          longitude: _optionalDouble(json['longitude']),
+        ),
       _ => throw const FormatException('invalid json'),
     };
   }
@@ -555,7 +595,14 @@ abstract class IpInfo with _$IpInfo {
   static IpInfo fromIpSbJson(Map<String, dynamic> json) {
     return switch (json) {
       {'ip': final String ip, 'country_code': final String countryCode} =>
-        IpInfo(ip: ip, countryCode: countryCode),
+        IpInfo(
+          ip: ip,
+          countryCode: countryCode,
+          city: _optionalString(json['city']),
+          region: _optionalString(json['region']),
+          latitude: _optionalDouble(json['latitude']),
+          longitude: _optionalDouble(json['longitude']),
+        ),
       _ => throw const FormatException('invalid json'),
     };
   }
@@ -563,7 +610,14 @@ abstract class IpInfo with _$IpInfo {
   static IpInfo fromIpWhoIsJson(Map<String, dynamic> json) {
     return switch (json) {
       {'ip': final String ip, 'country_code': final String countryCode} =>
-        IpInfo(ip: ip, countryCode: countryCode),
+        IpInfo(
+          ip: ip,
+          countryCode: countryCode,
+          city: _optionalString(json['city']),
+          region: _optionalString(json['region']),
+          latitude: _optionalDouble(json['latitude']),
+          longitude: _optionalDouble(json['longitude']),
+        ),
       _ => throw const FormatException('invalid json'),
     };
   }
@@ -583,20 +637,35 @@ abstract class IpInfo with _$IpInfo {
       {'ip': final String ip, 'cc': final String countryCode} => IpInfo(
         ip: ip,
         countryCode: countryCode,
+        city: _optionalString(json['city']),
+        region: _optionalString(json['region'] ?? json['country']),
+        latitude: _optionalDouble(json['latitude']),
+        longitude: _optionalDouble(json['longitude']),
       ),
       _ => throw const FormatException('invalid json'),
     };
   }
 
   static IpInfo fromIpQueryJson(Map<String, dynamic> json) {
-    return switch (json) {
-      {
-        'ip': final String ip,
-        'location': {'country_code': final String countryCode},
-      } =>
-        IpInfo(ip: ip, countryCode: countryCode),
-      _ => throw const FormatException('invalid json'),
-    };
+    final ip = json['ip'];
+    final location = json['location'];
+    if (ip is! String || location is! Map) {
+      throw const FormatException('invalid json');
+    }
+    final countryCode = location['country_code'];
+    if (countryCode is! String || countryCode.isEmpty) {
+      throw const FormatException('invalid json');
+    }
+    return IpInfo(
+      ip: ip,
+      countryCode: countryCode,
+      city: _optionalString(location['city']),
+      region: _optionalString(
+        location['state'] ?? location['region'] ?? location['province'],
+      ),
+      latitude: _optionalDouble(location['latitude']),
+      longitude: _optionalDouble(location['longitude']),
+    );
   }
 
   static IpInfo fromCloudflareTrace(String body) {
@@ -615,6 +684,39 @@ abstract class IpInfo with _$IpInfo {
       _ => throw const FormatException('invalid trace'),
     };
   }
+}
+
+String? _optionalString(Object? value) {
+  if (value is! String) {
+    return null;
+  }
+  final trimmed = value.trim();
+  return trimmed.isEmpty ? null : trimmed;
+}
+
+double? _optionalDouble(Object? value) {
+  return switch (value) {
+    final double number when number.isFinite => number,
+    final int number => number.toDouble(),
+    final String text => double.tryParse(text.trim()),
+    _ => null,
+  };
+}
+
+(double, double)? _latLonPair(Object? value) {
+  if (value is! String) {
+    return null;
+  }
+  final parts = value.split(',');
+  if (parts.length != 2) {
+    return null;
+  }
+  final lat = double.tryParse(parts[0].trim());
+  final lon = double.tryParse(parts[1].trim());
+  if (lat == null || lon == null || !lat.isFinite || !lon.isFinite) {
+    return null;
+  }
+  return (lat, lon);
 }
 
 @freezed

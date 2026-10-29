@@ -219,6 +219,37 @@ void main() {
       );
     });
 
+    test('keeps city and coordinates from rich geo sources', () {
+      expect(
+        IpInfo.fromIpInfoIoJson({
+          'ip': '8.8.8.8',
+          'city': 'Mountain View',
+          'region': 'California',
+          'country': 'US',
+          'loc': '37.3860,-122.0838',
+        }),
+        const IpInfo(
+          ip: '8.8.8.8',
+          countryCode: 'US',
+          city: 'Mountain View',
+          region: 'California',
+          latitude: 37.3860,
+          longitude: -122.0838,
+        ),
+      );
+      expect(
+        IpInfo.fromIpSbJson({
+          'ip': '1.1.1.1',
+          'country_code': 'AU',
+          'city': 'Sydney',
+          'region': 'New South Wales',
+          'latitude': -33.8688,
+          'longitude': 151.2093,
+        }).localityLabel,
+        'Sydney, New South Wales',
+      );
+    });
+
     test('parse the ipquery.io country from its location object', () {
       expect(
         IpInfo.fromIpQueryJson({
