@@ -297,11 +297,11 @@ class _OutboundWorldMapPainter extends CustomPainter {
       origin.dx.clamp(8, size.width - badgeSize.width - 8),
       origin.dy.clamp(8, size.height - badgeSize.height - 8),
     );
-    final rrect = RRect.fromRectAndRadius(
+    final badge = RSuperellipse.fromRectAndRadius(
       origin & badgeSize,
       const Radius.circular(999),
     );
-    canvas.drawRRect(rrect, Paint()..color = pin);
+    canvas.drawRSuperellipse(badge, Paint()..color = pin);
     painter.paint(
       canvas,
       Offset(

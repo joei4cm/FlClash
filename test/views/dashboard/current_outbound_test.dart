@@ -273,8 +273,10 @@ void main() {
       await tester.pump();
       await tester.pump(commonDuration);
       expect(find.text('Unknown type'), findsOneWidget);
+      // Country code is known, so tap opens the map; long-press retries.
+      expect(find.byTooltip('Exit location'), findsOneWidget);
 
-      await tester.tap(find.byTooltip('Retry'));
+      await tester.longPress(_clover());
       await tester.pumpAndSettle();
 
       expect(calls, 2);
