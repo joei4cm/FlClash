@@ -1,9 +1,16 @@
 # Changelog
 
+## v0.9.6 (2026-10-29)
+
+**Features**
+
+- **dashboard** Open exit location map from country badge (cee2ca0)
+
 ## v0.9.5 (2026-10-28)
 
 **Bug Fixes**
 
+- **release** Harden fork surfaces and retry macOS arm64 builds (47aecda)
 - **security** Harden geo timezone elevation, Tailscale and strategy-lane rule injection, and outbound-summary memory caps (dc0a3d4)
 
 ## v0.9.4 (2026-10-24)

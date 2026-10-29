@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.6",
+      "tag": "v0.9.6",
+      "date": "2026-10-29",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "cee2ca0",
+              "scope": "dashboard",
+              "text": "Open exit location map from country badge"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.5",
       "tag": "v0.9.5",
       "date": "2026-10-28",
@@ -10,6 +28,11 @@
         {
           "type": "fix",
           "entries": [
+            {
+              "id": "47aecda",
+              "scope": "release",
+              "text": "Harden fork surfaces and retry macOS arm64 builds"
+            },
             {
               "id": "dc0a3d4",
               "scope": "security",
