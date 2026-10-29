@@ -39,6 +39,52 @@ void main() {
       expect(json['accept-routes'], true);
     });
 
+    test('omits unsafe control-url and state-dir values', () {
+      const proxy = TailscaleProxy(
+        name: 'ts-node',
+        controlUrl: 'http://evil.example/steal',
+        stateDir: '../escape',
+      );
+      final json = proxy.toOutboundJson();
+      expect(json.containsKey('control-url'), isFalse);
+      expect(json.containsKey('state-dir'), isFalse);
+    });
+
+    test('rejects control-url with embedded credentials', () {
+      const proxy = TailscaleProxy(
+        name: 'ts-node',
+        controlUrl: 'https://user:pass@controlplane.example.com',
+      );
+      expect(proxy.toOutboundJson().containsKey('control-url'), isFalse);
+    });
+
+    test('rejects private and metadata control-url hosts', () {
+      for (final url in [
+        'https://127.0.0.1',
+        'https://10.0.0.8',
+        'https://192.168.0.1',
+        'https://169.254.169.254',
+        'https://localhost',
+      ]) {
+        final json = TailscaleProxy(
+          name: 'ts-node',
+          controlUrl: url,
+        ).toOutboundJson();
+        expect(json.containsKey('control-url'), isFalse, reason: url);
+      }
+    });
+
+    test('omits unsafe hostname and exit-node fields', () {
+      const proxy = TailscaleProxy(
+        name: 'ts-node',
+        hostname: 'bad,host',
+        exitNode: 'bad\nnode',
+      );
+      final json = proxy.toOutboundJson();
+      expect(json.containsKey('hostname'), isFalse);
+      expect(json.containsKey('exit-node'), isFalse);
+    });
+
     test('omits false boolean flags', () {
       const proxy = TailscaleProxy(name: 'ts-node');
       final json = proxy.toOutboundJson();
@@ -72,10 +118,12 @@ void main() {
   });
 
   group('TailscaleProxy validation and serialization', () {
-    test('isValid requires a non-empty trimmed name', () {
+    test('isValid requires a safe Clash field name', () {
       expect(const TailscaleProxy(name: '').isValid, isFalse);
       expect(const TailscaleProxy(name: '   ').isValid, isFalse);
       expect(const TailscaleProxy(name: 'ts-node').isValid, isTrue);
+      expect(const TailscaleProxy(name: 'bad,name').isValid, isFalse);
+      expect(const TailscaleProxy(name: 'bad\nname').isValid, isFalse);
     });
 
     test('round-trips through json for persistence', () {
@@ -89,6 +137,29 @@ void main() {
         jsonDecode(jsonEncode(proxy.toJson())) as Map<String, Object?>,
       );
       expect(restored, proxy);
+    });
+
+    test('persists authKey obfuscated and hides it from toString', () {
+      const proxy = TailscaleProxy(
+        name: 'ts-node',
+        authKey: 'tskey-auth-secret',
+      );
+      final encoded = proxy.toJson();
+      expect(encoded['authKey'], isNot(equals('tskey-auth-secret')));
+      expect(encoded['authKey'], startsWith('v1.'));
+      expect(proxy.toString(), isNot(contains('tskey-auth-secret')));
+      expect(proxy.toString(), contains('authKey: ***'));
+      expect(
+        TailscaleProxy.fromJson(Map<String, Object?>.from(encoded)).authKey,
+        'tskey-auth-secret',
+      );
+      expect(
+        TailscaleProxy.fromJson({
+          'name': 'legacy',
+          'authKey': 'plain-legacy-key',
+        }).authKey,
+        'plain-legacy-key',
+      );
     });
   });
 
@@ -165,6 +236,12 @@ void main() {
         buildTailscaleRouteRule('fd7a:115c:a1e0::1', 'ts-node'),
         'IP-CIDR6,fd7a:115c:a1e0::1/128,ts-node,no-resolve',
       );
+    });
+
+    test('returns null when dest or target would break Clash CSV', () {
+      expect(buildTailscaleRouteRule('evil,DIRECT', 'ts-node'), isNull);
+      expect(buildTailscaleRouteRule('home.ts.net', 'bad,name'), isNull);
+      expect(buildTailscaleRouteRule('home\nts.net', 'ts-node'), isNull);
     });
   });
 
@@ -246,6 +323,19 @@ void main() {
         ],
       );
       expect(props.buildInjectedRules(), isEmpty);
+    });
+
+    test('skips route destinations that would inject extra rule fields', () {
+      const props = TailscaleProps(
+        enable: true,
+        proxies: [
+          TailscaleProxy(
+            name: 'ts-node',
+            routes: ['evil,DIRECT', 'home.ts.net'],
+          ),
+        ],
+      );
+      expect(props.buildInjectedRules(), ['DOMAIN-SUFFIX,home.ts.net,ts-node']);
     });
   });
 

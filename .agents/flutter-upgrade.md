@@ -10,6 +10,17 @@ Flutter ships a stable release about once a quarter, three minor versions apart 
 between are beta only, so a fix that lands on `main` reaches the next stable minor, three above the current one.
 Hotfix releases (3.47.x) carry only cherry-picks listed in the SDK's `CHANGELOG.md`.
 
+## macOS minimum is 12 (Monterey); Intel still ships as its own DMG
+
+- **Floor:** Flutter 3.47 raised the macOS deployment target from 10.15 to **12.0**. The tool's
+  `macos_deployment_target_migration` rewrites any older `MACOSX_DEPLOYMENT_TARGET` (including 10.13 High
+  Sierra) back to 12.0, and `FlutterMacOS.framework` is built for 12. High Sierra / Mojave / Catalina /
+  Big Sur cannot run this app line without dropping below Flutter 3.47.
+- **Intel:** Release CI still builds `macos-amd64.dmg` on `macos-15-intel` (`arch: amd64`). Keep that matrix
+  entry while users need Intel; Flutter warns that Intel host/dual-arch builds will become errors later.
+- **Declare:** `macos/Runner.xcodeproj` sets `MACOSX_DEPLOYMENT_TARGET = 12.0`; `Info.plist` exposes it as
+  `LSMinimumSystemVersion`. Do not lower it to advertise older OS support the engine cannot load.
+
 ## Impeller disabled on Intel macOS release builds
 
 - **Bug:** [flutter/flutter#191538](https://github.com/flutter/flutter/issues/191538). From 3.47, when Impeller

@@ -1277,9 +1277,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Enter the rule content",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
     ),
@@ -1597,6 +1598,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "outbound": MessageLookupByLibrary.simpleMessage("Outbound"),
     "outboundExit": MessageLookupByLibrary.simpleMessage("Exit"),
     "outboundIp": MessageLookupByLibrary.simpleMessage("Outbound IP"),
+    "outboundLocation": MessageLookupByLibrary.simpleMessage("Exit location"),
+    "outboundLocationApproximate": MessageLookupByLibrary.simpleMessage(
+      "The pin is approximate from the country code. A precise city appears when the exit probe returns coordinates.",
+    ),
+    "outboundLocationCoordinates": MessageLookupByLibrary.simpleMessage(
+      "Coordinates",
+    ),
+    "outboundLocationCountry": MessageLookupByLibrary.simpleMessage("Country"),
+    "outboundLocationLocality": MessageLookupByLibrary.simpleMessage(
+      "Locality",
+    ),
+    "outboundLocationUnknown": MessageLookupByLibrary.simpleMessage(
+      "No map position for this exit yet",
+    ),
     "outboundMode": MessageLookupByLibrary.simpleMessage("Outbound mode"),
     "override": MessageLookupByLibrary.simpleMessage("Override"),
     "overrideDestination": MessageLookupByLibrary.simpleMessage(

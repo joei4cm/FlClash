@@ -186,6 +186,50 @@ void main() {
       expect(injection.skippedLanes, [StrategyLaneId.messaging]);
       expect(injection.groups, isEmpty);
     });
+
+    test('drops rules when the target would break Clash CSV', () {
+      final key = strategyLanePolicyKey(1, StrategyLaneId.streaming);
+      final injection = buildStrategyLaneInjection(
+        profileId: 1,
+        policies: {key: 'group:evil,DIRECT'},
+        proxyGroups: const [
+          ProxyGroup(id: 1, name: 'evil,DIRECT', type: GroupType.Selector),
+        ],
+        rules: const [],
+        testUrl: 'https://www.gstatic.com/generate_204',
+      );
+      expect(injection.groups, isEmpty);
+      expect(injection.rules, isEmpty);
+    });
+  });
+
+  group('profileHasStrategyLaneOverrides', () {
+    test('is false when only other profiles have overrides', () {
+      expect(
+        profileHasStrategyLaneOverrides({
+          strategyLanePolicyKey(2, StrategyLaneId.ai): 'auto',
+        }, 1),
+        isFalse,
+      );
+    });
+
+    test('is true for a non-follow policy on this profile', () {
+      expect(
+        profileHasStrategyLaneOverrides({
+          strategyLanePolicyKey(1, StrategyLaneId.ai): 'direct',
+        }, 1),
+        isTrue,
+      );
+    });
+
+    test('ignores explicit follow values', () {
+      expect(
+        profileHasStrategyLaneOverrides({
+          strategyLanePolicyKey(1, StrategyLaneId.ai): 'follow',
+        }, 1),
+        isFalse,
+      );
+    });
   });
 
   group('match helpers', () {

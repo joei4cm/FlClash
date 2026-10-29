@@ -1,3 +1,4 @@
+import 'package:fl_clash/common/clash_identifiers.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/clash_config.dart';
 import 'package:fl_clash/models/common.dart';
@@ -259,6 +260,26 @@ String strategyLanePolicyKey(int profileId, StrategyLaneId laneId) =>
 String strategyLaneManagedGroupName(StrategyLaneId laneId) =>
     'FlClash-${laneId.name}';
 
+/// True when [profileId] has at least one non-follow strategy-lane policy.
+///
+/// Setup uses this so other profiles' overrides do not force an outbounds
+/// fetch for the profile currently being applied.
+bool profileHasStrategyLaneOverrides(
+  Map<String, String> policies,
+  int profileId,
+) {
+  final prefix = '$profileId::';
+  for (final entry in policies.entries) {
+    if (!entry.key.startsWith(prefix)) {
+      continue;
+    }
+    if (!StrategyLanePolicy.parse(entry.value).isFollow) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /// Result of discovering how the subscription already routes a lane.
 class StrategyLaneDiscovery {
   const StrategyLaneDiscovery({
@@ -471,6 +492,9 @@ List<String> buildStrategyLaneRulesForTarget({
   required StrategyLanePreset preset,
   required String target,
 }) {
+  if (!isSafeClashField(target)) {
+    return const [];
+  }
   final rules = <String>[];
   for (final code in preset.geositeCodes) {
     rules.add('GEOSITE,$code,$target');

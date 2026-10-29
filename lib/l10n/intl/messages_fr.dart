@@ -1343,9 +1343,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Saisissez le contenu de la règle",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Ce système masque la liste des apps installées tant que l’autorisation n’est pas accordée. Accordez-la pour configurer le proxy par app.",
     ),
@@ -1689,6 +1690,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "outbound": MessageLookupByLibrary.simpleMessage("Sortant"),
     "outboundExit": MessageLookupByLibrary.simpleMessage("Sortie"),
     "outboundIp": MessageLookupByLibrary.simpleMessage("IP sortante"),
+    "outboundLocation": MessageLookupByLibrary.simpleMessage(
+      "Emplacement de sortie",
+    ),
+    "outboundLocationApproximate": MessageLookupByLibrary.simpleMessage(
+      "L’épingle est approximative d’après le code pays. Une ville précise apparaît quand la sonde renvoie des coordonnées.",
+    ),
+    "outboundLocationCoordinates": MessageLookupByLibrary.simpleMessage(
+      "Coordonnées",
+    ),
+    "outboundLocationCountry": MessageLookupByLibrary.simpleMessage("Pays"),
+    "outboundLocationLocality": MessageLookupByLibrary.simpleMessage(
+      "Localité",
+    ),
+    "outboundLocationUnknown": MessageLookupByLibrary.simpleMessage(
+      "Pas encore de position sur la carte pour cette sortie",
+    ),
     "outboundMode": MessageLookupByLibrary.simpleMessage("Mode sortant"),
     "override": MessageLookupByLibrary.simpleMessage("Override"),
     "overrideDestination": MessageLookupByLibrary.simpleMessage(

@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.5",
+      "tag": "v0.9.5",
+      "date": "2026-10-28",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "dc0a3d4",
+              "scope": "security",
+              "text": "Harden geo timezone elevation, Tailscale and strategy-lane rule injection, and outbound-summary memory caps"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.4",
       "tag": "v0.9.4",
       "date": "2026-10-24",

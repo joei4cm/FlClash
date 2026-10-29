@@ -1252,6 +1252,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "outbound": MessageLookupByLibrary.simpleMessage("出站"),
     "outboundExit": MessageLookupByLibrary.simpleMessage("出口"),
     "outboundIp": MessageLookupByLibrary.simpleMessage("出站 IP"),
+    "outboundLocation": MessageLookupByLibrary.simpleMessage("出口位置"),
+    "outboundLocationApproximate": MessageLookupByLibrary.simpleMessage(
+      "图上标记按国家/地区大致定位。出口探测返回坐标后会显示更精确的城市。",
+    ),
+    "outboundLocationCoordinates": MessageLookupByLibrary.simpleMessage("坐标"),
+    "outboundLocationCountry": MessageLookupByLibrary.simpleMessage("国家/地区"),
+    "outboundLocationLocality": MessageLookupByLibrary.simpleMessage("城市/地区"),
+    "outboundLocationUnknown": MessageLookupByLibrary.simpleMessage(
+      "暂时无法在地图上标出该出口",
+    ),
     "outboundMode": MessageLookupByLibrary.simpleMessage("出站模式"),
     "override": MessageLookupByLibrary.simpleMessage("覆写"),
     "overrideDestination": MessageLookupByLibrary.simpleMessage("覆盖目标地址"),

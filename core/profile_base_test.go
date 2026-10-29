@@ -133,6 +133,38 @@ func TestHandleGetProfileOutboundsKeepsMembersAndRoutingRules(t *testing.T) {
 	}
 }
 
+func TestHandleGetProfileOutboundsCapsProxiesRulesAndMembers(t *testing.T) {
+	var b strings.Builder
+	b.WriteString("proxies:\n")
+	for i := 0; i < maxProfileOutboundProxies+10; i++ {
+		fmt.Fprintf(&b, "  - {name: p%d, type: ss, server: 1.1.1.1, port: 1}\n", i)
+	}
+	b.WriteString("proxy-groups:\n  - name: g\n    type: select\n    proxies:\n")
+	for i := 0; i < maxProfileGroupMembers+5; i++ {
+		fmt.Fprintf(&b, "      - p%d\n", i)
+	}
+	b.WriteString("rules:\n")
+	for i := 0; i < maxProfileOutboundRules+10; i++ {
+		fmt.Fprintf(&b, "  - DOMAIN,host%d.test,g\n", i)
+	}
+	path := writeBaseProfile(t, b.String())
+
+	outbounds, err := handleGetProfileOutbounds(path)
+
+	if err != nil {
+		t.Fatalf("handleGetProfileOutbounds = %v", err)
+	}
+	if got := len(outbounds.Proxies); got != maxProfileOutboundProxies {
+		t.Errorf("proxies = %d, want %d", got, maxProfileOutboundProxies)
+	}
+	if got := len(outbounds.ProxyGroups[0].Proxies); got != maxProfileGroupMembers {
+		t.Errorf("members = %d, want %d", got, maxProfileGroupMembers)
+	}
+	if got := len(outbounds.Rules); got != maxProfileOutboundRules {
+		t.Errorf("rules = %d, want %d", got, maxProfileOutboundRules)
+	}
+}
+
 func TestHandleGetProfileOutboundsDropsRulesDiscoveryDoesNotRead(t *testing.T) {
 	path := writeBaseProfile(t, `proxies:
   - {name: a, type: ss, server: 1.1.1.1, port: 1}

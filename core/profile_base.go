@@ -48,6 +48,14 @@ func handleGetProfileBase(path string) (*ProfileBase, error) {
 	return base, nil
 }
 
+// Caps on the outbound summary so a hostile or huge subscription cannot force
+// unbounded IPC / Dart heap through getProfileOutbounds.
+const (
+	maxProfileOutboundProxies = 8000
+	maxProfileOutboundRules   = 4000
+	maxProfileGroupMembers    = 2000
+)
+
 func handleGetProfileOutbounds(path string) (*ProfileOutbounds, error) {
 	defer scheduleLoadMemoryRelease()
 	buf, err := os.ReadFile(path)
@@ -66,6 +74,9 @@ func handleGetProfileOutbounds(path string) (*ProfileOutbounds, error) {
 }
 
 func outboundsOf(mappings []map[string]any) []ProfileOutbound {
+	if len(mappings) > maxProfileOutboundProxies {
+		mappings = mappings[:maxProfileOutboundProxies]
+	}
 	outbounds := make([]ProfileOutbound, 0, len(mappings))
 	for _, mapping := range mappings {
 		name, _ := mapping["name"].(string)
@@ -76,6 +87,9 @@ func outboundsOf(mappings []map[string]any) []ProfileOutbound {
 }
 
 func groupOutboundsOf(mappings []map[string]any) []ProfileOutbound {
+	if len(mappings) > maxProfileOutboundProxies {
+		mappings = mappings[:maxProfileOutboundProxies]
+	}
 	outbounds := make([]ProfileOutbound, 0, len(mappings))
 	for _, mapping := range mappings {
 		name, _ := mapping["name"].(string)
@@ -83,19 +97,30 @@ func groupOutboundsOf(mappings []map[string]any) []ProfileOutbound {
 		outbounds = append(outbounds, ProfileOutbound{
 			Name:    name,
 			Type:    kind,
-			Proxies: stringList(mapping["proxies"]),
+			Proxies: cappedStringList(mapping["proxies"], maxProfileGroupMembers),
 		})
 	}
 	return outbounds
 }
 
 func stringList(value any) []string {
+	return cappedStringList(value, 0)
+}
+
+func cappedStringList(value any, limit int) []string {
 	items, ok := value.([]any)
 	if !ok {
 		return nil
 	}
-	names := make([]string, 0, len(items))
+	capacity := len(items)
+	if limit > 0 && capacity > limit {
+		capacity = limit
+	}
+	names := make([]string, 0, capacity)
 	for _, item := range items {
+		if limit > 0 && len(names) >= limit {
+			break
+		}
 		name, ok := item.(string)
 		if ok && name != "" {
 			names = append(names, name)
@@ -116,6 +141,9 @@ func routingRulesOf(rules []string) []string {
 		switch strings.ToUpper(strings.TrimSpace(kind)) {
 		case "GEOSITE", "DOMAIN", "DOMAIN-SUFFIX", "DOMAIN-KEYWORD", "RULE-SET":
 			kept = append(kept, rule)
+			if len(kept) >= maxProfileOutboundRules {
+				return kept
+			}
 		}
 	}
 	if len(kept) == 0 {

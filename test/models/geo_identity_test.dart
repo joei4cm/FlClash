@@ -84,6 +84,38 @@ void main() {
         'Eastern Standard Time',
       );
     });
+
+    test('rejects timezone ids that are not IANA before elevating', () async {
+      expect(
+        await GeoIdentityHost.setOsTimezone('America/Los_Angeles; rm -rf /'),
+        'invalid-timezone',
+      );
+      expect(await GeoIdentityHost.setOsTimezone(r'$(id)'), 'invalid-timezone');
+      expect(await GeoIdentityHost.setOsTimezone(''), 'empty timezone');
+    });
+
+    test('allowlist blocks remote zones outside the US/UTC map', () async {
+      expect(
+        GeoIdentityHost.isAllowedElevatedTimezone('America/New_York'),
+        isTrue,
+      );
+      expect(
+        GeoIdentityHost.isAllowedElevatedTimezone('Asia/Shanghai'),
+        isFalse,
+      );
+      expect(
+        await GeoIdentityHost.setOsTimezone('Asia/Shanghai'),
+        'unsupported-timezone',
+      );
+      // Restore path may re-apply a previously local OS zone.
+      expect(
+        await GeoIdentityHost.setOsTimezone(
+          'Asia/Shanghai;id',
+          restrictToElevatedAllowlist: false,
+        ),
+        'invalid-timezone',
+      );
+    });
   });
 
   test('GeoIdentityLinks and probe constants stay wired', () {

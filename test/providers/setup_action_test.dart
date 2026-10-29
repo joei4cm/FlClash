@@ -1646,9 +1646,50 @@ void main() {
             .read(setupActionProvider.notifier)
             .getProfileWithId(profile.id);
 
-        verify(() => core.getProfileOutbounds(any())).called(2);
+        verify(() => core.getProfileOutbounds(any())).called(1);
         expect(handed.overlay, contains('name: "FlClash-streaming"'));
         expect(handed.overlay, contains('GEOSITE,netflix,FlClash-streaming'));
+      },
+    );
+
+    test(
+      'another profile\'s strategy override does not fetch outbounds',
+      () async {
+        final profile = Profile.normal(label: 'p');
+        final otherId = profile.id + 1;
+        final core = _MockCoreHandlerInterface();
+        when(
+          () => core.getProfileBase(any()),
+        ).thenAnswer((_) async => const ProfileBase(config: {}, digest: 'd'));
+        when(
+          () => core.buildProfile(any()),
+        ).thenAnswer((_) async => 'spill.yaml');
+        final scoped = ProviderContainer(
+          overrides: [
+            profilesProvider.overrideWith(() => TestProfiles([profile])),
+            setupStateProvider.overrideWith(
+              (_, profileId) =>
+                  nullProfileSetupState.copyWith(profileId: profileId),
+            ),
+            appSettingProvider.overrideWithBuild(
+              (_, _) => AppSettingProps(
+                strategyLanePolicies: {
+                  strategyLanePolicyKey(otherId, StrategyLaneId.streaming):
+                      'auto',
+                },
+              ),
+            ),
+            coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+            setupActionProvider.overrideWith(SetupAction.new),
+          ],
+        );
+        addTearDown(scoped.dispose);
+
+        await scoped
+            .read(setupActionProvider.notifier)
+            .getProfileWithId(profile.id);
+
+        verifyNever(() => core.getProfileOutbounds(any()));
       },
     );
 

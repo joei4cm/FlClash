@@ -1376,6 +1376,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "outbound": MessageLookupByLibrary.simpleMessage("アウトバウンド"),
     "outboundExit": MessageLookupByLibrary.simpleMessage("出口"),
     "outboundIp": MessageLookupByLibrary.simpleMessage("アウトバウンド IP"),
+    "outboundLocation": MessageLookupByLibrary.simpleMessage("出口の位置"),
+    "outboundLocationApproximate": MessageLookupByLibrary.simpleMessage(
+      "ピンは国コードからのおおよその位置です。出口プローブが座標を返すと都市名が表示されます。",
+    ),
+    "outboundLocationCoordinates": MessageLookupByLibrary.simpleMessage("座標"),
+    "outboundLocationCountry": MessageLookupByLibrary.simpleMessage("国/地域"),
+    "outboundLocationLocality": MessageLookupByLibrary.simpleMessage("市区町村"),
+    "outboundLocationUnknown": MessageLookupByLibrary.simpleMessage(
+      "この出口の地図位置はまだありません",
+    ),
     "outboundMode": MessageLookupByLibrary.simpleMessage("アウトバウンドモード"),
     "override": MessageLookupByLibrary.simpleMessage("上書き"),
     "overrideDestination": MessageLookupByLibrary.simpleMessage("宛先を上書き"),

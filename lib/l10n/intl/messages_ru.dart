@@ -1316,9 +1316,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Введите содержимое правила",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Эта система не выдаёт список установленных приложений без разрешения. Предоставьте его, чтобы настроить прокси для отдельных приложений.",
     ),
@@ -1652,6 +1653,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "outbound": MessageLookupByLibrary.simpleMessage("Исходящие"),
     "outboundExit": MessageLookupByLibrary.simpleMessage("Выход"),
     "outboundIp": MessageLookupByLibrary.simpleMessage("Исходящий IP"),
+    "outboundLocation": MessageLookupByLibrary.simpleMessage(
+      "Расположение выхода",
+    ),
+    "outboundLocationApproximate": MessageLookupByLibrary.simpleMessage(
+      "Метка приблизительная по коду страны. Точный город появится, когда зонд вернёт координаты.",
+    ),
+    "outboundLocationCoordinates": MessageLookupByLibrary.simpleMessage(
+      "Координаты",
+    ),
+    "outboundLocationCountry": MessageLookupByLibrary.simpleMessage("Страна"),
+    "outboundLocationLocality": MessageLookupByLibrary.simpleMessage(
+      "Населённый пункт",
+    ),
+    "outboundLocationUnknown": MessageLookupByLibrary.simpleMessage(
+      "Пока нет точки на карте для этого выхода",
+    ),
     "outboundMode": MessageLookupByLibrary.simpleMessage(
       "Режим исходящего трафика",
     ),

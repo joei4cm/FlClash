@@ -103,6 +103,9 @@ jobs:
     name: Desktop ${{ matrix.platform }}
     if: (github.event_name == 'workflow_dispatch' || !github.event.repository.private) && !(github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
     runs-on: ${{ matrix.os }}
+    # macOS runners are often capacity-starved; keep Linux/Windows as the
+    # hard compile signal so a queued cancel does not red the whole branch.
+    continue-on-error: ${{ matrix.platform == 'macos' }}
     strategy:
       fail-fast: false
       matrix:
@@ -327,6 +330,8 @@ jobs:
     if: github.repository == 'joei4cm/FlClash' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ${{ matrix.os }}
     strategy:
+      # One platform flake (esp. macOS arm64 runner capacity) must not cancel the rest.
+      fail-fast: false
       matrix:
         include:
           - platform: android
@@ -340,9 +345,8 @@ jobs:
           - platform: macos
             os: macos-15-intel
             arch: amd64
-          - platform: macos
-            os: macos-latest
-            arch: arm64
+          # arm64 is built in build-macos-arm64* jobs so capacity misses can retry
+          # without wiping the rest of the matrix.
           - platform: windows
             os: windows-11-arm
             arch: arm64
@@ -438,9 +442,27 @@ jobs:
           curl -fsSL --retry 3 -o "$bundle" "https://curl.se/ca/$CA_BUNDLE"
           echo "$CA_BUNDLE_SHA256  $bundle" | sha256sum -c -
 
+      # proxy.golang.org occasionally returns HTTP/2 INTERNAL_ERROR mid-zip; warm the
+      # module cache with retries so Setup does not fail the whole release matrix.
+      - name: Prefetch Go modules
+        shell: bash
+        working-directory: core
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+        run: |
+          for i in 1 2 3 4 5; do
+            if go mod download; then
+              exit 0
+            fi
+            echo "go mod download failed (attempt $i); retrying..." >&2
+            sleep $((i * 20))
+          done
+          exit 1
+
       - name: Setup
         env:
           ANDROID_NDK_HOME: ${{ steps.build-ndk.outputs.ndk-path }}
+          GOPROXY: https://proxy.golang.org,direct
         run: dart setup.dart ${{ matrix.platform }} ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
 
       - name: Upload
@@ -450,10 +472,160 @@ jobs:
           path: ./dist
           overwrite: true
 
+  # macOS arm64 runners are frequently capacity-starved (queued jobs cancel
+  # with no runner). Build outside the matrix; retries must also fire on
+  # cancelled — `if: failure()` does not match cancelled.
+  build-macos-arm64:
+    name: build (macos, arm64)
+    if: github.repository == 'joei4cm/FlClash' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    # Capacity cancels must not fail the whole release; upload still publishes
+    # the rest (Intel macOS DMG runs on Apple Silicon via Rosetta 2).
+    continue-on-error: true
+    runs-on: macos-15
+    steps: &macos-arm64-steps
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: ${{ env.BRANCH_CACHE }}
+          cache-dependency-path: core/go.sum
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: ${{ env.BRANCH_CACHE }}
+
+      - name: Setup Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.3.app || sudo xcode-select -s /Applications/Xcode_26.2.app
+          xcodebuild -version
+
+      - name: Get Flutter Dependency
+        run: |
+          flutter --version
+          flutter pub get
+
+      - name: Fetch CA certificates
+        shell: bash
+        env:
+          CA_BUNDLE: cacert-2026-09-25.pem
+          CA_BUNDLE_SHA256: a41b5d356aea97a529fe27e0f7316d2f9d946d75927476cf9cf1b90637d00505
+        run: |
+          bundle=core/Clash.Meta/component/ca/ca-certificates.crt
+          curl -fsSL --retry 3 -o "$bundle" "https://curl.se/ca/$CA_BUNDLE"
+          echo "$CA_BUNDLE_SHA256  $bundle" | sha256sum -c -
+
+      - name: Prefetch Go modules
+        shell: bash
+        working-directory: core
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+        run: |
+          for i in 1 2 3 4 5; do
+            if go mod download; then
+              exit 0
+            fi
+            echo "go mod download failed (attempt $i); retrying..." >&2
+            sleep $((i * 20))
+          done
+          exit 1
+
+      - name: Setup
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+        run: dart setup.dart macos ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-macos-arm64
+          path: ./dist
+          overwrite: true
+
+  wait-macos-arm64-retry:
+    name: wait before macOS arm64 retry
+    needs: [build-macos-arm64]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.build-macos-arm64.result != 'success' &&
+      github.repository == 'joei4cm/FlClash' &&
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Back off for runner capacity
+        run: sleep 180
+
+  build-macos-arm64-retry:
+    name: build (macos, arm64, retry)
+    needs: [wait-macos-arm64-retry]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.wait-macos-arm64-retry.result == 'success' &&
+      github.repository == 'joei4cm/FlClash' &&
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/tags/v')
+    continue-on-error: true
+    runs-on: macos-latest
+    steps: *macos-arm64-steps
+
+  wait-macos-arm64-retry-2:
+    name: wait before macOS arm64 retry 2
+    needs: [build-macos-arm64-retry]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.build-macos-arm64-retry.result != 'success' &&
+      needs.build-macos-arm64-retry.result != 'skipped' &&
+      github.repository == 'joei4cm/FlClash' &&
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Back off for runner capacity
+        run: sleep 300
+
+  build-macos-arm64-retry-2:
+    name: build (macos, arm64, retry 2)
+    needs: [wait-macos-arm64-retry-2]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.wait-macos-arm64-retry-2.result == 'success' &&
+      github.repository == 'joei4cm/FlClash' &&
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/tags/v')
+    continue-on-error: true
+    runs-on: macos-15
+    steps: *macos-arm64-steps
+
   upload:
     permissions:
       contents: write
-    needs: [ build, dart, plugins, go, android, rust, windows-helper-test ]
+    # Do not wait on macOS arm64 retries — those jobs attach later if they win
+    # a runner. Blocking here left releases stuck behind capacity cancels.
+    needs: [build, dart, plugins, go, android, rust, windows-helper-test]
+    if: |
+      always() &&
+      github.repository == 'joei4cm/FlClash' &&
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/tags/v') &&
+      needs.build.result == 'success' &&
+      needs.dart.result == 'success' &&
+      needs.plugins.result == 'success' &&
+      needs.go.result == 'success' &&
+      needs.android.result == 'success' &&
+      needs.rust.result == 'success' &&
+      needs.windows-helper-test.result == 'success'
     runs-on: ubuntu-latest
     env:
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -509,10 +681,17 @@ jobs:
           dart run tool/changelog.dart render telegram "${target[@]}" --out telegram.md
 
       - name: Patch release.md
+        shell: bash
         run: |
           tag="${{ github.ref_name }}"
           version=$(printf '%s' "$tag" | sed -E 's/^v//; s/_[0-9a-fA-F]{6}$//')
           sed -e "s|vVERSION|$tag|g" -e "s|VERSION|$version|g" ./.github/release_template.md >> release.md
+          if ! compgen -G './dist/*macos-arm64*' > /dev/null; then
+            {
+              echo
+              echo '> **macOS Apple Silicon:** the arm64 DMG was not ready when this release published (GitHub runner capacity). Use the Intel DMG under Rosetta 2, or grab an arm64 asset if a follow-up upload lands on this tag.'
+            } >> release.md
+          fi
 
       - name: Generate sha256
         if: ${{ env.IS_STABLE == 'true' }}
@@ -537,3 +716,48 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
           python release_telegram.py
+
+  # Best-effort: attach arm64 if a retry eventually gets a runner.
+  attach-macos-arm64:
+    name: attach macOS arm64
+    permissions:
+      contents: write
+    needs:
+      [
+        upload,
+        build-macos-arm64,
+        build-macos-arm64-retry,
+        build-macos-arm64-retry-2,
+      ]
+    if: |
+      always() &&
+      github.repository == 'joei4cm/FlClash' &&
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/tags/v') &&
+      needs.upload.result == 'success' &&
+      (needs.build-macos-arm64.result == 'success' ||
+       needs.build-macos-arm64-retry.result == 'success' ||
+       needs.build-macos-arm64-retry-2.result == 'success')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download macOS arm64
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist/
+          pattern: artifact-macos-arm64
+          merge-multiple: true
+
+      - name: Attach to release
+        if: ${{ env.IS_STABLE == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          mapfile -t files < <(find ./dist -type f ! -name '.*' | sort)
+          test "${#files[@]}" -gt 0
+          printf 'Attaching %s\n' "${files[@]}"
+          gh release upload "$TAG" "${files[@]}" --clobber
