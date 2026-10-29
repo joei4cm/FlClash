@@ -27,7 +27,7 @@ void main() {
   });
 
   test('projects lat/lon onto an equirectangular map', () {
-    final size = const Size(360, 180);
+    const size = Size(360, 180);
     expect(outboundLatLonToOffset(0, 0, size), const Offset(180, 90));
     expect(outboundLatLonToOffset(90, -180, size), const Offset(0, 0));
     expect(outboundLatLonToOffset(-90, 180, size), const Offset(360, 180));
