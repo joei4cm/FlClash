@@ -1345,9 +1345,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "inputRuleContent": MessageLookupByLibrary.simpleMessage(
       "Introduce el contenido de la regla",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Este sistema oculta la lista de apps instaladas hasta que se concede el permiso. Autorízalo para configurar el proxy por app.",
     ),
@@ -1695,6 +1696,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "outbound": MessageLookupByLibrary.simpleMessage("Salida"),
     "outboundExit": MessageLookupByLibrary.simpleMessage("Salida"),
     "outboundIp": MessageLookupByLibrary.simpleMessage("IP de salida"),
+    "outboundLocation": MessageLookupByLibrary.simpleMessage(
+      "Ubicación de salida",
+    ),
+    "outboundLocationApproximate": MessageLookupByLibrary.simpleMessage(
+      "El pin es aproximado según el código de país. Aparece una ciudad precisa cuando la sonda devuelve coordenadas.",
+    ),
+    "outboundLocationCoordinates": MessageLookupByLibrary.simpleMessage(
+      "Coordenadas",
+    ),
+    "outboundLocationCountry": MessageLookupByLibrary.simpleMessage("País"),
+    "outboundLocationLocality": MessageLookupByLibrary.simpleMessage(
+      "Localidad",
+    ),
+    "outboundLocationUnknown": MessageLookupByLibrary.simpleMessage(
+      "Aún no hay posición en el mapa para esta salida",
+    ),
     "outboundMode": MessageLookupByLibrary.simpleMessage("Modo de salida"),
     "override": MessageLookupByLibrary.simpleMessage("Override"),
     "overrideDestination": MessageLookupByLibrary.simpleMessage(

@@ -6104,6 +6104,66 @@ class AppLocalizations {
     return Intl.message('Outbound IP', name: 'outboundIp', desc: '', args: []);
   }
 
+  /// `Exit location`
+  String get outboundLocation {
+    return Intl.message(
+      'Exit location',
+      name: 'outboundLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Country`
+  String get outboundLocationCountry {
+    return Intl.message(
+      'Country',
+      name: 'outboundLocationCountry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Locality`
+  String get outboundLocationLocality {
+    return Intl.message(
+      'Locality',
+      name: 'outboundLocationLocality',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coordinates`
+  String get outboundLocationCoordinates {
+    return Intl.message(
+      'Coordinates',
+      name: 'outboundLocationCoordinates',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The pin is approximate from the country code. A precise city appears when the exit probe returns coordinates.`
+  String get outboundLocationApproximate {
+    return Intl.message(
+      'The pin is approximate from the country code. A precise city appears when the exit probe returns coordinates.',
+      name: 'outboundLocationApproximate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No map position for this exit yet`
+  String get outboundLocationUnknown {
+    return Intl.message(
+      'No map position for this exit yet',
+      name: 'outboundLocationUnknown',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `IP address`
   String get ipAddress {
     return Intl.message('IP address', name: 'ipAddress', desc: '', args: []);
@@ -7943,8 +8003,7 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one:
-          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',

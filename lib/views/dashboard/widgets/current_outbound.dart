@@ -339,6 +339,13 @@ class _ExitRow extends StatelessWidget {
           active: active,
           checking: checking,
           onRefresh: onRefresh,
+          onOpenLocation: info == null
+              ? null
+              : () => showOutboundLocationSheet(
+                  context,
+                  info: info,
+                  onRefresh: onRefresh,
+                ),
         ),
         Expanded(
           child: Column(
@@ -451,8 +458,9 @@ class _IpChips extends StatelessWidget {
 
 const _spinPeriod = Duration(milliseconds: 1500);
 
-/// The exit's country on a clover that checks the exit again when tapped and
-/// turns while it is being checked.
+/// The exit's country on a clover. Tap opens the location map when a code is
+/// known; long-press (or tap with no code) checks the exit again. The clover
+/// turns while a check is running.
 class _CountryBadge extends StatefulWidget {
   const _CountryBadge({
     required this.countryCode,
@@ -460,6 +468,7 @@ class _CountryBadge extends StatefulWidget {
     required this.active,
     required this.checking,
     required this.onRefresh,
+    this.onOpenLocation,
   });
 
   final String? countryCode;
@@ -467,6 +476,7 @@ class _CountryBadge extends StatefulWidget {
   final bool active;
   final bool checking;
   final VoidCallback onRefresh;
+  final VoidCallback? onOpenLocation;
 
   @override
   State<_CountryBadge> createState() => _CountryBadgeState();
@@ -522,7 +532,11 @@ class _CountryBadgeState extends State<_CountryBadge>
     final enabled = !widget.checking;
     final size = widget.size;
     final code = widget.countryCode;
-    final tooltip = context.appLocalizations.retry;
+    final hasCode = code != null && code.isNotEmpty;
+    final openLocation = widget.onOpenLocation;
+    final tooltip = hasCode && openLocation != null
+        ? context.appLocalizations.outboundLocation
+        : context.appLocalizations.retry;
     final color = Color.alphaBlend(
       foreground.withValues(alpha: enabled && _hovered ? 0.08 : 0),
       DashboardColors.of(context).tone2,
@@ -534,7 +548,12 @@ class _CountryBadgeState extends State<_CountryBadge>
         enabled: enabled,
         label: tooltip,
         child: InkResponse(
-          onTap: enabled ? widget.onRefresh : null,
+          onTap: !enabled
+              ? null
+              : hasCode && openLocation != null
+              ? openLocation
+              : widget.onRefresh,
+          onLongPress: enabled ? widget.onRefresh : null,
           onHover: (value) => setState(() => _hovered = value),
           onFocusChange: (value) => setState(() => _focused = value),
           overlayColor: const WidgetStatePropertyAll(Colors.transparent),

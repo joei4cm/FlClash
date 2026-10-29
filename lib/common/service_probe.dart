@@ -161,15 +161,17 @@ IpInfo Function(String) _json(IpInfo Function(Map<String, dynamic>) parse) {
   return (body) => parse(jsonDecode(body) as Map<String, dynamic>);
 }
 
+/// Richer city/lat/lon answers are listed first so the Go race prefers them
+/// over Cloudflare's country-only trace when both return quickly.
 final Map<String, IpInfo Function(String)> ipInfoSources = {
-  'https://www.cloudflare.com/cdn-cgi/trace': IpInfo.fromCloudflareTrace,
   'https://api.ip.sb/geoip': _json(IpInfo.fromIpSbJson),
   'https://ipinfo.io/json': _json(IpInfo.fromIpInfoIoJson),
   'https://ipwho.is': _json(IpInfo.fromIpWhoIsJson),
   'https://get.geojs.io/v1/ip/geo.json': _json(IpInfo.fromGeoJsJson),
-  'https://api.country.is': _json(IpInfo.fromCountryIsJson),
   'https://api.ipquery.io/?format=json': _json(IpInfo.fromIpQueryJson),
   'https://ident.me/json': _json(IpInfo.fromIdentMeJson),
+  'https://www.cloudflare.com/cdn-cgi/trace': IpInfo.fromCloudflareTrace,
+  'https://api.country.is': _json(IpInfo.fromCountryIsJson),
 };
 
 /// Raw so the route stamp survives; [parseOutboundIp] reads the address.
