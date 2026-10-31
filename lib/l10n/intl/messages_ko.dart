@@ -268,11 +268,13 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m110(transport) => "${transport} 요청 헤더";
 
-  static String m111(label) => "${label}은(는) URL이어야 합니다";
+  static String m111(version) => "현재 버전 ${version}";
 
-  static String m112(count) => "${Intl.plural(count, other: '${count}년 전')}";
+  static String m112(label) => "${label}은(는) URL이어야 합니다";
 
   static String m113(count) => "${Intl.plural(count, other: '${count}년 전')}";
+
+  static String m114(count) => "${Intl.plural(count, other: '${count}년 전')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1118,6 +1120,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "프록시 그룹 이름을 입력하세요",
     ),
     "inputRuleContent": MessageLookupByLibrary.simpleMessage("규칙 내용을 입력하세요"),
+    "installUpdate": MessageLookupByLibrary.simpleMessage("업데이트 설치"),
     "installedAppsPermissionDeniedMessage":
         MessageLookupByLibrary.simpleMessage(
           "앱 목록 권한이 거부되어 설치된 앱을 표시할 수 없습니다. 시스템 설정에서 직접 허용해 주세요.",
@@ -2147,6 +2150,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP relay"),
     "tapIconToRetry": MessageLookupByLibrary.simpleMessage("아이콘을 눌러 다시 시도"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("눌러서 허용"),
+    "tapToRetry": MessageLookupByLibrary.simpleMessage("탭하여 다시 시도"),
     "target": MessageLookupByLibrary.simpleMessage("대상"),
     "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP 동시 연결"),
     "testInterval": MessageLookupByLibrary.simpleMessage("테스트 간격"),
@@ -2229,6 +2233,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "updatePackageMissing": MessageLookupByLibrary.simpleMessage(
       "이 릴리스에는 이 기기용 설치 파일이 없습니다",
     ),
+    "updateRunningVersion": m111,
     "updateVerify": MessageLookupByLibrary.simpleMessage("다운로드를 확인하는 중"),
     "updateWillRestart": MessageLookupByLibrary.simpleMessage(
       "앱이 종료된 뒤 다시 열립니다",
@@ -2239,7 +2244,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "urlDesc": MessageLookupByLibrary.simpleMessage(
       "Obtain a profile from a URL",
     ),
-    "urlTip": m111,
+    "urlTip": m112,
     "useHosts": MessageLookupByLibrary.simpleMessage("hosts 사용"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("시스템 hosts 사용"),
     "usedShort": MessageLookupByLibrary.simpleMessage("사용"),
@@ -2266,8 +2271,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "시스템에 기록하면 시스템 시계도 설정합니다. Android에서는 무시됩니다.",
     ),
-    "yearsAgo": m112,
-    "yearsAgoShort": m113,
+    "yearsAgo": m113,
+    "yearsAgoShort": m114,
     "yes": MessageLookupByLibrary.simpleMessage("예"),
     "zhCN": MessageLookupByLibrary.simpleMessage("중국어 간체"),
   };

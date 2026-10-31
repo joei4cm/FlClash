@@ -259,11 +259,13 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m110(transport) => "${transport} リクエストヘッダー";
 
-  static String m111(label) => "${label}はURLである必要があります";
+  static String m111(version) => "現在のバージョン ${version}";
 
-  static String m112(count) => "${count} 年前";
+  static String m112(label) => "${label}はURLである必要があります";
 
   static String m113(count) => "${count} 年前";
+
+  static String m114(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1095,6 +1097,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "プロキシグループ名を入力してください",
     ),
     "inputRuleContent": MessageLookupByLibrary.simpleMessage("ルールの内容を入力してください"),
+    "installUpdate": MessageLookupByLibrary.simpleMessage("アップデートをインストール"),
     "installedAppsPermissionDeniedMessage":
         MessageLookupByLibrary.simpleMessage(
           "アプリ一覧の権限が拒否されたため、インストール済みアプリを取得できません。システム設定から手動で許可してください。",
@@ -2104,6 +2107,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP リレー"),
     "tapIconToRetry": MessageLookupByLibrary.simpleMessage("アイコンをタップして再試行"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("タップして許可"),
+    "tapToRetry": MessageLookupByLibrary.simpleMessage("タップして再試行"),
     "target": MessageLookupByLibrary.simpleMessage("宛先"),
     "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP同時接続"),
     "testInterval": MessageLookupByLibrary.simpleMessage("テスト間隔"),
@@ -2184,13 +2188,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "updatePackageMissing": MessageLookupByLibrary.simpleMessage(
       "このリリースにはこの端末向けのパッケージがありません",
     ),
+    "updateRunningVersion": m111,
     "updateVerify": MessageLookupByLibrary.simpleMessage("ダウンロードを確認しています"),
     "updateWillRestart": MessageLookupByLibrary.simpleMessage("アプリを終了して開き直します"),
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("アップロード帯域幅"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage("URLからプロファイルを取得します"),
-    "urlTip": m111,
+    "urlTip": m112,
     "useHosts": MessageLookupByLibrary.simpleMessage("Hostsを使用"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("システムのHostsを使用"),
     "usedShort": MessageLookupByLibrary.simpleMessage("使用済み"),
@@ -2215,8 +2220,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "writeToSystemDesc": MessageLookupByLibrary.simpleMessage(
       "システムに書き込むを有効にするとシステムクロックも設定します。Android では無視されます。",
     ),
-    "yearsAgo": m112,
-    "yearsAgoShort": m113,
+    "yearsAgo": m113,
+    "yearsAgoShort": m114,
     "yes": MessageLookupByLibrary.simpleMessage("はい"),
     "zhCN": MessageLookupByLibrary.simpleMessage("簡体字中国語"),
   };

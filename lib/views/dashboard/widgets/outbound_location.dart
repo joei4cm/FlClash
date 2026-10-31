@@ -58,9 +58,14 @@ class _OutboundLocationCardState extends ConsumerState<OutboundLocationCard>
       outboundIpProbeProvider.select((state) => state.entryOf(routedOutbound)),
     );
     final info = entry.value;
-    final failed = shownPhase(entry) == ProbePhase.failed && info == null;
+    final phase = shownPhase(entry);
+    final failed = phase == ProbePhase.failed && info == null;
+    final probing = phase == ProbePhase.probing && info == null;
     final point = info == null ? null : resolveOutboundMapPoint(info);
     final code = info?.countryCode.trim().toUpperCase();
+    final titleStyle = mobile
+        ? DashboardText.mobileCardTitle(context)
+        : DashboardText.cardTitle(context);
     final header = Padding(
       padding: dashboardCardPadding(density).copyWith(bottom: 8),
       child: DashboardCardHeader(
@@ -71,45 +76,51 @@ class _OutboundLocationCardState extends ConsumerState<OutboundLocationCard>
           if (code != null && code.isNotEmpty)
             Text(
               code,
-              style:
-                  (mobile
-                          ? DashboardText.mobileCardTitle(context)
-                          : DashboardText.cardTitle(context))
-                      .copyWith(color: context.colorScheme.onSurfaceVariant),
+              style: titleStyle.copyWith(
+                color: context.colorScheme.onSurfaceVariant,
+              ),
             ),
         ],
       ),
     );
-    final map = failed
-        ? ColoredBox(
-            color: context.colorScheme.surfaceContainerHighest.opacity38,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  localizations.serviceFailed,
-                  textAlign: TextAlign.center,
-                  style:
-                      (mobile
-                              ? DashboardText.mobileCardTitle(context)
-                              : DashboardText.cardTitle(context))
-                          .copyWith(color: context.colorScheme.error),
-                ),
-              ),
-            ),
-          )
-        : OutboundMapView(
-            latitude: point?.$1,
-            longitude: point?.$2,
-            iso: code ?? '',
-            label: code ?? '',
-            framed: point != null,
-          );
+    final Widget map;
+    if (failed) {
+      map = _StatusPane(
+        title: localizations.serviceFailed,
+        detail: localizations.tapToRetry,
+        titleStyle: titleStyle.copyWith(color: context.colorScheme.error),
+        detailStyle: DashboardText.label(context),
+      );
+    } else if (probing) {
+      map = _StatusPane(
+        title: localizations.loading,
+        titleStyle: titleStyle.copyWith(
+          color: context.colorScheme.onSurfaceVariant,
+        ),
+      );
+    } else if (info == null) {
+      map = _StatusPane(
+        title: localizations.outboundLocationUnknown,
+        detail: localizations.tapToRetry,
+        titleStyle: titleStyle.copyWith(
+          color: context.colorScheme.onSurfaceVariant,
+        ),
+        detailStyle: DashboardText.label(context),
+      );
+    } else {
+      map = OutboundMapView(
+        latitude: point?.$1,
+        longitude: point?.$2,
+        iso: code ?? '',
+        label: code ?? '',
+        framed: point != null,
+      );
+    }
     return DashboardCard(
       padding: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       semanticLabel: localizations.outboundLocation,
-      onTap: info == null && !failed
+      onTap: probing
           ? null
           : () {
               final known = info;
@@ -139,6 +150,42 @@ class _OutboundLocationCardState extends ConsumerState<OutboundLocationCard>
                 Expanded(child: map),
               ],
             ),
+    );
+  }
+}
+
+class _StatusPane extends StatelessWidget {
+  const _StatusPane({
+    required this.title,
+    required this.titleStyle,
+    this.detail,
+    this.detailStyle,
+  });
+
+  final String title;
+  final TextStyle titleStyle;
+  final String? detail;
+  final TextStyle? detailStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: context.colorScheme.surfaceContainerHighest.opacity38,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(title, textAlign: TextAlign.center, style: titleStyle),
+              if (detail != null) ...[
+                const SizedBox(height: 4),
+                Text(detail!, textAlign: TextAlign.center, style: detailStyle),
+              ],
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

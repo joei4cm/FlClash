@@ -164,6 +164,16 @@
   "updateWillRestart": "The app will close and reopen",
   "updateOpensInstaller": "The system installer will open",
   "updateOpenDownloadPage": "This device has no in-app installer. The download page will open.",
+  "installUpdate": "Install update",
+  "updateRunningVersion": "Running {version}",
+  "@updateRunningVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "tapToRetry": "Tap to retry",
   "unknown": "Unknown",
   "country": "Region",
   "search": "Search",

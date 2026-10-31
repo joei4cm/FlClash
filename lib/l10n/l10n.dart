@@ -1331,6 +1331,31 @@ class AppLocalizations {
     );
   }
 
+  /// `Install update`
+  String get installUpdate {
+    return Intl.message(
+      'Install update',
+      name: 'installUpdate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Running {version}`
+  String updateRunningVersion(String version) {
+    return Intl.message(
+      'Running $version',
+      name: 'updateRunningVersion',
+      desc: '',
+      args: [version],
+    );
+  }
+
+  /// `Tap to retry`
+  String get tapToRetry {
+    return Intl.message('Tap to retry', name: 'tapToRetry', desc: '', args: []);
+  }
+
   /// `Unknown`
   String get unknown {
     return Intl.message('Unknown', name: 'unknown', desc: '', args: []);

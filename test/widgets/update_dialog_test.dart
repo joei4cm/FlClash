@@ -83,11 +83,12 @@ void main() {
         .checkUpdateResultHandle(data: release(_bodyWith(_payload)));
     await tester.pumpAndSettle();
 
+    expect(find.textContaining('Running $_runningVersion'), findsOneWidget);
     expect(find.textContaining('v0.8.96'), findsOneWidget);
     expect(find.textContaining('Re-import backups'), findsOneWidget);
     expect(find.textContaining('Override scripts'), findsOneWidget);
     expect(find.textContaining('Breaking changes'), findsOneWidget);
-    expect(find.text('Update'), findsOneWidget);
+    expect(find.text('Install update'), findsOneWidget);
 
     await tapCancel(tester);
     await shown;

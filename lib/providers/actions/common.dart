@@ -100,19 +100,25 @@ class CommonAction extends _$CommonAction {
 
   TextSpan _releaseSpan(BuildContext context, String tagName, String? body) {
     final version = parseReleaseChangelog(body);
+    final localizations = currentAppLocalizations;
+    final running = globalState.packageInfo.version;
+    final secondary = AppTextStyle.subheadline
+        .of(context)
+        .copyWith(color: context.colorScheme.onSurfaceVariant);
     return TextSpan(
-      text: '$tagName \n',
-      style: AppTextStyle.title2.of(context),
-      children: version == null
-          ? [
-              TextSpan(text: '\n', style: AppTextStyle.subheadline.of(context)),
-              for (final submit in parseReleaseBody(body))
-                TextSpan(
-                  text: '- $submit \n',
-                  style: AppTextStyle.subheadline.of(context),
-                ),
-            ]
-          : _changelogSpans(context, version),
+      children: [
+        TextSpan(
+          text: '${localizations.updateRunningVersion(running)}\n',
+          style: secondary,
+        ),
+        TextSpan(text: '$tagName \n', style: AppTextStyle.title2.of(context)),
+        if (version == null) ...[
+          TextSpan(text: '\n', style: AppTextStyle.subheadline.of(context)),
+          for (final submit in parseReleaseBody(body))
+            TextSpan(text: '- $submit \n', style: secondary),
+        ] else
+          ..._changelogSpans(context, version),
+      ],
     );
   }
 
@@ -162,7 +168,7 @@ class CommonAction extends _$CommonAction {
           data['body'] as String?,
         ),
         confirmText: inAppUpdate
-            ? currentAppLocalizations.update
+            ? currentAppLocalizations.installUpdate
             : currentAppLocalizations.goDownload,
         cancelText: isUser ? null : currentAppLocalizations.noLongerRemind,
       );

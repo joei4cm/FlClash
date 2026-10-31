@@ -79,17 +79,35 @@ void main() {
   testWidgets('a phone lays the same map out at the world aspect', (
     tester,
   ) async {
-    await pumpCard(tester, density: DashboardDensity.mobile);
+    await pumpCard(
+      tester,
+      density: DashboardDensity.mobile,
+      info: const IpInfo(
+        ip: '1.1.1.1',
+        countryCode: 'au',
+        latitude: -33.87,
+        longitude: 151.21,
+      ),
+    );
 
     expect(find.text('Exit location'), findsOneWidget);
-    expect(find.text('US'), findsNothing);
+    expect(find.text('AU'), findsOneWidget);
     final card = tester.getSize(find.byType(OutboundLocationCard));
     expect(card.width, 420);
     expect(card.height, greaterThan(420 / 2));
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('a failed probe shows the error instead of a blank map', (
+  testWidgets('an empty exit invites a retry instead of a blank map', (
+    tester,
+  ) async {
+    await pumpCard(tester, density: DashboardDensity.standard);
+    expect(find.text('No map position for this exit yet'), findsOneWidget);
+    expect(find.text('Tap to retry'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a failed probe shows the error and a retry hint', (
     tester,
   ) async {
     await pumpCard(
@@ -97,9 +115,21 @@ void main() {
       density: DashboardDensity.standard,
       phase: ProbePhase.failed,
     );
-
-    expect(find.text('Exit location'), findsOneWidget);
     expect(find.text('Check failed'), findsOneWidget);
+    expect(find.text('Tap to retry'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a probing exit shows loading without inviting a tap', (
+    tester,
+  ) async {
+    await pumpCard(
+      tester,
+      density: DashboardDensity.standard,
+      phase: ProbePhase.probing,
+    );
+    expect(find.text('Loading…'), findsOneWidget);
+    expect(find.text('Tap to retry'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 }
