@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.9.9 (2026-10-31)
+
+**Features**
+
+- **about** Windows can install an update from the app. (07c0e77)
+- **about** Android, Linux, and macOS can install an update from the app. (75369ce)
+
 ## v0.9.8 (2026-10-31)
 
 **Features**
