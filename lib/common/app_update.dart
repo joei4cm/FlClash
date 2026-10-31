@@ -4,7 +4,18 @@ import 'package:fl_clash/common/constant.dart';
 
 enum LinuxInstallLayout { appImage, deb, rpm, portable }
 
-enum UpdateApply { apk, appImageReplace, appImageLaunch, deb, rpm, dmg }
+enum WindowsInstallLayout { setup, portable }
+
+enum UpdateApply {
+  apk,
+  appImageReplace,
+  appImageLaunch,
+  deb,
+  rpm,
+  dmg,
+  windowsSetup,
+  windowsZip,
+}
 
 enum UpdatePhase { download, verify, install }
 
@@ -54,8 +65,9 @@ bool supportsInAppUpdate({
   required bool isAndroid,
   required bool isLinux,
   required bool isMacOS,
+  required bool isWindows,
 }) {
-  return isAndroid || isLinux || isMacOS;
+  return isAndroid || isLinux || isMacOS || isWindows;
 }
 
 bool isGitHubReleaseDownload(String url) {
@@ -97,6 +109,7 @@ UpdateHost? updateHost({
   required String operatingSystem,
   required Abi abi,
   LinuxInstallLayout linuxLayout = LinuxInstallLayout.portable,
+  WindowsInstallLayout windowsLayout = WindowsInstallLayout.portable,
 }) {
   switch (operatingSystem) {
     case 'android':
@@ -163,6 +176,26 @@ UpdateHost? updateHost({
           ),
         ],
       );
+    case 'windows':
+      final arch = switch (abi) {
+        Abi.windowsX64 => 'amd64',
+        Abi.windowsArm64 => 'arm64',
+        _ => null,
+      };
+      if (arch == null) {
+        return null;
+      }
+      final preference = switch (windowsLayout) {
+        WindowsInstallLayout.setup => (
+          suffix: '-windows-$arch-setup.exe',
+          apply: UpdateApply.windowsSetup,
+        ),
+        WindowsInstallLayout.portable => (
+          suffix: '-windows-$arch.zip',
+          apply: UpdateApply.windowsZip,
+        ),
+      };
+      return UpdateHost(preferences: [preference]);
     default:
       return null;
   }
@@ -298,6 +331,81 @@ bool macUpdateNeedsAdmin({
 }
 
 String shellSingleQuote(String value) => "'${value.replaceAll("'", r"'\''")}'";
+
+String windowsUpdateScript() => '''
+param(
+  [Parameter(Mandatory = \$true)][int]\$ProcessId,
+  [Parameter(Mandatory = \$true)][string]\$Package,
+  [Parameter(Mandatory = \$true)][string]\$InstallDir,
+  [Parameter(Mandatory = \$true)][string]\$Mode,
+  [Parameter(Mandatory = \$true)][string]\$Workspace
+)
+\$ErrorActionPreference = 'Continue'
+Wait-Process -Id \$ProcessId -ErrorAction SilentlyContinue
+\$exe = Join-Path \$InstallDir 'FlClash.exe'
+if (\$Mode -eq 'setup') {
+  try {
+    \$setup = Start-Process -FilePath \$Package -ArgumentList @(
+      '/VERYSILENT',
+      '/SUPPRESSMSGBOXES',
+      '/NORESTART',
+      "/DIR=\$InstallDir"
+    ) -Verb RunAs -Wait -PassThru
+    if (\$null -ne \$setup -and -not \$setup.HasExited) {
+      \$setup.WaitForExit()
+    }
+  } catch {
+  }
+} else {
+  \$helper = Join-Path \$InstallDir 'FlClashHelperService.exe'
+  \$service = Get-Service -Name 'FlClashHelperService' -ErrorAction SilentlyContinue
+  if (\$null -ne \$service -and (Test-Path -LiteralPath \$helper)) {
+    try {
+      Start-Process -FilePath \$helper -ArgumentList 'uninstall' -Verb RunAs -Wait
+    } catch {
+    }
+  }
+  Get-Process -Name 'FlClashCore', 'FlClashHelperService' -ErrorAction SilentlyContinue |
+    Stop-Process -Force -ErrorAction SilentlyContinue
+  Add-Type -AssemblyName System.IO.Compression.FileSystem
+  \$archive = [System.IO.Compression.ZipFile]::OpenRead(\$Package)
+  try {
+    \$root = [System.IO.Path]::GetFullPath(\$InstallDir)
+    if (-not \$root.EndsWith('\\')) { \$root = \$root + '\\' }
+    foreach (\$entry in \$archive.Entries) {
+      \$relative = (\$entry.FullName -replace '/', '\\').TrimStart('\\')
+      if ([string]::IsNullOrWhiteSpace(\$relative)) { continue }
+      \$destination = [System.IO.Path]::GetFullPath((Join-Path \$InstallDir \$relative))
+      if (-not \$destination.StartsWith(\$root, [System.StringComparison]::OrdinalIgnoreCase)) {
+        continue
+      }
+      if (\$relative.EndsWith('\\')) {
+        New-Item -ItemType Directory -Path \$destination -Force | Out-Null
+        continue
+      }
+      \$parent = Split-Path -Parent \$destination
+      if (-not (Test-Path -LiteralPath \$parent)) {
+        New-Item -ItemType Directory -Path \$parent -Force | Out-Null
+      }
+      try {
+        [System.IO.Compression.ZipFileExtensions]::ExtractToFile(\$entry, \$destination, \$true)
+      } catch {
+      }
+    }
+  } finally {
+    \$archive.Dispose()
+  }
+}
+if (Test-Path -LiteralPath \$exe) {
+  Start-Process -FilePath \$exe
+}
+\$workspaceRoot = [System.IO.Path]::GetFullPath(\$Workspace)
+\$installRoot = [System.IO.Path]::GetFullPath(\$InstallDir)
+if (\$workspaceRoot -ne \$installRoot) {
+  Remove-Item -LiteralPath \$Workspace -Recurse -Force -ErrorAction SilentlyContinue
+}
+Remove-Item -LiteralPath \$PSCommandPath -Force -ErrorAction SilentlyContinue
+''';
 
 String linuxRelaunchScript() => '''
 #!/bin/sh

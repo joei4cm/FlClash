@@ -102,7 +102,7 @@ class AppUpdateInstaller {
           workspace == null &&
           (outcome == UpdateInstallOutcome.androidInstaller ||
               (outcome == UpdateInstallOutcome.scheduledRestart &&
-                  applied == UpdateApply.dmg));
+                  _keepsDownloadedPackage(applied)));
       return outcome;
     } on DioException catch (error) {
       if (CancelToken.isCancel(error)) {
@@ -250,7 +250,40 @@ class AppUpdateInstaller {
       case UpdateApply.dmg:
         await _scheduleMacSwap(file, directory);
         return UpdateInstallOutcome.scheduledRestart;
+      case UpdateApply.windowsSetup:
+      case UpdateApply.windowsZip:
+        await _scheduleWindowsUpdate(file, directory, apply);
+        return UpdateInstallOutcome.scheduledRestart;
     }
+  }
+
+  Future<void> _scheduleWindowsUpdate(
+    File package,
+    Directory directory,
+    UpdateApply apply,
+  ) async {
+    final installDir = p.dirname(_executable);
+    final script = File(
+      p.join(Directory.systemTemp.path, 'flclash-update-$pid.ps1'),
+    );
+    await script.writeAsString(windowsUpdateScript());
+    await startDetached(_powerShell, [
+      '-NoProfile',
+      '-ExecutionPolicy',
+      'Bypass',
+      '-File',
+      script.path,
+      '-ProcessId',
+      '$pid',
+      '-Package',
+      package.path,
+      '-InstallDir',
+      installDir,
+      '-Mode',
+      apply == UpdateApply.windowsSetup ? 'setup' : 'zip',
+      '-Workspace',
+      directory.path,
+    ]);
   }
 
   Future<void> _replaceAppImage(File downloaded) async {
@@ -395,6 +428,20 @@ class AppUpdateInstaller {
 
   String get _executable => executablePath ?? Platform.resolvedExecutable;
 
+  String get _powerShell {
+    final root = Platform.environment['SystemRoot'];
+    if (root != null && root.isNotEmpty) {
+      return p.join(
+        root,
+        'System32',
+        'WindowsPowerShell',
+        'v1.0',
+        'powershell.exe',
+      );
+    }
+    return 'powershell.exe';
+  }
+
   String get _appImage {
     final path = appImagePath ?? Platform.environment['APPIMAGE'];
     if (path == null || path.isEmpty) {
@@ -433,6 +480,16 @@ Future<LinuxInstallLayout> detectLinuxInstallLayout({
   return LinuxInstallLayout.portable;
 }
 
+bool windowsSetupInstalled(String executable) {
+  return File(p.join(p.dirname(executable), 'unins000.exe')).existsSync();
+}
+
+bool _keepsDownloadedPackage(UpdateApply? apply) {
+  return apply == UpdateApply.dmg ||
+      apply == UpdateApply.windowsSetup ||
+      apply == UpdateApply.windowsZip;
+}
+
 Future<UpdateHost?> currentUpdateHost({
   String? operatingSystem,
   Abi? abi,
@@ -441,17 +498,22 @@ Future<UpdateHost?> currentUpdateHost({
   ProcessRunner? runProcess,
 }) async {
   final os = operatingSystem ?? Platform.operatingSystem;
+  final executablePath = executable ?? Platform.resolvedExecutable;
   final layout = os == 'linux'
       ? await detectLinuxInstallLayout(
           appImage: appImage ?? Platform.environment.containsKey('APPIMAGE'),
-          executable: executable ?? Platform.resolvedExecutable,
+          executable: executablePath,
           runProcess: runProcess ?? Process.run,
         )
       : LinuxInstallLayout.portable;
+  final windowsLayout = os == 'windows' && windowsSetupInstalled(executablePath)
+      ? WindowsInstallLayout.setup
+      : WindowsInstallLayout.portable;
   return updateHost(
     operatingSystem: os,
     abi: abi ?? Abi.current(),
     linuxLayout: layout,
+    windowsLayout: windowsLayout,
   );
 }
 

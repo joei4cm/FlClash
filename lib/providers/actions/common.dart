@@ -148,6 +148,12 @@ class CommonAction extends _$CommonAction {
   }) async {
     if (data != null) {
       final context = globalState.navigatorKey.currentContext!;
+      final inAppUpdate = supportsInAppUpdate(
+        isAndroid: system.isAndroid,
+        isLinux: system.isLinux,
+        isMacOS: system.isMacOS,
+        isWindows: system.isWindows,
+      );
       final res = await dialogs.showMessage(
         title: currentAppLocalizations.discoverNewVersion,
         message: _releaseSpan(
@@ -155,22 +161,13 @@ class CommonAction extends _$CommonAction {
           data['tag_name'] as String,
           data['body'] as String?,
         ),
-        confirmText:
-            supportsInAppUpdate(
-              isAndroid: system.isAndroid,
-              isLinux: system.isLinux,
-              isMacOS: system.isMacOS,
-            )
+        confirmText: inAppUpdate
             ? currentAppLocalizations.update
             : currentAppLocalizations.goDownload,
         cancelText: isUser ? null : currentAppLocalizations.noLongerRemind,
       );
       if (res == true) {
-        if (supportsInAppUpdate(
-          isAndroid: system.isAndroid,
-          isLinux: system.isLinux,
-          isMacOS: system.isMacOS,
-        )) {
+        if (inAppUpdate) {
           unawaited(
             globalState.safeRun(
               () => _installInApp(data),

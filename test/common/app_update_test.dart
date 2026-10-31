@@ -17,6 +17,10 @@ void main() {
     'FlClash-0.9.8-linux-arm64.AppImage',
     'FlClash-0.9.8-macos-arm64.dmg',
     'FlClash-0.9.8-macos-amd64.dmg',
+    'FlClash-0.9.8-windows-amd64-setup.exe',
+    'FlClash-0.9.8-windows-amd64.zip',
+    'FlClash-0.9.8-windows-arm64-setup.exe',
+    'FlClash-0.9.8-windows-arm64.zip',
     'SHA256SUMS',
   ];
 
@@ -95,7 +99,30 @@ void main() {
       only(updateHost(operatingSystem: 'macos', abi: Abi.macosX64)!).asset.name,
       'FlClash-0.9.8-macos-amd64.dmg',
     );
-    expect(updateHost(operatingSystem: 'windows', abi: Abi.windowsX64), isNull);
+    expect(
+      only(
+        updateHost(
+          operatingSystem: 'windows',
+          abi: Abi.windowsX64,
+          windowsLayout: WindowsInstallLayout.setup,
+        )!,
+      ).asset.name,
+      'FlClash-0.9.8-windows-amd64-setup.exe',
+    );
+    expect(
+      only(
+        updateHost(
+          operatingSystem: 'windows',
+          abi: Abi.windowsArm64,
+          windowsLayout: WindowsInstallLayout.portable,
+        )!,
+      ).asset.name,
+      'FlClash-0.9.8-windows-arm64.zip',
+    );
+    expect(
+      updateHost(operatingSystem: 'windows', abi: Abi.windowsIA32),
+      isNull,
+    );
   });
 
   test(
@@ -314,4 +341,67 @@ void main() {
       expect(File(relaunch![1]).readAsStringSync(), contains('flock'));
     },
   );
+
+  test('windows setup and portable copies pick different packages', () async {
+    final directory = await Directory.systemTemp.createTemp('flclash-win-');
+    addTearDown(() => directory.delete(recursive: true));
+    final executable = File('${directory.path}/FlClash.exe')
+      ..writeAsStringSync('old');
+    expect(
+      supportsInAppUpdate(
+        isAndroid: false,
+        isLinux: false,
+        isMacOS: false,
+        isWindows: true,
+      ),
+      isTrue,
+    );
+    expect(windowsSetupInstalled(executable.path), isFalse);
+    expect(
+      (await currentUpdateHost(
+        operatingSystem: 'windows',
+        abi: Abi.windowsX64,
+        executable: executable.path,
+      ))!.preferences.single.apply,
+      UpdateApply.windowsZip,
+    );
+    File('${directory.path}/unins000.exe').writeAsStringSync('uninstaller');
+    expect(
+      (await currentUpdateHost(
+        operatingSystem: 'windows',
+        abi: Abi.windowsX64,
+        executable: executable.path,
+      ))!.preferences.single.apply,
+      UpdateApply.windowsSetup,
+    );
+
+    final package = File('${directory.path}/setup.exe')
+      ..writeAsStringSync('setup');
+    List<String>? launched;
+    final installer = AppUpdateInstaller(
+      executablePath: executable.path,
+      startDetached: (executable, arguments) async {
+        launched = [executable, ...arguments];
+      },
+    );
+    final outcome = await installer.applyDownloaded(
+      file: package,
+      apply: UpdateApply.windowsSetup,
+      directory: directory,
+    );
+    expect(outcome, UpdateInstallOutcome.scheduledRestart);
+    expect(launched, isNotNull);
+    expect(launched!.first.toLowerCase(), contains('powershell'));
+    expect(launched, isNot(contains('/bin/sh')));
+    expect(launched, contains('setup'));
+    expect(launched, contains(package.path));
+    expect(launched, contains(directory.path));
+    final script = File(launched![launched!.indexOf('-File') + 1]);
+    addTearDown(script.delete);
+    final text = script.readAsStringSync();
+    expect(text, contains('Wait-Process'));
+    expect(text, contains('/VERYSILENT'));
+    expect(text, contains('ExtractToFile'));
+    expect(text, isNot(contains('/bin/sh')));
+  });
 }
