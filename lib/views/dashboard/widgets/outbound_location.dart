@@ -86,26 +86,18 @@ class _OutboundLocationCardState extends ConsumerState<OutboundLocationCard>
     final Widget map;
     if (failed) {
       map = _StatusPane(
-        title: localizations.serviceFailed,
-        detail: localizations.tapToRetry,
-        titleStyle: titleStyle.copyWith(color: context.colorScheme.error),
-        detailStyle: DashboardText.label(context),
+        label: localizations.serviceFailed,
+        style: titleStyle.copyWith(color: context.colorScheme.error),
       );
     } else if (probing) {
       map = _StatusPane(
-        title: localizations.loading,
-        titleStyle: titleStyle.copyWith(
-          color: context.colorScheme.onSurfaceVariant,
-        ),
+        label: localizations.loading,
+        style: titleStyle.copyWith(color: context.colorScheme.onSurfaceVariant),
       );
     } else if (info == null) {
       map = _StatusPane(
-        title: localizations.outboundLocationUnknown,
-        detail: localizations.tapToRetry,
-        titleStyle: titleStyle.copyWith(
-          color: context.colorScheme.onSurfaceVariant,
-        ),
-        detailStyle: DashboardText.label(context),
+        label: localizations.outboundLocationUnknown,
+        style: titleStyle.copyWith(color: context.colorScheme.onSurfaceVariant),
       );
     } else {
       map = OutboundMapView(
@@ -116,10 +108,15 @@ class _OutboundLocationCardState extends ConsumerState<OutboundLocationCard>
         framed: point != null,
       );
     }
+    final semantic = probing
+        ? localizations.outboundLocation
+        : info == null
+        ? '${localizations.outboundLocation}. ${localizations.tapToRetry}'
+        : localizations.outboundLocation;
     return DashboardCard(
       padding: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
-      semanticLabel: localizations.outboundLocation,
+      semanticLabel: semantic,
       onTap: probing
           ? null
           : () {
@@ -155,17 +152,10 @@ class _OutboundLocationCardState extends ConsumerState<OutboundLocationCard>
 }
 
 class _StatusPane extends StatelessWidget {
-  const _StatusPane({
-    required this.title,
-    required this.titleStyle,
-    this.detail,
-    this.detailStyle,
-  });
+  const _StatusPane({required this.label, required this.style});
 
-  final String title;
-  final TextStyle titleStyle;
-  final String? detail;
-  final TextStyle? detailStyle;
+  final String label;
+  final TextStyle style;
 
   @override
   Widget build(BuildContext context) {
@@ -174,15 +164,12 @@ class _StatusPane extends StatelessWidget {
       child: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(title, textAlign: TextAlign.center, style: titleStyle),
-              if (detail != null) ...[
-                const SizedBox(height: 4),
-                Text(detail!, textAlign: TextAlign.center, style: detailStyle),
-              ],
-            ],
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: style,
           ),
         ),
       ),

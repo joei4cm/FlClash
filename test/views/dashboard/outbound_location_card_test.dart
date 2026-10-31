@@ -4,6 +4,7 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/outbound_ip.dart';
 import 'package:fl_clash/providers/routed_probe.dart';
 import 'package:fl_clash/views/dashboard/layout.dart';
+import 'package:fl_clash/views/dashboard/widgets/card.dart';
 import 'package:fl_clash/views/dashboard/widgets/outbound_location.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -103,11 +104,10 @@ void main() {
   ) async {
     await pumpCard(tester, density: DashboardDensity.standard);
     expect(find.text('No map position for this exit yet'), findsOneWidget);
-    expect(find.text('Tap to retry'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('a failed probe shows the error and a retry hint', (
+  testWidgets('a failed probe shows the error instead of a blank map', (
     tester,
   ) async {
     await pumpCard(
@@ -116,7 +116,6 @@ void main() {
       phase: ProbePhase.failed,
     );
     expect(find.text('Check failed'), findsOneWidget);
-    expect(find.text('Tap to retry'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -129,7 +128,8 @@ void main() {
       phase: ProbePhase.probing,
     );
     expect(find.text('Loading…'), findsOneWidget);
-    expect(find.text('Tap to retry'), findsNothing);
+    final card = tester.widget<DashboardCard>(find.byType(DashboardCard));
+    expect(card.onTap, isNull);
     expect(tester.takeException(), isNull);
   });
 }
