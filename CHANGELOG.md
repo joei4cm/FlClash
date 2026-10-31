@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.7 (2026-10-31)
+
+**Features**
+
+- **dashboard** The exit location map shows country outlines, with the exit country highlighted. (9a9fe5c)
+
 ## v0.9.6 (2026-10-29)
 
 **Features**

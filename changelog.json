@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.7",
+      "tag": "v0.9.7",
+      "date": "2026-10-31",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "9a9fe5c",
+              "scope": "dashboard",
+              "text": "The exit location map shows country outlines, with the exit country highlighted."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.6",
       "tag": "v0.9.6",
       "date": "2026-10-29",
