@@ -1973,10 +1973,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateInstallPermission": MessageLookupByLibrary.simpleMessage(
       "请允许安装未知应用，然后再次检查更新",
     ),
+    "updateOpenDownloadPage": MessageLookupByLibrary.simpleMessage(
+      "当前设备没有应用内安装包，将打开发布页。",
+    ),
+    "updateOpensInstaller": MessageLookupByLibrary.simpleMessage("将打开系统安装程序"),
     "updatePackageMissing": MessageLookupByLibrary.simpleMessage(
       "这个版本没有适用于当前设备的安装包",
     ),
     "updateVerify": MessageLookupByLibrary.simpleMessage("正在校验下载"),
+    "updateWillRestart": MessageLookupByLibrary.simpleMessage("应用将关闭并重新打开"),
     "upload": MessageLookupByLibrary.simpleMessage("上传"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("上行带宽"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),

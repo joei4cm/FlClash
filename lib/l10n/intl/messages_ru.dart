@@ -2633,10 +2633,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateInstallPermission": MessageLookupByLibrary.simpleMessage(
       "Разрешите установку неизвестных приложений и проверьте обновление снова",
     ),
+    "updateOpenDownloadPage": MessageLookupByLibrary.simpleMessage(
+      "Для этого устройства нет встроенного установщика. Откроется страница загрузки.",
+    ),
+    "updateOpensInstaller": MessageLookupByLibrary.simpleMessage(
+      "Откроется системный установщик",
+    ),
     "updatePackageMissing": MessageLookupByLibrary.simpleMessage(
       "В этом выпуске нет пакета для этого устройства",
     ),
     "updateVerify": MessageLookupByLibrary.simpleMessage("Проверка загрузки"),
+    "updateWillRestart": MessageLookupByLibrary.simpleMessage(
+      "Приложение закроется и откроется снова",
+    ),
     "upload": MessageLookupByLibrary.simpleMessage("Отдача"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Скорость отдачи"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),

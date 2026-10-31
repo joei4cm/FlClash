@@ -20,6 +20,7 @@ void main() {
     WidgetTester tester, {
     required DashboardDensity density,
     IpInfo? info,
+    ProbePhase? phase,
   }) async {
     tester.view.physicalSize = const Size(800, 600);
     tester.view.devicePixelRatio = 1;
@@ -32,7 +33,9 @@ void main() {
           outboundIpProbeProvider.overrideWithBuild(
             (_, _) => RoutedProbeState({
               routedOutbound: ProbeEntry(
-                phase: info == null ? ProbePhase.empty : ProbePhase.fresh,
+                phase:
+                    phase ??
+                    (info == null ? ProbePhase.empty : ProbePhase.fresh),
                 value: info,
               ),
             }),
@@ -83,6 +86,20 @@ void main() {
     final card = tester.getSize(find.byType(OutboundLocationCard));
     expect(card.width, 420);
     expect(card.height, greaterThan(420 / 2));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a failed probe shows the error instead of a blank map', (
+    tester,
+  ) async {
+    await pumpCard(
+      tester,
+      density: DashboardDensity.standard,
+      phase: ProbePhase.failed,
+    );
+
+    expect(find.text('Exit location'), findsOneWidget);
+    expect(find.text('Check failed'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

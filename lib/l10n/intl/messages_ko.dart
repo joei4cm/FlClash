@@ -2220,10 +2220,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateInstallPermission": MessageLookupByLibrary.simpleMessage(
       "알 수 없는 앱 설치를 허용한 다음 업데이트를 다시 확인하세요",
     ),
+    "updateOpenDownloadPage": MessageLookupByLibrary.simpleMessage(
+      "이 기기용 앱 내 설치 패키지가 없어 다운로드 페이지를 엽니다.",
+    ),
+    "updateOpensInstaller": MessageLookupByLibrary.simpleMessage(
+      "시스템 설치 프로그램이 열립니다",
+    ),
     "updatePackageMissing": MessageLookupByLibrary.simpleMessage(
       "이 릴리스에는 이 기기용 설치 파일이 없습니다",
     ),
     "updateVerify": MessageLookupByLibrary.simpleMessage("다운로드를 확인하는 중"),
+    "updateWillRestart": MessageLookupByLibrary.simpleMessage(
+      "앱이 종료된 뒤 다시 열립니다",
+    ),
     "upload": MessageLookupByLibrary.simpleMessage("업로드"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("업로드 대역폭"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),

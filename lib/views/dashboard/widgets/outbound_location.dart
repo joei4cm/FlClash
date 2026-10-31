@@ -5,6 +5,7 @@ import 'package:fl_clash/features/ip_quality/outbound_map.dart';
 import 'package:fl_clash/providers/ip_quality.dart';
 import 'package:fl_clash/providers/outbound_ip.dart';
 import 'package:fl_clash/providers/routed_probe.dart';
+import 'package:fl_clash/ui/color.dart';
 import 'package:fl_clash/ui/context.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/views/dashboard/layout.dart';
@@ -79,13 +80,31 @@ class _OutboundLocationCardState extends ConsumerState<OutboundLocationCard>
         ],
       ),
     );
-    final map = OutboundMapView(
-      latitude: point?.$1,
-      longitude: point?.$2,
-      iso: code ?? '',
-      label: code ?? '',
-      framed: point != null,
-    );
+    final map = failed
+        ? ColoredBox(
+            color: context.colorScheme.surfaceContainerHighest.opacity38,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  localizations.serviceFailed,
+                  textAlign: TextAlign.center,
+                  style:
+                      (mobile
+                              ? DashboardText.mobileCardTitle(context)
+                              : DashboardText.cardTitle(context))
+                          .copyWith(color: context.colorScheme.error),
+                ),
+              ),
+            ),
+          )
+        : OutboundMapView(
+            latitude: point?.$1,
+            longitude: point?.$2,
+            iso: code ?? '',
+            label: code ?? '',
+            framed: point != null,
+          );
     return DashboardCard(
       padding: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,

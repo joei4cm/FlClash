@@ -2175,10 +2175,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateInstallPermission": MessageLookupByLibrary.simpleMessage(
       "不明なアプリのインストールを許可してから、もう一度更新を確認してください",
     ),
+    "updateOpenDownloadPage": MessageLookupByLibrary.simpleMessage(
+      "この端末向けのアプリ内インストーラーがないため、ダウンロードページを開きます。",
+    ),
+    "updateOpensInstaller": MessageLookupByLibrary.simpleMessage(
+      "システムのインストーラーが開きます",
+    ),
     "updatePackageMissing": MessageLookupByLibrary.simpleMessage(
       "このリリースにはこの端末向けのパッケージがありません",
     ),
     "updateVerify": MessageLookupByLibrary.simpleMessage("ダウンロードを確認しています"),
+    "updateWillRestart": MessageLookupByLibrary.simpleMessage("アプリを終了して開き直します"),
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("アップロード帯域幅"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),

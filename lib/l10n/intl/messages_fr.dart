@@ -2670,11 +2670,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateInstallPermission": MessageLookupByLibrary.simpleMessage(
       "Autorisez l\'installation d\'applications inconnues, puis vérifiez à nouveau",
     ),
+    "updateOpenDownloadPage": MessageLookupByLibrary.simpleMessage(
+      "Aucun installateur intégré pour cet appareil. La page de téléchargement va s\'ouvrir.",
+    ),
+    "updateOpensInstaller": MessageLookupByLibrary.simpleMessage(
+      "L\'installateur système va s\'ouvrir",
+    ),
     "updatePackageMissing": MessageLookupByLibrary.simpleMessage(
       "Cette version n\'a pas d\'installateur pour cet appareil",
     ),
     "updateVerify": MessageLookupByLibrary.simpleMessage(
       "Vérification du téléchargement",
+    ),
+    "updateWillRestart": MessageLookupByLibrary.simpleMessage(
+      "L\'application va se fermer puis se rouvrir",
     ),
     "upload": MessageLookupByLibrary.simpleMessage("Envoi"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage(

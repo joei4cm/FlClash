@@ -1301,6 +1301,36 @@ class AppLocalizations {
     );
   }
 
+  /// `The app will close and reopen`
+  String get updateWillRestart {
+    return Intl.message(
+      'The app will close and reopen',
+      name: 'updateWillRestart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The system installer will open`
+  String get updateOpensInstaller {
+    return Intl.message(
+      'The system installer will open',
+      name: 'updateOpensInstaller',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This device has no in-app installer. The download page will open.`
+  String get updateOpenDownloadPage {
+    return Intl.message(
+      'This device has no in-app installer. The download page will open.',
+      name: 'updateOpenDownloadPage',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Unknown`
   String get unknown {
     return Intl.message('Unknown', name: 'unknown', desc: '', args: []);

@@ -200,20 +200,26 @@ class CommonAction extends _$CommonAction {
   }
 
   Future<void> _installInApp(Map<String, dynamic> data) async {
+    final localizations = currentAppLocalizations;
     final host = await currentUpdateHost();
     if (host == null) {
+      await dialogs.showAlert(
+        title: localizations.discoverNewVersion,
+        message: TextSpan(text: localizations.updateOpenDownloadPage),
+      );
       await _openReleasePage();
       return;
     }
-    final localizations = currentAppLocalizations;
     final progress = ValueNotifier<double?>(null);
     final title = ValueNotifier(localizations.updateDownload);
+    final phase = ValueNotifier(UpdatePhase.download);
     final installer = AppUpdateInstaller(
       elevate: system.isLinux ? linuxElevation.elevate : null,
       installApk: system.isAndroid ? app!.installApk : null,
       lockFilePath: () => appPath.lockFilePath,
       portableDirectory: () => appPath.downloadDirPath,
     );
+    var cancelled = false;
     BuildContext? dialogContext;
     final shown = Completer<void>();
     void closeDialog() {
@@ -231,24 +237,63 @@ class CommonAction extends _$CommonAction {
           if (!shown.isCompleted) {
             shown.complete();
           }
+          final colorScheme = context.colorScheme;
           return ValueListenableBuilder<String>(
             valueListenable: title,
             builder: (context, titleText, _) {
-              return ValueListenableBuilder<double?>(
-                valueListenable: progress,
-                builder: (context, fraction, _) {
-                  return CommonDialog(
-                    title: titleText,
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          installer.cancel();
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(context.appLocalizations.cancel),
-                      ),
-                    ],
-                    child: LinearProgressIndicator(value: fraction),
+              return ValueListenableBuilder<UpdatePhase>(
+                valueListenable: phase,
+                builder: (context, currentPhase, _) {
+                  return ValueListenableBuilder<double?>(
+                    valueListenable: progress,
+                    builder: (context, fraction, _) {
+                      final canCancel = currentPhase == UpdatePhase.download;
+                      return CommonDialog(
+                        title: titleText,
+                        actions: [
+                          if (canCancel)
+                            TextButton(
+                              onPressed: () {
+                                cancelled = true;
+                                installer.cancel();
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(context.appLocalizations.cancel),
+                            ),
+                        ],
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            LinearProgressIndicator(value: fraction),
+                            if (fraction != null) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                '${(fraction * 100).round()}%',
+                                style: AppTextStyle.subheadline
+                                    .of(context)
+                                    .copyWith(
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                              ),
+                            ],
+                            if (currentPhase == UpdatePhase.install) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                system.isAndroid
+                                    ? localizations.updateOpensInstaller
+                                    : localizations.updateWillRestart,
+                                style: AppTextStyle.subheadline
+                                    .of(context)
+                                    .copyWith(
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      );
+                    },
                   );
                 },
               );
@@ -262,9 +307,10 @@ class CommonAction extends _$CommonAction {
       final outcome = await installer.install(
         release: data,
         host: host,
-        onProgress: (phase, fraction) {
+        onProgress: (nextPhase, fraction) {
+          phase.value = nextPhase;
           progress.value = fraction;
-          title.value = switch (phase) {
+          title.value = switch (nextPhase) {
             UpdatePhase.download => localizations.updateDownload,
             UpdatePhase.verify => localizations.updateVerify,
             UpdatePhase.install => localizations.updateInstall,
@@ -273,6 +319,9 @@ class CommonAction extends _$CommonAction {
       );
       closeDialog();
       await dialog;
+      if (cancelled) {
+        return;
+      }
       switch (outcome) {
         case UpdateInstallOutcome.needsPermission:
           await dialogs.showAlert(
@@ -303,6 +352,7 @@ class CommonAction extends _$CommonAction {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         progress.dispose();
         title.dispose();
+        phase.dispose();
       });
     }
   }
