@@ -68,3 +68,23 @@ Offset outboundLatLonToOffset(double latitude, double longitude, Size size) {
   final y = (90 - latitude) / 180 * size.height;
   return Offset(x, y);
 }
+
+(double, Offset) frameOutboundMap({
+  required Size viewport,
+  required double latitude,
+  required double longitude,
+  double scale = 3.2,
+}) {
+  final framed = scale.clamp(1.0, 8.0);
+  final mapPoint = outboundLatLonToOffset(latitude, longitude, viewport);
+  final centered = viewport.center(Offset.zero) - mapPoint * framed;
+  final minX = viewport.width * (1 - framed);
+  final minY = viewport.height * (1 - framed);
+  return (
+    framed,
+    Offset(
+      centered.dx.clamp(minX, 0).toDouble(),
+      centered.dy.clamp(minY, 0).toDouble(),
+    ),
+  );
+}

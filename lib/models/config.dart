@@ -1,6 +1,7 @@
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/ui/color.dart';
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -109,7 +110,7 @@ final List<HotKeyAction> defaultHotKeyActions = system.isWindows
         _defaultHotKeyAction(HotAction.delayTest, PhysicalKeyboardKey.keyD),
       ];
 
-const List<DashboardWidget> defaultDashboardWidgets = [
+const _dashboardBeforeOutboundLocation = [
   DashboardWidget.currentOutbound,
   DashboardWidget.networkSpeed,
   DashboardWidget.outboundMode,
@@ -122,15 +123,25 @@ const List<DashboardWidget> defaultDashboardWidgets = [
   DashboardWidget.connectionStats,
 ];
 
+const _androidDashboardBeforeOutboundLocation = [
+  DashboardWidget.currentOutbound,
+  DashboardWidget.networkSpeed,
+  DashboardWidget.outboundMode,
+  DashboardWidget.profiles,
+  DashboardWidget.proxyGroups,
+];
+
+const List<DashboardWidget> defaultDashboardWidgets = [
+  ..._dashboardBeforeOutboundLocation,
+  DashboardWidget.outboundLocation,
+];
+
 /// A phone starts without the VPN switch and the diagnostic cards, which stay
 /// addable. The field default keeps the shared list because it must be const.
 final List<DashboardWidget> platformDefaultDashboardWidgets = system.isAndroid
     ? const [
-        DashboardWidget.currentOutbound,
-        DashboardWidget.networkSpeed,
-        DashboardWidget.outboundMode,
-        DashboardWidget.profiles,
-        DashboardWidget.proxyGroups,
+        ..._androidDashboardBeforeOutboundLocation,
+        DashboardWidget.outboundLocation,
       ]
     : defaultDashboardWidgets;
 
@@ -172,11 +183,13 @@ List<DashboardWidget> dashboardWidgetsFromJson(
   }
   final byName = DashboardWidget.values.asNameMap();
   if (dashboardWidgets.contains(DashboardWidget.currentOutbound.name)) {
-    return dashboardWidgets
-        .map((e) => _legacyDashboardWidgets[e] ?? byName[e])
-        .nonNulls
-        .toSet()
-        .toList();
+    return _adoptOutboundLocation(
+      dashboardWidgets
+          .map((e) => _legacyDashboardWidgets[e] ?? byName[e])
+          .nonNulls
+          .toSet()
+          .toList(),
+    );
   }
   final names = {
     for (final name in dashboardWidgets)
@@ -194,6 +207,16 @@ List<DashboardWidget> dashboardWidgetsFromJson(
     return platformDefaultDashboardWidgets;
   }
   return {DashboardWidget.currentOutbound, ...kept}.toList();
+}
+
+List<DashboardWidget> _adoptOutboundLocation(List<DashboardWidget> widgets) {
+  final previous = system.isAndroid
+      ? _androidDashboardBeforeOutboundLocation
+      : _dashboardBeforeOutboundLocation;
+  if (listEquals(widgets, previous)) {
+    return platformDefaultDashboardWidgets;
+  }
+  return widgets;
 }
 
 Object? _readSidebarExpanded(Map<dynamic, dynamic> json, String key) {

@@ -26,6 +26,35 @@ void main() {
     });
   });
 
+  test('frames the exit in the card and keeps the map covering it', () {
+    const viewport = Size(360, 180);
+    const latitude = 37.39;
+    const longitude = -122.08;
+    final (scale, translation) = frameOutboundMap(
+      viewport: viewport,
+      latitude: latitude,
+      longitude: longitude,
+    );
+    final marker =
+        outboundLatLonToOffset(latitude, longitude, viewport) * scale +
+        translation;
+    expect(scale, 3.2);
+    expect(marker.dx, closeTo(180, 0.01));
+    expect(marker.dy, closeTo(90, 0.01));
+    expect(translation.dx, inInclusiveRange(viewport.width * (1 - scale), 0));
+    expect(translation.dy, inInclusiveRange(viewport.height * (1 - scale), 0));
+
+    final (edgeScale, edge) = frameOutboundMap(
+      viewport: viewport,
+      latitude: 71,
+      longitude: 170,
+      scale: 8,
+    );
+    expect(edgeScale, 8);
+    expect(edge.dx, viewport.width * (1 - edgeScale));
+    expect(edge.dy, inInclusiveRange(viewport.height * (1 - edgeScale), 0));
+  });
+
   test('projects lat/lon onto an equirectangular map', () {
     const size = Size(360, 180);
     expect(outboundLatLonToOffset(0, 0, size), const Offset(180, 90));

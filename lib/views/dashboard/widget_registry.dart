@@ -17,6 +17,7 @@ extension DashboardWidgetView on DashboardWidget {
     DashboardWidget.connectionStats => const ConnectionStatsCard(),
     DashboardWidget.intranetIp => const IntranetIpCard(),
     DashboardWidget.memoryInfo => const MemoryInfo(),
+    DashboardWidget.outboundLocation => const OutboundLocationCard(),
   };
 
   Glyph get glyph => switch (this) {
@@ -31,6 +32,7 @@ extension DashboardWidgetView on DashboardWidget {
     DashboardWidget.connectionStats => AppGlyphs.connections,
     DashboardWidget.intranetIp => AppGlyphs.devices,
     DashboardWidget.memoryInfo => AppGlyphs.memory,
+    DashboardWidget.outboundLocation => AppGlyphs.pin,
   };
 
   String label(BuildContext context) {
@@ -47,6 +49,7 @@ extension DashboardWidgetView on DashboardWidget {
       DashboardWidget.connectionStats => appLocalizations.connectionStats,
       DashboardWidget.intranetIp => appLocalizations.intranetIP,
       DashboardWidget.memoryInfo => appLocalizations.memoryInfo,
+      DashboardWidget.outboundLocation => appLocalizations.outboundLocation,
     };
   }
 

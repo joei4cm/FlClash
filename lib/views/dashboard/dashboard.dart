@@ -168,11 +168,16 @@ class _DesktopDashboard extends StatelessWidget {
                 (1, NetworkTakeoverTile(TakeoverSwitch.tun)),
               ]
             : const [(2, VpnTile())];
-        final half = columns ~/ 2;
-        final summaries = row([
-          (half, const ConnectionStatsCard()),
-          (half, const ProxyGroupsSummaryCard()),
-        ]);
+        final summaries = columns == 2
+            ? row(const [
+                (1, ConnectionStatsCard()),
+                (1, ProxyGroupsSummaryCard()),
+              ])
+            : row(const [
+                (1, ConnectionStatsCard()),
+                (1, ProxyGroupsSummaryCard()),
+                (2, OutboundLocationCard()),
+              ]);
         if (columns == 2) {
           return SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -183,6 +188,10 @@ class _DesktopDashboard extends StatelessWidget {
                 sized(
                   topHeight,
                   const RepaintBoundary(child: CurrentOutboundCard()),
+                ),
+                sized(
+                  topHeight,
+                  const RepaintBoundary(child: OutboundLocationCard()),
                 ),
                 sized(
                   topHeight,
@@ -260,8 +269,8 @@ class _DesktopDashboard extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         spacing: gap,
-                        children: const [
-                          Expanded(
+                        children: [
+                          const Expanded(
                             flex: 3,
                             child: RepaintBoundary(
                               child: ConnectionsTableCard(),
@@ -269,7 +278,23 @@ class _DesktopDashboard extends StatelessWidget {
                           ),
                           Expanded(
                             flex: 2,
-                            child: RepaintBoundary(child: ProxyGroupsCard()),
+                            child: Column(
+                              spacing: gap,
+                              children: const [
+                                Expanded(
+                                  flex: 3,
+                                  child: RepaintBoundary(
+                                    child: ProxyGroupsCard(),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: RepaintBoundary(
+                                    child: OutboundLocationCard(),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),

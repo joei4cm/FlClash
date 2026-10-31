@@ -192,6 +192,36 @@ void main() {
       expect(restored.dashboardWidgets, defaultDashboardWidgets);
     });
 
+    test('the dashboard from before the exit map gains that card', () {
+      final restored = AppSettingProps.fromJson({
+        'dashboardWidgets': [
+          'currentOutbound',
+          'networkSpeed',
+          'outboundMode',
+          'vpnButton',
+          'networkTakeover',
+          'intranetIp',
+          'serviceStatus',
+          'profiles',
+          'proxyGroups',
+          'connectionStats',
+        ],
+      });
+      expect(restored.dashboardWidgets, defaultDashboardWidgets);
+      expect(restored.dashboardWidgets.last, DashboardWidget.outboundLocation);
+    });
+
+    test('a rearranged dashboard does not gain the exit map', () {
+      final restored = AppSettingProps.fromJson({
+        'dashboardWidgets': ['currentOutbound', 'profiles', 'networkSpeed'],
+      });
+      expect(restored.dashboardWidgets, [
+        DashboardWidget.currentOutbound,
+        DashboardWidget.profiles,
+        DashboardWidget.networkSpeed,
+      ]);
+    });
+
     test('an old dashboard emptied of cards keeps only the current '
         'outbound', () {
       for (final saved in [

@@ -110,6 +110,7 @@ void main() {
     final memory = rectOf(tester, MemoryInfo);
     final table = rectOf(tester, ConnectionsTableCard);
     final groups = rectOf(tester, ProxyGroupsCard);
+    final map = rectOf(tester, OutboundLocationCard);
 
     expect(current.height, 208);
     expect(current.width, closeTo(upload.width * 2 + 16, 0.01));
@@ -132,6 +133,10 @@ void main() {
     expect(table.top, intranet.bottom + 16);
     expect(table.width / groups.width, closeTo(1.5, 0.01));
     expect(groups.top, table.top);
+    expect(map.left, groups.left);
+    expect(map.right, groups.right);
+    expect(map.top, closeTo(groups.bottom + 16, 0.01));
+    expect(map.bottom, table.bottom);
     expect(table.bottom, 824 - 24);
     expect(scrollExtentOf(tester), 0);
     expect(find.byType(OutboundModeCard), findsNothing);
@@ -241,7 +246,11 @@ void main() {
     expect(find.byType(ProxyGroupsCard), findsNothing);
     expect(stats.height, greaterThan(112));
     expect(stats.bottom, 660 - 24);
-    expect(stats.width, closeTo(current.width, 0.01));
+    expect(stats.width, closeTo(rectOf(tester, SpeedCard).width, 0.01));
+    expect(
+      rectOf(tester, OutboundLocationCard).width,
+      closeTo(current.width, 0.01),
+    );
     expect(groups.top, stats.top);
     expect(find.text('12 groups', findRichText: true), findsOneWidget);
     expect(scrollExtentOf(tester), 0);
@@ -366,6 +375,9 @@ void main() {
 
     expect(current.width, 800 - 16 - 24);
     expect(current.width, closeTo(upload.width * 2 + gap, 0.01));
+    final map = rectOf(tester, OutboundLocationCard);
+    expect(map.width, current.width);
+    expect(map.top, closeTo(current.bottom + gap, 0.01));
     expect(mode.width, current.width);
     expect(tun.width, closeTo(upload.width, 0.01));
     expect(intranet.top, tun.bottom + gap);
@@ -431,6 +443,28 @@ void main() {
     expect(find.byType(OutboundModeBar), findsNothing);
 
     await teardown(tester);
+  });
+
+  testWidgets('the exit map is on the desktop for Android, Linux, and macOS', (
+    tester,
+  ) async {
+    for (final platform in const [
+      SupportPlatform.Android,
+      SupportPlatform.Linux,
+      SupportPlatform.MacOS,
+    ]) {
+      await pumpDashboard(tester, const Size(1220, 824), platform: platform);
+
+      final map = rectOf(tester, OutboundLocationCard);
+      final table = rectOf(tester, ConnectionsTableCard);
+      expect(map.bottom, table.bottom, reason: platform.name);
+      expect(map.left, greaterThan(table.left), reason: platform.name);
+      expect(map.height, lessThan(table.height), reason: platform.name);
+      expect(find.byType(OutboundLocationCard), findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      await teardown(tester);
+    }
   });
 
   testWidgets('a phone shows the saved cards edge to edge', (tester) async {
