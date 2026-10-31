@@ -66,6 +66,7 @@ class _OutboundLocationCardState extends ConsumerState<OutboundLocationCard>
     final titleStyle = mobile
         ? DashboardText.mobileCardTitle(context)
         : DashboardText.cardTitle(context);
+    final retryable = info == null && !probing;
     final header = Padding(
       padding: dashboardCardPadding(density).copyWith(bottom: 8),
       child: DashboardCardHeader(
@@ -79,6 +80,16 @@ class _OutboundLocationCardState extends ConsumerState<OutboundLocationCard>
               style: titleStyle.copyWith(
                 color: context.colorScheme.onSurfaceVariant,
               ),
+            ),
+          // Visible retry cue without a second status line (desktop grid
+          // overflowed when the pane grew taller in #50).
+          if (retryable)
+            GlyphIcon(
+              AppGlyphs.refresh,
+              size: DashboardCardHeader.glyphSize,
+              color: failed
+                  ? context.colorScheme.error
+                  : context.colorScheme.onSurfaceVariant,
             ),
         ],
       ),

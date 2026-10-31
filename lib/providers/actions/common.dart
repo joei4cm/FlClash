@@ -111,11 +111,11 @@ class CommonAction extends _$CommonAction {
           text: '${localizations.updateRunningVersion(running)}\n',
           style: secondary,
         ),
-        TextSpan(text: '$tagName \n', style: AppTextStyle.title2.of(context)),
+        TextSpan(text: '$tagName\n', style: AppTextStyle.title2.of(context)),
         if (version == null) ...[
           TextSpan(text: '\n', style: AppTextStyle.subheadline.of(context)),
           for (final submit in parseReleaseBody(body))
-            TextSpan(text: '- $submit \n', style: secondary),
+            TextSpan(text: '- $submit\n', style: secondary),
         ] else
           ..._changelogSpans(context, version),
       ],
@@ -219,6 +219,7 @@ class CommonAction extends _$CommonAction {
     final progress = ValueNotifier<double?>(null);
     final title = ValueNotifier(localizations.updateDownload);
     final phase = ValueNotifier(UpdatePhase.download);
+    final releaseTag = data['tag_name'] as String? ?? '';
     final installer = AppUpdateInstaller(
       elevate: system.isLinux ? linuxElevation.elevate : null,
       installApk: system.isAndroid ? app!.installApk : null,
@@ -244,6 +245,9 @@ class CommonAction extends _$CommonAction {
             shown.complete();
           }
           final colorScheme = context.colorScheme;
+          final secondaryStyle = AppTextStyle.subheadline
+              .of(context)
+              .copyWith(color: colorScheme.onSurfaceVariant);
           return ValueListenableBuilder<String>(
             valueListenable: title,
             builder: (context, titleText, _) {
@@ -276,12 +280,12 @@ class CommonAction extends _$CommonAction {
                               const SizedBox(height: 8),
                               Text(
                                 '${(fraction * 100).round()}%',
-                                style: AppTextStyle.subheadline
-                                    .of(context)
-                                    .copyWith(
-                                      color: colorScheme.onSurfaceVariant,
-                                    ),
+                                style: secondaryStyle,
                               ),
+                            ],
+                            if (releaseTag.isNotEmpty) ...[
+                              const SizedBox(height: 8),
+                              Text(releaseTag, style: secondaryStyle),
                             ],
                             if (currentPhase == UpdatePhase.install) ...[
                               const SizedBox(height: 8),
@@ -289,11 +293,7 @@ class CommonAction extends _$CommonAction {
                                 system.isAndroid
                                     ? localizations.updateOpensInstaller
                                     : localizations.updateWillRestart,
-                                style: AppTextStyle.subheadline
-                                    .of(context)
-                                    .copyWith(
-                                      color: colorScheme.onSurfaceVariant,
-                                    ),
+                                style: secondaryStyle,
                               ),
                             ],
                           ],

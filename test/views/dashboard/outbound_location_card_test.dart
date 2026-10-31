@@ -3,6 +3,7 @@ import 'package:fl_clash/common/service_probe.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/outbound_ip.dart';
 import 'package:fl_clash/providers/routed_probe.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/views/dashboard/layout.dart';
 import 'package:fl_clash/views/dashboard/widgets/card.dart';
 import 'package:fl_clash/views/dashboard/widgets/outbound_location.dart';
@@ -104,6 +105,12 @@ void main() {
   ) async {
     await pumpCard(tester, density: DashboardDensity.standard);
     expect(find.text('No map position for this exit yet'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is GlyphIcon && widget.glyph == AppGlyphs.refresh,
+      ),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -116,6 +123,12 @@ void main() {
       phase: ProbePhase.failed,
     );
     expect(find.text('Check failed'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is GlyphIcon && widget.glyph == AppGlyphs.refresh,
+      ),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -130,6 +143,12 @@ void main() {
     expect(find.text('Loading…'), findsOneWidget);
     final card = tester.widget<DashboardCard>(find.byType(DashboardCard));
     expect(card.onTap, isNull);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is GlyphIcon && widget.glyph == AppGlyphs.refresh,
+      ),
+      findsNothing,
+    );
     expect(tester.takeException(), isNull);
   });
 }
