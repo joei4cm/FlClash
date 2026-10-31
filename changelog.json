@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.8",
+      "tag": "v0.9.8",
+      "date": "2026-10-31",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "fbceba6",
+              "scope": "dashboard",
+              "text": "The dashboard shows the exit on a country map on desktop and on phones."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.7",
       "tag": "v0.9.7",
       "date": "2026-10-31",

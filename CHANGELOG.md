@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.8 (2026-10-31)
+
+**Features**
+
+- **dashboard** The dashboard shows the exit on a country map on desktop and on phones. (fbceba6)
+
 ## v0.9.7 (2026-10-31)
 
 **Features**
