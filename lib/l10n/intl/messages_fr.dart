@@ -2655,6 +2655,27 @@ class MessageLookup extends MessageLookupByLibrary {
       "Désépingler la fenêtre",
     ),
     "update": MessageLookupByLibrary.simpleMessage("Mettre à jour"),
+    "updateChecksumMismatch": MessageLookupByLibrary.simpleMessage(
+      "Le fichier ne correspond pas à l\'empreinte publiée",
+    ),
+    "updateDownload": MessageLookupByLibrary.simpleMessage(
+      "Téléchargement de la mise à jour",
+    ),
+    "updateInstall": MessageLookupByLibrary.simpleMessage(
+      "Installation de la mise à jour",
+    ),
+    "updateInstallFailed": MessageLookupByLibrary.simpleMessage(
+      "Impossible d\'installer la mise à jour",
+    ),
+    "updateInstallPermission": MessageLookupByLibrary.simpleMessage(
+      "Autorisez l\'installation d\'applications inconnues, puis vérifiez à nouveau",
+    ),
+    "updatePackageMissing": MessageLookupByLibrary.simpleMessage(
+      "Cette version n\'a pas d\'installateur pour cet appareil",
+    ),
+    "updateVerify": MessageLookupByLibrary.simpleMessage(
+      "Vérification du téléchargement",
+    ),
     "upload": MessageLookupByLibrary.simpleMessage("Envoi"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Bande passante d’envoi",

@@ -2209,6 +2209,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("이름 없음"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("창 고정 해제"),
     "update": MessageLookupByLibrary.simpleMessage("업데이트"),
+    "updateChecksumMismatch": MessageLookupByLibrary.simpleMessage(
+      "다운로드가 게시된 체크섬과 일치하지 않습니다",
+    ),
+    "updateDownload": MessageLookupByLibrary.simpleMessage("업데이트를 다운로드하는 중"),
+    "updateInstall": MessageLookupByLibrary.simpleMessage("업데이트를 설치하는 중"),
+    "updateInstallFailed": MessageLookupByLibrary.simpleMessage(
+      "업데이트를 설치할 수 없습니다",
+    ),
+    "updateInstallPermission": MessageLookupByLibrary.simpleMessage(
+      "알 수 없는 앱 설치를 허용한 다음 업데이트를 다시 확인하세요",
+    ),
+    "updatePackageMissing": MessageLookupByLibrary.simpleMessage(
+      "이 릴리스에는 이 기기용 설치 파일이 없습니다",
+    ),
+    "updateVerify": MessageLookupByLibrary.simpleMessage("다운로드를 확인하는 중"),
     "upload": MessageLookupByLibrary.simpleMessage("업로드"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("업로드 대역폭"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),

@@ -155,15 +155,32 @@ class CommonAction extends _$CommonAction {
           data['tag_name'] as String,
           data['body'] as String?,
         ),
-        confirmText: currentAppLocalizations.goDownload,
+        confirmText:
+            supportsInAppUpdate(
+              isAndroid: system.isAndroid,
+              isLinux: system.isLinux,
+              isMacOS: system.isMacOS,
+            )
+            ? currentAppLocalizations.update
+            : currentAppLocalizations.goDownload,
         cancelText: isUser ? null : currentAppLocalizations.noLongerRemind,
       );
       if (res == true) {
-        unawaited(
-          launchUrl(
-            Uri.parse('https://github.com/$repository/releases/latest'),
-          ),
-        );
+        if (supportsInAppUpdate(
+          isAndroid: system.isAndroid,
+          isLinux: system.isLinux,
+          isMacOS: system.isMacOS,
+        )) {
+          unawaited(
+            globalState.safeRun(
+              () => _installInApp(data),
+              silence: false,
+              title: currentAppLocalizations.discoverNewVersion,
+            ),
+          );
+        } else {
+          unawaited(_openReleasePage());
+        }
       } else if (!isUser && res == false) {
         ref
             .read(appSettingProvider.notifier)
@@ -176,6 +193,120 @@ class CommonAction extends _$CommonAction {
           message: TextSpan(text: currentAppLocalizations.checkUpdateError),
         ),
       );
+    }
+  }
+
+  Future<void> _openReleasePage() {
+    return launchUrl(
+      Uri.parse('https://github.com/$repository/releases/latest'),
+    );
+  }
+
+  Future<void> _installInApp(Map<String, dynamic> data) async {
+    final host = await currentUpdateHost();
+    if (host == null) {
+      await _openReleasePage();
+      return;
+    }
+    final localizations = currentAppLocalizations;
+    final progress = ValueNotifier<double?>(null);
+    final title = ValueNotifier(localizations.updateDownload);
+    final installer = AppUpdateInstaller(
+      elevate: system.isLinux ? linuxElevation.elevate : null,
+      installApk: system.isAndroid ? app!.installApk : null,
+      lockFilePath: () => appPath.lockFilePath,
+      portableDirectory: () => appPath.downloadDirPath,
+    );
+    BuildContext? dialogContext;
+    final shown = Completer<void>();
+    void closeDialog() {
+      final context = dialogContext;
+      if (context != null && context.mounted) {
+        Navigator.of(context).pop();
+      }
+    }
+
+    final dialog = dialogs.showCommonDialog<void>(
+      dismissible: false,
+      child: Builder(
+        builder: (context) {
+          dialogContext ??= context;
+          if (!shown.isCompleted) {
+            shown.complete();
+          }
+          return ValueListenableBuilder<String>(
+            valueListenable: title,
+            builder: (context, titleText, _) {
+              return ValueListenableBuilder<double?>(
+                valueListenable: progress,
+                builder: (context, fraction, _) {
+                  return CommonDialog(
+                    title: titleText,
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          installer.cancel();
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(context.appLocalizations.cancel),
+                      ),
+                    ],
+                    child: LinearProgressIndicator(value: fraction),
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
+    );
+    try {
+      await shown.future;
+      final outcome = await installer.install(
+        release: data,
+        host: host,
+        onProgress: (phase, fraction) {
+          progress.value = fraction;
+          title.value = switch (phase) {
+            UpdatePhase.download => localizations.updateDownload,
+            UpdatePhase.verify => localizations.updateVerify,
+            UpdatePhase.install => localizations.updateInstall,
+          };
+        },
+      );
+      closeDialog();
+      await dialog;
+      switch (outcome) {
+        case UpdateInstallOutcome.needsPermission:
+          await dialogs.showAlert(
+            title: localizations.discoverNewVersion,
+            message: TextSpan(text: localizations.updateInstallPermission),
+          );
+        case UpdateInstallOutcome.androidInstaller:
+          break;
+        case UpdateInstallOutcome.scheduledRestart:
+          await ref.read(systemActionProvider.notifier).handleExit();
+      }
+    } on UpdateCancelled {
+      closeDialog();
+      await dialog;
+    } on UpdateFailed catch (error) {
+      closeDialog();
+      await dialog;
+      throw MessageException(switch (error.failure) {
+        UpdateFailure.checksum => localizations.updateChecksumMismatch,
+        UpdateFailure.missingPackage => localizations.updatePackageMissing,
+        UpdateFailure.install => localizations.updateInstallFailed,
+      });
+    } catch (error) {
+      closeDialog();
+      await dialog;
+      rethrow;
+    } finally {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        progress.dispose();
+        title.dispose();
+      });
     }
   }
 }

@@ -1964,6 +1964,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("未命名"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("取消置顶"),
     "update": MessageLookupByLibrary.simpleMessage("更新"),
+    "updateChecksumMismatch": MessageLookupByLibrary.simpleMessage(
+      "下载文件和发布的校验值不一致",
+    ),
+    "updateDownload": MessageLookupByLibrary.simpleMessage("正在下载更新"),
+    "updateInstall": MessageLookupByLibrary.simpleMessage("正在安装更新"),
+    "updateInstallFailed": MessageLookupByLibrary.simpleMessage("无法安装更新"),
+    "updateInstallPermission": MessageLookupByLibrary.simpleMessage(
+      "请允许安装未知应用，然后再次检查更新",
+    ),
+    "updatePackageMissing": MessageLookupByLibrary.simpleMessage(
+      "这个版本没有适用于当前设备的安装包",
+    ),
+    "updateVerify": MessageLookupByLibrary.simpleMessage("正在校验下载"),
     "upload": MessageLookupByLibrary.simpleMessage("上传"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("上行带宽"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),

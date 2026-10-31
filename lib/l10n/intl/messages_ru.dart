@@ -2618,6 +2618,25 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("Без названия"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("Открепить окно"),
     "update": MessageLookupByLibrary.simpleMessage("Обновить"),
+    "updateChecksumMismatch": MessageLookupByLibrary.simpleMessage(
+      "Файл не совпадает с опубликованной контрольной суммой",
+    ),
+    "updateDownload": MessageLookupByLibrary.simpleMessage(
+      "Загрузка обновления",
+    ),
+    "updateInstall": MessageLookupByLibrary.simpleMessage(
+      "Установка обновления",
+    ),
+    "updateInstallFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось установить обновление",
+    ),
+    "updateInstallPermission": MessageLookupByLibrary.simpleMessage(
+      "Разрешите установку неизвестных приложений и проверьте обновление снова",
+    ),
+    "updatePackageMissing": MessageLookupByLibrary.simpleMessage(
+      "В этом выпуске нет пакета для этого устройства",
+    ),
+    "updateVerify": MessageLookupByLibrary.simpleMessage("Проверка загрузки"),
     "upload": MessageLookupByLibrary.simpleMessage("Отдача"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Скорость отдачи"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),

@@ -87,6 +87,7 @@ void main() {
     expect(find.textContaining('Re-import backups'), findsOneWidget);
     expect(find.textContaining('Override scripts'), findsOneWidget);
     expect(find.textContaining('Breaking changes'), findsOneWidget);
+    expect(find.text('Update'), findsOneWidget);
 
     await tapCancel(tester);
     await shown;

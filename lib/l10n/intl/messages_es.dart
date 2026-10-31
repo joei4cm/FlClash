@@ -2655,6 +2655,27 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("Sin nombre"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("Desfijar ventana"),
     "update": MessageLookupByLibrary.simpleMessage("Actualizar"),
+    "updateChecksumMismatch": MessageLookupByLibrary.simpleMessage(
+      "La descarga no coincide con la suma publicada",
+    ),
+    "updateDownload": MessageLookupByLibrary.simpleMessage(
+      "Descargando la actualización",
+    ),
+    "updateInstall": MessageLookupByLibrary.simpleMessage(
+      "Instalando la actualización",
+    ),
+    "updateInstallFailed": MessageLookupByLibrary.simpleMessage(
+      "No se pudo instalar la actualización",
+    ),
+    "updateInstallPermission": MessageLookupByLibrary.simpleMessage(
+      "Permite instalar aplicaciones desconocidas y vuelve a buscar actualizaciones",
+    ),
+    "updatePackageMissing": MessageLookupByLibrary.simpleMessage(
+      "Esta versión no tiene un instalador para este dispositivo",
+    ),
+    "updateVerify": MessageLookupByLibrary.simpleMessage(
+      "Comprobando la descarga",
+    ),
     "upload": MessageLookupByLibrary.simpleMessage("Subida"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage(
       "Ancho de banda de subida",

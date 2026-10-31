@@ -2501,6 +2501,27 @@ class MessageLookup extends MessageLookupByLibrary {
     "unnamed": MessageLookupByLibrary.simpleMessage("Unnamed"),
     "unpinWindow": MessageLookupByLibrary.simpleMessage("Unpin window"),
     "update": MessageLookupByLibrary.simpleMessage("Update"),
+    "updateChecksumMismatch": MessageLookupByLibrary.simpleMessage(
+      "The download does not match the published checksum",
+    ),
+    "updateDownload": MessageLookupByLibrary.simpleMessage(
+      "Downloading the update",
+    ),
+    "updateInstall": MessageLookupByLibrary.simpleMessage(
+      "Installing the update",
+    ),
+    "updateInstallFailed": MessageLookupByLibrary.simpleMessage(
+      "The update could not be installed",
+    ),
+    "updateInstallPermission": MessageLookupByLibrary.simpleMessage(
+      "Allow installing unknown apps, then check for updates again",
+    ),
+    "updatePackageMissing": MessageLookupByLibrary.simpleMessage(
+      "This release has no installer for this device",
+    ),
+    "updateVerify": MessageLookupByLibrary.simpleMessage(
+      "Checking the download",
+    ),
     "upload": MessageLookupByLibrary.simpleMessage("Upload"),
     "uploadBandwidth": MessageLookupByLibrary.simpleMessage("Upload bandwidth"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),

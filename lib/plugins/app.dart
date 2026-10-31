@@ -151,6 +151,13 @@ class App {
     });
   }
 
+  Future<bool> installApk(String path) async {
+    return await methodChannel.invokeMethod<bool>('installApk', {
+          'path': path,
+        }) ??
+        false;
+  }
+
   Future<bool?> openAppSettings() async {
     if (!Platform.isAndroid) return false;
     return methodChannel.invokeMethod<bool>('openAppSettings');

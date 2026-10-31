@@ -1231,6 +1231,76 @@ class AppLocalizations {
     return Intl.message('Download', name: 'goDownload', desc: '', args: []);
   }
 
+  /// `Downloading the update`
+  String get updateDownload {
+    return Intl.message(
+      'Downloading the update',
+      name: 'updateDownload',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Checking the download`
+  String get updateVerify {
+    return Intl.message(
+      'Checking the download',
+      name: 'updateVerify',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Installing the update`
+  String get updateInstall {
+    return Intl.message(
+      'Installing the update',
+      name: 'updateInstall',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The update could not be installed`
+  String get updateInstallFailed {
+    return Intl.message(
+      'The update could not be installed',
+      name: 'updateInstallFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The download does not match the published checksum`
+  String get updateChecksumMismatch {
+    return Intl.message(
+      'The download does not match the published checksum',
+      name: 'updateChecksumMismatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This release has no installer for this device`
+  String get updatePackageMissing {
+    return Intl.message(
+      'This release has no installer for this device',
+      name: 'updatePackageMissing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow installing unknown apps, then check for updates again`
+  String get updateInstallPermission {
+    return Intl.message(
+      'Allow installing unknown apps, then check for updates again',
+      name: 'updateInstallPermission',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Unknown`
   String get unknown {
     return Intl.message('Unknown', name: 'unknown', desc: '', args: []);

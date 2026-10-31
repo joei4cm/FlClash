@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.BroadcastReceiver
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -16,6 +17,7 @@ import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.FileProvider
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
@@ -47,6 +49,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.io.File
 
 class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware {
 
@@ -203,6 +206,15 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                 result.success(openAppSettings())
             }
 
+            "installApk" -> {
+                val path = call.argument<String>("path")
+                if (path.isNullOrEmpty()) {
+                    result.error("INVALID_ARGUMENT", "path is required", null)
+                } else {
+                    result.success(installApk(path))
+                }
+            }
+
             "getLastExitInfo" -> reply(result) {
                 GlobalState.lastExitInfo()
             }
@@ -211,6 +223,35 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                 result.notImplemented()
             }
         }
+    }
+
+    private fun installApk(path: String): Boolean {
+        val host = activity ?: GlobalState.application
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            !host.packageManager.canRequestPackageInstalls()
+        ) {
+            val intent = Intent(
+                Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                "package:${host.packageName}".toUri(),
+            )
+            if (host !is Activity) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            host.startActivity(intent)
+            return false
+        }
+        val uri = FileProvider.getUriForFile(
+            host,
+            "${host.packageName}.fileprovider",
+            File(path),
+        )
+        val intent = Intent(Intent.ACTION_VIEW)
+            .setDataAndType(uri, "application/vnd.android.package-archive")
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.clipData = ClipData.newRawUri("", uri)
+        host.startActivity(intent)
+        return true
     }
 
     private fun handleGetPackageIcon(call: MethodCall, result: Result) = reply(result) {
