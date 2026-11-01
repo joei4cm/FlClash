@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.12 (2026-11-01)
+
+**Bug Fixes**
+
+- **about** In-app update verify stays responsive, and cancel no longer blanks the screen. (e67197b)
+
 ## v0.9.11 (2026-11-01)
 
 Internal improvements only.

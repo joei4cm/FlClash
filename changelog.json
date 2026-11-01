@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.12",
+      "tag": "v0.9.12",
+      "date": "2026-11-01",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "e67197b",
+              "scope": "about",
+              "text": "In-app update verify stays responsive, and cancel no longer blanks the screen."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.11",
       "tag": "v0.9.11",
       "date": "2026-11-01",
