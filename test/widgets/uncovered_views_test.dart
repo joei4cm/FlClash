@@ -284,7 +284,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const TestApp(child: AboutView()),
+        child: const TestApp(withStatusManager: true, child: AboutView()),
       ),
     );
     await tester.pump();
@@ -312,6 +312,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(find.byType(CommonDialog), findsNothing);
     expect(find.text('The app is already up to date'), findsOneWidget);
     expect(tester.takeException(), null);
   });

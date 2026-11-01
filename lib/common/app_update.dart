@@ -41,6 +41,18 @@ enum UpdateInstallOutcome {
   needsPermission,
 }
 
+/// Choice from the "new version found" prompt.
+enum UpdatePromptResult {
+  /// Download or install the release.
+  install,
+
+  /// Close for now; keep automatic checks on.
+  dismiss,
+
+  /// Turn off automatic update reminders.
+  mute,
+}
+
 final class ReleaseAsset {
   const ReleaseAsset({required this.name, required this.downloadUrl});
 

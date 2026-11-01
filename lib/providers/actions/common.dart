@@ -153,50 +153,98 @@ class CommonAction extends _$CommonAction {
     bool isUser = false,
   }) async {
     if (data != null) {
-      final context = globalState.navigatorKey.currentContext!;
-      final inAppUpdate = supportsInAppUpdate(
-        isAndroid: system.isAndroid,
-        isLinux: system.isLinux,
-        isMacOS: system.isMacOS,
-        isWindows: system.isWindows,
+      final choice = await _showUpdatePrompt(
+        tagName: data['tag_name'] as String,
+        body: data['body'] as String?,
+        isUser: isUser,
       );
-      final res = await dialogs.showMessage(
-        title: currentAppLocalizations.discoverNewVersion,
-        message: _releaseSpan(
-          context,
-          data['tag_name'] as String,
-          data['body'] as String?,
-        ),
-        confirmText: inAppUpdate
-            ? currentAppLocalizations.installUpdate
-            : currentAppLocalizations.goDownload,
-        cancelText: isUser ? null : currentAppLocalizations.noLongerRemind,
-      );
-      if (res == true) {
-        if (inAppUpdate) {
-          unawaited(
-            globalState.safeRun(
-              () => _installInApp(data),
-              silence: false,
-              title: currentAppLocalizations.discoverNewVersion,
-            ),
+      switch (choice) {
+        case UpdatePromptResult.install:
+          final inAppUpdate = supportsInAppUpdate(
+            isAndroid: system.isAndroid,
+            isLinux: system.isLinux,
+            isMacOS: system.isMacOS,
+            isWindows: system.isWindows,
           );
-        } else {
-          unawaited(_openReleasePage());
-        }
-      } else if (!isUser && res == false) {
-        ref
-            .read(appSettingProvider.notifier)
-            .update((state) => state.copyWith(autoCheckUpdate: false));
+          if (inAppUpdate) {
+            unawaited(
+              globalState.safeRun(
+                () => _installInApp(data),
+                silence: false,
+                title: currentAppLocalizations.discoverNewVersion,
+              ),
+            );
+          } else {
+            unawaited(_openReleasePage());
+          }
+        case UpdatePromptResult.mute:
+          ref
+              .read(appSettingProvider.notifier)
+              .update((state) => state.copyWith(autoCheckUpdate: false));
+        case UpdatePromptResult.dismiss:
+        case null:
+          break;
       }
     } else if (isUser) {
-      unawaited(
-        dialogs.showAlert(
-          title: currentAppLocalizations.checkUpdate,
-          message: TextSpan(text: currentAppLocalizations.checkUpdateError),
-        ),
+      dialogs.showNotifier(
+        currentAppLocalizations.checkUpdateError,
+        level: MessageLevel.success,
       );
     }
+  }
+
+  /// Auto checks offer Cancel / Don't remind / Install so "later" does not
+  /// mute reminders. Manual checks keep Cancel / Install.
+  Future<UpdatePromptResult?> _showUpdatePrompt({
+    required String tagName,
+    required String? body,
+    required bool isUser,
+  }) {
+    final inAppUpdate = supportsInAppUpdate(
+      isAndroid: system.isAndroid,
+      isLinux: system.isLinux,
+      isMacOS: system.isMacOS,
+      isWindows: system.isWindows,
+    );
+    return dialogs.showCommonDialog<UpdatePromptResult>(
+      child: Builder(
+        builder: (context) {
+          final localizations = context.appLocalizations;
+          return CommonDialog(
+            title: localizations.discoverNewVersion,
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(UpdatePromptResult.dismiss);
+                },
+                child: Text(localizations.cancel),
+              ),
+              if (!isUser)
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(UpdatePromptResult.mute);
+                  },
+                  child: Text(localizations.noLongerRemind),
+                ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(UpdatePromptResult.install);
+                },
+                child: Text(
+                  inAppUpdate
+                      ? localizations.installUpdate
+                      : localizations.goDownload,
+                ),
+              ),
+            ],
+            child: SelectableText.rich(
+              TextSpan(children: [_releaseSpan(context, tagName, body)]),
+              style: const TextStyle(overflow: TextOverflow.visible),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Future<void> _openReleasePage() {

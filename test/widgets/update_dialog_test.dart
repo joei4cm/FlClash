@@ -2,6 +2,7 @@ import 'package:fl_clash/providers/action.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/state.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -58,8 +59,8 @@ Future<ProviderContainer> pumpApp(WidgetTester tester, {Locale? locale}) async {
 
 /// The dialog blocks until the user answers, so tests must close it before
 /// awaiting the call that opened it.
-Future<void> tapCancel(WidgetTester tester) async {
-  await tester.tap(find.byType(TextButton).first);
+Future<void> tapLabeled(WidgetTester tester, String label) async {
+  await tester.tap(find.widgetWithText(TextButton, label));
   await tester.pumpAndSettle();
 }
 
@@ -88,10 +89,13 @@ void main() {
     expect(find.textContaining('Re-import backups'), findsOneWidget);
     expect(find.textContaining('Override scripts'), findsOneWidget);
     expect(find.textContaining('Breaking changes'), findsOneWidget);
+    expect(find.text('Cancel'), findsOneWidget);
+    expect(find.text("Don't remind me again"), findsOneWidget);
     expect(find.text('Install update'), findsOneWidget);
 
-    await tapCancel(tester);
+    await tapLabeled(tester, 'Cancel');
     await shown;
+    expect(container.read(appSettingProvider).autoCheckUpdate, isTrue);
   });
 
   testWidgets('localizes the group titles but not the entries', (tester) async {
@@ -107,7 +111,7 @@ void main() {
     expect(find.textContaining('新功能'), findsOneWidget);
     expect(find.textContaining('Override scripts'), findsOneWidget);
 
-    await tapCancel(tester);
+    await tapLabeled(tester, '取消');
     await shown;
   });
 
@@ -123,38 +127,53 @@ void main() {
 
     expect(find.textContaining('- Override scripts'), findsOneWidget);
 
-    await tapCancel(tester);
+    await tapLabeled(tester, 'Cancel');
     await shown;
   });
 
-  testWidgets('stops reminding when an automatic check is dismissed', (
-    tester,
-  ) async {
+  testWidgets('muting an automatic check turns off reminders', (tester) async {
     final container = await pumpApp(tester);
 
     final shown = container
         .read(commonActionProvider.notifier)
         .checkUpdateResultHandle(data: release(_bodyWith(_payload)));
     await tester.pumpAndSettle();
-    await tapCancel(tester);
+    await tapLabeled(tester, "Don't remind me again");
     await shown;
 
     expect(container.read(appSettingProvider).autoCheckUpdate, isFalse);
   });
 
-  testWidgets('a manual check keeps the setting and reports a failure', (
+  testWidgets('a manual check keeps the setting when already current', (
     tester,
   ) async {
     final container = await pumpApp(tester);
 
-    final shown = container
+    await container
         .read(commonActionProvider.notifier)
         .checkUpdateResultHandle(isUser: true);
     await tester.pumpAndSettle();
 
-    expect(find.text('Check for updates'), findsOneWidget);
+    expect(find.byType(CommonDialog), findsNothing);
+    expect(container.read(appSettingProvider).autoCheckUpdate, isTrue);
+  });
 
-    await tapCancel(tester);
+  testWidgets('a manual check omits the mute action', (tester) async {
+    final container = await pumpApp(tester);
+
+    final shown = container
+        .read(commonActionProvider.notifier)
+        .checkUpdateResultHandle(
+          data: release(_bodyWith(_payload)),
+          isUser: true,
+        );
+    await tester.pumpAndSettle();
+
+    expect(find.text("Don't remind me again"), findsNothing);
+    expect(find.text('Cancel'), findsOneWidget);
+    expect(find.text('Install update'), findsOneWidget);
+
+    await tapLabeled(tester, 'Cancel');
     await shown;
     expect(container.read(appSettingProvider).autoCheckUpdate, isTrue);
   });
