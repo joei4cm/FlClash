@@ -1,10 +1,68 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
+import 'package:dio/dio.dart';
 import 'package:fl_clash/common/app_update.dart';
 import 'package:fl_clash/common/app_update_installer.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+class _ScriptedUpdateAdapter implements HttpClientAdapter {
+  _ScriptedUpdateAdapter({
+    required this.packageBytes,
+    required this.sumsBody,
+    this.stallSums = false,
+  });
+
+  final List<int> packageBytes;
+  final String sumsBody;
+  final bool stallSums;
+  final sumsStarted = Completer<void>();
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    final name = options.uri.pathSegments.isEmpty
+        ? ''
+        : options.uri.pathSegments.last;
+    if (name == 'SHA256SUMS') {
+      if (!sumsStarted.isCompleted) {
+        sumsStarted.complete();
+      }
+      if (stallSums) {
+        await (cancelFuture ?? Completer<void>().future);
+        throw DioException(
+          requestOptions: options,
+          type: DioExceptionType.cancel,
+        );
+      }
+      return ResponseBody.fromString(
+        sumsBody,
+        200,
+        headers: {
+          Headers.contentTypeHeader: ['text/plain'],
+        },
+      );
+    }
+    return ResponseBody.fromBytes(
+      packageBytes,
+      200,
+      headers: {
+        Headers.contentTypeHeader: ['application/octet-stream'],
+        Headers.contentLengthHeader: ['${packageBytes.length}'],
+      },
+    );
+  }
+
+  @override
+  void close({bool force = false}) {}
+}
 
 void main() {
   const assets = [
@@ -292,6 +350,66 @@ void main() {
           UpdateFailure.checksum,
         ),
       ),
+    );
+  });
+
+  test('cancel during checksum download stops verify', () async {
+    final payload = utf8.encode('update-package');
+    final hash = sha256.convert(payload).toString();
+    final name = 'FlClash-0.9.8-android-arm64-v8a.apk';
+    final adapter = _ScriptedUpdateAdapter(
+      packageBytes: payload,
+      sumsBody: '$hash  $name\n',
+      stallSums: true,
+    );
+    final dio = Dio()..httpClientAdapter = adapter;
+    final workspace = await Directory.systemTemp.createTemp(
+      'flclash-update-cancel-',
+    );
+    addTearDown(() => workspace.delete(recursive: true));
+    final installer = AppUpdateInstaller(dio: dio, workspace: workspace);
+    final host = updateHost(operatingSystem: 'android', abi: Abi.androidArm64)!;
+    final phases = <UpdatePhase>[];
+    final pending = installer.install(
+      release: {
+        'tag_name': 'v0.9.8_8784e8',
+        'assets': [
+          {
+            'name': name,
+            'browser_download_url':
+                'https://github.com/joei4cm/FlClash/releases/download/v0.9.8_8784e8/$name',
+          },
+          {
+            'name': 'SHA256SUMS',
+            'browser_download_url':
+                'https://github.com/joei4cm/FlClash/releases/download/v0.9.8_8784e8/SHA256SUMS',
+          },
+        ],
+      },
+      host: host,
+      onProgress: (phase, _) => phases.add(phase),
+    );
+    await adapter.sumsStarted.future;
+    installer.cancel();
+    await expectLater(pending, throwsA(isA<UpdateCancelled>()));
+    expect(phases, contains(UpdatePhase.verify));
+    expect(phases, isNot(contains(UpdatePhase.install)));
+  });
+
+  test('a cancelled installer refuses to keep hashing', () async {
+    final file = File(
+      '${Directory.systemTemp.path}/flclash-update-hash-cancel',
+    );
+    await file.writeAsString('payload');
+    addTearDown(file.delete);
+    final installer = AppUpdateInstaller();
+    installer.cancel();
+    await expectLater(
+      installer.verifyFileHash(
+        file,
+        sha256.convert(file.readAsBytesSync()).toString(),
+      ),
+      throwsA(isA<UpdateCancelled>()),
     );
   });
 

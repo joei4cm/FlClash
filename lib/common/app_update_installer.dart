@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
@@ -83,6 +84,7 @@ class AppUpdateInstaller {
         directory,
         onProgress,
       );
+      _throwIfCancelled();
       onProgress?.call(UpdatePhase.verify, null);
       await _verify(
         file: downloaded.file,
@@ -91,6 +93,7 @@ class AppUpdateInstaller {
         assets: assets,
         assetsKnown: known,
       );
+      _throwIfCancelled();
       onProgress?.call(UpdatePhase.install, null);
       applied = downloaded.candidate.apply;
       final outcome = await _apply(
@@ -176,9 +179,14 @@ class AppUpdateInstaller {
       options: Options(
         responseType: ResponseType.plain,
         followRedirects: true,
+        // Keep verify shorter than the package download; a hung sums fetch
+        // previously left the progress dialog on "Checking the download".
+        receiveTimeout: const Duration(minutes: 2),
+        sendTimeout: const Duration(seconds: 30),
         validateStatus: (status) => status != null && status < 500,
       ),
     );
+    _throwIfCancelled();
     if (response.statusCode == 404) {
       if (assetsKnown) {
         throw const UpdateFailed(UpdateFailure.checksum);
@@ -204,9 +212,19 @@ class AppUpdateInstaller {
 
   @visibleForTesting
   Future<void> verifyFileHash(File file, String expected) async {
-    final digest = await sha256.bind(file.openRead()).first;
-    if (digest.toString() != expected) {
+    _throwIfCancelled();
+    // Hash off the UI isolate so a large installer does not freeze the
+    // progress dialog on the verify step.
+    final digest = await Isolate.run(() => _sha256File(file.path));
+    _throwIfCancelled();
+    if (digest != expected) {
       throw const UpdateFailed(UpdateFailure.checksum);
+    }
+  }
+
+  void _throwIfCancelled() {
+    if (_cancelToken.isCancelled) {
+      throw const UpdateCancelled();
     }
   }
 
@@ -453,6 +471,11 @@ class AppUpdateInstaller {
   Future<ProcessResult> _run(String executable, List<String> arguments) {
     return runProcess(executable, arguments);
   }
+}
+
+Future<String> _sha256File(String path) async {
+  final digest = await sha256.bind(File(path).openRead()).first;
+  return digest.toString();
 }
 
 Future<void> startDetachedProcess(String executable, List<String> arguments) {

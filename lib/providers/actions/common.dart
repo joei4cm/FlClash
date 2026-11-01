@@ -275,9 +275,16 @@ class CommonAction extends _$CommonAction {
       portableDirectory: () => appPath.downloadDirPath,
     );
     var cancelled = false;
+    var dialogOpen = true;
     BuildContext? dialogContext;
     final shown = Completer<void>();
+    // One pop only: the cancel button used to pop and UpdateCancelled then
+    // popped again, which removed the page under the dialog (black screen).
     void closeDialog() {
+      if (!dialogOpen) {
+        return;
+      }
+      dialogOpen = false;
       final context = dialogContext;
       if (context != null && context.mounted) {
         Navigator.of(context).pop();
@@ -305,7 +312,7 @@ class CommonAction extends _$CommonAction {
                   return ValueListenableBuilder<double?>(
                     valueListenable: progress,
                     builder: (context, fraction, _) {
-                      final canCancel = currentPhase == UpdatePhase.download;
+                      final canCancel = currentPhase != UpdatePhase.install;
                       return CommonDialog(
                         title: titleText,
                         actions: [
@@ -314,7 +321,7 @@ class CommonAction extends _$CommonAction {
                               onPressed: () {
                                 cancelled = true;
                                 installer.cancel();
-                                Navigator.of(context).pop();
+                                closeDialog();
                               },
                               child: Text(context.appLocalizations.cancel),
                             ),
