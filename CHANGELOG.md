@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.13 (2026-11-03)
+
+**Bug Fixes**
+
+- **security** Require update checksums, sanitize package names, and cap outbound member totals (5e565b1)
+
 ## v0.9.12 (2026-11-01)
 
 **Bug Fixes**

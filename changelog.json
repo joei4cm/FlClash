@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.13",
+      "tag": "v0.9.13",
+      "date": "2026-11-03",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "5e565b1",
+              "scope": "security",
+              "text": "Require update checksums, sanitize package names, and cap outbound member totals"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.12",
       "tag": "v0.9.12",
       "date": "2026-11-01",
