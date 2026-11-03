@@ -64,6 +64,43 @@ class _ScriptedUpdateAdapter implements HttpClientAdapter {
   void close({bool force = false}) {}
 }
 
+class _MissingSumsAdapter implements HttpClientAdapter {
+  _MissingSumsAdapter({required this.packageBytes});
+
+  final List<int> packageBytes;
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    final name = options.uri.pathSegments.isEmpty
+        ? ''
+        : options.uri.pathSegments.last;
+    if (name == 'SHA256SUMS') {
+      return ResponseBody.fromString(
+        '',
+        404,
+        headers: {
+          Headers.contentTypeHeader: ['text/plain'],
+        },
+      );
+    }
+    return ResponseBody.fromBytes(
+      packageBytes,
+      200,
+      headers: {
+        Headers.contentTypeHeader: ['application/octet-stream'],
+        Headers.contentLengthHeader: ['${packageBytes.length}'],
+      },
+    );
+  }
+
+  @override
+  void close({bool force = false}) {}
+}
+
 void main() {
   const assets = [
     'FlClash-0.9.8-android-arm64-v8a.apk',
@@ -252,6 +289,37 @@ void main() {
     expect(parseSha256Sums(body)['FlClash-0.9.8-linux-amd64.deb'], hash);
   });
 
+  test('rejects release asset names that could escape the download directory', () {
+    expect(isSafeReleaseAssetName('FlClash-0.9.8-android-arm64-v8a.apk'), isTrue);
+    expect(isSafeReleaseAssetName('SHA256SUMS'), isTrue);
+    expect(
+      isSafeReleaseAssetName('FlClash-../../../tmp/pwned-android-arm64-v8a.apk'),
+      isFalse,
+    );
+    expect(isSafeReleaseAssetName('FlClash-evil/android-arm64-v8a.apk'), isFalse);
+    final release = <String, dynamic>{
+      'assets': [
+        {
+          'name': 'FlClash-../escape-android-arm64-v8a.apk',
+          'browser_download_url':
+              'https://github.com/joei4cm/FlClash/releases/download/v0.9.8_8784e8/FlClash-0.9.8-android-arm64-v8a.apk',
+        },
+      ],
+    };
+    expect(releaseAssetsFrom(release), isEmpty);
+  });
+
+  test('checksum lookup still synthesizes SHA256SUMS when the API omitted it', () {
+    final asset = checksumAsset(
+      tag: 'v0.9.8_8784e8',
+      assets: const [],
+      assetsKnown: true,
+    );
+    expect(asset, isNotNull);
+    expect(asset!.name, 'SHA256SUMS');
+    expect(asset.downloadUrl, contains('/SHA256SUMS'));
+  });
+
   test('finds the macOS bundle and decides when an admin copy is required', () {
     expect(
       macOSAppBundle('/Applications/FlClash.app/Contents/MacOS/FlClash'),
@@ -261,6 +329,10 @@ void main() {
     expect(
       chooseMountedApp(['/mnt/Applications', '/mnt/FlClash.app']),
       '/mnt/FlClash.app',
+    );
+    expect(
+      chooseMountedApp(['/mnt/Applications', '/mnt/Other.app']),
+      isNull,
     );
     expect(
       macUpdateNeedsAdmin(
@@ -362,7 +434,9 @@ void main() {
       sumsBody: '$hash  $name\n',
       stallSums: true,
     );
-    final dio = Dio()..httpClientAdapter = adapter;
+    final dio = Dio(
+      BaseOptions(followRedirects: false, maxRedirects: 0),
+    )..httpClientAdapter = adapter;
     final workspace = await Directory.systemTemp.createTemp(
       'flclash-update-cancel-',
     );
@@ -394,6 +468,42 @@ void main() {
     await expectLater(pending, throwsA(isA<UpdateCancelled>()));
     expect(phases, contains(UpdatePhase.verify));
     expect(phases, isNot(contains(UpdatePhase.install)));
+  });
+
+  test('a missing SHA256SUMS fails closed before install', () async {
+    final payload = utf8.encode('update-package');
+    final name = 'FlClash-0.9.8-android-arm64-v8a.apk';
+    final adapter = _MissingSumsAdapter(packageBytes: payload);
+    final dio = Dio(
+      BaseOptions(followRedirects: false, maxRedirects: 0),
+    )..httpClientAdapter = adapter;
+    final workspace = await Directory.systemTemp.createTemp(
+      'flclash-update-nosums-',
+    );
+    addTearDown(() => workspace.delete(recursive: true));
+    final installer = AppUpdateInstaller(dio: dio, workspace: workspace);
+    await expectLater(
+      installer.install(
+        release: {
+          'tag_name': 'v0.9.8_8784e8',
+          'assets': [
+            {
+              'name': name,
+              'browser_download_url':
+                  'https://github.com/joei4cm/FlClash/releases/download/v0.9.8_8784e8/$name',
+            },
+          ],
+        },
+        host: updateHost(operatingSystem: 'android', abi: Abi.androidArm64)!,
+      ),
+      throwsA(
+        isA<UpdateFailed>().having(
+          (error) => error.failure,
+          'failure',
+          UpdateFailure.checksum,
+        ),
+      ),
+    );
   });
 
   test('a cancelled installer refuses to keep hashing', () async {

@@ -49,11 +49,14 @@ func handleGetProfileBase(path string) (*ProfileBase, error) {
 }
 
 // Caps on the outbound summary so a hostile or huge subscription cannot force
-// unbounded IPC / Dart heap through getProfileOutbounds.
+// unbounded IPC / Dart heap through getProfileOutbounds. Per-group and
+// per-list limits alone still allow ~groups×members product growth, so
+// maxProfileOutboundMembersTotal bounds the summed member slots.
 const (
-	maxProfileOutboundProxies = 8000
-	maxProfileOutboundRules   = 4000
-	maxProfileGroupMembers    = 2000
+	maxProfileOutboundProxies      = 8000
+	maxProfileOutboundRules        = 4000
+	maxProfileGroupMembers         = 2000
+	maxProfileOutboundMembersTotal = 50000
 )
 
 func handleGetProfileOutbounds(path string) (*ProfileOutbounds, error) {
@@ -91,14 +94,24 @@ func groupOutboundsOf(mappings []map[string]any) []ProfileOutbound {
 		mappings = mappings[:maxProfileOutboundProxies]
 	}
 	outbounds := make([]ProfileOutbound, 0, len(mappings))
+	remaining := maxProfileOutboundMembersTotal
 	for _, mapping := range mappings {
 		name, _ := mapping["name"].(string)
 		kind, _ := mapping["type"].(string)
+		limit := maxProfileGroupMembers
+		if remaining < limit {
+			limit = remaining
+		}
+		members := cappedStringList(mapping["proxies"], limit)
+		remaining -= len(members)
 		outbounds = append(outbounds, ProfileOutbound{
 			Name:    name,
 			Type:    kind,
-			Proxies: cappedStringList(mapping["proxies"], maxProfileGroupMembers),
+			Proxies: members,
 		})
+		if remaining <= 0 {
+			break
+		}
 	}
 	return outbounds
 }

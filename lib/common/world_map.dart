@@ -7,15 +7,27 @@ import 'package:flutter/services.dart';
 /// Natural Earth 1:50m admin-0 countries, public domain, packed by
 /// `tool/generate_world_map.py`. Coordinates are hundredths of a degree.
 class WorldMapData {
-  const WorldMapData(this.countries);
+  WorldMapData(this.countries);
 
   static const assetPath = 'assets/data/world_countries.wmap';
 
+  /// Unit square the shared [unitPaths] are built in; painters scale to the
+  /// viewport so card and sheet reuse one Path set (~0.9 MB) instead of two.
+  static const unitSize = Size(1, 1);
+
   final List<WorldCountry> countries;
+  List<Path>? _unitPaths;
 
   static Future<WorldMapData>? _loading;
 
   static Future<WorldMapData> load() => _loading ??= _read();
+
+  /// Country outlines in [unitSize] space. Built once per decoded map.
+  List<Path> get unitPaths {
+    return _unitPaths ??= [
+      for (final country in countries) country.path(unitSize),
+    ];
+  }
 
   static Future<WorldMapData> _read() async {
     final data = await rootBundle.load(assetPath);

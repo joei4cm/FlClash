@@ -90,6 +90,25 @@ bool isGitHubReleaseDownload(String url) {
   return uri.path.startsWith('/$repository/releases/download/');
 }
 
+/// Hosts GitHub may redirect release downloads to. Only https is accepted.
+bool isAllowedUpdateDownloadHost(String host) {
+  return host == 'github.com' ||
+      host == 'objects.githubusercontent.com' ||
+      host == 'release-assets.githubusercontent.com' ||
+      host.endsWith('.githubusercontent.com');
+}
+
+/// Asset names become local paths; reject separators and anything outside a
+/// FlClash release basename so a malicious `name` cannot escape the workspace.
+final _safeReleaseAssetName = RegExp(r'^FlClash-[A-Za-z0-9._-]+$');
+
+bool isSafeReleaseAssetName(String name) {
+  if (name == 'SHA256SUMS') {
+    return true;
+  }
+  return _safeReleaseAssetName.hasMatch(name);
+}
+
 String? releaseFileVersion(String tag) {
   return RegExp(r'^v?(\d+\.\d+\.\d+)').firstMatch(tag.trim())?.group(1);
 }
@@ -106,7 +125,10 @@ List<ReleaseAsset> releaseAssetsFrom(Map<String, dynamic> release) {
     }
     final name = item['name'];
     final url = item['browser_download_url'];
-    if (name is! String || url is! String || !isGitHubReleaseDownload(url)) {
+    if (name is! String ||
+        url is! String ||
+        !isSafeReleaseAssetName(name) ||
+        !isGitHubReleaseDownload(url)) {
       continue;
     }
     assets.add(ReleaseAsset(name: name, downloadUrl: url));
@@ -261,9 +283,8 @@ ReleaseAsset? checksumAsset({
       return asset;
     }
   }
-  if (assetsKnown) {
-    return null;
-  }
+  // Always synthesize the sums URL when the API omitted it so verify can
+  // fail closed on a missing digest instead of installing unchecked.
   return ReleaseAsset(
     name: 'SHA256SUMS',
     downloadUrl: releaseDownloadUrl(tag, 'SHA256SUMS'),
@@ -313,19 +334,12 @@ String? macOSAppBundle(String executable) {
 }
 
 String? chooseMountedApp(Iterable<String> paths) {
-  final apps = [
-    for (final path in paths)
-      if (path.endsWith('.app')) path,
-  ];
-  for (final path in apps) {
+  for (final path in paths) {
     if (path.endsWith('/FlClash.app') || path == 'FlClash.app') {
       return path;
     }
   }
-  if (apps.isEmpty) {
-    return null;
-  }
-  return apps.first;
+  return null;
 }
 
 bool macUpdateNeedsAdmin({
@@ -502,7 +516,9 @@ List<String> packageInstallCommand(UpdateApply apply, String path) {
 
 ReleaseAsset? _listedAsset(List<ReleaseAsset> assets, String suffix) {
   for (final asset in assets) {
-    if (asset.name.startsWith('FlClash-') && asset.name.endsWith(suffix)) {
+    if (isSafeReleaseAssetName(asset.name) &&
+        asset.name.startsWith('FlClash-') &&
+        asset.name.endsWith(suffix)) {
       return asset;
     }
   }

@@ -4,8 +4,9 @@ import 'dart:isolate';
 
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:fl_clash/common/app_update.dart';
-import 'package:fl_clash/common/request.dart';
+import 'package:fl_clash/common/constant.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -30,7 +31,7 @@ class AppUpdateInstaller {
     this.appImagePath,
     this.executablePath,
     this.workspace,
-  }) : dio = dio ?? request.dio,
+  }) : dio = dio ?? createUpdateDio(),
        runProcess = runProcess ?? Process.run,
        startDetached = startDetached ?? startDetachedProcess;
 
@@ -125,24 +126,22 @@ class AppUpdateInstaller {
     void Function(UpdatePhase phase, double? fraction)? onProgress,
   ) async {
     for (final candidate in candidates) {
-      final file = File(p.join(directory.path, candidate.asset.name));
+      final name = candidate.asset.name;
+      if (!isSafeReleaseAssetName(name)) {
+        continue;
+      }
+      final file = File(p.join(directory.path, p.basename(name)));
+      final resolved = p.normalize(file.absolute.path);
+      if (!p.isWithin(directory.absolute.path, resolved) &&
+          resolved != p.normalize(directory.absolute.path)) {
+        continue;
+      }
       try {
         onProgress?.call(UpdatePhase.download, null);
-        await dio.download(
+        await _downloadToFile(
           candidate.asset.downloadUrl,
-          file.path,
-          cancelToken: _cancelToken,
-          options: Options(
-            followRedirects: true,
-            receiveTimeout: const Duration(minutes: 15),
-            validateStatus: (status) => status != null && status < 400,
-          ),
-          onReceiveProgress: (received, total) {
-            onProgress?.call(
-              UpdatePhase.download,
-              total > 0 ? received / total : null,
-            );
-          },
+          file,
+          onProgress: onProgress,
         );
         return (candidate: candidate, file: file);
       } on DioException catch (error) {
@@ -158,6 +157,42 @@ class AppUpdateInstaller {
     throw const UpdateFailed(UpdateFailure.missingPackage);
   }
 
+  Future<void> _downloadToFile(
+    String url,
+    File file, {
+    void Function(UpdatePhase phase, double? fraction)? onProgress,
+  }) async {
+    final response = await _getAllowed(
+      url,
+      options: Options(
+        responseType: ResponseType.stream,
+        receiveTimeout: const Duration(minutes: 15),
+        validateStatus: (status) => status != null && status < 400,
+      ),
+    );
+    _throwIfCancelled();
+    final body = response.data;
+    if (body is! ResponseBody) {
+      throw const UpdateFailed(UpdateFailure.install);
+    }
+    final sink = file.openWrite();
+    try {
+      var received = 0;
+      final total = contentLengthOf(response.headers);
+      await for (final chunk in body.stream) {
+        _throwIfCancelled();
+        sink.add(chunk);
+        received += chunk.length;
+        onProgress?.call(
+          UpdatePhase.download,
+          total != null && total > 0 ? received / total : null,
+        );
+      }
+    } finally {
+      await sink.close();
+    }
+  }
+
   Future<void> _verify({
     required File file,
     required String name,
@@ -171,14 +206,12 @@ class AppUpdateInstaller {
       assetsKnown: assetsKnown,
     );
     if (checksum == null) {
-      return;
+      throw const UpdateFailed(UpdateFailure.checksum);
     }
-    final response = await dio.get<String>(
+    final response = await _getAllowed(
       checksum.downloadUrl,
-      cancelToken: _cancelToken,
       options: Options(
         responseType: ResponseType.plain,
-        followRedirects: true,
         // Keep verify shorter than the package download; a hung sums fetch
         // previously left the progress dialog on "Checking the download".
         receiveTimeout: const Duration(minutes: 2),
@@ -188,17 +221,50 @@ class AppUpdateInstaller {
     );
     _throwIfCancelled();
     if (response.statusCode == 404) {
-      if (assetsKnown) {
-        throw const UpdateFailed(UpdateFailure.checksum);
-      }
-      return;
+      throw const UpdateFailed(UpdateFailure.checksum);
     }
-    final sums = parseSha256Sums(response.data ?? '');
+    final sums = parseSha256Sums('${response.data ?? ''}');
     final expected = sums[name];
     if (expected == null) {
       throw const UpdateFailed(UpdateFailure.checksum);
     }
     await verifyFileHash(file, expected);
+  }
+
+  /// Follow redirects only onto the GitHub download CDN allowlist.
+  Future<Response<T>> _getAllowed<T>(
+    String url, {
+    required Options options,
+  }) async {
+    var current = url;
+    for (var hop = 0; hop < 8; hop++) {
+      _throwIfCancelled();
+      final uri = Uri.tryParse(current);
+      if (uri == null ||
+          uri.scheme != 'https' ||
+          !isAllowedUpdateDownloadHost(uri.host)) {
+        throw const UpdateFailed(UpdateFailure.install);
+      }
+      if (hop == 0 && !isGitHubReleaseDownload(current)) {
+        throw const UpdateFailed(UpdateFailure.install);
+      }
+      final response = await dio.getUri<T>(
+        uri,
+        cancelToken: _cancelToken,
+        options: options.copyWith(followRedirects: false, maxRedirects: 0),
+      );
+      final status = response.statusCode ?? 0;
+      if (status >= 300 && status < 400) {
+        final location = response.headers.value('location');
+        if (location == null || location.isEmpty) {
+          throw const UpdateFailed(UpdateFailure.install);
+        }
+        current = uri.resolve(location).toString();
+        continue;
+      }
+      return response;
+    }
+    throw const UpdateFailed(UpdateFailure.install);
   }
 
   @visibleForTesting
@@ -233,6 +299,7 @@ class AppUpdateInstaller {
     required UpdateApply apply,
     required Directory directory,
   }) async {
+    _throwIfCancelled();
     switch (apply) {
       case UpdateApply.apk:
         final install = installApk;
@@ -280,10 +347,9 @@ class AppUpdateInstaller {
     Directory directory,
     UpdateApply apply,
   ) async {
+    _throwIfCancelled();
     final installDir = p.dirname(_executable);
-    final script = File(
-      p.join(Directory.systemTemp.path, 'flclash-update-$pid.ps1'),
-    );
+    final script = File(p.join(directory.path, 'flclash-update.ps1'));
     await script.writeAsString(windowsUpdateScript());
     await startDetached(_powerShell, [
       '-NoProfile',
@@ -345,6 +411,7 @@ class AppUpdateInstaller {
   }
 
   Future<void> _scheduleLinuxRelaunch(String target) async {
+    _throwIfCancelled();
     final lock = lockFilePath;
     if (lock == null) {
       throw const UpdateFailed(UpdateFailure.install);
@@ -361,6 +428,7 @@ class AppUpdateInstaller {
   }
 
   Future<void> _scheduleMacSwap(File dmg, Directory directory) async {
+    _throwIfCancelled();
     final bundle = macOSAppBundle(_executable);
     if (bundle == null) {
       throw const UpdateFailed(UpdateFailure.install);
@@ -406,6 +474,7 @@ class AppUpdateInstaller {
       if (chmod.exitCode != 0) {
         throw UpdateFailed(UpdateFailure.install, chmod.stderr.toString());
       }
+      _throwIfCancelled();
       await startDetached('/bin/sh', [script.path, '$pid', bundle, staged]);
     } finally {
       await _run('hdiutil', ['detach', mount.path]);
@@ -471,6 +540,33 @@ class AppUpdateInstaller {
   Future<ProcessResult> _run(String executable, List<String> arguments) {
     return runProcess(executable, arguments);
   }
+}
+
+/// Update traffic never inherits the app-wide optional TLS bypass or the
+/// mixed-port proxy — a disabled cert check would otherwise MITM installers.
+Dio createUpdateDio({String? userAgent}) {
+  final dio = Dio(
+    BaseOptions(
+      headers: {'User-Agent': userAgent ?? browserUa},
+      followRedirects: false,
+      maxRedirects: 0,
+    ),
+  );
+  dio.httpClientAdapter = IOHttpClientAdapter(
+    createHttpClient: () {
+      final client = HttpClient();
+      client.badCertificateCallback = (_, _, _) => false;
+      client.findProxy = (_) => 'DIRECT';
+      return client;
+    },
+  );
+  return dio;
+}
+
+@visibleForTesting
+int? contentLengthOf(Headers headers) {
+  final raw = headers.value(Headers.contentLengthHeader);
+  return raw == null ? null : int.tryParse(raw);
 }
 
 Future<String> _sha256File(String path) async {

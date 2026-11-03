@@ -46,8 +46,6 @@ class _OutboundMapViewState extends State<OutboundMapView>
   var _gestureScale = _minScale;
   var _gestureTranslation = Offset.zero;
   var _gestureFocal = Offset.zero;
-  Size? _pathSize;
-  List<Path>? _countryPaths;
   Offset _doubleTapFocal = Offset.zero;
 
   @override
@@ -79,16 +77,6 @@ class _OutboundMapViewState extends State<OutboundMapView>
   void dispose() {
     _pulse.dispose();
     super.dispose();
-  }
-
-  List<Path> _paths(Size size, WorldMapData map) {
-    if (_countryPaths != null && _pathSize == size) {
-      return _countryPaths!;
-    }
-    _pathSize = size;
-    return _countryPaths = [
-      for (final country in map.countries) country.path(size),
-    ];
   }
 
   void _zoomAt(Offset focal, double nextScale, Size viewport) {
@@ -152,7 +140,6 @@ class _OutboundMapViewState extends State<OutboundMapView>
           final (scale, translation) = _view(viewport);
           final canvas = _MapCanvas(
             map: map,
-            paths: map == null ? const [] : _paths(viewport, map),
             latitude: latitude,
             longitude: longitude,
             scale: scale,
@@ -214,7 +201,6 @@ class _OutboundMapViewState extends State<OutboundMapView>
 class _MapCanvas extends StatelessWidget {
   const _MapCanvas({
     required this.map,
-    required this.paths,
     required this.latitude,
     required this.longitude,
     required this.scale,
@@ -232,7 +218,6 @@ class _MapCanvas extends StatelessWidget {
   });
 
   final WorldMapData? map;
-  final List<Path> paths;
   final double? latitude;
   final double? longitude;
   final double scale;
@@ -261,7 +246,7 @@ class _MapCanvas extends StatelessWidget {
             child: CustomPaint(
               painter: _CountryMapPainter(
                 countries: map.countries,
-                paths: paths,
+                paths: map.unitPaths,
                 scale: scale,
                 translation: translation,
                 iso: iso,
@@ -326,11 +311,14 @@ class _CountryMapPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawRect(Offset.zero & size, Paint()..color = ocean);
+    // Paths live in the unit square; scale them to the viewport then zoom.
+    final sx = scale * size.width;
+    final sy = scale * size.height;
     canvas
       ..save()
       ..translate(translation.dx, translation.dy)
-      ..scale(scale);
-    _paintGrid(canvas, size);
+      ..scale(sx, sy);
+    _paintGrid(canvas);
     final landPaint = Paint()..color = land;
     final highlightPaint = Paint()..color = highlight;
     for (var index = 0; index < paths.length; index++) {
@@ -344,24 +332,24 @@ class _CountryMapPainter extends CustomPainter {
     final borderPaint = Paint()
       ..color = border
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.6 / scale;
+      ..strokeWidth = 0.6 / sx;
     for (final path in paths) {
       canvas.drawPath(path, borderPaint);
     }
     canvas.restore();
   }
 
-  void _paintGrid(Canvas canvas, Size size) {
+  void _paintGrid(Canvas canvas) {
     final paint = Paint()
       ..color = grid
-      ..strokeWidth = 1 / scale;
+      ..strokeWidth = 1 / (scale == 0 ? 1 : scale * 360);
     for (var longitude = -150.0; longitude <= 150; longitude += 30) {
-      final x = outboundLatLonToOffset(0, longitude, size).dx;
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+      final x = (longitude + 180) / 360;
+      canvas.drawLine(Offset(x, 0), Offset(x, 1), paint);
     }
     for (var latitude = -60.0; latitude <= 60; latitude += 30) {
-      final y = outboundLatLonToOffset(latitude, 0, size).dy;
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+      final y = (90 - latitude) / 180;
+      canvas.drawLine(Offset(0, y), Offset(1, y), paint);
     }
   }
 

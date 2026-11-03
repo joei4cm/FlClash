@@ -165,6 +165,39 @@ func TestHandleGetProfileOutboundsCapsProxiesRulesAndMembers(t *testing.T) {
 	}
 }
 
+func TestHandleGetProfileOutboundsCapsTotalGroupMembers(t *testing.T) {
+	groups := (maxProfileOutboundMembersTotal / maxProfileGroupMembers) + 3
+	var b strings.Builder
+	b.WriteString("proxies:\n  - {name: p0, type: ss, server: 1.1.1.1, port: 1}\n")
+	b.WriteString("proxy-groups:\n")
+	for g := 0; g < groups; g++ {
+		fmt.Fprintf(&b, "  - name: g%d\n    type: select\n    proxies:\n", g)
+		for i := 0; i < maxProfileGroupMembers; i++ {
+			fmt.Fprintf(&b, "      - m%d-%d\n", g, i)
+		}
+	}
+	path := writeBaseProfile(t, b.String())
+
+	outbounds, err := handleGetProfileOutbounds(path)
+
+	if err != nil {
+		t.Fatalf("handleGetProfileOutbounds = %v", err)
+	}
+	total := 0
+	for _, group := range outbounds.ProxyGroups {
+		total += len(group.Proxies)
+	}
+	if total > maxProfileOutboundMembersTotal {
+		t.Errorf("total members = %d, want <= %d", total, maxProfileOutboundMembersTotal)
+	}
+	if total != maxProfileOutboundMembersTotal {
+		t.Errorf("total members = %d, want the product cap %d", total, maxProfileOutboundMembersTotal)
+	}
+	if got := len(outbounds.ProxyGroups); got > groups {
+		t.Errorf("groups = %d, want at most %d", got, groups)
+	}
+}
+
 func TestHandleGetProfileOutboundsDropsRulesDiscoveryDoesNotRead(t *testing.T) {
 	path := writeBaseProfile(t, `proxies:
   - {name: a, type: ss, server: 1.1.1.1, port: 1}
