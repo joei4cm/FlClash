@@ -13,11 +13,10 @@ import 'package:fl_clash/views/hotkey.dart';
 import 'package:fl_clash/views/strategy_lanes.dart';
 import 'package:fl_clash/views/tailscale.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/advanced.dart';
-import 'config/custom_resources.dart';
 import 'developer.dart';
 import 'disclaimer.dart';
 import 'theme.dart';
@@ -58,24 +57,17 @@ class _ToolViewState extends ConsumerState<ToolsView> {
   }
 
   Widget _getSettingList() {
-    final appLocalizations = context.appLocalizations;
     return generateSection(
-      title: appLocalizations.settings,
+      title: context.appLocalizations.settings,
       items: [
         const _LocaleItem(),
         const _ThemeItem(),
-        const _BackupItem(),
         if (system.isDesktop) const _HotkeyItem(),
         if (system.isAndroid) const _AccessItem(),
+        const _BackupItem(),
         const _AdvancedConfigItem(),
-        const _CustomResourcesItem(),
         const _GeneralItem(),
       ],
-      footer: [
-        if (system.isAndroid) appLocalizations.accessControlDesc,
-        appLocalizations.advancedConfigDesc,
-        appLocalizations.customProfileResourcesDesc,
-      ].join('\n'),
     );
   }
 
@@ -100,10 +92,10 @@ class _ToolViewState extends ConsumerState<ToolsView> {
       _getSettingList(),
       _getOtherList(developerMode),
     ];
-    return CommonScaffold(
+    return Scaffold(
       title: context.appLocalizations.tools,
       body: Builder(
-        builder: (context) => ListView.builder(
+        builder: (context) => PrismListView(
           key: toolsStoreKey,
           itemCount: items.length,
           itemBuilder: (_, index) => items[index],
@@ -222,19 +214,6 @@ class _AdvancedConfigItem extends StatelessWidget {
       leading: const GlyphIcon(AppGlyphs.wrench),
       title: Text(context.appLocalizations.advancedConfig),
       widget: const AdvancedConfigView(),
-    );
-  }
-}
-
-class _CustomResourcesItem extends StatelessWidget {
-  const _CustomResourcesItem();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListItem.open(
-      leading: const GlyphIcon(AppGlyphs.customize),
-      title: Text(context.appLocalizations.customProfileResources),
-      widget: const CustomResourcesView(),
     );
   }
 }

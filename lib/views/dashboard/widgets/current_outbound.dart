@@ -15,11 +15,12 @@ import 'package:fl_clash/views/dashboard/layout.dart';
 import 'package:fl_clash/views/dashboard/probe_start_hold.dart';
 import 'package:fl_clash/views/dashboard/style.dart';
 import 'package:fl_clash/widgets/widgets.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_new_shapes/material_new_shapes.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:prism_ui/shapes/shapes.dart';
 
 import 'card.dart';
+import 'package:prism_ui/prism_ui.dart';
 
 const _builtinOutbounds = {'DIRECT', 'REJECT', 'REJECT-DROP', 'PASS'};
 
@@ -71,6 +72,8 @@ class _CurrentOutboundCardState extends ConsumerState<CurrentOutboundCard>
     );
     final isStart = ref.watch(isStartProvider);
     final suspended = isStart && ref.watch(suspendProvider);
+    final rootAccess =
+        mitmFeature && (ref.watch(rootAccessProvider).value ?? false);
     final entry = ref.watch(
       outboundIpProbeProvider.select((state) => state.entryOf(routedOutbound)),
     );
@@ -93,9 +96,22 @@ class _CurrentOutboundCardState extends ConsumerState<CurrentOutboundCard>
         : isStart
         ? (appLocalizations.running, DashboardChipTone.ok)
         : (appLocalizations.notRunning, DashboardChipTone.idle);
-    return DashboardCard(
-      padding: EdgeInsets.zero,
-      semanticLabel: appLocalizations.status,
+    return TweenAnimationBuilder<double>(
+      tween: Tween(end: rootAccess ? 1 : 0),
+      duration: context.motionDuration(commonDuration),
+      builder: (context, root, child) => DashboardCard(
+        padding: EdgeInsets.zero,
+        semanticLabel: rootAccess
+            ? '${appLocalizations.status} ${appLocalizations.root}'
+            : appLocalizations.status,
+        side: root == 0
+            ? BorderSide.none
+            : BorderSide(
+                color: context.colorScheme.primary.withValues(alpha: root),
+                width: 1.5,
+              ),
+        child: child!,
+      ),
       child: Stack(
         children: [
           Positioned.fill(
@@ -312,12 +328,10 @@ class _ExitRow extends StatelessWidget {
             child: FocusRing(
               shape: AppShape.xs,
               standsOff: true,
-              child: InkWell(
+              child: PressRegion(
                 onTap: () => showIpQualitySheet(context, ip: info.ip),
-                customBorder: AppShape.xs,
-                hoverColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
+                shape: AppShape.xs,
+                overlay: PressRegion.focusOverlay,
                 child: _IpText(ip: info.ip, style: style),
               ),
             ),
@@ -547,45 +561,45 @@ class _CountryBadgeState extends State<_CountryBadge>
         button: true,
         enabled: enabled,
         label: tooltip,
-        child: InkResponse(
-          onTap: !enabled
-              ? null
-              : hasCode && openLocation != null
-              ? openLocation
-              : widget.onRefresh,
+        child: GestureDetector(
           onLongPress: enabled ? widget.onRefresh : null,
-          onHover: (value) => setState(() => _hovered = value),
-          onFocusChange: (value) => setState(() => _focused = value),
-          overlayColor: const WidgetStatePropertyAll(Colors.transparent),
-          splashFactory: NoSplash.splashFactory,
-          child: ElasticPress(
-            enabled: enabled,
-            child: AnimatedBuilder(
-              animation: _turns,
-              builder: (_, child) => ShapeBadge(
-                shape: MaterialShapes.clover4Leaf,
-                color: color,
-                size: size,
-                rotation: _turns.value * 2 * math.pi,
-                ring: _focused ? focusRingSide(colorScheme) : null,
-                child: child,
+          child: PressRegion(
+            onTap: !enabled
+                ? null
+                : hasCode && openLocation != null
+                ? openLocation
+                : widget.onRefresh,
+            onHover: (value) => setState(() => _hovered = value),
+            onFocusChange: (value) => setState(() => _focused = value),
+            child: ElasticPress(
+              enabled: enabled,
+              child: AnimatedBuilder(
+                animation: _turns,
+                builder: (_, child) => ShapeBadge(
+                  shape: MaterialShapes.clover4Leaf,
+                  color: color,
+                  size: size,
+                  rotation: _turns.value * 2 * math.pi,
+                  ring: _focused ? focusRingSide(colorScheme) : null,
+                  child: child,
+                ),
+                child: code == null || code.isEmpty
+                    ? GlyphIcon(
+                        AppGlyphs.proxies,
+                        size: size * 0.42,
+                        color: foreground,
+                      )
+                    : Text(
+                        code.toUpperCase(),
+                        maxLines: 1,
+                        style: AppTextStyle.footnote
+                            .of(context, emphasized: true)
+                            .copyWith(
+                              color: foreground,
+                              letterSpacing: 0.04 * AppTextStyle.footnote.size,
+                            ),
+                      ),
               ),
-              child: code == null || code.isEmpty
-                  ? GlyphIcon(
-                      AppGlyphs.proxies,
-                      size: size * 0.42,
-                      color: foreground,
-                    )
-                  : Text(
-                      code.toUpperCase(),
-                      maxLines: 1,
-                      style: AppTextStyle.footnote
-                          .of(context, emphasized: true)
-                          .copyWith(
-                            color: foreground,
-                            letterSpacing: 0.04 * AppTextStyle.footnote.size,
-                          ),
-                    ),
             ),
           ),
         ),
@@ -704,11 +718,7 @@ const _stateDuration = Duration(milliseconds: 150);
 
 final _startMorph = Morph(MaterialShapes.circle, MaterialShapes.cookie9Sided);
 
-Path _morphPath(double progress) => _startMorph.toPath(
-  progress: progress,
-  rotationPivotX: 0.5,
-  rotationPivotY: 0.5,
-);
+Path _morphPath(double progress) => _startMorph.toPath(progress: progress);
 
 double _morphTurn(double progress) => progress * 2 * math.pi / 9;
 
@@ -748,7 +758,7 @@ class _StartToggleState extends ConsumerState<_StartToggle>
   var _focused = false;
 
   /// The M3 state layer, painted inside the shape: the card's decoration
-  /// covers the button, so ink on the card's Material would never show.
+  /// covers the button, so ink on the card would never show.
   double get _overlay => !widget.enabled
       ? 0
       : _focused
@@ -799,13 +809,11 @@ class _StartToggleState extends ConsumerState<_StartToggle>
         button: true,
         enabled: enabled,
         label: tooltip,
-        child: InkResponse(
+        child: PressRegion(
           onTap: enabled ? _toggle : null,
           onHover: (value) => setState(() => _hovered = value),
-          onHighlightChanged: (value) => setState(() => _pressed = value),
+          onPressedChanged: (value) => setState(() => _pressed = value),
           onFocusChange: (value) => setState(() => _focused = value),
-          overlayColor: const WidgetStatePropertyAll(Colors.transparent),
-          splashFactory: NoSplash.splashFactory,
           child: ElasticPress(
             enabled: enabled,
             child: TweenAnimationBuilder<double>(

@@ -1,62 +1,26 @@
 # Changelog
 
-## v0.9.13 (2026-11-03)
+## v0.9.14 (2026-11-12)
+
+**Features**
+
+- Rebase fork onto upstream v0.9.3 (core protocol rework, in-app update, prism_ui, connections merge)
+- Update Clash.Meta / mihomo to v1.19.34 (Snell v6, multi-user Shadowsocks listener, TUN/easytier fixes)
+- Keep fork capabilities: Tailscale, geo identity, strategy lanes, sticky auto-select, exit map, hardened update
+
+## v0.9.3 (2026-11-04)
+
+**Features**
+
+- **connections** Merged requests and connections; quick edit lists (52b975f)
+- **ui** iOS 27 transitions, press and text selection; smoother pages (bb47f2c)
+- **update** Download and install updates in the app (b8f84b3)
+- **core** One delay test timeout; VPN crash and startup fixes (2a5a42c)
 
 **Bug Fixes**
 
-- **security** Require update checksums, sanitize package names, and cap outbound member totals (5e565b1)
-
-## v0.9.12 (2026-11-01)
-
-**Bug Fixes**
-
-- **about** In-app update verify stays responsive, and cancel no longer blanks the screen. (e67197b)
-
-## v0.9.11 (2026-11-01)
-
-Internal improvements only.
-
-## v0.9.10 (2026-10-31)
-
-Internal improvements only.
-
-## v0.9.9 (2026-10-31)
-
-**Features**
-
-- **about** Windows can install an update from the app. (07c0e77)
-- **about** Android, Linux, and macOS can install an update from the app. (75369ce)
-
-## v0.9.8 (2026-10-31)
-
-**Features**
-
-- **dashboard** The dashboard shows the exit on a country map on desktop and on phones. (fbceba6)
-
-## v0.9.7 (2026-10-31)
-
-**Features**
-
-- **dashboard** The exit location map shows country outlines, with the exit country highlighted. (9a9fe5c)
-
-## v0.9.6 (2026-10-29)
-
-**Features**
-
-- **dashboard** Open exit location map from country badge (cee2ca0)
-
-## v0.9.5 (2026-10-28)
-
-**Bug Fixes**
-
-- **release** Harden fork surfaces and retry macOS arm64 builds (47aecda)
-- **security** Harden geo timezone elevation, Tailscale and strategy-lane rule injection, and outbound-summary memory caps (dc0a3d4)
-
-## v0.9.4 (2026-10-24)
-
-**Features**
-
-- Tailscale, geo identity, strategy lanes, and sticky auto-select on upstream 0.9.2, with update checks on joei4cm/FlClash (3afd1da)
+- **core** Auto-select leaves an unusable first node at once (7d5db7e)
+- **access** Keep selections a filter hides (63aaf6d)
 
 ## v0.9.2 (2026-10-24)
 
@@ -889,3 +853,7 @@ Internal improvements only.
 
 - update mobile_scanner
 - Initial commit
+
+## Merge note (cursor/upstream-093-fork-78f9)
+
+Merged origin/production fork features onto upstream/main v0.9.3; changelog rewrite pending.

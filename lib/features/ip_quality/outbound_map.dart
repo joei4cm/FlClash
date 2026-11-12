@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/ui/ui.dart';
 import 'package:flutter/gestures.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
 /// The country map shared by the exit sheet and the dashboard card.
 ///

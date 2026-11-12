@@ -87,7 +87,7 @@ func ruleStrings(cfg *config.Config) []string {
 func TestHandleGetProfileBaseLeavesTheBulkSectionsInTheCore(t *testing.T) {
 	path := writeBaseProfile(t, baseProfile)
 
-	base, err := handleGetProfileBase(path)
+	base, err := handleGetProfileBase(PathParams{Path: path})
 
 	if err != nil {
 		t.Fatalf("handleGetProfileBase = %v", err)
@@ -114,7 +114,7 @@ func TestHandleGetProfileBaseLeavesTheBulkSectionsInTheCore(t *testing.T) {
 func TestHandleGetProfileOutboundsKeepsMembersAndRoutingRules(t *testing.T) {
 	path := writeBaseProfile(t, baseProfile)
 
-	outbounds, err := handleGetProfileOutbounds(path)
+	outbounds, err := handleGetProfileOutbounds(PathParams{Path: path})
 
 	if err != nil {
 		t.Fatalf("handleGetProfileOutbounds = %v", err)
@@ -149,7 +149,7 @@ func TestHandleGetProfileOutboundsCapsProxiesRulesAndMembers(t *testing.T) {
 	}
 	path := writeBaseProfile(t, b.String())
 
-	outbounds, err := handleGetProfileOutbounds(path)
+	outbounds, err := handleGetProfileOutbounds(PathParams{Path: path})
 
 	if err != nil {
 		t.Fatalf("handleGetProfileOutbounds = %v", err)
@@ -178,7 +178,7 @@ func TestHandleGetProfileOutboundsCapsTotalGroupMembers(t *testing.T) {
 	}
 	path := writeBaseProfile(t, b.String())
 
-	outbounds, err := handleGetProfileOutbounds(path)
+	outbounds, err := handleGetProfileOutbounds(PathParams{Path: path})
 
 	if err != nil {
 		t.Fatalf("handleGetProfileOutbounds = %v", err)
@@ -213,7 +213,7 @@ rules:
   - MATCH,节点选择
 `)
 
-	outbounds, err := handleGetProfileOutbounds(path)
+	outbounds, err := handleGetProfileOutbounds(PathParams{Path: path})
 
 	if err != nil {
 		t.Fatalf("handleGetProfileOutbounds = %v", err)
@@ -235,7 +235,7 @@ rules:
 func TestHandleBuildProfileWritesTheMergedConfigWhereTheHostReadsSpills(t *testing.T) {
 	withSpillHome(t, responseSpillThreshold)
 	path := writeBaseProfile(t, baseProfile)
-	base, err := handleGetProfileBase(path)
+	base, err := handleGetProfileBase(PathParams{Path: path})
 	if err != nil {
 		t.Fatalf("handleGetProfileBase = %v", err)
 	}
@@ -260,7 +260,7 @@ func TestHandleBuildProfileWritesTheMergedConfigWhereTheHostReadsSpills(t *testi
 
 func TestLoadConfigWithBasePutsTheAddedRulesFirstAndTheOverlayOverTheRest(t *testing.T) {
 	path := writeBaseProfile(t, baseProfile)
-	base, err := handleGetProfileBase(path)
+	base, err := handleGetProfileBase(PathParams{Path: path})
 	if err != nil {
 		t.Fatalf("handleGetProfileBase = %v", err)
 	}
@@ -302,7 +302,7 @@ func TestLoadConfigWithBasePutsTheAddedRulesFirstAndTheOverlayOverTheRest(t *tes
 
 func TestLoadConfigWithBasePrependsOverlayProxiesAndGroups(t *testing.T) {
 	path := writeBaseProfile(t, baseProfile)
-	base, err := handleGetProfileBase(path)
+	base, err := handleGetProfileBase(PathParams{Path: path})
 	if err != nil {
 		t.Fatalf("handleGetProfileBase = %v", err)
 	}
@@ -332,7 +332,7 @@ func TestLoadConfigWithBasePrependsOverlayProxiesAndGroups(t *testing.T) {
 // profile, and the anchor it was written with sits in a section the overlay drops.
 func TestLoadConfigWithBaseWritesAConfigThatLoadsAlone(t *testing.T) {
 	path := writeBaseProfile(t, baseProfile)
-	base, err := handleGetProfileBase(path)
+	base, err := handleGetProfileBase(PathParams{Path: path})
 	if err != nil {
 		t.Fatalf("handleGetProfileBase = %v", err)
 	}
@@ -356,9 +356,9 @@ func TestLoadConfigWithBaseWritesAConfigThatLoadsAlone(t *testing.T) {
 	if len(reloaded.Proxies) != len(cfg.Proxies) {
 		t.Errorf("reloaded %d proxies, want %d", len(reloaded.Proxies), len(cfg.Proxies))
 	}
-	raw, err := handleGetConfig(configPath)
+	raw, err := readRawConfig(configPath)
 	if err != nil {
-		t.Fatalf("handleGetConfig(config.yaml) = %v", err)
+		t.Fatalf("readRawConfig(config.yaml) = %v", err)
 	}
 	for _, proxy := range raw.Proxy {
 		if proxy["name"] != "b" {
@@ -408,7 +408,7 @@ func TestLoadSetupConfigReadsConfigYamlWithoutABase(t *testing.T) {
 		t.Fatalf("write config: %v", err)
 	}
 
-	cfg, err := loadSetupConfig(defaultSetupParams())
+	cfg, err := loadSetupConfig(&SetupParams{})
 
 	if err != nil {
 		t.Fatalf("loadSetupConfig = %v", err)
@@ -427,15 +427,15 @@ func TestHandleGetProxyDefinitionReadsTheRunningConfig(t *testing.T) {
 		t.Fatalf("write config: %v", err)
 	}
 
-	merged, err := handleGetProxyDefinition("a")
+	merged, err := handleGetProxyDefinition(NameParams{Name: "a"})
 	if err != nil {
 		t.Fatalf("handleGetProxyDefinition(a) = %v", err)
 	}
-	reality, err := handleGetProxyDefinition("b")
+	reality, err := handleGetProxyDefinition(NameParams{Name: "b"})
 	if err != nil {
 		t.Fatalf("handleGetProxyDefinition(b) = %v", err)
 	}
-	group, err := handleGetProxyDefinition("g")
+	group, err := handleGetProxyDefinition(NameParams{Name: "g"})
 	if err != nil {
 		t.Fatalf("handleGetProxyDefinition(g) = %v", err)
 	}
@@ -477,7 +477,7 @@ func TestHandleGetProxyDefinitionReadsAProviderProxyAsItsProviderBuildsIt(t *tes
 			t.Fatalf("write %s: %v", path, err)
 		}
 	}
-	raw, err := handleGetConfig(runningConfigPath())
+	raw, err := readRawConfig(runningConfigPath())
 	if err != nil {
 		t.Fatalf("read running config: %v", err)
 	}
@@ -500,7 +500,7 @@ func TestHandleGetProxyDefinitionReadsAProviderProxyAsItsProviderBuildsIt(t *tes
 		"c":   {"name": "c", "type": "socks5", "server": "127.0.0.3", "port": 1080},
 		"a":   nil,
 	} {
-		got, err := handleGetProxyDefinition(name)
+		got, err := handleGetProxyDefinition(NameParams{Name: name})
 		if err != nil {
 			t.Fatalf("handleGetProxyDefinition(%s) = %v", name, err)
 		}

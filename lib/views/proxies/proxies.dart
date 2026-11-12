@@ -5,7 +5,7 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/views/proxies/list.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'tab.dart';
@@ -35,7 +35,7 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
     ref.read(proxiesStyleSettingProvider.notifier).update(update);
   }
 
-  List<CommonPopupMenuItem> _buildMenuItems(
+  List<PopupMenuItem> _buildMenuItems(
     BuildContext context,
     ProxiesStyleProps style,
   ) {
@@ -44,7 +44,7 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
       _optionsMenuItem(
         glyph: AppGlyphs.appsList,
         label: appLocalizations.style,
-        section: const CommonPopupMenuSection(),
+        section: const PopupMenuSection(),
         options: ProxiesType.values,
         value: style.type,
         textOf: (type) => type.label,
@@ -100,11 +100,11 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
           onSelected: (iconStyle) =>
               _updateStyle((state) => state.copyWith(iconStyle: iconStyle)),
         ),
-      CommonPopupMenuItem(
+      PopupMenuItem(
         glyph: AppGlyphs.eyeOff,
         label: appLocalizations.hideTimeoutProxies,
         checked: style.hideTimeoutProxies,
-        section: const CommonPopupMenuSection(),
+        section: const PopupMenuSection(),
         onPressed: () => _updateStyle(
           (state) =>
               state.copyWith(hideTimeoutProxies: !state.hideTimeoutProxies),
@@ -113,10 +113,10 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
       if (!ref
           .read(groupsProvider)
           .any((group) => group.type.isComputedSelected))
-        CommonPopupMenuItem(
+        PopupMenuItem(
           glyph: AppGlyphs.bolt,
           label: appLocalizations.enableAutoSelect,
-          section: const CommonPopupMenuSection(),
+          section: const PopupMenuSection(),
           onPressed: () async {
             final confirmed = await dialogs.showMessage(
               title: appLocalizations.enableAutoSelect,
@@ -143,7 +143,7 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
                 ),
               _ => appLocalizations.enableAutoSelectFailed,
             };
-            dialogs.showNotifier(message);
+            dialogs.showBanner(message);
           },
         ),
     ];
@@ -192,7 +192,7 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
     final isLoading = ref.watch(loadingProvider(LoadingTag.proxies));
     final picker = widget.picker;
     final primaryAction = _buildPrimaryAction();
-    return CommonScaffold(
+    return Scaffold(
       isLoading: isLoading,
       resizeToAvoidBottomInset: false,
       primaryAction: primaryAction,
@@ -218,22 +218,22 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
   }
 }
 
-CommonPopupMenuItem _optionsMenuItem<T>({
+PopupMenuItem _optionsMenuItem<T>({
   required Glyph glyph,
   required String label,
   required List<T> options,
   required T value,
   required String Function(T option) textOf,
   required ValueSetter<T> onSelected,
-  CommonPopupMenuSection? section,
+  PopupMenuSection? section,
 }) {
-  return CommonPopupMenuItem(
+  return PopupMenuItem(
     glyph: glyph,
     label: label,
     section: section,
     subItems: [
       for (final option in options)
-        CommonPopupMenuItem(
+        PopupMenuItem(
           label: textOf(option),
           checked: option == value,
           onPressed: () => onSelected(option),

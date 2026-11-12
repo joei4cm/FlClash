@@ -1,644 +1,105 @@
-import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
+import 'dart:ffi' show Abi;
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
-import 'package:dio/dio.dart';
 import 'package:fl_clash/common/app_update.dart';
-import 'package:fl_clash/common/app_update_installer.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class _ScriptedUpdateAdapter implements HttpClientAdapter {
-  _ScriptedUpdateAdapter({
-    required this.packageBytes,
-    required this.sumsBody,
-    this.stallSums = false,
-  });
-
-  final List<int> packageBytes;
-  final String sumsBody;
-  final bool stallSums;
-  final sumsStarted = Completer<void>();
-
-  @override
-  Future<ResponseBody> fetch(
-    RequestOptions options,
-    Stream<Uint8List>? requestStream,
-    Future<void>? cancelFuture,
-  ) async {
-    final name = options.uri.pathSegments.isEmpty
-        ? ''
-        : options.uri.pathSegments.last;
-    if (name == 'SHA256SUMS') {
-      if (!sumsStarted.isCompleted) {
-        sumsStarted.complete();
-      }
-      if (stallSums) {
-        await (cancelFuture ?? Completer<void>().future);
-        throw DioException(
-          requestOptions: options,
-          type: DioExceptionType.cancel,
-        );
-      }
-      return ResponseBody.fromString(
-        sumsBody,
-        200,
-        headers: {
-          Headers.contentTypeHeader: ['text/plain'],
-        },
-      );
-    }
-    return ResponseBody.fromBytes(
-      packageBytes,
-      200,
-      headers: {
-        Headers.contentTypeHeader: ['application/octet-stream'],
-        Headers.contentLengthHeader: ['${packageBytes.length}'],
-      },
-    );
-  }
-
-  @override
-  void close({bool force = false}) {}
-}
-
-class _MissingSumsAdapter implements HttpClientAdapter {
-  _MissingSumsAdapter({required this.packageBytes});
-
-  final List<int> packageBytes;
-
-  @override
-  Future<ResponseBody> fetch(
-    RequestOptions options,
-    Stream<Uint8List>? requestStream,
-    Future<void>? cancelFuture,
-  ) async {
-    final name = options.uri.pathSegments.isEmpty
-        ? ''
-        : options.uri.pathSegments.last;
-    if (name == 'SHA256SUMS') {
-      return ResponseBody.fromString(
-        '',
-        404,
-        headers: {
-          Headers.contentTypeHeader: ['text/plain'],
-        },
-      );
-    }
-    return ResponseBody.fromBytes(
-      packageBytes,
-      200,
-      headers: {
-        Headers.contentTypeHeader: ['application/octet-stream'],
-        Headers.contentLengthHeader: ['${packageBytes.length}'],
-      },
-    );
-  }
-
-  @override
-  void close({bool force = false}) {}
-}
-
 void main() {
-  const assets = [
-    'FlClash-0.9.8-android-arm64-v8a.apk',
-    'FlClash-0.9.8-android-armeabi-v7a.apk',
-    'FlClash-0.9.8-android-x86_64.apk',
-    'FlClash-0.9.8-linux-amd64.AppImage',
-    'FlClash-0.9.8-linux-amd64.deb',
-    'FlClash-0.9.8-linux-amd64.rpm',
-    'FlClash-0.9.8-linux-arm64.AppImage',
-    'FlClash-0.9.8-macos-arm64.dmg',
-    'FlClash-0.9.8-macos-amd64.dmg',
-    'FlClash-0.9.8-windows-amd64-setup.exe',
-    'FlClash-0.9.8-windows-amd64.zip',
-    'FlClash-0.9.8-windows-arm64-setup.exe',
-    'FlClash-0.9.8-windows-arm64.zip',
-    'SHA256SUMS',
-  ];
-
-  List<ReleaseAsset> listed() {
-    return [
-      for (final name in assets)
-        if (name != 'SHA256SUMS')
-          ReleaseAsset(
-            name: name,
-            downloadUrl:
-                'https://github.com/joei4cm/FlClash/releases/download/v0.9.8_8784e8/$name',
-          ),
-    ];
-  }
-
-  UpdateCandidate only(UpdateHost host) {
-    final candidates = updateCandidates(
-      tag: 'v0.9.8_8784e8',
-      assets: listed(),
-      assetsKnown: true,
-      host: host,
-    );
-    expect(candidates, hasLength(1));
-    return candidates.single;
-  }
-
-  test('picks the package for this device', () {
-    expect(
-      only(
-        updateHost(operatingSystem: 'android', abi: Abi.androidArm64)!,
-      ).asset.name,
-      'FlClash-0.9.8-android-arm64-v8a.apk',
-    );
-    expect(
-      only(
-        updateHost(operatingSystem: 'android', abi: Abi.androidArm)!,
-      ).asset.name,
-      'FlClash-0.9.8-android-armeabi-v7a.apk',
-    );
-    expect(
-      only(
-        updateHost(
-          operatingSystem: 'linux',
-          abi: Abi.linuxArm64,
-          linuxLayout: LinuxInstallLayout.appImage,
-        )!,
-      ).apply,
-      UpdateApply.appImageReplace,
-    );
-    final deb = updateCandidates(
-      tag: 'v0.9.8_8784e8',
-      assets: listed(),
-      assetsKnown: true,
-      host: updateHost(
-        operatingSystem: 'linux',
-        abi: Abi.linuxX64,
-        linuxLayout: LinuxInstallLayout.deb,
-      )!,
-    );
-    expect(deb.map((candidate) => candidate.apply), [
-      UpdateApply.deb,
-      UpdateApply.appImageLaunch,
-    ]);
-    final rpm = updateCandidates(
-      tag: 'v0.9.8_8784e8',
-      assets: listed(),
-      assetsKnown: true,
-      host: updateHost(
-        operatingSystem: 'linux',
-        abi: Abi.linuxX64,
-        linuxLayout: LinuxInstallLayout.rpm,
-      )!,
-    );
-    expect(rpm.first.apply, UpdateApply.rpm);
-    expect(
-      only(updateHost(operatingSystem: 'macos', abi: Abi.macosX64)!).asset.name,
-      'FlClash-0.9.8-macos-amd64.dmg',
-    );
-    expect(
-      only(
-        updateHost(
-          operatingSystem: 'windows',
-          abi: Abi.windowsX64,
-          windowsLayout: WindowsInstallLayout.setup,
-        )!,
-      ).asset.name,
-      'FlClash-0.9.8-windows-amd64-setup.exe',
-    );
-    expect(
-      only(
-        updateHost(
-          operatingSystem: 'windows',
-          abi: Abi.windowsArm64,
-          windowsLayout: WindowsInstallLayout.portable,
-        )!,
-      ).asset.name,
-      'FlClash-0.9.8-windows-arm64.zip',
-    );
-    expect(
-      updateHost(operatingSystem: 'windows', abi: Abi.windowsIA32),
-      isNull,
-    );
-  });
-
-  test(
-    'a deb install falls back to an AppImage when the package is absent',
-    () {
-      final host = updateHost(
-        operatingSystem: 'linux',
-        abi: Abi.linuxX64,
-        linuxLayout: LinuxInstallLayout.deb,
-      )!;
-      final candidates = updateCandidates(
-        tag: 'v0.9.8_8784e8',
-        assets: listed()
-            .where((asset) => !asset.name.endsWith('.deb'))
-            .toList(),
-        assetsKnown: true,
-        host: host,
-      );
-      expect(candidates.single.apply, UpdateApply.appImageLaunch);
-      expect(candidates.single.asset.name, endsWith('.AppImage'));
-    },
-  );
-
-  test('Apple Silicon uses the Intel disk image when arm64 is missing', () {
-    final host = updateHost(operatingSystem: 'macos', abi: Abi.macosArm64)!;
-    final candidates = updateCandidates(
-      tag: 'v0.9.8_8784e8',
-      assets: listed()
-          .where((asset) => !asset.name.endsWith('macos-arm64.dmg'))
-          .toList(),
-      assetsKnown: true,
-      host: host,
-    );
-    expect(candidates.single.asset.name, endsWith('macos-amd64.dmg'));
-  });
-
-  test('an unknown asset list builds the stable download url', () {
-    final host = updateHost(operatingSystem: 'android', abi: Abi.androidX64)!;
-    final candidates = updateCandidates(
-      tag: 'v0.9.8_8784e8',
-      assets: const [],
-      assetsKnown: false,
-      host: host,
-    );
-    expect(
-      candidates.single.asset.downloadUrl,
-      'https://github.com/joei4cm/FlClash/releases/download/'
-      'v0.9.8_8784e8/FlClash-0.9.8-android-x86_64.apk',
-    );
-    expect(releaseFileVersion('v0.9.8-pre.1_abcdef'), '0.9.8');
-  });
-
-  test('drops download urls that are not this repository release', () {
-    final release = {
-      'assets': [
-        {
-          'name': 'FlClash-0.9.8-android-arm64-v8a.apk',
-          'browser_download_url': 'https://example.com/FlClash.apk',
-        },
-      ],
-    };
-    expect(releaseAssetsFrom(release), isEmpty);
-    expect(releaseListsAssets(release), isTrue);
-  });
-
-  test('reads the published checksum names', () {
-    final hash = 'ab' * 32;
-    final body = '$hash  ./FlClash-0.9.8-linux-amd64.deb\n';
-    expect(parseSha256Sums(body)['FlClash-0.9.8-linux-amd64.deb'], hash);
-  });
-
-  test(
-    'rejects release asset names that could escape the download directory',
-    () {
+  group('selfUpdateAssetSuffix', () {
+    test('names the APK built for the running ABI', () {
       expect(
-        isSafeReleaseAssetName('FlClash-0.9.8-android-arm64-v8a.apk'),
-        isTrue,
-      );
-      expect(isSafeReleaseAssetName('SHA256SUMS'), isTrue);
-      expect(
-        isSafeReleaseAssetName(
-          'FlClash-../../../tmp/pwned-android-arm64-v8a.apk',
-        ),
-        isFalse,
+        selfUpdateAssetSuffix(Abi.androidArm64, windowsInstalled: false),
+        'android-arm64-v8a.apk',
       );
       expect(
-        isSafeReleaseAssetName('FlClash-evil/android-arm64-v8a.apk'),
-        isFalse,
+        selfUpdateAssetSuffix(Abi.androidArm, windowsInstalled: false),
+        'android-armeabi-v7a.apk',
       );
-      final release = <String, dynamic>{
-        'assets': [
-          {
-            'name': 'FlClash-../escape-android-arm64-v8a.apk',
-            'browser_download_url':
-                'https://github.com/joei4cm/FlClash/releases/download/v0.9.8_8784e8/FlClash-0.9.8-android-arm64-v8a.apk',
-          },
-        ],
-      };
-      expect(releaseAssetsFrom(release), isEmpty);
-    },
-  );
-
-  test(
-    'checksum lookup still synthesizes SHA256SUMS when the API omitted it',
-    () {
-      final asset = checksumAsset(
-        tag: 'v0.9.8_8784e8',
-        assets: const [],
-        assetsKnown: true,
-      );
-      expect(asset, isNotNull);
-      expect(asset!.name, 'SHA256SUMS');
-      expect(asset.downloadUrl, contains('/SHA256SUMS'));
-    },
-  );
-
-  test('finds the macOS bundle and decides when an admin copy is required', () {
-    expect(
-      macOSAppBundle('/Applications/FlClash.app/Contents/MacOS/FlClash'),
-      '/Applications/FlClash.app',
-    );
-    expect(macOSAppBundle('/usr/bin/FlClash'), isNull);
-    expect(
-      chooseMountedApp(['/mnt/Applications', '/mnt/FlClash.app']),
-      '/mnt/FlClash.app',
-    );
-    expect(chooseMountedApp(['/mnt/Applications', '/mnt/Other.app']), isNull);
-    expect(
-      macUpdateNeedsAdmin(
-        bundleExists: true,
-        userOwnsBundle: false,
-        directoryWritable: true,
-      ),
-      isTrue,
-    );
-    expect(
-      macUpdateNeedsAdmin(
-        bundleExists: true,
-        userOwnsBundle: true,
-        directoryWritable: true,
-      ),
-      isFalse,
-    );
-  });
-
-  test(
-    'the relaunch script waits until the running process drops its lock',
-    () {
-      expect(linuxRelaunchScript(), contains('flock'));
-      final script = macOSUpdateScript(
-        needsAdmin: true,
-        rootScript: '/tmp/swap root.sh',
-      );
-      expect(script, contains('quoted form of'));
-      expect(script, contains("'/tmp/swap root.sh'"));
       expect(
-        macOSRootSwapScript(
-          destination: "/Applications/FlClash's.app",
-          stagedApp: '/tmp/FlClash.app',
-        ),
-        contains(r"'/Applications/FlClash'\''s.app'"),
+        selfUpdateAssetSuffix(Abi.androidX64, windowsInstalled: false),
+        'android-x86_64.apk',
       );
-    },
-  );
+    });
 
-  test('linux package detection follows the running binary', () async {
-    Future<ProcessResult> run(String executable, List<String> arguments) async {
-      final owns = executable == 'dpkg' && arguments.last == '/usr/bin/FlClash';
-      return ProcessResult(0, owns ? 0 : 1, '', '');
-    }
+    test('names the Windows installer only for an installed build', () {
+      expect(
+        selfUpdateAssetSuffix(Abi.windowsX64, windowsInstalled: true),
+        'windows-amd64-setup.exe',
+      );
+      expect(
+        selfUpdateAssetSuffix(Abi.windowsArm64, windowsInstalled: true),
+        'windows-arm64-setup.exe',
+      );
+      expect(
+        selfUpdateAssetSuffix(Abi.windowsX64, windowsInstalled: false),
+        isNull,
+      );
+    });
 
+    test('leaves macOS and Linux to the release page', () {
+      for (final abi in [
+        Abi.macosArm64,
+        Abi.macosX64,
+        Abi.linuxX64,
+        Abi.linuxArm64,
+      ]) {
+        expect(selfUpdateAssetSuffix(abi, windowsInstalled: true), isNull);
+      }
+    });
+  });
+
+  test('releaseAssetName drops the tag prefix', () {
     expect(
-      await detectLinuxInstallLayout(
-        appImage: true,
-        executable: '/usr/bin/FlClash',
-        runProcess: run,
-      ),
-      LinuxInstallLayout.appImage,
-    );
-    expect(
-      await detectLinuxInstallLayout(
-        appImage: false,
-        executable: '/usr/bin/FlClash',
-        runProcess: run,
-      ),
-      LinuxInstallLayout.deb,
-    );
-    expect(
-      await detectLinuxInstallLayout(
-        appImage: false,
-        executable: '/opt/FlClash',
-        runProcess: run,
-      ),
-      LinuxInstallLayout.portable,
+      releaseAssetName('v0.9.3', 'android-arm64-v8a.apk'),
+      'FlClash-0.9.3-android-arm64-v8a.apk',
     );
   });
 
-  test('a file hash must match the published checksum', () async {
-    final file = File('${Directory.systemTemp.path}/flclash-update-hash-test');
-    await file.writeAsString('payload');
-    addTearDown(file.delete);
-    final installer = AppUpdateInstaller();
-    await installer.verifyFileHash(
-      file,
-      sha256.convert(file.readAsBytesSync()).toString(),
-    );
-    await expectLater(
-      installer.verifyFileHash(file, '0' * 64),
-      throwsA(
-        isA<UpdateFailed>().having(
-          (error) => error.failure,
-          'failure',
-          UpdateFailure.checksum,
-        ),
-      ),
-    );
-  });
+  group('releaseChecksum', () {
+    const digest =
+        'ff6a953c0f5c12e6bdc97b49428b565b64c4a62d85e50081823ba297407529b1';
 
-  test('cancel during checksum download stops verify', () async {
-    final payload = utf8.encode('update-package');
-    final hash = sha256.convert(payload).toString();
-    final name = 'FlClash-0.9.8-android-arm64-v8a.apk';
-    final adapter = _ScriptedUpdateAdapter(
-      packageBytes: payload,
-      sumsBody: '$hash  $name\n',
-      stallSums: true,
-    );
-    final dio = Dio(BaseOptions(followRedirects: false, maxRedirects: 0))
-      ..httpClientAdapter = adapter;
-    final workspace = await Directory.systemTemp.createTemp(
-      'flclash-update-cancel-',
-    );
-    addTearDown(() => workspace.delete(recursive: true));
-    final installer = AppUpdateInstaller(dio: dio, workspace: workspace);
-    final host = updateHost(operatingSystem: 'android', abi: Abi.androidArm64)!;
-    final phases = <UpdatePhase>[];
-    final pending = installer.install(
-      release: {
-        'tag_name': 'v0.9.8_8784e8',
-        'assets': [
-          {
-            'name': name,
-            'browser_download_url':
-                'https://github.com/joei4cm/FlClash/releases/download/v0.9.8_8784e8/$name',
-          },
-          {
-            'name': 'SHA256SUMS',
-            'browser_download_url':
-                'https://github.com/joei4cm/FlClash/releases/download/v0.9.8_8784e8/SHA256SUMS',
-          },
-        ],
-      },
-      host: host,
-      onProgress: (phase, _) => phases.add(phase),
-    );
-    await adapter.sumsStarted.future;
-    installer.cancel();
-    await expectLater(pending, throwsA(isA<UpdateCancelled>()));
-    expect(phases, contains(UpdatePhase.verify));
-    expect(phases, isNot(contains(UpdatePhase.install)));
-  });
+    test('reads the entry sha256sum wrote for a file', () {
+      final sums =
+          '$digest  ./FlClash-0.9.2-android-arm64-v8a.apk\n'
+          '${'0' * 64}  ./FlClash-0.9.2-windows-amd64-setup.exe\n';
 
-  test('a missing SHA256SUMS fails closed before install', () async {
-    final payload = utf8.encode('update-package');
-    final name = 'FlClash-0.9.8-android-arm64-v8a.apk';
-    final adapter = _MissingSumsAdapter(packageBytes: payload);
-    final dio = Dio(BaseOptions(followRedirects: false, maxRedirects: 0))
-      ..httpClientAdapter = adapter;
-    final workspace = await Directory.systemTemp.createTemp(
-      'flclash-update-nosums-',
-    );
-    addTearDown(() => workspace.delete(recursive: true));
-    final installer = AppUpdateInstaller(dio: dio, workspace: workspace);
-    await expectLater(
-      installer.install(
-        release: {
-          'tag_name': 'v0.9.8_8784e8',
-          'assets': [
-            {
-              'name': name,
-              'browser_download_url':
-                  'https://github.com/joei4cm/FlClash/releases/download/v0.9.8_8784e8/$name',
-            },
-          ],
-        },
-        host: updateHost(operatingSystem: 'android', abi: Abi.androidArm64)!,
-      ),
-      throwsA(
-        isA<UpdateFailed>().having(
-          (error) => error.failure,
-          'failure',
-          UpdateFailure.checksum,
-        ),
-      ),
-    );
-  });
-
-  test('a cancelled installer refuses to keep hashing', () async {
-    final file = File(
-      '${Directory.systemTemp.path}/flclash-update-hash-cancel',
-    );
-    await file.writeAsString('payload');
-    addTearDown(file.delete);
-    final installer = AppUpdateInstaller();
-    installer.cancel();
-    await expectLater(
-      installer.verifyFileHash(
-        file,
-        sha256.convert(file.readAsBytesSync()).toString(),
-      ),
-      throwsA(isA<UpdateCancelled>()),
-    );
-  });
-
-  test(
-    'an AppImage is replaced and relaunched after this process exits',
-    () async {
-      final directory = await Directory.systemTemp.createTemp(
-        'flclash-update-',
+      expect(
+        releaseChecksum(sums, 'FlClash-0.9.2-android-arm64-v8a.apk'),
+        digest,
       );
-      addTearDown(() => directory.delete(recursive: true));
-      final current = File('${directory.path}/FlClash.AppImage')
-        ..writeAsStringSync('old');
-      final downloaded = File('${directory.path}/new.AppImage')
-        ..writeAsStringSync('new');
-      List<String>? relaunch;
-      final installer = AppUpdateInstaller(
-        appImagePath: current.path,
-        lockFilePath: () async => '${directory.path}/FlClash.lock',
-        runProcess: (executable, arguments) async {
-          if (executable == 'rm' && arguments.last == '${current.path}.old') {
-            final backup = File(arguments.last);
-            if (backup.existsSync()) {
-              backup.deleteSync();
-            }
-          } else if (executable == 'mv') {
-            await File(arguments[0]).rename(arguments[1]);
-          }
-          return ProcessResult(0, 0, '', '');
-        },
-        startDetached: (executable, arguments) async {
-          relaunch = [executable, ...arguments];
-        },
-      );
+    });
 
-      final outcome = await installer.applyDownloaded(
-        file: downloaded,
-        apply: UpdateApply.appImageReplace,
-        directory: directory,
-      );
+    test('accepts the binary marker, upper case and CRLF', () {
+      final sums = '${digest.toUpperCase()} *FlClash.apk\r\n';
 
-      expect(outcome, UpdateInstallOutcome.scheduledRestart);
-      expect(current.readAsStringSync(), 'new');
-      expect(File('${current.path}.old').readAsStringSync(), 'old');
-      expect(relaunch, isNotNull);
-      expect(relaunch!.first, '/bin/sh');
-      expect(relaunch!.last, current.path);
-      expect(File(relaunch![1]).readAsStringSync(), contains('flock'));
-    },
-  );
+      expect(releaseChecksum(sums, 'FlClash.apk'), digest);
+    });
 
-  test('windows setup and portable copies pick different packages', () async {
-    final directory = await Directory.systemTemp.createTemp('flclash-win-');
+    test('answers null for a file the listing does not name', () {
+      expect(releaseChecksum('$digest  ./other.apk\n', 'FlClash.apk'), isNull);
+      expect(releaseChecksum('not a listing', 'FlClash.apk'), isNull);
+    });
+  });
+
+  test('fileSha256 hashes the file on disk', () async {
+    final directory = await Directory.systemTemp.createTemp('app_update');
     addTearDown(() => directory.delete(recursive: true));
-    final executable = File('${directory.path}/FlClash.exe')
-      ..writeAsStringSync('old');
-    expect(
-      supportsInAppUpdate(
-        isAndroid: false,
-        isLinux: false,
-        isMacOS: false,
-        isWindows: true,
-      ),
-      isTrue,
-    );
-    expect(windowsSetupInstalled(executable.path), isFalse);
-    expect(
-      (await currentUpdateHost(
-        operatingSystem: 'windows',
-        abi: Abi.windowsX64,
-        executable: executable.path,
-      ))!.preferences.single.apply,
-      UpdateApply.windowsZip,
-    );
-    File('${directory.path}/unins000.exe').writeAsStringSync('uninstaller');
-    expect(
-      (await currentUpdateHost(
-        operatingSystem: 'windows',
-        abi: Abi.windowsX64,
-        executable: executable.path,
-      ))!.preferences.single.apply,
-      UpdateApply.windowsSetup,
-    );
+    final file = File('${directory.path}/package');
+    await file.writeAsString('package');
 
-    final package = File('${directory.path}/setup.exe')
-      ..writeAsStringSync('setup');
-    List<String>? launched;
-    final installer = AppUpdateInstaller(
-      executablePath: executable.path,
-      startDetached: (executable, arguments) async {
-        launched = [executable, ...arguments];
-      },
+    expect(
+      await fileSha256(file.path),
+      sha256.convert(utf8.encode('package')).toString(),
     );
-    final outcome = await installer.applyDownloaded(
-      file: package,
-      apply: UpdateApply.windowsSetup,
-      directory: directory,
-    );
-    expect(outcome, UpdateInstallOutcome.scheduledRestart);
-    expect(launched, isNotNull);
-    expect(launched!.first.toLowerCase(), contains('powershell'));
-    expect(launched, isNot(contains('/bin/sh')));
-    expect(launched, contains('setup'));
-    expect(launched, contains(package.path));
-    expect(launched, contains(directory.path));
-    final script = File(launched![launched!.indexOf('-File') + 1]);
-    addTearDown(script.delete);
-    final text = script.readAsStringSync();
-    expect(text, contains('Wait-Process'));
-    expect(text, contains('/VERYSILENT'));
-    expect(text, contains('ExtractToFile'));
-    expect(text, isNot(contains('/bin/sh')));
+  });
+
+  test('windowsUpdateArguments installs silently on behalf of a pid', () {
+    final arguments = windowsUpdateArguments(4242).split(' ');
+
+    expect(arguments, containsAll(['/SILENT', '/SUPPRESSMSGBOXES']));
+    expect(arguments, contains('/updatefrom=4242'));
   });
 }

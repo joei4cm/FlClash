@@ -3,7 +3,7 @@ import 'package:fl_clash/features/ip_quality/outbound_map.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
 Future<void> showOutboundLocationSheet(
   BuildContext context, {
@@ -33,7 +33,7 @@ class _OutboundLocationSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = context.appLocalizations;
-    return CommonScaffold(
+    return Scaffold(
       title: localizations.outboundLocation,
       actions: [
         if (onRefresh != null)

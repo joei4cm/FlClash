@@ -6,10 +6,11 @@ import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/geo_identity.dart';
 import 'package:fl_clash/views/strategy_lanes.dart';
 import 'package:fl_clash/views/tailscale.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../helpers/host_scaffold.dart';
 import '../helpers/test_app.dart';
 
 ProviderContainer _containerFor(WidgetTester tester) {
@@ -175,7 +176,7 @@ void main() {
     await _pumpView(
       tester,
       container,
-      const Scaffold(body: TailscaleNodeDialog(existingNames: ['taken'])),
+      const HostScaffold(body: TailscaleNodeDialog(existingNames: ['taken'])),
     );
     await tester.pumpAndSettle();
 
@@ -212,7 +213,7 @@ void main() {
     await _pumpView(
       tester,
       container,
-      const Scaffold(
+      const HostScaffold(
         body: TailscaleNodeDialog(
           proxy: TailscaleProxy(
             name: 'home-exit',

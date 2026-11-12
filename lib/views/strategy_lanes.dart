@@ -1,12 +1,12 @@
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/auto_select_sticky.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Business → strategy UI: show subscription routing and let users override it.
@@ -97,17 +97,17 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
           continue;
         }
         if (preview.hasSkipped) {
-          context.showNotifier(
+          dialogs.showBanner(
             context.appLocalizations.strategyLanesPartialApplied,
-            level: MessageLevel.warning,
+            level: BannerLevel.warning,
           );
         } else {
-          context.showNotifier(context.appLocalizations.strategyLanesApplied);
+          dialogs.showBanner(context.appLocalizations.strategyLanesApplied);
         }
       } while (_pendingApply && mounted);
     } catch (error) {
       if (mounted) {
-        context.showNotifier(error.toString(), level: MessageLevel.error);
+        dialogs.showBanner(error.toString(), level: BannerLevel.error);
       }
     } finally {
       if (mounted) {
@@ -161,7 +161,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
   }) {
     return showSheet<String>(
       context: context,
-      builder: (context) => CommonScaffold(
+      builder: (context) => Scaffold(
         title: title,
         body: ListView(
           children: [
@@ -258,7 +258,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
         ? null
         : ref.watch(clashConfigProvider(profileId));
 
-    return CommonScaffold(
+    return Scaffold(
       title: l10n.strategyLanes,
       body: clashAsync == null
           ? ListView(
@@ -270,7 +270,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
               ],
             )
           : clashAsync.when(
-              loading: () => const Center(child: CommonCircleLoading.page()),
+              loading: () => const Center(child: ActivityIndicator.page()),
               error: (error, _) => ListView(
                 children: [
                   ListItem(
@@ -394,7 +394,7 @@ class _StrategyLanesViewState extends ConsumerState<StrategyLanesView> {
                     ),
                 ];
 
-                return ListView.builder(
+                return PrismListView(
                   itemCount: items.length,
                   itemBuilder: (_, index) => items[index],
                   padding: const EdgeInsets.only(bottom: 20),
@@ -444,7 +444,7 @@ class _ExtraGroupItem extends StatelessWidget {
       onTap: () async {
         final value = await showSheet<String>(
           context: context,
-          builder: (context) => CommonScaffold(
+          builder: (context) => Scaffold(
             title: group.groupName,
             body: ListView(
               children: [

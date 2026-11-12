@@ -5,14 +5,13 @@ import 'package:fl_clash/features/ip_quality/outbound_map.dart';
 import 'package:fl_clash/providers/ip_quality.dart';
 import 'package:fl_clash/providers/outbound_ip.dart';
 import 'package:fl_clash/providers/routed_probe.dart';
-import 'package:fl_clash/ui/color.dart';
-import 'package:fl_clash/ui/context.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/views/dashboard/layout.dart';
 import 'package:fl_clash/views/dashboard/probe_start_hold.dart';
 import 'package:fl_clash/views/dashboard/style.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_ui/material_ui.dart';
 
 import 'card.dart';
 
