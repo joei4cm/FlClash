@@ -20,9 +20,9 @@ import (
 // Overlay prepends proxies and proxy-groups; sub-rules stay the profile's.
 var profileBaseSections = []string{"sub-rules"}
 
-func handleGetProfileBase(path string) (*ProfileBase, error) {
+func handleGetProfileBase(params PathParams) (*ProfileBase, error) {
 	defer scheduleLoadMemoryRelease()
-	buf, err := os.ReadFile(path)
+	buf, err := os.ReadFile(params.Path)
 	if err != nil {
 		return nil, err
 	}
@@ -59,9 +59,9 @@ const (
 	maxProfileOutboundMembersTotal = 50000
 )
 
-func handleGetProfileOutbounds(path string) (*ProfileOutbounds, error) {
+func handleGetProfileOutbounds(params PathParams) (*ProfileOutbounds, error) {
 	defer scheduleLoadMemoryRelease()
-	buf, err := os.ReadFile(path)
+	buf, err := os.ReadFile(params.Path)
 	if err != nil {
 		return nil, err
 	}

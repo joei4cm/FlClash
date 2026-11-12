@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class GeoIdentityView extends ConsumerStatefulWidget {
@@ -97,7 +97,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     }
     setState(() => _copiedProxyExports = true);
     if (notify) {
-      context.showNotifier(context.appLocalizations.copySuccess);
+      dialogs.showBanner(context.appLocalizations.copySuccess);
     }
   }
 
@@ -187,13 +187,13 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     final target = _report?.timezone?.trim();
     if (target == null || target.isEmpty) {
       if (notify && mounted) {
-        context.showNotifier(l10n.geoIdentityTimezoneMissing);
+        dialogs.showBanner(l10n.geoIdentityTimezoneMissing);
       }
       return;
     }
     if (!GeoIdentityHost.isAllowedElevatedTimezone(target)) {
       if (notify && mounted) {
-        context.showNotifier(l10n.geoIdentityTimezoneAlignFailed(target));
+        dialogs.showBanner(l10n.geoIdentityTimezoneAlignFailed(target));
       }
       return;
     }
@@ -211,7 +211,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     });
     if (error != null) {
       if (notify) {
-        context.showNotifier(l10n.geoIdentityTimezoneAlignFailed(error));
+        dialogs.showBanner(l10n.geoIdentityTimezoneAlignFailed(error));
       }
       return;
     }
@@ -222,7 +222,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
           appliedOsTimezone: target,
         );
     if (notify) {
-      context.showNotifier(l10n.geoIdentityTimezoneRestored(target));
+      dialogs.showBanner(l10n.geoIdentityTimezoneRestored(target));
     }
   }
 
@@ -233,7 +233,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     final previous = ref.read(geoIdentitySettingProvider).previousOsTimezone;
     if (previous == null || previous.isEmpty) {
       if (notify && mounted) {
-        context.showNotifier(
+        dialogs.showBanner(
           context.appLocalizations.geoIdentityTimezoneNothingToRestore,
         );
       }
@@ -247,12 +247,12 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
       ref.read(geoIdentitySettingProvider.notifier).clearTimezoneHistory();
       setState(() => _timezoneNote = null);
       if (notify) {
-        context.showNotifier(
+        dialogs.showBanner(
           context.appLocalizations.geoIdentityTimezoneRestored(previous),
         );
       }
     } else if (notify && mounted && error != null) {
-      context.showNotifier(
+      dialogs.showBanner(
         context.appLocalizations.geoIdentityTimezoneAlignFailed(error),
       );
     }
@@ -346,16 +346,16 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
         _timezoneNote = null;
       });
       if (protected) {
-        context.showNotifier(l10n.geoIdentitySetupDoneProtected);
+        dialogs.showBanner(l10n.geoIdentitySetupDoneProtected);
       } else if (report == null) {
-        context.showNotifier(l10n.geoIdentityCheckFailed);
+        dialogs.showBanner(l10n.geoIdentityCheckFailed);
       } else if (!report.looksUsExit) {
-        context.showNotifier(l10n.geoIdentitySetupDoneNeedUsNode);
+        dialogs.showBanner(l10n.geoIdentitySetupDoneNeedUsNode);
       } else {
-        context.showNotifier(l10n.geoIdentityNetworkExposed);
+        dialogs.showBanner(l10n.geoIdentityNetworkExposed);
       }
       if (_copiedProxyExports) {
-        context.showNotifier(l10n.copySuccess);
+        dialogs.showBanner(l10n.copySuccess);
       }
     } catch (e) {
       if (!mounted) {
@@ -367,7 +367,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
         _report = null;
         _statusMessage = _localizeCheckError(e.toString());
       });
-      context.showNotifier(_localizeCheckError(e.toString()));
+      dialogs.showBanner(_localizeCheckError(e.toString()));
     }
   }
 
@@ -459,7 +459,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
             Row(
               children: [
                 if (_busy)
-                  CommonCircleLoading(size: 20, color: accent)
+                  ActivityIndicator(size: 20, color: accent)
                 else
                   GlyphIcon(icon, color: accent),
                 const SizedBox(width: 8),
@@ -594,7 +594,7 @@ class _GeoIdentityViewState extends ConsumerState<GeoIdentityView> {
     final l10n = context.appLocalizations;
     final enabled = ref.watch(geoIdentitySettingProvider).enable;
 
-    return CommonScaffold(
+    return Scaffold(
       title: l10n.geoIdentity,
       body: ListView(
         children: [

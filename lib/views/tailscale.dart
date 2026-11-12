@@ -1,9 +1,9 @@
 import 'package:fl_clash/common/common.dart';
-import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TailscaleView extends ConsumerWidget {
@@ -62,11 +62,11 @@ class TailscaleView extends ConsumerWidget {
   ) async {
     final appLocalizations = context.appLocalizations;
     if (!ref.read(tailscaleSettingProvider).enable) {
-      context.showNotifier(appLocalizations.tailscaleTestNeedEnable);
+      dialogs.showBanner(appLocalizations.tailscaleTestNeedEnable);
       return;
     }
     if (!ref.read(isStartProvider)) {
-      context.showNotifier(appLocalizations.tailscaleTestNeedStart);
+      dialogs.showBanner(appLocalizations.tailscaleTestNeedStart);
       return;
     }
     await _applyTailscaleConfig(ref);
@@ -305,7 +305,7 @@ class TailscaleView extends ConsumerWidget {
       );
     }
     if (delay == 0) {
-      return CommonCircleLoading(size: 14, color: context.colorScheme.primary);
+      return ActivityIndicator(size: 14, color: context.colorScheme.primary);
     }
     return Text(
       delay > 0 ? '$delay ms' : appLocalizations.timeout,
@@ -383,19 +383,18 @@ class TailscaleView extends ConsumerWidget {
     final bypassRecommended = system.isDesktop;
     // Header block is always index 0; nodes follow.
     final itemCount = proxies.isEmpty ? 1 : proxies.length + 1;
-    return CommonScaffold(
+    return Scaffold(
       title: appLocalizations.tailscale,
-      actions: [
-        IconButton(
+      iconActions: [
+        IconButtonData(
+          glyph: AppGlyphs.add,
           tooltip: appLocalizations.addTailscaleNode,
           onPressed: () {
             _handleAddOrEdit(context, ref);
           },
-          icon: const GlyphIcon(AppGlyphs.add),
         ),
-        const SizedBox(width: 8),
       ],
-      body: ListView.builder(
+      body: PrismListView(
         padding: const EdgeInsets.only(bottom: 20),
         itemCount: itemCount,
         itemBuilder: (_, index) {
@@ -416,18 +415,14 @@ class TailscaleView extends ConsumerWidget {
                     if (value &&
                         bypassRecommended &&
                         !ref.read(tailscaleSettingProvider).bypassTraffic) {
-                      context.showNotifier(
+                      dialogs.showBanner(
                         appLocalizations.tailscaleBypassNudge,
-                        actionState: MessageActionState(
-                          actionText:
-                              appLocalizations.tailscaleEnableBypassAction,
-                          action: () async {
-                            ref
-                                .read(tailscaleSettingProvider.notifier)
-                                .setBypassTraffic(true);
-                            await _applyTailscaleConfig(ref);
-                          },
-                        ),
+                        onTap: () async {
+                          ref
+                              .read(tailscaleSettingProvider.notifier)
+                              .setBypassTraffic(true);
+                          await _applyTailscaleConfig(ref);
+                        },
                       );
                     }
                     await _applyTailscaleConfig(ref);
@@ -460,17 +455,19 @@ class TailscaleView extends ConsumerWidget {
                 if (proxies.isEmpty)
                   _buildGuide(context)
                 else
-                  ExpansionTile(
-                    tilePadding: const EdgeInsets.symmetric(horizontal: 16),
-                    title: Text(appLocalizations.tailscaleShowSetupGuide),
-                    children: [_buildGuide(context)],
+                  _ExpandableGuide(
+                    title: appLocalizations.tailscaleShowSetupGuide,
+                    child: _buildGuide(context),
                   ),
                 if (proxies.isEmpty)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
                     child: Column(
                       children: [
-                        NullStatus(label: appLocalizations.tailscaleEmptyTip),
+                        NullStatus(
+                          label: appLocalizations.tailscaleEmptyTip,
+                          illustration: NullStatusIllustration.tun,
+                        ),
                         const SizedBox(height: 24),
                         FilledButton.icon(
                           onPressed: () {
@@ -614,11 +611,8 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
         maxLines: obscureText ? 1 : maxLines,
         obscureText: obscureText,
         decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          labelText: label,
+          hintText: label,
           helperText: helperText,
-          helperMaxLines: 3,
-          alignLabelWithHint: maxLines > 1,
           suffixIcon: suffixIcon,
         ),
       ),
@@ -630,9 +624,8 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    return SwitchListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Text(label, style: AppTextStyle.body.of(context)),
+    return ListItem.toggle(
+      title: Text(label),
       value: value,
       onChanged: onChanged,
     );
@@ -641,10 +634,11 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
   @override
   Widget build(BuildContext context) {
     final appLocalizations = context.appLocalizations;
-    return CommonDialog(
+    return AlertDialog(
       title: widget.proxy != null
           ? appLocalizations.editTailscaleNode
           : appLocalizations.addTailscaleNode,
+      hasFields: true,
       actions: [
         TextButton(
           onPressed: () {
@@ -652,167 +646,192 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
           },
           child: Text(appLocalizations.cancel),
         ),
-        const SizedBox(width: 8),
         TextButton(
           onPressed: _handleSubmit,
           child: Text(appLocalizations.confirm),
         ),
       ],
-      child: SizedBox(
-        width: 360,
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              _buildTextField(
+                controller: _nameController,
+                label: appLocalizations.name,
+                helperText: appLocalizations.tailscaleNameHelper,
+                validator: (value) {
+                  final name = value?.trim() ?? '';
+                  if (name.isEmpty) {
+                    return appLocalizations.emptyTip(appLocalizations.name);
+                  }
+                  final isEditingSame = widget.proxy?.name == name;
+                  if (!isEditingSame && widget.existingNames.contains(name)) {
+                    return appLocalizations.tailscaleNameExistsTip;
+                  }
+                  return null;
+                },
+              ),
+              _buildTextField(
+                controller: _authKeyController,
+                label: appLocalizations.tailscaleAuthKey,
+                helperText: appLocalizations.tailscaleAuthKeyHint,
+                obscureText: _obscureAuthKey,
+                suffixIcon: IconButton(
+                  tooltip: _obscureAuthKey
+                      ? appLocalizations.showPassword
+                      : appLocalizations.hidePassword,
+                  onPressed: () {
+                    setState(() => _obscureAuthKey = !_obscureAuthKey);
+                  },
+                  icon: GlyphIcon(
+                    _obscureAuthKey ? AppGlyphs.eye : AppGlyphs.eyeOff,
+                  ),
+                ),
+                validator: (value) {
+                  final key = value?.trim() ?? '';
+                  if (key.isEmpty) {
+                    return appLocalizations.emptyTip(
+                      appLocalizations.tailscaleAuthKey,
+                    );
+                  }
+                  return null;
+                },
+              ),
+              _buildTextField(
+                controller: _routesController,
+                label: appLocalizations.tailscaleRoutes,
+                helperText: appLocalizations.tailscaleRoutesHint,
+                maxLines: 3,
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: () {
+                    setState(() => _showAdvanced = !_showAdvanced);
+                  },
+                  icon: GlyphIcon(
+                    _showAdvanced ? AppGlyphs.chevronUp : AppGlyphs.chevronDown,
+                  ),
+                  label: Text(
+                    _showAdvanced
+                        ? appLocalizations.hideAdvanced
+                        : appLocalizations.showAdvanced,
+                  ),
+                ),
+              ),
+              if (_showAdvanced) ...[
                 _buildTextField(
-                  controller: _nameController,
-                  label: appLocalizations.name,
-                  helperText: appLocalizations.tailscaleNameHelper,
+                  controller: _hostnameController,
+                  label: appLocalizations.tailscaleHostname,
+                  helperText: appLocalizations.tailscaleHostnameHint,
+                ),
+                _buildTextField(
+                  controller: _controlUrlController,
+                  label: appLocalizations.tailscaleControlUrl,
+                  helperText: appLocalizations.tailscaleControlUrlHint,
                   validator: (value) {
-                    final name = value?.trim() ?? '';
-                    if (name.isEmpty) {
-                      return appLocalizations.emptyTip(appLocalizations.name);
+                    final url = value?.trim() ?? '';
+                    if (url.isEmpty || isSafeTailscaleControlUrl(url)) {
+                      return null;
                     }
-                    final isEditingSame = widget.proxy?.name == name;
-                    if (!isEditingSame && widget.existingNames.contains(name)) {
-                      return appLocalizations.tailscaleNameExistsTip;
-                    }
-                    return null;
+                    return appLocalizations.invalidLinkTip;
                   },
                 ),
                 _buildTextField(
-                  controller: _authKeyController,
-                  label: appLocalizations.tailscaleAuthKey,
-                  helperText: appLocalizations.tailscaleAuthKeyHint,
-                  obscureText: _obscureAuthKey,
-                  suffixIcon: IconButton(
-                    tooltip: _obscureAuthKey
-                        ? appLocalizations.showPassword
-                        : appLocalizations.hidePassword,
-                    onPressed: () {
-                      setState(() => _obscureAuthKey = !_obscureAuthKey);
-                    },
-                    icon: GlyphIcon(
-                      _obscureAuthKey ? AppGlyphs.eye : AppGlyphs.eyeOff,
-                    ),
-                  ),
+                  controller: _stateDirController,
+                  label: appLocalizations.tailscaleStateDir,
+                  helperText: appLocalizations.tailscaleStateDirHint,
                   validator: (value) {
-                    final key = value?.trim() ?? '';
-                    if (key.isEmpty) {
-                      return appLocalizations.emptyTip(
-                        appLocalizations.tailscaleAuthKey,
-                      );
+                    final dir = value?.trim() ?? '';
+                    if (dir.isEmpty || isSafeTailscaleStateDir(dir)) {
+                      return null;
                     }
-                    return null;
+                    return appLocalizations.emptyTip(
+                      appLocalizations.tailscaleStateDir,
+                    );
                   },
                 ),
                 _buildTextField(
-                  controller: _routesController,
-                  label: appLocalizations.tailscaleRoutes,
-                  helperText: appLocalizations.tailscaleRoutesHint,
-                  maxLines: 3,
+                  controller: _exitNodeController,
+                  label: appLocalizations.tailscaleExitNode,
+                  helperText: appLocalizations.tailscaleExitNodeHint,
                 ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton.icon(
-                    onPressed: () {
-                      setState(() => _showAdvanced = !_showAdvanced);
-                    },
-                    icon: GlyphIcon(
-                      _showAdvanced
-                          ? AppGlyphs.chevronUp
-                          : AppGlyphs.chevronDown,
-                    ),
-                    label: Text(
-                      _showAdvanced
-                          ? appLocalizations.hideAdvanced
-                          : appLocalizations.showAdvanced,
-                    ),
-                  ),
+                _buildSwitch(
+                  label: appLocalizations.tailscaleEphemeral,
+                  value: _ephemeral,
+                  onChanged: (value) {
+                    setState(() {
+                      _ephemeral = value;
+                    });
+                  },
                 ),
-                if (_showAdvanced) ...[
-                  _buildTextField(
-                    controller: _hostnameController,
-                    label: appLocalizations.tailscaleHostname,
-                    helperText: appLocalizations.tailscaleHostnameHint,
-                  ),
-                  _buildTextField(
-                    controller: _controlUrlController,
-                    label: appLocalizations.tailscaleControlUrl,
-                    helperText: appLocalizations.tailscaleControlUrlHint,
-                    validator: (value) {
-                      final url = value?.trim() ?? '';
-                      if (url.isEmpty || isSafeTailscaleControlUrl(url)) {
-                        return null;
-                      }
-                      return appLocalizations.invalidLinkTip;
-                    },
-                  ),
-                  _buildTextField(
-                    controller: _stateDirController,
-                    label: appLocalizations.tailscaleStateDir,
-                    helperText: appLocalizations.tailscaleStateDirHint,
-                    validator: (value) {
-                      final dir = value?.trim() ?? '';
-                      if (dir.isEmpty || isSafeTailscaleStateDir(dir)) {
-                        return null;
-                      }
-                      return appLocalizations.emptyTip(
-                        appLocalizations.tailscaleStateDir,
-                      );
-                    },
-                  ),
-                  _buildTextField(
-                    controller: _exitNodeController,
-                    label: appLocalizations.tailscaleExitNode,
-                    helperText: appLocalizations.tailscaleExitNodeHint,
-                  ),
-                  _buildSwitch(
-                    label: appLocalizations.tailscaleEphemeral,
-                    value: _ephemeral,
-                    onChanged: (value) {
-                      setState(() {
-                        _ephemeral = value;
-                      });
-                    },
-                  ),
-                  _buildSwitch(
-                    label: appLocalizations.tailscaleUdp,
-                    value: _udp,
-                    onChanged: (value) {
-                      setState(() {
-                        _udp = value;
-                      });
-                    },
-                  ),
-                  _buildSwitch(
-                    label: appLocalizations.tailscaleAcceptRoutes,
-                    value: _acceptRoutes,
-                    onChanged: (value) {
-                      setState(() {
-                        _acceptRoutes = value;
-                      });
-                    },
-                  ),
-                  _buildSwitch(
-                    label: appLocalizations.tailscaleExitNodeAllowLanAccess,
-                    value: _exitNodeAllowLanAccess,
-                    onChanged: (value) {
-                      setState(() {
-                        _exitNodeAllowLanAccess = value;
-                      });
-                    },
-                  ),
-                ],
+                _buildSwitch(
+                  label: appLocalizations.tailscaleUdp,
+                  value: _udp,
+                  onChanged: (value) {
+                    setState(() {
+                      _udp = value;
+                    });
+                  },
+                ),
+                _buildSwitch(
+                  label: appLocalizations.tailscaleAcceptRoutes,
+                  value: _acceptRoutes,
+                  onChanged: (value) {
+                    setState(() {
+                      _acceptRoutes = value;
+                    });
+                  },
+                ),
+                _buildSwitch(
+                  label: appLocalizations.tailscaleExitNodeAllowLanAccess,
+                  value: _exitNodeAllowLanAccess,
+                  onChanged: (value) {
+                    setState(() {
+                      _exitNodeAllowLanAccess = value;
+                    });
+                  },
+                ),
               ],
-            ),
+            ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ExpandableGuide extends StatefulWidget {
+  const _ExpandableGuide({required this.title, required this.child});
+
+  final String title;
+  final Widget child;
+
+  @override
+  State<_ExpandableGuide> createState() => _ExpandableGuideState();
+}
+
+class _ExpandableGuideState extends State<_ExpandableGuide> {
+  var _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ListItem(
+          title: Text(widget.title),
+          trailing: GlyphIcon(
+            _expanded ? AppGlyphs.chevronUp : AppGlyphs.chevronDown,
+          ),
+          onTap: () => setState(() => _expanded = !_expanded),
+        ),
+        if (_expanded) widget.child,
+      ],
     );
   }
 }

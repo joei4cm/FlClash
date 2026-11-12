@@ -4,6 +4,7 @@ part of '../action.dart';
 class CommonAction extends _$CommonAction {
   CoreController get _core => ref.read(coreHandlerProvider);
   bool _isUpdatingTraffic = false;
+  CancelToken? _updateCancelToken;
 
   @override
   void build() {}
@@ -100,25 +101,19 @@ class CommonAction extends _$CommonAction {
 
   TextSpan _releaseSpan(BuildContext context, String tagName, String? body) {
     final version = parseReleaseChangelog(body);
-    final localizations = currentAppLocalizations;
-    final running = globalState.packageInfo.version;
-    final secondary = AppTextStyle.subheadline
-        .of(context)
-        .copyWith(color: context.colorScheme.onSurfaceVariant);
     return TextSpan(
-      children: [
-        TextSpan(
-          text: '${localizations.updateRunningVersion(running)}\n',
-          style: secondary,
-        ),
-        TextSpan(text: '$tagName\n', style: AppTextStyle.title2.of(context)),
-        if (version == null) ...[
-          TextSpan(text: '\n', style: AppTextStyle.subheadline.of(context)),
-          for (final submit in parseReleaseBody(body))
-            TextSpan(text: '- $submit\n', style: secondary),
-        ] else
-          ..._changelogSpans(context, version),
-      ],
+      text: '$tagName \n',
+      style: AppTextStyle.title2.of(context),
+      children: version == null
+          ? [
+              TextSpan(text: '\n', style: AppTextStyle.subheadline.of(context)),
+              for (final submit in parseReleaseBody(body))
+                TextSpan(
+                  text: '- $submit \n',
+                  style: AppTextStyle.subheadline.of(context),
+                ),
+            ]
+          : _changelogSpans(context, version),
     );
   }
 
@@ -153,268 +148,153 @@ class CommonAction extends _$CommonAction {
     bool isUser = false,
   }) async {
     if (data != null) {
-      final choice = await _showUpdatePrompt(
-        tagName: data['tag_name'] as String,
-        body: data['body'] as String?,
-        isUser: isUser,
+      final context = globalState.navigatorKey.currentContext!;
+      final tag = data['tag_name'] as String;
+      final suffix = selfUpdateSuffix;
+      final res = await dialogs.showMessage(
+        title: currentAppLocalizations.discoverNewVersion,
+        message: _releaseSpan(context, tag, data['body'] as String?),
+        confirmText: suffix == null
+            ? currentAppLocalizations.goDownload
+            : currentAppLocalizations.update,
+        cancelText: isUser ? null : currentAppLocalizations.noLongerRemind,
       );
-      switch (choice) {
-        case UpdatePromptResult.install:
-          final inAppUpdate = supportsInAppUpdate(
-            isAndroid: system.isAndroid,
-            isLinux: system.isLinux,
-            isMacOS: system.isMacOS,
-            isWindows: system.isWindows,
-          );
-          if (inAppUpdate) {
-            unawaited(
-              globalState.safeRun(
-                () => _installInApp(data),
-                silence: false,
-                title: currentAppLocalizations.discoverNewVersion,
-              ),
-            );
-          } else {
-            unawaited(_openReleasePage());
-          }
-        case UpdatePromptResult.mute:
-          ref
-              .read(appSettingProvider.notifier)
-              .update((state) => state.copyWith(autoCheckUpdate: false));
-        case UpdatePromptResult.dismiss:
-        case null:
-          break;
+      if (res == true) {
+        if (suffix == null) {
+          _openReleasePage();
+        } else {
+          unawaited(_downloadUpdate(tag, releaseAssetName(tag, suffix)));
+        }
+      } else if (!isUser && res == false) {
+        ref
+            .read(appSettingProvider.notifier)
+            .update((state) => state.copyWith(autoCheckUpdate: false));
       }
     } else if (isUser) {
-      dialogs.showNotifier(
-        currentAppLocalizations.checkUpdateError,
-        level: MessageLevel.success,
+      unawaited(
+        dialogs.showAlert(
+          title: currentAppLocalizations.checkUpdate,
+          message: TextSpan(text: currentAppLocalizations.checkUpdateError),
+        ),
       );
     }
   }
 
-  /// Auto checks offer Cancel / Don't remind / Install so "later" does not
-  /// mute reminders. Manual checks keep Cancel / Install.
-  Future<UpdatePromptResult?> _showUpdatePrompt({
-    required String tagName,
-    required String? body,
-    required bool isUser,
-  }) {
-    final inAppUpdate = supportsInAppUpdate(
-      isAndroid: system.isAndroid,
-      isLinux: system.isLinux,
-      isMacOS: system.isMacOS,
-      isWindows: system.isWindows,
-    );
-    return dialogs.showCommonDialog<UpdatePromptResult>(
-      child: Builder(
-        builder: (context) {
-          final localizations = context.appLocalizations;
-          return CommonDialog(
-            title: localizations.discoverNewVersion,
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(UpdatePromptResult.dismiss);
-                },
-                child: Text(localizations.cancel),
-              ),
-              if (!isUser)
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(UpdatePromptResult.mute);
-                  },
-                  child: Text(localizations.noLongerRemind),
-                ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(UpdatePromptResult.install);
-                },
-                child: Text(
-                  inAppUpdate
-                      ? localizations.installUpdate
-                      : localizations.goDownload,
-                ),
-              ),
-            ],
-            child: SelectableText.rich(
-              TextSpan(children: [_releaseSpan(context, tagName, body)]),
-              style: const TextStyle(overflow: TextOverflow.visible),
-            ),
-          );
-        },
-      ),
+  void _openReleasePage() {
+    unawaited(
+      launchUrl(Uri.parse('https://github.com/$repository/releases/latest')),
     );
   }
 
-  Future<void> _openReleasePage() {
-    return launchUrl(
-      Uri.parse('https://github.com/$repository/releases/latest'),
-    );
-  }
-
-  Future<void> _installInApp(Map<String, dynamic> data) async {
-    final localizations = currentAppLocalizations;
-    final host = await currentUpdateHost();
-    if (host == null) {
-      await dialogs.showAlert(
-        title: localizations.discoverNewVersion,
-        message: TextSpan(text: localizations.updateOpenDownloadPage),
-      );
-      await _openReleasePage();
+  /// Downloads the latest release for this build even when it is not newer.
+  Future<void> testUpdateDownload() async {
+    final suffix = selfUpdateSuffix;
+    if (suffix == null || ref.read(updateDownloadStateProvider) != null) {
       return;
     }
-    final progress = ValueNotifier<double?>(null);
-    final title = ValueNotifier(localizations.updateDownload);
-    final phase = ValueNotifier(UpdatePhase.download);
-    final releaseTag = data['tag_name'] as String? ?? '';
-    final installer = AppUpdateInstaller(
-      elevate: system.isLinux ? linuxElevation.elevate : null,
-      installApk: system.isAndroid ? app!.installApk : null,
-      lockFilePath: () => appPath.lockFilePath,
-      portableDirectory: () => appPath.downloadDirPath,
+    final release = await globalState.loadingRun(
+      request.latestRelease,
+      title: currentAppLocalizations.updateDownloadTest,
+      tag: LoadingTag.checkUpdate,
     );
-    var cancelled = false;
-    var dialogOpen = true;
-    BuildContext? dialogContext;
-    final shown = Completer<void>();
-    // One pop only: the cancel button used to pop and UpdateCancelled then
-    // popped again, which removed the page under the dialog (black screen).
-    void closeDialog() {
-      if (!dialogOpen) {
-        return;
-      }
-      dialogOpen = false;
-      final context = dialogContext;
-      if (context != null && context.mounted) {
-        Navigator.of(context).pop();
-      }
-    }
+    if (release == null) return;
+    final tag = release['tag_name'] as String;
+    await _downloadUpdate(tag, releaseAssetName(tag, suffix));
+  }
 
-    final dialog = dialogs.showCommonDialog<void>(
-      dismissible: false,
-      child: Builder(
-        builder: (context) {
-          dialogContext ??= context;
-          if (!shown.isCompleted) {
-            shown.complete();
-          }
-          final colorScheme = context.colorScheme;
-          final secondaryStyle = AppTextStyle.subheadline
-              .of(context)
-              .copyWith(color: colorScheme.onSurfaceVariant);
-          return ValueListenableBuilder<String>(
-            valueListenable: title,
-            builder: (context, titleText, _) {
-              return ValueListenableBuilder<UpdatePhase>(
-                valueListenable: phase,
-                builder: (context, currentPhase, _) {
-                  return ValueListenableBuilder<double?>(
-                    valueListenable: progress,
-                    builder: (context, fraction, _) {
-                      final canCancel = currentPhase != UpdatePhase.install;
-                      return CommonDialog(
-                        title: titleText,
-                        actions: [
-                          if (canCancel)
-                            TextButton(
-                              onPressed: () {
-                                cancelled = true;
-                                installer.cancel();
-                                closeDialog();
-                              },
-                              child: Text(context.appLocalizations.cancel),
-                            ),
-                        ],
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            LinearProgressIndicator(value: fraction),
-                            if (fraction != null) ...[
-                              const SizedBox(height: 8),
-                              Text(
-                                '${(fraction * 100).round()}%',
-                                style: secondaryStyle,
-                              ),
-                            ],
-                            if (releaseTag.isNotEmpty) ...[
-                              const SizedBox(height: 8),
-                              Text(releaseTag, style: secondaryStyle),
-                            ],
-                            if (currentPhase == UpdatePhase.install) ...[
-                              const SizedBox(height: 8),
-                              Text(
-                                system.isAndroid
-                                    ? localizations.updateOpensInstaller
-                                    : localizations.updateWillRestart,
-                                style: secondaryStyle,
-                              ),
-                            ],
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
-              );
-            },
-          );
-        },
-      ),
-    );
+  Future<void> _downloadUpdate(String tag, String name) async {
+    final download = ref.read(updateDownloadStateProvider.notifier);
+    if (download.value != null) return;
+    final cancelToken = CancelToken();
+    _updateCancelToken = cancelToken;
+    download.value = UpdateDownloading(tag);
+    dialogs.showBanner(currentAppLocalizations.updateDownloadStarted);
     try {
-      await shown.future;
-      final outcome = await installer.install(
-        release: data,
-        host: host,
-        onProgress: (nextPhase, fraction) {
-          phase.value = nextPhase;
-          progress.value = fraction;
-          title.value = switch (nextPhase) {
-            UpdatePhase.download => localizations.updateDownload,
-            UpdatePhase.verify => localizations.updateVerify,
-            UpdatePhase.install => localizations.updateInstall,
-          };
+      final directory = await appPath.updateDirPath;
+      await clearUpdateDownloads();
+      await Directory(directory).create(recursive: true);
+      var shown = 0;
+      final path = await request.downloadVerifiedRelease(
+        tag: tag,
+        name: name,
+        directory: directory,
+        cancelToken: cancelToken,
+        onReceiveProgress: (received, total) {
+          // Every chunk would otherwise rebuild the status on its own frame.
+          final step = total > 0 ? total / 100 : 1 << 20;
+          if (received - shown < step && received != total) return;
+          shown = received;
+          download.value = UpdateDownloading(
+            tag,
+            received: received,
+            total: total,
+          );
         },
       );
-      closeDialog();
-      await dialog;
-      if (cancelled) {
+      download.value = UpdateReady(tag, path);
+      dialogs.showBanner(
+        currentAppLocalizations.updateReadyTip,
+        level: BannerLevel.success,
+        onTap: () => unawaited(installUpdate()),
+      );
+    } catch (error) {
+      download.value = null;
+      await clearUpdateDownloads();
+      if (error is DioException && CancelToken.isCancel(error)) {
         return;
       }
-      switch (outcome) {
-        case UpdateInstallOutcome.needsPermission:
-          await dialogs.showAlert(
-            title: localizations.discoverNewVersion,
-            message: TextSpan(text: localizations.updateInstallPermission),
-          );
-        case UpdateInstallOutcome.androidInstaller:
-          break;
-        case UpdateInstallOutcome.scheduledRestart:
-          await ref.read(systemActionProvider.notifier).handleExit();
-      }
-    } on UpdateCancelled {
-      closeDialog();
-      await dialog;
-    } on UpdateFailed catch (error) {
-      closeDialog();
-      await dialog;
-      throw MessageException(switch (error.failure) {
-        UpdateFailure.checksum => localizations.updateChecksumMismatch,
-        UpdateFailure.missingPackage => localizations.updatePackageMissing,
-        UpdateFailure.install => localizations.updateInstallFailed,
-      });
-    } catch (error) {
-      closeDialog();
-      await dialog;
-      rethrow;
+      commonPrint.log(
+        'Update download failed: ${compactError(error)}',
+        logLevel: LogLevel.warning,
+      );
+      await _showUpdateFailure(
+        userFacingErrorMessage(error, currentAppLocalizations),
+      );
     } finally {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        progress.dispose();
-        title.dispose();
-        phase.dispose();
-      });
+      if (identical(_updateCancelToken, cancelToken)) {
+        _updateCancelToken = null;
+      }
+    }
+  }
+
+  void cancelUpdateDownload() {
+    _updateCancelToken?.cancel();
+  }
+
+  Future<void> discardUpdate() async {
+    if (ref.read(updateDownloadStateProvider) is! UpdateReady) return;
+    ref.read(updateDownloadStateProvider.notifier).value = null;
+    await clearUpdateDownloads();
+  }
+
+  Future<void> installUpdate() async {
+    final download = ref.read(updateDownloadStateProvider);
+    if (download is! UpdateReady) return;
+    if (system.isAndroid) {
+      ref.read(updateDownloadStateProvider.notifier).value = null;
+      final status = await app?.installPackage(download.path);
+      await clearUpdateDownloads();
+      if (status != null && packageInstallFailed(status)) {
+        await _showUpdateFailure(currentAppLocalizations.updateInstallFailed);
+      }
+      return;
+    }
+    final started = windows?.runas(download.path, windowsUpdateArguments(pid));
+    if (started == true) {
+      await ref.read(systemActionProvider.notifier).handleExit();
+    } else if (started == false) {
+      await _showUpdateFailure(currentAppLocalizations.updateInstallFailed);
+    }
+  }
+
+  Future<void> _showUpdateFailure(String message) async {
+    final res = await dialogs.showMessage(
+      title: currentAppLocalizations.updateFailed,
+      message: TextSpan(text: message),
+      confirmText: currentAppLocalizations.goDownload,
+    );
+    if (res == true) {
+      _openReleasePage();
     }
   }
 }

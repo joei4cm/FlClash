@@ -4,9 +4,11 @@ import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/proxies/auto_group_bar.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../helpers/host_scaffold.dart';
+import '../helpers/test_app.dart';
 
 void main() {
   testWidgets('AutoGroupBar shows stick to region action', (tester) async {
@@ -30,13 +32,8 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: MaterialApp(
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            ...GlobalMaterialLocalizations.delegates,
-          ],
-          supportedLocales: AppLocalizations.delegate.supportedLocales,
-          home: const Scaffold(body: AutoGroupBar(group: group)),
+        child: const TestApp(
+          child: HostScaffold(body: AutoGroupBar(group: group)),
         ),
       ),
     );
