@@ -145,6 +145,10 @@ class ProxiesAction extends _$ProxiesAction {
       );
       final typedGroups = List<Group>.from(groups);
       ref.read(groupsProvider.notifier).value = typedGroups;
+      ref.read(delayDataSourceProvider.notifier).pruneToNames({
+        for (final group in typedGroups)
+          for (final proxy in group.all) proxy.name,
+      });
       await AutoSelectSticky.enforce(ref, typedGroups);
     } catch (e) {
       // The Core failure path already runs inside the retry task above; a

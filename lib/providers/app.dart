@@ -368,6 +368,40 @@ class DelayDataSource extends _$DelayDataSource with AutoDisposeNotifierMixin {
     }
   }
 
+  /// Drops delay rows for proxies that left the live group set. Without this,
+  /// a subscription refresh or profile switch keeps every historical name
+  /// until the next full setup clear.
+  void pruneToNames(Set<String> names) {
+    if (state.isEmpty) {
+      return;
+    }
+    final delayMap = _ownedDelayMap();
+    var changed = false;
+    final emptyUrls = <String>[];
+    for (final entry in delayMap.entries) {
+      final dropped = [
+        for (final name in entry.value.keys)
+          if (!names.contains(name)) name,
+      ];
+      if (dropped.isEmpty) {
+        continue;
+      }
+      changed = true;
+      for (final name in dropped) {
+        entry.value.remove(name);
+      }
+      if (entry.value.isEmpty) {
+        emptyUrls.add(entry.key);
+      }
+    }
+    for (final url in emptyUrls) {
+      delayMap.remove(url);
+    }
+    if (changed) {
+      value = _published = UnmodifiableMapView(delayMap);
+    }
+  }
+
   DelayMap _ownedDelayMap() {
     final owned = _owned;
     if (owned != null && identical(state, _published)) {

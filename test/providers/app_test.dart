@@ -410,6 +410,33 @@ void main() {
         },
       ]);
     });
+
+    test('pruneToNames drops proxies that left the live set', () {
+      const url = 'https://test.example';
+      final notifier = container.read(delayDataSourceProvider.notifier);
+      notifier.setDelays([
+        const Delay(name: 'keep', url: url, value: 10),
+        const Delay(name: 'gone', url: url, value: 20),
+        const Delay(name: 'gone', url: 'https://other.example', value: 30),
+      ]);
+
+      notifier.pruneToNames({'keep'});
+
+      expect(container.read(delayDataSourceProvider), {
+        url: {'keep': 10},
+      });
+    });
+
+    test('pruneToNames is a no-op when every name remains', () {
+      const url = 'https://test.example';
+      final notifier = container.read(delayDataSourceProvider.notifier);
+      notifier.setDelay(const Delay(name: 'keep', url: url, value: 10));
+      final state = container.read(delayDataSourceProvider);
+
+      notifier.pruneToNames({'keep', 'extra'});
+
+      expect(identical(container.read(delayDataSourceProvider), state), isTrue);
+    });
   });
 
   group('Loading provider', () {
