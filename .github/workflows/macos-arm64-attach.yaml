@@ -1,0 +1,263 @@
+# Rebuild macOS Apple Silicon and attach it to an existing release tag.
+# Hosted macOS arm64 runners are often capacity-starved; this workflow tries
+# several runner labels in parallel across multiple rounds so a later window
+# can still finish a release that published without the arm64 DMG.
+name: macos-arm64-attach
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to attach to (e.g. v0.9.14_c76143)'
+        required: true
+        type: string
+      ref:
+        description: 'Git ref to build (defaults to the tag)'
+        required: false
+        type: string
+        default: ''
+
+concurrency:
+  group: macos-arm64-attach-${{ inputs.tag }}
+  cancel-in-progress: false
+
+env:
+  IS_STABLE: ${{ !contains(inputs.tag, '-') }}
+  BRANCH_CACHE: false
+  FLUTTER_VERSION: '3.47.6'
+  GO_VERSION: '1.27.1'
+
+jobs:
+  # Round 1: ask several Apple Silicon labels at once.
+  build-round-1:
+    name: build round 1 (${{ matrix.runner }})
+    if: github.repository == 'joei4cm/FlClash'
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-14, macos-latest]
+    runs-on: ${{ matrix.runner }}
+    steps: &macos-arm64-steps
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref != '' && inputs.ref || inputs.tag }}
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: ${{ env.BRANCH_CACHE }}
+          cache-dependency-path: core/go.sum
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: ${{ env.BRANCH_CACHE }}
+
+      - name: Setup Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.3.app || \
+            sudo xcode-select -s /Applications/Xcode_26.2.app || \
+            sudo xcode-select -s /Applications/Xcode_16.4.app || \
+            sudo xcode-select -s /Applications/Xcode.app
+          xcodebuild -version
+          uname -m
+
+      - name: Require Apple Silicon host
+        run: |
+          arch="$(uname -m)"
+          test "$arch" = 'arm64' || {
+            echo "Runner is $arch; need arm64 for the Apple Silicon DMG" >&2
+            exit 1
+          }
+
+      - name: Get Flutter Dependency
+        run: |
+          flutter --version
+          flutter pub get
+
+      - name: Fetch CA certificates
+        shell: bash
+        env:
+          CA_BUNDLE: cacert-2026-09-25.pem
+          CA_BUNDLE_SHA256: a41b5d356aea97a529fe27e0f7316d2f9d946d75927476cf9cf1b90637d00505
+        run: |
+          bundle=core/Clash.Meta/component/ca/ca-certificates.crt
+          curl -fsSL --retry 3 -o "$bundle" "https://curl.se/ca/$CA_BUNDLE"
+          echo "$CA_BUNDLE_SHA256  $bundle" | sha256sum -c -
+
+      - name: Prefetch Go modules
+        shell: bash
+        working-directory: core
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+        run: |
+          for i in 1 2 3 4 5; do
+            if go mod download; then
+              exit 0
+            fi
+            echo "go mod download failed (attempt $i); retrying..." >&2
+            sleep $((i * 20))
+          done
+          exit 1
+
+      - name: Setup
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+        run: dart setup.dart macos ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-macos-arm64-${{ matrix.runner }}-${{ github.job }}
+          path: ./dist
+          overwrite: true
+          if-no-files-found: error
+
+  wait-round-2:
+    name: wait before round 2
+    needs: [build-round-1]
+    if: always() && !cancelled() && github.repository == 'joei4cm/FlClash'
+    runs-on: ubuntu-latest
+    outputs:
+      needed: ${{ steps.publish.outputs.needed }}
+    steps:
+      - name: Download round 1 artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: artifact-macos-arm64-*
+          path: ./dist
+          merge-multiple: true
+      - name: Publish needed flag
+        id: publish
+        run: |
+          if compgen -G './dist/*macos-arm64*' > /dev/null; then
+            echo "Round 1 already has a macOS arm64 DMG"
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Round 1 missed; backing off for capacity"
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+            sleep 600
+          fi
+
+  build-round-2:
+    name: build round 2 (${{ matrix.runner }})
+    needs: [wait-round-2]
+    if: |
+      always() &&
+      !cancelled() &&
+      github.repository == 'joei4cm/FlClash' &&
+      needs.wait-round-2.outputs.needed == 'true'
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-14, macos-latest]
+    runs-on: ${{ matrix.runner }}
+    steps: *macos-arm64-steps
+
+  wait-round-3:
+    name: wait before round 3
+    needs: [wait-round-2, build-round-2]
+    if: |
+      always() &&
+      !cancelled() &&
+      github.repository == 'joei4cm/FlClash' &&
+      needs.wait-round-2.outputs.needed == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      needed: ${{ steps.publish.outputs.needed }}
+    steps:
+      - name: Download any arm64 artifact so far
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: artifact-macos-arm64-*
+          path: ./dist
+          merge-multiple: true
+      - name: Publish needed flag
+        id: publish
+        run: |
+          if compgen -G './dist/*macos-arm64*' > /dev/null; then
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+            echo "Still missing; backing off longer"
+            sleep 900
+          fi
+
+  build-round-3:
+    name: build round 3 (${{ matrix.runner }})
+    needs: [wait-round-3]
+    if: |
+      always() &&
+      !cancelled() &&
+      github.repository == 'joei4cm/FlClash' &&
+      needs.wait-round-3.outputs.needed == 'true'
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-latest]
+    runs-on: ${{ matrix.runner }}
+    steps: *macos-arm64-steps
+
+  attach:
+    name: attach to release
+    permissions:
+      contents: write
+    needs: [build-round-1, wait-round-2, build-round-2, wait-round-3, build-round-3]
+    if: always() && !cancelled() && github.repository == 'joei4cm/FlClash'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download macOS arm64 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: artifact-macos-arm64-*
+          path: ./dist
+          merge-multiple: true
+
+      - name: Require a DMG
+        run: |
+          mapfile -t files < <(find ./dist -type f ! -name '.*' | sort)
+          printf 'Found:\n'
+          printf '  %s\n' "${files[@]}"
+          test "${#files[@]}" -gt 0
+          compgen -G './dist/*macos-arm64*' > /dev/null
+
+      - name: Attach assets and refresh SHA256SUMS
+        if: ${{ env.IS_STABLE == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(find ./dist -type f ! -name '.*' | sort)
+          printf 'Attaching %s\n' "${files[@]}"
+          gh release upload "$TAG" "${files[@]}" --clobber
+
+          mkdir -p /tmp/sums
+          if gh release download "$TAG" -D /tmp/sums -p SHA256SUMS; then
+            grep -v 'macos-arm64' /tmp/sums/SHA256SUMS > /tmp/SHA256SUMS || true
+          else
+            : > /tmp/SHA256SUMS
+          fi
+          (
+            cd ./dist
+            sha256sum ./*
+          ) >> /tmp/SHA256SUMS
+          sort -k2 /tmp/SHA256SUMS -o /tmp/SHA256SUMS
+          gh release upload "$TAG" /tmp/SHA256SUMS --clobber
+
+          # Drop the capacity warning from the release body once arm64 is present.
+          body="$(gh release view "$TAG" --json body -q .body)"
+          printf '%s\n' "$body" | \
+            sed '/macOS Apple Silicon: the arm64 DMG was not ready/d' > /tmp/body.md
+          gh release edit "$TAG" --notes-file /tmp/body.md
