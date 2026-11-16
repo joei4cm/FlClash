@@ -130,8 +130,18 @@ class SetupAction extends _$SetupAction {
   }
 
   void _refreshRunningState() {
-    _updateRunTime();
-    unawaited(ref.read(commonActionProvider.notifier).updateTraffic());
+    final visible = ref.read(appVisibleProvider);
+    // Uptime and chart history only matter while someone can see the UI.
+    // macOS tray title keeps this ticker alive while hidden; that path still
+    // samples rates for the menu bar without scrolling the speed charts.
+    if (visible) {
+      _updateRunTime();
+    }
+    unawaited(
+      ref
+          .read(commonActionProvider.notifier)
+          .updateTraffic(recordHistory: visible),
+    );
   }
 
   void _updateRunTime() {
@@ -242,6 +252,7 @@ class SetupAction extends _$SetupAction {
     }
     resetCoreTraffic();
     ref.read(trafficsProvider.notifier).clear();
+    ref.read(currentTrafficProvider.notifier).value = const Traffic();
     ref.read(totalTrafficProvider.notifier).value = const Traffic();
     // A silent Core is gone or hung; running again would proxy traffic to it.
     if (unanswered case (final error, final stackTrace)) {

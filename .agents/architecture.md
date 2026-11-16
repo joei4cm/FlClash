@@ -1389,8 +1389,10 @@ seen. There are three levels of gating:
 
 - `appVisibleProvider` is false while the desktop window is hidden or the Android activity is in the background
   (`hidden`, `paused`, `detached`). `AppStateManager` writes it. The one-second run-time and traffic ticker in
-  `SetupAction` follows it. The macOS menu bar title is the exception: it shows the traffic while the window is
-  hidden. `RouteTracker` and `RoutedProbe` follow it too, as described under Route Consistency.
+  `SetupAction` follows it. The macOS menu bar title is the exception: it keeps sampling rates into
+  `currentTrafficProvider` while the window is hidden, but does not append chart history or tick uptime, so
+  kept-alive dashboard widgets stay idle. `RouteTracker` and `RoutedProbe` follow it too, as described under
+  Route Consistency.
 - `ActivePollingMixin` is stricter for per-widget polls such as connections and memory. It polls only while the app is
   `resumed`, its home page is the current one, and no opaque route covers its page: the overlay turns tickers off on a
   covered page once the route over it has finished moving in, and the mixin follows `TickerMode`.

@@ -156,11 +156,7 @@ class SystemAction extends _$SystemAction {
   Future<void> updateTray() async {
     await trayPort?.update(
       trayState: ref.read(trayStateProvider),
-      traffic: ref.read(
-        trafficsProvider.select(
-          (state) => state.list.safeLast(const Traffic()),
-        ),
-      ),
+      traffic: ref.read(currentTrafficProvider),
       read: globalState.container.read,
     );
   }

@@ -641,7 +641,7 @@ final class TrafficsProvider
   }
 }
 
-String _$trafficsHash() => r'1fea2cb24af6903156ffa46394a71d953092f33d';
+String _$trafficsHash() => r'4a6b7a1d0ed0df3358893467044a8aa8974b2fff';
 
 abstract class _$Traffics extends $Notifier<FixedList<Traffic>> {
   FixedList<Traffic> build();
@@ -654,6 +654,72 @@ abstract class _$Traffics extends $Notifier<FixedList<Traffic>> {
             as $ClassProviderElement<
               AnyNotifier<FixedList<Traffic>, FixedList<Traffic>>,
               FixedList<Traffic>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// Instantaneous up/down rate for the tray title and other non-chart readers.
+/// Updated even while the window is hidden so macOS can keep a menu-bar rate
+/// without appending chart history or waking dashboard widgets.
+
+@ProviderFor(CurrentTraffic)
+final currentTrafficProvider = CurrentTrafficProvider._();
+
+/// Instantaneous up/down rate for the tray title and other non-chart readers.
+/// Updated even while the window is hidden so macOS can keep a menu-bar rate
+/// without appending chart history or waking dashboard widgets.
+final class CurrentTrafficProvider
+    extends $NotifierProvider<CurrentTraffic, Traffic> {
+  /// Instantaneous up/down rate for the tray title and other non-chart readers.
+  /// Updated even while the window is hidden so macOS can keep a menu-bar rate
+  /// without appending chart history or waking dashboard widgets.
+  CurrentTrafficProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'currentTrafficProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentTrafficHash();
+
+  @$internal
+  @override
+  CurrentTraffic create() => CurrentTraffic();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Traffic value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Traffic>(value),
+    );
+  }
+}
+
+String _$currentTrafficHash() => r'7d59817f15f418887afe2756e881af0ccd09ccd1';
+
+/// Instantaneous up/down rate for the tray title and other non-chart readers.
+/// Updated even while the window is hidden so macOS can keep a menu-bar rate
+/// without appending chart history or waking dashboard widgets.
+
+abstract class _$CurrentTraffic extends $Notifier<Traffic> {
+  Traffic build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<Traffic, Traffic>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Traffic, Traffic>,
+              Traffic,
               Object?,
               Object?
             >;
@@ -1563,7 +1629,7 @@ final class DelayDataSourceProvider
   }
 }
 
-String _$delayDataSourceHash() => r'0d0fb2faccb3ce4539ce683b1a2bc4dcb8c8f3c0';
+String _$delayDataSourceHash() => r'82e404bac705aa421b81a18307f91f70342e93b9';
 
 abstract class _$DelayDataSource extends $Notifier<DelayMap> {
   DelayMap build();
