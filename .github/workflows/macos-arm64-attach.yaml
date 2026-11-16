@@ -2,6 +2,10 @@
 # Hosted macOS arm64 runners are often capacity-starved; this workflow tries
 # several runner labels in parallel across multiple rounds so a later window
 # can still finish a release that published without the arm64 DMG.
+#
+# Trigger either:
+#   - Actions UI / `gh workflow run` with tag (+ optional ref)
+#   - Push branch `attach/macos-arm64/<tag>` (tag may include `_` suffix)
 name: macos-arm64-attach
 
 on:
@@ -16,22 +20,68 @@ on:
         required: false
         type: string
         default: ''
+  push:
+    branches:
+      - 'attach/macos-arm64/**'
 
 concurrency:
-  group: macos-arm64-attach-${{ inputs.tag }}
+  group: macos-arm64-attach-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
   cancel-in-progress: false
 
 env:
-  IS_STABLE: ${{ !contains(inputs.tag, '-') }}
   BRANCH_CACHE: false
   FLUTTER_VERSION: '3.47.6'
   GO_VERSION: '1.27.1'
 
 jobs:
+  resolve:
+    name: resolve tag
+    if: github.repository == 'joei4cm/FlClash'
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.out.outputs.tag }}
+      ref: ${{ steps.out.outputs.ref }}
+      is_stable: ${{ steps.out.outputs.is_stable }}
+    steps:
+      - name: Resolve
+        id: out
+        env:
+          EVENT: ${{ github.event_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+          INPUT_REF: ${{ inputs.ref }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT" == 'workflow_dispatch' ]]; then
+            tag="$INPUT_TAG"
+            ref="${INPUT_REF:-$tag}"
+          else
+            prefix='attach/macos-arm64/'
+            [[ "$REF_NAME" == "$prefix"* ]] || {
+              echo "Branch $REF_NAME is not under $prefix" >&2
+              exit 1
+            }
+            tag="${REF_NAME#"$prefix"}"
+            ref="$tag"
+          fi
+          [[ "$tag" == v* ]] || {
+            echo "Tag must start with v, got: $tag" >&2
+            exit 1
+          }
+          if [[ "$tag" == *-* ]]; then
+            is_stable=false
+          else
+            is_stable=true
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "is_stable=$is_stable" >> "$GITHUB_OUTPUT"
+          echo "Building $ref for release $tag (stable=$is_stable)"
+
   # Round 1: ask several Apple Silicon labels at once.
   build-round-1:
     name: build round 1 (${{ matrix.runner }})
-    if: github.repository == 'joei4cm/FlClash'
+    needs: [resolve]
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -42,7 +92,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref != '' && inputs.ref || inputs.tag }}
+          ref: ${{ needs.resolve.outputs.ref }}
           submodules: recursive
 
       - name: Setup Go
@@ -109,7 +159,8 @@ jobs:
       - name: Setup
         env:
           GOPROXY: https://proxy.golang.org,direct
-        run: dart setup.dart macos ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
+          IS_STABLE: ${{ needs.resolve.outputs.is_stable }}
+        run: dart setup.dart macos ${{ needs.resolve.outputs.is_stable == 'true' && '--env stable' || '' }} -v
 
       - name: Upload
         uses: actions/upload-artifact@v4
@@ -121,8 +172,8 @@ jobs:
 
   wait-round-2:
     name: wait before round 2
-    needs: [build-round-1]
-    if: always() && !cancelled() && github.repository == 'joei4cm/FlClash'
+    needs: [resolve, build-round-1]
+    if: always() && !cancelled() && needs.resolve.result == 'success'
     runs-on: ubuntu-latest
     outputs:
       needed: ${{ steps.publish.outputs.needed }}
@@ -148,11 +199,11 @@ jobs:
 
   build-round-2:
     name: build round 2 (${{ matrix.runner }})
-    needs: [wait-round-2]
+    needs: [resolve, wait-round-2]
     if: |
       always() &&
       !cancelled() &&
-      github.repository == 'joei4cm/FlClash' &&
+      needs.resolve.result == 'success' &&
       needs.wait-round-2.outputs.needed == 'true'
     continue-on-error: true
     strategy:
@@ -164,11 +215,11 @@ jobs:
 
   wait-round-3:
     name: wait before round 3
-    needs: [wait-round-2, build-round-2]
+    needs: [resolve, wait-round-2, build-round-2]
     if: |
       always() &&
       !cancelled() &&
-      github.repository == 'joei4cm/FlClash' &&
+      needs.resolve.result == 'success' &&
       needs.wait-round-2.outputs.needed == 'true'
     runs-on: ubuntu-latest
     outputs:
@@ -194,11 +245,11 @@ jobs:
 
   build-round-3:
     name: build round 3 (${{ matrix.runner }})
-    needs: [wait-round-3]
+    needs: [resolve, wait-round-3]
     if: |
       always() &&
       !cancelled() &&
-      github.repository == 'joei4cm/FlClash' &&
+      needs.resolve.result == 'success' &&
       needs.wait-round-3.outputs.needed == 'true'
     continue-on-error: true
     strategy:
@@ -212,8 +263,16 @@ jobs:
     name: attach to release
     permissions:
       contents: write
-    needs: [build-round-1, wait-round-2, build-round-2, wait-round-3, build-round-3]
-    if: always() && !cancelled() && github.repository == 'joei4cm/FlClash'
+    needs:
+      [
+        resolve,
+        build-round-1,
+        wait-round-2,
+        build-round-2,
+        wait-round-3,
+        build-round-3,
+      ]
+    if: always() && !cancelled() && needs.resolve.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Download macOS arm64 artifacts
@@ -232,11 +291,11 @@ jobs:
           compgen -G './dist/*macos-arm64*' > /dev/null
 
       - name: Attach assets and refresh SHA256SUMS
-        if: ${{ env.IS_STABLE == 'true' }}
+        if: ${{ needs.resolve.outputs.is_stable == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          TAG: ${{ inputs.tag }}
+          TAG: ${{ needs.resolve.outputs.tag }}
         run: |
           set -euo pipefail
           mapfile -t files < <(find ./dist -type f ! -name '.*' | sort)
