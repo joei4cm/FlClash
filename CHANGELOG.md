@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.9.15 (2026-11-16)
+
+**Bug Fixes**
+
+- **memory** Cap live connection UI lists at 4k newest (7efb285)
+- **memory** Prune stale delays and release world map cache (43a657b)
+- **ci** Recover macOS arm64 builds under runner capacity pressure (2d5e008)
+
 ## v0.9.14 (2026-11-12)
 
 **Features**

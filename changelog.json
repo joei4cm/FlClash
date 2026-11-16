@@ -2,6 +2,34 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.15",
+      "tag": "v0.9.15",
+      "date": "2026-11-16",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "7efb285",
+              "scope": "memory",
+              "text": "Cap live connection UI lists at 4k newest"
+            },
+            {
+              "id": "43a657b",
+              "scope": "memory",
+              "text": "Prune stale delays and release world map cache"
+            },
+            {
+              "id": "2d5e008",
+              "scope": "ci",
+              "text": "Recover macOS arm64 builds under runner capacity pressure"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.14",
       "tag": "v0.9.14",
       "date": "2026-11-12",
