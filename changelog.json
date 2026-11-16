@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.16",
+      "tag": "v0.9.16",
+      "date": "2026-11-16",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "8d271bd",
+              "scope": "proxies",
+              "text": "Geo region chips for auto-select groups"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.15",
       "tag": "v0.9.15",
       "date": "2026-11-16",
