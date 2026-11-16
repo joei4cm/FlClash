@@ -88,7 +88,10 @@ List<String> geosPresentIn(Iterable<String> names) {
   ];
 }
 
-String stickyGeoStorageKey({required int? profileId, required String groupName}) {
+String stickyGeoStorageKey({
+  required int? profileId,
+  required String groupName,
+}) {
   if (profileId == null) {
     return groupName;
   }
