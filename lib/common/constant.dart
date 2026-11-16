@@ -187,6 +187,10 @@ const pausedMaxLogsLength = maxLogsLength * 2;
 const pausedMaxRequestsLength = maxRequestsLength * 2;
 const pausedMaxDnsQueriesLength = maxDnsQueriesLength * 2;
 
+/// Newest open connections kept in the live UI. The Core snapshot can be
+/// larger; the dashboard count still reports the full total.
+const maxLiveConnectionsLength = pausedMaxRequestsLength;
+
 const trafficSampleLength = 30;
 
 // iOS 27's system colors but the deeper blue of earlier iOS, in the order of the

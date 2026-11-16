@@ -23,7 +23,7 @@ class TrackerInfoListController extends ValueNotifier<TrackerInfosState> {
     }
     value = value.copyWith(
       trackerInfos: value.autoScrollToEnd
-          ? trackerInfos
+          ? takeLeading(trackerInfos, maxLiveConnectionsLength)
           : retainTrimmedHead(
               value.trackerInfos,
               trackerInfos,
@@ -38,7 +38,10 @@ class TrackerInfoListController extends ValueNotifier<TrackerInfosState> {
   }
 
   void resumeAutoScrollToEnd(List<TrackerInfo> trackerInfos) {
-    value = value.copyWith(autoScrollToEnd: true, trackerInfos: trackerInfos);
+    value = value.copyWith(
+      autoScrollToEnd: true,
+      trackerInfos: takeLeading(trackerInfos, maxLiveConnectionsLength),
+    );
   }
 }
 
