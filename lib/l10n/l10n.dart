@@ -7663,8 +7663,7 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one:
-          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',
@@ -11565,13 +11564,43 @@ class AppLocalizations {
     );
   }
 
-  /// `Sticky region: {region}`
+  /// `Preferred region: {region}`
   String autoGroupStickyRegion(String region) {
     return Intl.message(
-      'Sticky region: $region',
+      'Preferred region: $region',
       name: 'autoGroupStickyRegion',
       desc: '',
       args: [region],
+    );
+  }
+
+  /// `Switch by region`
+  String get autoGroupPickRegion {
+    return Intl.message(
+      'Switch by region',
+      name: 'autoGroupPickRegion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Testing {region}…`
+  String autoGroupTestingRegion(String region) {
+    return Intl.message(
+      'Testing $region…',
+      name: 'autoGroupTestingRegion',
+      desc: '',
+      args: [region],
+    );
+  }
+
+  /// `{region} · {count}`
+  String autoGroupRegionNodes(String region, int count) {
+    return Intl.message(
+      '$region · $count',
+      name: 'autoGroupRegionNodes',
+      desc: '',
+      args: [region, count],
     );
   }
 

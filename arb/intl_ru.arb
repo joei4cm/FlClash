@@ -1376,11 +1376,31 @@
     }
   },
   "stickToRegion": "Закрепить регион",
-  "autoGroupStickyRegion": "Закреплённый регион: {region}",
+  "autoGroupStickyRegion": "Предпочтительный регион: {region}",
   "@autoGroupStickyRegion": {
     "placeholders": {
       "region": {
         "type": "String"
+      }
+    }
+  },
+  "autoGroupPickRegion": "Переключить по региону",
+  "autoGroupTestingRegion": "Проверка {region}…",
+  "@autoGroupTestingRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupRegionNodes": "{region} · {count}",
+  "@autoGroupRegionNodes": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
       }
     }
   },

@@ -1376,11 +1376,31 @@
     }
   },
   "stickToRegion": "Stick to region",
-  "autoGroupStickyRegion": "Sticky region: {region}",
+  "autoGroupStickyRegion": "선호 지역: {region}",
   "@autoGroupStickyRegion": {
     "placeholders": {
       "region": {
         "type": "String"
+      }
+    }
+  },
+  "autoGroupPickRegion": "지역으로 전환",
+  "autoGroupTestingRegion": "{region} 테스트 중…",
+  "@autoGroupTestingRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupRegionNodes": "{region} · {count}",
+  "@autoGroupRegionNodes": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
       }
     }
   },
