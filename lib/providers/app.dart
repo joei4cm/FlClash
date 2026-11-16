@@ -181,15 +181,37 @@ class Traffics extends _$Traffics with AutoDisposeNotifierMixin {
     return FixedList(trafficSampleLength);
   }
 
+  /// Appends a speed sample for the dashboard chart. Consecutive idle (0/0)
+  /// samples are dropped so a flat baseline does not keep scrolling and
+  /// repainting once a second.
   void addTraffic(Traffic value) {
     if (!ref.mounted) {
       return;
+    }
+    if (_isIdleTraffic(value)) {
+      final list = state.list;
+      if (list.isNotEmpty && _isIdleTraffic(list.last)) {
+        return;
+      }
     }
     this.value = state.append(value);
   }
 
   void clear() {
     value = state.copyWith()..clear();
+  }
+}
+
+bool _isIdleTraffic(Traffic traffic) => traffic.up == 0 && traffic.down == 0;
+
+/// Instantaneous up/down rate for the tray title and other non-chart readers.
+/// Updated even while the window is hidden so macOS can keep a menu-bar rate
+/// without appending chart history or waking dashboard widgets.
+@Riverpod(keepAlive: true)
+class CurrentTraffic extends _$CurrentTraffic with AutoDisposeNotifierMixin {
+  @override
+  Traffic build() {
+    return const Traffic();
   }
 }
 

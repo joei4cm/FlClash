@@ -66,10 +66,12 @@ class _CappedDebounceSetupAction extends _UnflooredDebounceSetupAction {
 
 class TestCommonAction extends CommonAction {
   int trafficUpdates = 0;
+  final List<bool> trafficRecordHistory = [];
 
   @override
-  Future<void> updateTraffic() async {
+  Future<void> updateTraffic({bool recordHistory = true}) async {
     trafficUpdates++;
+    trafficRecordHistory.add(recordHistory);
   }
 }
 
@@ -442,6 +444,45 @@ void main() {
       await tester.pump(const Duration(seconds: 2));
 
       expect(trafficUpdates(), system.isMacOS ? 3 : 0);
+      if (system.isMacOS) {
+        expect(
+          (scoped.read(commonActionProvider.notifier) as TestCommonAction)
+              .trafficRecordHistory,
+          everyElement(isFalse),
+        );
+      }
+
+      await setup.setRunning(false);
+    });
+
+    testWidgets('hidden tray polling does not keep recording chart history', (
+      tester,
+    ) async {
+      final setup = buildScoped();
+      setVisible(true);
+      await setup.setRunning(true);
+      await tester.pump();
+      expect(
+        (scoped.read(commonActionProvider.notifier) as TestCommonAction)
+            .trafficRecordHistory,
+        everyElement(isTrue),
+      );
+
+      setVisible(false);
+      scoped
+          .read(appSettingProvider.notifier)
+          .update((state) => state.copyWith(showTrayTitle: true));
+      await tester.pump(const Duration(seconds: 2));
+
+      if (system.isMacOS) {
+        expect(
+          (scoped.read(commonActionProvider.notifier) as TestCommonAction)
+              .trafficRecordHistory
+              .skipWhile((record) => record)
+              .toList(),
+          everyElement(isFalse),
+        );
+      }
 
       await setup.setRunning(false);
     });

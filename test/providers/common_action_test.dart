@@ -96,11 +96,39 @@ void main() {
       expect(container.read(trafficsProvider).list.last.up, 10);
       expect(container.read(trafficsProvider).list.last.down, 20);
       expect(
+        container.read(currentTrafficProvider),
+        const Traffic(up: 10, down: 20),
+      );
+      expect(
         container.read(totalTrafficProvider),
         const Traffic(up: 100, down: 200),
       );
       verify(() => core.getTraffic(true)).called(1);
       verify(() => core.getTotalTraffic(true)).called(1);
+    });
+
+    test('skips chart history while still updating the current rate', () async {
+      final container = buildContainer();
+      when(
+        () => core.getTraffic(any()),
+      ).thenAnswer((_) async => const Traffic(up: 7, down: 8));
+      when(
+        () => core.getTotalTraffic(any()),
+      ).thenAnswer((_) async => const Traffic(up: 70, down: 80));
+
+      await container
+          .read(commonActionProvider.notifier)
+          .updateTraffic(recordHistory: false);
+
+      expect(container.read(trafficsProvider).list, isEmpty);
+      expect(
+        container.read(currentTrafficProvider),
+        const Traffic(up: 7, down: 8),
+      );
+      expect(
+        container.read(totalTrafficProvider),
+        const Traffic(up: 70, down: 80),
+      );
     });
 
     test('swallows a core failure and leaves the total untouched', () async {

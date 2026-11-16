@@ -343,6 +343,21 @@ void main() {
       expect(notifications, 3);
       expect(container.read(trafficsProvider).length, 0);
     });
+
+    test('Traffics.addTraffic drops consecutive idle samples', () {
+      final notifier = container.read(trafficsProvider.notifier);
+      notifier.addTraffic(const Traffic(up: 1, down: 0));
+      notifier.addTraffic(const Traffic());
+      notifier.addTraffic(const Traffic());
+      notifier.addTraffic(const Traffic());
+      expect(container.read(trafficsProvider).list, [
+        const Traffic(up: 1, down: 0),
+        const Traffic(),
+      ]);
+
+      notifier.addTraffic(const Traffic(up: 0, down: 5));
+      expect(container.read(trafficsProvider).list.last.down, 5);
+    });
   });
 
   group('SortNum provider', () {

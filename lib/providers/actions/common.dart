@@ -47,7 +47,12 @@ class CommonAction extends _$CommonAction {
     });
   }
 
-  Future<void> updateTraffic() async {
+  /// Pulls speed samples from the Core.
+  ///
+  /// [recordHistory] appends to the dashboard chart series. Pass false while
+  /// the window is hidden so macOS tray title polling does not keep rebuilding
+  /// kept-alive chart widgets.
+  Future<void> updateTraffic({bool recordHistory = true}) async {
     if (_isUpdatingTraffic) {
       return;
     }
@@ -61,7 +66,10 @@ class CommonAction extends _$CommonAction {
         _readTraffic(() => _core.getTotalTraffic(onlyStatisticsProxy)),
       ]);
       if (traffic != null) {
-        ref.read(trafficsProvider.notifier).addTraffic(traffic);
+        ref.read(currentTrafficProvider.notifier).value = traffic;
+        if (recordHistory) {
+          ref.read(trafficsProvider.notifier).addTraffic(traffic);
+        }
       }
       if (totalTraffic != null) {
         ref.read(totalTrafficProvider.notifier).value = totalTraffic;
