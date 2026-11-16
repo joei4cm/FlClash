@@ -209,6 +209,36 @@ void main() {
         'Stale',
       ]);
     });
+
+    test('prunes delay rows for proxies that left the live groups', () async {
+      when(core.getProxies).thenAnswer(
+        (_) async => ProxiesData(
+          all: const ['Proxy', 'Direct'],
+          proxies: Map<String, dynamic>.from({
+            'Proxy': Map<String, dynamic>.from({
+              'name': 'Proxy',
+              'type': 'Selector',
+              'now': 'HK-01',
+              'all': ['HK-01'],
+            }),
+            'Direct': Map<String, dynamic>.from({
+              'name': 'Direct',
+              'type': 'Direct',
+            }),
+            'HK-01': Map<String, dynamic>.from({'name': 'HK-01', 'type': 'ss'}),
+          }),
+        ),
+      );
+      final container = buildContainer();
+      container.read(delayDataSourceProvider.notifier).setDelays([
+        const Delay(name: 'HK-01', url: _testUrl, value: 40),
+        const Delay(name: 'gone', url: _testUrl, value: 90),
+      ]);
+
+      await actionOf(container).updateGroups();
+
+      expect(container.read(delayDataSourceProvider)[_testUrl], {'HK-01': 40});
+    });
   });
 
   group('changeProxy', () {

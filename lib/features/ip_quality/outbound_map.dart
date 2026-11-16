@@ -41,6 +41,7 @@ class _OutboundMapViewState extends State<OutboundMapView>
     duration: const Duration(milliseconds: 1600),
   );
   WorldMapData? _map;
+  var _mapHeld = false;
   var _scale = _minScale;
   var _translation = Offset.zero;
   var _gestureScale = _minScale;
@@ -67,14 +68,33 @@ class _OutboundMapViewState extends State<OutboundMapView>
   }
 
   Future<void> _loadMap() async {
-    final map = await WorldMapData.load();
-    if (mounted) {
+    WorldMapData.retain();
+    _mapHeld = true;
+    try {
+      final map = await WorldMapData.load();
+      if (!mounted) {
+        _releaseMap();
+        return;
+      }
       setState(() => _map = map);
+    } catch (_) {
+      _releaseMap();
+      rethrow;
     }
+  }
+
+  void _releaseMap() {
+    if (!_mapHeld) {
+      return;
+    }
+    _mapHeld = false;
+    _map = null;
+    WorldMapData.release();
   }
 
   @override
   void dispose() {
+    _releaseMap();
     _pulse.dispose();
     super.dispose();
   }

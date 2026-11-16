@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui' show Offset, Path, PathFillType, Size;
 
 import 'package:fl_clash/common/outbound_location.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
 
 /// Natural Earth 1:50m admin-0 countries, public domain, packed by
@@ -19,8 +20,31 @@ class WorldMapData {
   List<Path>? _unitPaths;
 
   static Future<WorldMapData>? _loading;
+  static var _holders = 0;
 
+  /// Decodes once and keeps the result while any [retain] has not been
+  /// matched by [release]. The unit [Path] set alone is ~0.9 MB.
   static Future<WorldMapData> load() => _loading ??= _read();
+
+  /// Marks one live consumer of the cached map. Pair every call with
+  /// [release] when the consumer no longer needs the data.
+  static void retain() => _holders++;
+
+  /// Drops the process-wide cache when the last consumer releases.
+  static void release() {
+    if (_holders > 0) {
+      _holders--;
+    }
+    if (_holders == 0) {
+      _loading = null;
+    }
+  }
+
+  @visibleForTesting
+  static void resetCacheForTest() {
+    _holders = 0;
+    _loading = null;
+  }
 
   /// Country outlines in [unitSize] space. Built once per decoded map.
   List<Path> get unitPaths {

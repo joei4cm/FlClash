@@ -50,4 +50,17 @@ void main() {
     expect(bounds.width, greaterThan(20));
     expect(bounds.height, greaterThan(10));
   });
+
+  test('release drops the cached load after the last retain', () async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    WorldMapData.resetCacheForTest();
+    WorldMapData.retain();
+    final shared = await WorldMapData.load();
+    expect(identical(await WorldMapData.load(), shared), isTrue);
+    WorldMapData.release();
+    final second = await WorldMapData.load();
+    expect(identical(second, shared), isFalse);
+    expect(second.countries.length, shared.countries.length);
+    WorldMapData.resetCacheForTest();
+  });
 }
