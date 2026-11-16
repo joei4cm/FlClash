@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.16 (2026-11-16)
+
+**Features**
+
+- **proxies** Geo region chips for auto-select groups (8d271bd)
+
 ## v0.9.15 (2026-11-16)
 
 **Bug Fixes**
