@@ -404,8 +404,14 @@ class _LiveFeedState extends ConsumerState<_LiveFeed>
     if (trackerInfos == null) {
       return;
     }
+    final newestFirst = trackerInfos.length <= maxLiveConnectionsLength
+        ? trackerInfos
+        : ([...trackerInfos]..sort((a, b) => b.start.compareTo(a.start)));
     widget.listController.setTrackerInfos(
-      _speedRanker.rank(trackerInfos, readAt),
+      _speedRanker.rank(
+        takeLeading(newestFirst, maxLiveConnectionsLength),
+        readAt,
+      ),
     );
     widget.filters.offer(widget.listController.value.trackerInfos);
     if (_startsAtFarEnd) {

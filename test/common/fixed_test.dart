@@ -94,6 +94,18 @@ void main() {
     });
   });
 
+  group('takeLeading', () {
+    test('returns the same list when within the limit', () {
+      final items = [1, 2, 3];
+      expect(takeLeading(items, 3), same(items));
+      expect(takeLeading(items, 10), same(items));
+    });
+
+    test('keeps only the leading items past the limit', () {
+      expect(takeLeading([1, 2, 3, 4, 5], 3), [1, 2, 3]);
+    });
+  });
+
   group('retainTrimmedHead', () {
     final items = List.generate(6, (i) => Object());
 

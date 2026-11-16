@@ -130,9 +130,10 @@ mixin ConnectionsPolling<T extends ConsumerStatefulWidget>
             .where((item) => item.metadata.network.toLowerCase() == 'tcp')
             .length;
         connectionCount.value = next.length;
+        final visible = takeLeading(next, maxLiveConnectionsLength);
         updateWhenRouteSettled(
           () => setState(() {
-            connections = next;
+            connections = visible;
             tcpCount = tcp;
             udpCount = next.length - tcp;
           }),

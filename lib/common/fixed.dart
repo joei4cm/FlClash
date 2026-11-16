@@ -58,6 +58,15 @@ class FixedList<T> {
   int get hashCode => Object.hash(identityHashCode(_list), _revision);
 }
 
+/// Keeps the leading [limit] items. Callers that care about "newest" must
+/// sort newest-first before calling.
+List<T> takeLeading<T>(List<T> items, int limit) {
+  if (items.length <= limit) {
+    return items;
+  }
+  return List.unmodifiable(items.sublist(0, limit));
+}
+
 /// Restores the head that [latest] trimmed off [current] so a paused view
 /// stays anchored; the result is capped at [limit] from the tail.
 List<T> retainTrimmedHead<T>(
