@@ -1,3 +1,6 @@
+/// Preferred display order for region chips on a proxy group.
+const proxyGeoRegionOrder = ['HK', 'TW', 'JP', 'SG', 'KR', 'US', 'EU', 'CN'];
+
 String? inferProxyGeoRegion(String name) {
   final normalized = name.trim().toUpperCase();
   if (normalized.isEmpty) {
@@ -59,6 +62,46 @@ bool _nameContainsGeoToken(String normalized, String token) {
     ).hasMatch(normalized);
   }
   return normalized.contains(upperToken);
+}
+
+/// Groups leaf proxy names by inferred region. Names with no region are omitted.
+Map<String, List<String>> groupProxyNamesByGeo(Iterable<String> names) {
+  final grouped = <String, List<String>>{};
+  for (final name in names) {
+    final geo = inferProxyGeoRegion(name);
+    if (geo == null) {
+      continue;
+    }
+    (grouped[geo] ??= []).add(name);
+  }
+  return grouped;
+}
+
+/// Regions present in [names], ordered for the chip row.
+List<String> geosPresentIn(Iterable<String> names) {
+  final present = groupProxyNamesByGeo(names).keys.toSet();
+  return [
+    for (final geo in proxyGeoRegionOrder)
+      if (present.contains(geo)) geo,
+    for (final geo in present)
+      if (!proxyGeoRegionOrder.contains(geo)) geo,
+  ];
+}
+
+String stickyGeoStorageKey({required int? profileId, required String groupName}) {
+  if (profileId == null) {
+    return groupName;
+  }
+  return '$profileId::$groupName';
+}
+
+String? stickyGeoForGroup(
+  Map<String, String> byGroup, {
+  required int? profileId,
+  required String groupName,
+}) {
+  final keyed = stickyGeoStorageKey(profileId: profileId, groupName: groupName);
+  return byGroup[keyed] ?? byGroup[groupName];
 }
 
 String? resolvePreferredStickyGeo({
@@ -130,6 +173,29 @@ AutoSelectDecision? decideAutoSelectSwitch({
   return AutoSelectDecision(
     proxyName: candidate,
     reason: 'current_unhealthy_prefer_$preferredGeo',
+  );
+}
+
+/// User tapped a region chip: move to the best healthy node in that geo even
+/// when the current node is still healthy but elsewhere.
+AutoSelectDecision? decideGeoPickSwitch({
+  required String currentName,
+  required String preferredGeo,
+  required String? bestHealthyInPreferredGeo,
+}) {
+  if (preferredGeo.isEmpty || preferredGeo == 'ANY') {
+    return null;
+  }
+  final candidate = bestHealthyInPreferredGeo;
+  if (candidate == null || candidate.isEmpty) {
+    return null;
+  }
+  if (candidate == currentName) {
+    return null;
+  }
+  return AutoSelectDecision(
+    proxyName: candidate,
+    reason: 'user_picked_$preferredGeo',
   );
 }
 

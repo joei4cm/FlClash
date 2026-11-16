@@ -1383,11 +1383,31 @@
     }
   },
   "stickToRegion": "Stick to region",
-  "autoGroupStickyRegion": "Sticky region: {region}",
+  "autoGroupStickyRegion": "Preferred region: {region}",
   "@autoGroupStickyRegion": {
     "placeholders": {
       "region": {
         "type": "String"
+      }
+    }
+  },
+  "autoGroupPickRegion": "Switch by region",
+  "autoGroupTestingRegion": "Testing {region}…",
+  "@autoGroupTestingRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupRegionNodes": "{region} · {count}",
+  "@autoGroupRegionNodes": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
       }
     }
   },

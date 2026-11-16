@@ -7,8 +7,9 @@ import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Nudges an unhealthy url-test/fallback node toward a healthy preferred-region
-/// node. Does not write selectedMap and does not close connections.
+/// Keeps url-test / fallback groups on a preferred region inferred from node
+/// names: failover when the current node is unhealthy, and an explicit pick
+/// when the user taps a region chip.
 class AutoSelectSticky {
   AutoSelectSticky._();
 
@@ -26,6 +27,7 @@ class AutoSelectSticky {
     final geoIdentityEnabled = ref.read(
       geoIdentitySettingProvider.select((state) => state.enable),
     );
+    final profileId = ref.read(currentProfileIdProvider);
     final selectedMap = ref.read(
       currentProfileProvider.select((state) => state?.selectedMap ?? {}),
     );
@@ -42,7 +44,11 @@ class AutoSelectSticky {
         continue;
       }
       final preferredGeo = resolvePreferredStickyGeo(
-        configuredGeo: stickyByGroup[group.name],
+        configuredGeo: stickyGeoForGroup(
+          stickyByGroup,
+          profileId: profileId,
+          groupName: group.name,
+        ),
         geoIdentityEnabled: geoIdentityEnabled,
       );
       if (preferredGeo == null) {
@@ -93,34 +99,109 @@ class AutoSelectSticky {
     }
   }
 
-  static void setStickyGeoForGroup(
+  /// Pins [geo] for the current profile's [group] and switches to the best
+  /// healthy node in that region after a delay test of those members.
+  static Future<bool> selectGeo(
     WidgetRef ref, {
-    required String groupName,
-    required String proxyName,
-  }) {
-    final geo = resolveAutoSelectStickyGeo(
-      configuredGeo: null,
-      geoIdentityEnabled: ref.read(
-        geoIdentitySettingProvider.select((state) => state.enable),
-      ),
-      proxyName: proxyName,
+    required Group group,
+    required String geo,
+  }) async {
+    if (!group.type.isComputedSelected || geo.isEmpty || geo == 'ANY') {
+      return false;
+    }
+    final members = [
+      for (final proxy in group.all)
+        if (inferProxyGeoRegion(proxy.name) == geo) proxy,
+    ];
+    if (members.isEmpty) {
+      return false;
+    }
+
+    final profileId = ref.read(currentProfileIdProvider);
+    _writeStickyGeo(
+      ref,
+      profileId: profileId,
+      groupName: group.name,
+      geo: geo,
+      enable: true,
     );
-    ref.read(appSettingProvider.notifier).update((state) {
-      final next = Map<String, String>.from(state.autoSelectStickyGeoByGroup)
-        ..[groupName] = geo;
-      return state.copyWith(autoSelectStickyGeoByGroup: next);
-    });
+    ref
+        .read(profilesActionProvider.notifier)
+        .clearCurrentSelectedMap(group.name);
+
+    final proxies = ref.read(proxiesActionProvider.notifier);
+    await proxies.delayTest(members, group.testUrl);
+
+    final testUrl = ref.read(realTestUrlProvider(group.testUrl));
+    final delayMap = ref.read(delayDataSourceProvider);
+    final override = ref.read(proxyNameProvider(group.name));
+    final currentName = group.getCurrentSelectedName(override ?? '');
+    final best = pickBestHealthyProxyInGeo(
+      proxyNames: members.map((proxy) => proxy.name),
+      preferredGeo: geo,
+      testUrl: testUrl,
+      delayMap: delayMap,
+    );
+    final decision = decideGeoPickSwitch(
+      currentName: currentName,
+      preferredGeo: geo,
+      bestHealthyInPreferredGeo: best,
+    );
+    if (decision == null) {
+      ref.read(proxiesActionProvider.notifier).updateGroupsDebounce();
+      return best != null;
+    }
+
+    final switched = await proxies.changeProxy(
+      groupName: group.name,
+      proxyName: decision.proxyName,
+      persistOverride: false,
+      closeConnections: false,
+    );
+    if (switched) {
+      _lastSwitchAtByGroup[group.name] = DateTime.now();
+    }
+    ref.read(proxiesActionProvider.notifier).updateGroupsDebounce();
+    return switched;
   }
 
   static void clearStickyGeoForGroup(WidgetRef ref, String groupName) {
+    final keyed = stickyGeoStorageKey(
+      profileId: ref.read(currentProfileIdProvider),
+      groupName: groupName,
+    );
     ref.read(appSettingProvider.notifier).update((state) {
-      if (!state.autoSelectStickyGeoByGroup.containsKey(groupName)) {
+      if (!state.autoSelectStickyGeoByGroup.containsKey(keyed) &&
+          !state.autoSelectStickyGeoByGroup.containsKey(groupName)) {
         return state;
       }
       final next = Map<String, String>.from(state.autoSelectStickyGeoByGroup)
+        ..remove(keyed)
         ..remove(groupName);
       return state.copyWith(autoSelectStickyGeoByGroup: next);
     });
     _lastSwitchAtByGroup.remove(groupName);
+  }
+
+  static void _writeStickyGeo(
+    WidgetRef ref, {
+    required int? profileId,
+    required String groupName,
+    required String geo,
+    required bool enable,
+  }) {
+    final keyed = stickyGeoStorageKey(
+      profileId: profileId,
+      groupName: groupName,
+    );
+    ref.read(appSettingProvider.notifier).update((state) {
+      final next = Map<String, String>.from(state.autoSelectStickyGeoByGroup)
+        ..remove(groupName)
+        ..[keyed] = geo;
+      return state.copyWith(
+        autoSelectStickyGeo: enable || state.autoSelectStickyGeo,
+        autoSelectStickyGeoByGroup: next,
+      );
+    });
   }
 }

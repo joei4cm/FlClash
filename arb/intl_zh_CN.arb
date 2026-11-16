@@ -1376,11 +1376,31 @@
     }
   },
   "stickToRegion": "锁定地区",
-  "autoGroupStickyRegion": "锁定地区：{region}",
+  "autoGroupStickyRegion": "优选地区：{region}",
   "@autoGroupStickyRegion": {
     "placeholders": {
       "region": {
         "type": "String"
+      }
+    }
+  },
+  "autoGroupPickRegion": "按地区切换",
+  "autoGroupTestingRegion": "正在测试 {region}…",
+  "@autoGroupTestingRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupRegionNodes": "{region} · {count}",
+  "@autoGroupRegionNodes": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
       }
     }
   },

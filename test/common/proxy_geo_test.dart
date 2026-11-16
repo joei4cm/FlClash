@@ -52,6 +52,66 @@ void main() {
     expect(best, 'US-Fast');
   });
 
+  test('groupProxyNamesByGeo and geosPresentIn order chips', () {
+    final names = ['US-A', 'HK-1', 'Random', 'JP-1', 'US-B'];
+    expect(groupProxyNamesByGeo(names), {
+      'US': ['US-A', 'US-B'],
+      'HK': ['HK-1'],
+      'JP': ['JP-1'],
+    });
+    expect(geosPresentIn(names), ['HK', 'JP', 'US']);
+  });
+
+  test('stickyGeoStorageKey is profile-scoped with legacy fallback', () {
+    expect(stickyGeoStorageKey(profileId: 3, groupName: 'AUTO'), '3::AUTO');
+    expect(
+      stickyGeoForGroup(
+        {'AUTO': 'HK', '3::AUTO': 'JP'},
+        profileId: 3,
+        groupName: 'AUTO',
+      ),
+      'JP',
+    );
+    expect(
+      stickyGeoForGroup({'AUTO': 'HK'}, profileId: 3, groupName: 'AUTO'),
+      'HK',
+    );
+  });
+
+  group('decideGeoPickSwitch', () {
+    test('switches to best healthy node in picked geo', () {
+      final decision = decideGeoPickSwitch(
+        currentName: 'HK-01',
+        preferredGeo: 'US',
+        bestHealthyInPreferredGeo: 'US-01',
+      );
+      expect(decision?.proxyName, 'US-01');
+      expect(decision?.reason, 'user_picked_US');
+    });
+
+    test('skips when already on best healthy node', () {
+      expect(
+        decideGeoPickSwitch(
+          currentName: 'US-01',
+          preferredGeo: 'US',
+          bestHealthyInPreferredGeo: 'US-01',
+        ),
+        isNull,
+      );
+    });
+
+    test('skips when picked geo has no healthy node', () {
+      expect(
+        decideGeoPickSwitch(
+          currentName: 'HK-01',
+          preferredGeo: 'US',
+          bestHealthyInPreferredGeo: null,
+        ),
+        isNull,
+      );
+    });
+  });
+
   group('decideAutoSelectSwitch', () {
     final now = DateTime.utc(2026, 8, 29, 6);
 

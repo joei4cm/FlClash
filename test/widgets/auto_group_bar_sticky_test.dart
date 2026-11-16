@@ -11,12 +11,15 @@ import '../helpers/host_scaffold.dart';
 import '../helpers/test_app.dart';
 
 void main() {
-  testWidgets('AutoGroupBar shows stick to region action', (tester) async {
+  testWidgets('AutoGroupBar shows region chips from node names', (
+    tester,
+  ) async {
     final container = ProviderContainer(
       overrides: [
         appSettingProvider.overrideWithBuild(
           (_, _) => const AppSettingProps(autoSelectStickyGeo: true),
         ),
+        currentProfileIdProvider.overrideWithBuild((_, _) => 1),
       ],
     );
     addTearDown(container.dispose);
@@ -26,7 +29,11 @@ void main() {
       name: 'Auto',
       type: GroupType.URLTest,
       now: 'US-Node',
-      all: [Proxy(name: 'US-Node', type: 'Shadowsocks')],
+      all: [
+        Proxy(name: 'US-Node', type: 'Shadowsocks'),
+        Proxy(name: 'HK-01', type: 'Shadowsocks'),
+        Proxy(name: 'JP-Tokyo', type: 'Shadowsocks'),
+      ],
     );
 
     await tester.pumpWidget(
@@ -39,6 +46,11 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(AppLocalizations.current.stickToRegion), findsOneWidget);
+    final l10n = AppLocalizations.current;
+    expect(find.text(l10n.autoGroupPickRegion), findsOneWidget);
+    expect(find.text(l10n.autoGroupRegionNodes('HK', 1)), findsOneWidget);
+    expect(find.text(l10n.autoGroupRegionNodes('JP', 1)), findsOneWidget);
+    expect(find.text(l10n.autoGroupRegionNodes('US', 1)), findsOneWidget);
+    expect(find.text(l10n.autoGroupStickyRegion('US')), findsOneWidget);
   });
 }

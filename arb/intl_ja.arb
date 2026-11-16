@@ -1376,11 +1376,31 @@
     }
   },
   "stickToRegion": "地域を固定",
-  "autoGroupStickyRegion": "固定地域：{region}",
+  "autoGroupStickyRegion": "優先地域：{region}",
   "@autoGroupStickyRegion": {
     "placeholders": {
       "region": {
         "type": "String"
+      }
+    }
+  },
+  "autoGroupPickRegion": "地域で切り替え",
+  "autoGroupTestingRegion": "{region} をテスト中…",
+  "@autoGroupTestingRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "autoGroupRegionNodes": "{region} · {count}",
+  "@autoGroupRegionNodes": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
       }
     }
   },
