@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.17 (2026-11-16)
+
+**Bug Fixes**
+
+- **perf** Stop idle traffic chart redraws when the window is hidden (f94c2fb)
+
 ## v0.9.16 (2026-11-16)
 
 **Features**
