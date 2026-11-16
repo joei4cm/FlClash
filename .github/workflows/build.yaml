@@ -475,15 +475,21 @@ jobs:
           overwrite: true
 
   # macOS arm64 runners are frequently capacity-starved (queued jobs cancel
-  # with no runner). Build outside the matrix; retries must also fire on
-  # cancelled — `if: failure()` does not match cancelled.
+  # with no runner). Build outside the main matrix; try several Apple Silicon
+  # labels in parallel, then retry after longer backoffs. Retries must also
+  # fire on cancelled — `if: failure()` does not match cancelled.
+  # If a tag still ships without arm64, run workflow macos-arm64-attach.
   build-macos-arm64:
-    name: build (macos, arm64)
+    name: build (macos, arm64, ${{ matrix.runner }})
     if: github.repository == 'joei4cm/FlClash' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     # Capacity cancels must not fail the whole release; upload still publishes
     # the rest (Intel macOS DMG runs on Apple Silicon via Rosetta 2).
     continue-on-error: true
-    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-14, macos-latest]
+    runs-on: ${{ matrix.runner }}
     steps: &macos-arm64-steps
       - name: Checkout
         uses: actions/checkout@v4
@@ -506,8 +512,20 @@ jobs:
 
       - name: Setup Xcode
         run: |
-          sudo xcode-select -s /Applications/Xcode_26.3.app || sudo xcode-select -s /Applications/Xcode_26.2.app
+          sudo xcode-select -s /Applications/Xcode_26.3.app || \
+            sudo xcode-select -s /Applications/Xcode_26.2.app || \
+            sudo xcode-select -s /Applications/Xcode_16.4.app || \
+            sudo xcode-select -s /Applications/Xcode.app
           xcodebuild -version
+          uname -m
+
+      - name: Require Apple Silicon host
+        run: |
+          arch="$(uname -m)"
+          test "$arch" = 'arm64' || {
+            echo "Runner is $arch; need arm64 for the Apple Silicon DMG" >&2
+            exit 1
+          }
 
       - name: Get Flutter Dependency
         run: |
@@ -547,7 +565,7 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: artifact-macos-arm64
+          name: artifact-macos-arm64-${{ matrix.runner }}-${{ github.job }}
           path: ./dist
           overwrite: true
 
@@ -557,57 +575,95 @@ jobs:
     if: |
       always() &&
       !cancelled() &&
-      needs.build-macos-arm64.result != 'success' &&
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
       startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
+    outputs:
+      needed: ${{ steps.publish.outputs.needed }}
     steps:
-      - name: Back off for runner capacity
-        run: sleep 180
+      - name: Download any arm64 artifact
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: artifact-macos-arm64-*
+          path: ./dist
+          merge-multiple: true
+      - name: Publish needed flag
+        id: publish
+        run: |
+          if compgen -G './dist/*macos-arm64*' > /dev/null; then
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+            sleep 600
+          fi
 
   build-macos-arm64-retry:
-    name: build (macos, arm64, retry)
+    name: build (macos, arm64, retry, ${{ matrix.runner }})
     needs: [wait-macos-arm64-retry]
     if: |
       always() &&
       !cancelled() &&
-      needs.wait-macos-arm64-retry.result == 'success' &&
+      needs.wait-macos-arm64-retry.outputs.needed == 'true' &&
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
       startsWith(github.ref, 'refs/tags/v')
     continue-on-error: true
-    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-14, macos-latest]
+    runs-on: ${{ matrix.runner }}
     steps: *macos-arm64-steps
 
   wait-macos-arm64-retry-2:
     name: wait before macOS arm64 retry 2
-    needs: [build-macos-arm64-retry]
+    needs: [wait-macos-arm64-retry, build-macos-arm64-retry]
     if: |
       always() &&
       !cancelled() &&
-      needs.build-macos-arm64-retry.result != 'success' &&
-      needs.build-macos-arm64-retry.result != 'skipped' &&
+      needs.wait-macos-arm64-retry.outputs.needed == 'true' &&
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
       startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
+    outputs:
+      needed: ${{ steps.publish.outputs.needed }}
     steps:
-      - name: Back off for runner capacity
-        run: sleep 300
+      - name: Download any arm64 artifact
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: artifact-macos-arm64-*
+          path: ./dist
+          merge-multiple: true
+      - name: Publish needed flag
+        id: publish
+        run: |
+          if compgen -G './dist/*macos-arm64*' > /dev/null; then
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+            sleep 900
+          fi
 
   build-macos-arm64-retry-2:
-    name: build (macos, arm64, retry 2)
+    name: build (macos, arm64, retry 2, ${{ matrix.runner }})
     needs: [wait-macos-arm64-retry-2]
     if: |
       always() &&
       !cancelled() &&
-      needs.wait-macos-arm64-retry-2.result == 'success' &&
+      needs.wait-macos-arm64-retry-2.outputs.needed == 'true' &&
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
       startsWith(github.ref, 'refs/tags/v')
     continue-on-error: true
-    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, macos-latest]
+    runs-on: ${{ matrix.runner }}
     steps: *macos-arm64-steps
 
   upload:
@@ -721,6 +777,8 @@ jobs:
           python release_telegram.py
 
   # Best-effort: attach arm64 if a retry eventually gets a runner.
+  # Also refreshes SHA256SUMS so in-app update verification accepts the DMG.
+  # If this still misses, dispatch workflow macos-arm64-attach for the tag.
   attach-macos-arm64:
     name: attach macOS arm64
     permissions:
@@ -729,7 +787,9 @@ jobs:
       [
         upload,
         build-macos-arm64,
+        wait-macos-arm64-retry,
         build-macos-arm64-retry,
+        wait-macos-arm64-retry-2,
         build-macos-arm64-retry-2,
       ]
     if: |
@@ -737,20 +797,15 @@ jobs:
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
       startsWith(github.ref, 'refs/tags/v') &&
-      needs.upload.result == 'success' &&
-      (needs.build-macos-arm64.result == 'success' ||
-       needs.build-macos-arm64-retry.result == 'success' ||
-       needs.build-macos-arm64-retry-2.result == 'success')
+      needs.upload.result == 'success'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Download macOS arm64
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           path: ./dist/
-          pattern: artifact-macos-arm64
+          pattern: artifact-macos-arm64-*
           merge-multiple: true
 
       - name: Attach to release
@@ -760,7 +815,24 @@ jobs:
           GH_REPO: ${{ github.repository }}
           TAG: ${{ github.ref_name }}
         run: |
+          set -euo pipefail
+          if ! compgen -G './dist/*macos-arm64*' > /dev/null; then
+            echo 'No macOS arm64 artifact; skipping attach (use macos-arm64-attach).'
+            exit 0
+          fi
           mapfile -t files < <(find ./dist -type f ! -name '.*' | sort)
-          test "${#files[@]}" -gt 0
           printf 'Attaching %s\n' "${files[@]}"
           gh release upload "$TAG" "${files[@]}" --clobber
+
+          mkdir -p /tmp/sums
+          if gh release download "$TAG" -D /tmp/sums -p SHA256SUMS; then
+            grep -v 'macos-arm64' /tmp/sums/SHA256SUMS > /tmp/SHA256SUMS || true
+          else
+            : > /tmp/SHA256SUMS
+          fi
+          (
+            cd ./dist
+            sha256sum ./*
+          ) >> /tmp/SHA256SUMS
+          sort -k2 /tmp/SHA256SUMS -o /tmp/SHA256SUMS
+          gh release upload "$TAG" /tmp/SHA256SUMS --clobber
