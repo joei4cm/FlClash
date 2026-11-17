@@ -16,6 +16,11 @@ One-shot:
   dart run tool/tui.dart groups
   dart run tool/tui.dart group <name>
   dart run tool/tui.dart use <group> <proxy>
+  dart run tool/tui.dart delay <proxy>
+  dart run tool/tui.dart delay-group <group>
+  dart run tool/tui.dart connections
+  dart run tool/tui.dart close <id>
+  dart run tool/tui.dart close-all
   dart run tool/tui.dart traffic
   dart run tool/tui.dart watch [n]
 
@@ -57,6 +62,31 @@ Future<void> runCli(ClashApi client, List<String> parts) async {
       }
       await client.selectProxy(parts[1], parts.sublist(2).join(' '));
       stdout.writeln('selected ${parts.sublist(2).join(' ')} in ${parts[1]}');
+    case 'delay':
+    case 'd':
+      if (parts.length < 2) {
+        throw const FormatException('usage: delay <proxy>');
+      }
+      await printDelay(client, parts.sublist(1).join(' '));
+    case 'delay-group':
+    case 'dg':
+      if (parts.length < 2) {
+        throw const FormatException('usage: delay-group <group>');
+      }
+      await printGroupDelay(client, parts.sublist(1).join(' '));
+    case 'connections':
+    case 'c':
+    case 'conn':
+      await printConnections(client);
+    case 'close':
+      if (parts.length < 2) {
+        throw const FormatException('usage: close <id>');
+      }
+      await client.closeConnection(parts[1]);
+      stdout.writeln('closed ${parts[1]}');
+    case 'close-all':
+      await client.closeAllConnections();
+      stdout.writeln('closed all connections');
     case 'traffic':
     case 't':
       await printTraffic(client);
@@ -77,12 +107,21 @@ Future<void> printStatus(ClashApi client) async {
   final version = await client.getVersion();
   final configs = await client.getConfigs();
   final traffic = await client.getTrafficOnce();
+  final snapshot = await client.getConnections();
+  final groups = await client.listGroups();
   stdout.writeln('version  ${version['version']}');
   stdout.writeln('mode     ${configs['mode'] ?? '?'}');
   stdout.writeln('port     ${configs['mixed-port'] ?? configs['port'] ?? '?'}');
   stdout.writeln(
     'traffic  ↑ ${formatRate(traffic['up'])}  ↓ ${formatRate(traffic['down'])}',
   );
+  stdout.writeln(
+    'session  ↑ ${formatBytes(snapshot.uploadTotal)}  '
+    '↓ ${formatBytes(snapshot.downloadTotal)}  '
+    'mem ${formatBytes(snapshot.memory)}',
+  );
+  stdout.writeln('links    ${snapshot.count} open');
+  stdout.writeln('groups   ${groups.length}');
 }
 
 Future<void> printGroups(ClashApi client) async {
@@ -110,6 +149,49 @@ Future<void> printGroup(ClashApi client, String name) async {
     final mark = node.name == group.now ? '*' : ' ';
     final delay = node.delayMs == null ? '' : '  ${formatDelay(node.delayMs)}';
     stdout.writeln('  $mark ${node.name}$delay');
+  }
+}
+
+Future<void> printDelay(ClashApi client, String proxy) async {
+  final delay = await client.testDelay(proxy);
+  if (delay == null) {
+    stdout.writeln('$proxy  timeout');
+    return;
+  }
+  stdout.writeln('$proxy  ${formatDelay(delay)}');
+}
+
+Future<void> printGroupDelay(ClashApi client, String group) async {
+  final results = await client.testGroupDelay(group);
+  if (results.isEmpty) {
+    stdout.writeln('(no delay results for $group)');
+    return;
+  }
+  final sorted = results.entries.toList()
+    ..sort((a, b) {
+      final av = a.value <= 0 ? 1 << 30 : a.value;
+      final bv = b.value <= 0 ? 1 << 30 : b.value;
+      return av.compareTo(bv);
+    });
+  for (final entry in sorted) {
+    stdout.writeln('${entry.key}  ${formatDelay(entry.value)}');
+  }
+}
+
+Future<void> printConnections(ClashApi client) async {
+  final snapshot = await client.getConnections();
+  stdout.writeln(
+    '${snapshot.count} connections  '
+    '↓${formatBytes(snapshot.downloadTotal)}  '
+    '↑${formatBytes(snapshot.uploadTotal)}  '
+    'mem ${formatBytes(snapshot.memory)}',
+  );
+  for (final conn in snapshot.connections) {
+    final id = conn['id']?.toString() ?? '?';
+    stdout.writeln(
+      '  $id  ${connectionLabel(conn)}  '
+      '↓${formatBytes(conn['download'])} ↑${formatBytes(conn['upload'])}',
+    );
   }
 }
 
