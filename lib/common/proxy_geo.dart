@@ -1,5 +1,28 @@
 /// Preferred display order for region chips on a proxy group.
-const proxyGeoRegionOrder = ['HK', 'TW', 'JP', 'SG', 'KR', 'US', 'EU', 'CN'];
+const proxyGeoRegionOrder = [
+  'HK',
+  'TW',
+  'JP',
+  'SG',
+  'KR',
+  'US',
+  'CA',
+  'AU',
+  'EU',
+  'GB',
+  'DE',
+  'FR',
+  'NL',
+  'IN',
+  'TR',
+  'AE',
+  'MY',
+  'TH',
+  'PH',
+  'VN',
+  'ID',
+  'CN',
+];
 
 String? inferProxyGeoRegion(String name) {
   final normalized = name.trim().toUpperCase();
@@ -7,12 +30,16 @@ String? inferProxyGeoRegion(String name) {
     return null;
   }
 
+  // First match wins. Keep more specific / multi-word tokens ahead of short
+  // codes so "United States" and city names beat a stray letter pair.
   const rules = <String, List<String>>{
     'US': [
-      'US',
-      'USA',
       'UNITED STATES',
+      'UNITEDSTATES',
       'AMERICA',
+      'USA',
+      'US',
+      '美国',
       '洛杉矶',
       '旧金山',
       '西雅图',
@@ -23,25 +50,52 @@ String? inferProxyGeoRegion(String name) {
       '硅谷',
       '美西',
       '美东',
+      '美北',
+      '美南',
     ],
-    'HK': ['HK', 'HONG KONG', 'HONGKONG', '香港'],
-    'TW': ['TW', 'TAIWAN', '台湾', '台北', '台中', '高雄'],
-    'JP': ['JP', 'JAPAN', '日本', '东京', 'TOKYO', '大阪', 'OSAKA'],
-    'SG': ['SG', 'SINGAPORE', '新加坡', '狮城'],
-    'KR': ['KR', 'KOREA', '韩国', '首尔'],
-    'EU': [
-      'EU',
-      'EUROPE',
-      '欧洲',
-      'DE',
-      'GERMANY',
-      'FR',
-      'FRANCE',
-      'NL',
-      'UK',
-      'LONDON',
+    'HK': ['HONG KONG', 'HONGKONG', 'HKG', 'HK', '香港'],
+    'TW': ['TAIWAN', 'TPE', 'TW', '台湾', '台灣', '台北', '台中', '高雄'],
+    'JP': [
+      'JAPAN',
+      'TOKYO',
+      'OSAKA',
+      'NRT',
+      'HND',
+      'KIX',
+      'JP',
+      '日本',
+      '东京',
+      '東京',
+      '大阪',
     ],
-    'CN': ['CN', 'CHINA', '中国', '国内', '直连'],
+    'SG': ['SINGAPORE', 'SGP', 'SG', '新加坡', '狮城'],
+    'KR': ['KOREA', 'SEOUL', 'ICN', 'KR', '韩国', '韓國', '首尔', '首爾'],
+    'CA': [
+      'CANADA',
+      'TORONTO',
+      'VANCOUVER',
+      'YVR',
+      'YYZ',
+      'CA',
+      '加拿大',
+      '温哥华',
+      '多伦多',
+    ],
+    'AU': ['AUSTRALIA', 'SYDNEY', 'MELBOURNE', 'AU', '澳大利亚', '澳洲', '悉尼', '墨尔本'],
+    'GB': ['UNITED KINGDOM', 'ENGLAND', 'LONDON', 'UK', 'GB', '英国', '倫敦', '伦敦'],
+    'DE': ['GERMANY', 'FRANKFURT', 'BERLIN', 'DE', '德国', '德國', '法兰克福'],
+    'FR': ['FRANCE', 'PARIS', 'FR', '法国', '法國', '巴黎'],
+    'NL': ['NETHERLANDS', 'AMSTERDAM', 'NL', '荷兰', '荷蘭', '阿姆斯特丹'],
+    'EU': ['EUROPE', 'EU', '欧洲', '歐洲'],
+    'IN': ['INDIA', 'MUMBAI', 'IN', '印度', '孟买'],
+    'TR': ['TURKEY', 'ISTANBUL', 'TR', '土耳其', '伊斯坦布尔'],
+    'AE': ['DUBAI', 'UAE', 'AE', '迪拜', '阿联酋'],
+    'MY': ['MALAYSIA', 'KUL', 'MY', '马来西亚', '马来', '吉隆坡'],
+    'TH': ['THAILAND', 'BANGKOK', 'BKK', 'TH', '泰国', '泰國', '曼谷'],
+    'PH': ['PHILIPPINES', 'MANILA', 'PH', '菲律宾', '菲律賓', '马尼拉'],
+    'VN': ['VIETNAM', 'HO CHI MINH', 'VN', '越南', '胡志明'],
+    'ID': ['INDONESIA', 'JAKARTA', 'ID', '印尼', '印度尼西亚', '雅加达'],
+    'CN': ['CHINA', 'CN', '中国', '國內', '国内', '直连', '直連'],
   };
 
   for (final entry in rules.entries) {
@@ -57,8 +111,10 @@ String? inferProxyGeoRegion(String name) {
 bool _nameContainsGeoToken(String normalized, String token) {
   final upperToken = token.toUpperCase();
   if (RegExp(r'^[A-Z0-9]+$').hasMatch(upperToken)) {
+    // Letter boundary only: "US01" / "US-01" match, "PLUS" / "BUS" do not.
+    // Digits after a country code are common in airport node names.
     return RegExp(
-      '(^|[^A-Z0-9])${RegExp.escape(upperToken)}([^A-Z0-9]|\$)',
+      '(^|[^A-Z])${RegExp.escape(upperToken)}(?=[^A-Z]|\$)',
     ).hasMatch(normalized);
   }
   return normalized.contains(upperToken);
