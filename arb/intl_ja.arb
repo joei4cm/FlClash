@@ -1475,5 +1475,17 @@
   "hideAdvanced": "詳細設定を隠す",
   "showAdvanced": "詳細設定を表示",
   "addTailscaleNode": "Tailscale ノードを追加",
-  "editTailscaleNode": "Tailscale ノードを編集"
+  "editTailscaleNode": "Tailscale ノードを編集",
+  "appRouting": "アプリ振り分け",
+  "appRoutingDesc": "ローカルアプリ/プロセスを DIRECT・グループ・ノードへ送る",
+  "appRoutingTip": "これらのルールは PROCESS-NAME で一致し、グローバル追加ルールとして適用されます。「プロセス検出」をオンにして、どのアプリが接続を開いたかをコアが把握できるようにしてください。",
+  "appRoutingFindProcessTip": "プロセス振り分けに必要です。オンにすると CPU 使用がわずかに増えます。",
+  "appRoutingEmpty": "アプリ振り分けルールはまだありません",
+  "appRoutingEmptyDesc": "プロセス名（例: chrome.exe や Cursor）を追加し、DIRECT / REJECT / グループ / ノードを選んでください。",
+  "appRoutingRules": "プロセスルール",
+  "appRoutingAdd": "アプリ振り分けを追加",
+  "appRoutingEdit": "アプリ振り分けを編集",
+  "appRoutingProcessName": "プロセス名",
+  "appRoutingProcessHint": "chrome.exe / Cursor / firefox",
+  "tuiControllerTip": "デスクトップ TUI: 外部コントローラーを有効にしたうえで、別ターミナルで dart run tool/tui.dart を実行します。GUI の単一インスタンスロックは取りません。"
 }

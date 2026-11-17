@@ -451,6 +451,31 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appIconDesign": MessageLookupByLibrary.simpleMessage("App icon design"),
     "appProxiesEmpty": MessageLookupByLibrary.simpleMessage("No local proxies"),
+    "appRouting": MessageLookupByLibrary.simpleMessage("App routing"),
+    "appRoutingAdd": MessageLookupByLibrary.simpleMessage("Add app route"),
+    "appRoutingDesc": MessageLookupByLibrary.simpleMessage(
+      "Send a local app or process through DIRECT, a group, or a node",
+    ),
+    "appRoutingEdit": MessageLookupByLibrary.simpleMessage("Edit app route"),
+    "appRoutingEmpty": MessageLookupByLibrary.simpleMessage(
+      "No app routing rules yet",
+    ),
+    "appRoutingEmptyDesc": MessageLookupByLibrary.simpleMessage(
+      "Add a process name (for example chrome.exe or Cursor) and choose DIRECT, REJECT, a group, or a node.",
+    ),
+    "appRoutingFindProcessTip": MessageLookupByLibrary.simpleMessage(
+      "Required for process-based routing. Slightly higher CPU when on.",
+    ),
+    "appRoutingProcessHint": MessageLookupByLibrary.simpleMessage(
+      "chrome.exe / Cursor / firefox",
+    ),
+    "appRoutingProcessName": MessageLookupByLibrary.simpleMessage(
+      "Process name",
+    ),
+    "appRoutingRules": MessageLookupByLibrary.simpleMessage("Process rules"),
+    "appRoutingTip": MessageLookupByLibrary.simpleMessage(
+      "These rules use PROCESS-NAME matching and apply as global added rules. Turn on Find process so the Core can see which app opens each connection.",
+    ),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage(
       "Append system DNS",
     ),
@@ -1432,9 +1457,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Certificate installed",
     ),
     "installUpdate": MessageLookupByLibrary.simpleMessage("Install update"),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
     ),
@@ -2806,6 +2832,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "transportHeaders": m127,
     "trustCertificate": MessageLookupByLibrary.simpleMessage(
       "Trust certificate",
+    ),
+    "tuiControllerTip": MessageLookupByLibrary.simpleMessage(
+      "Desktop TUI: with the controller enabled, run dart run tool/tui.dart in another terminal. It attaches without locking out the GUI.",
     ),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(

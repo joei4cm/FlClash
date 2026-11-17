@@ -418,7 +418,9 @@ class GeneralView extends ConsumerWidget {
               authentication: authentication,
               externalController: externalController,
             ),
-            footer: appLocalizations.externalControllerDesc,
+            footer: system.isDesktop
+                ? '${appLocalizations.externalControllerDesc}\n${appLocalizations.tuiControllerTip}'
+                : appLocalizations.externalControllerDesc,
           ),
           generateSection(
             title: appLocalizations.connection,

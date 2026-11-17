@@ -381,6 +381,27 @@ class MessageLookup extends MessageLookupByLibrary {
     "appAccessControl": MessageLookupByLibrary.simpleMessage("应用访问控制"),
     "appIconDesign": MessageLookupByLibrary.simpleMessage("应用图标设计"),
     "appProxiesEmpty": MessageLookupByLibrary.simpleMessage("暂无本地代理"),
+    "appRouting": MessageLookupByLibrary.simpleMessage("应用分流"),
+    "appRoutingAdd": MessageLookupByLibrary.simpleMessage("添加应用分流"),
+    "appRoutingDesc": MessageLookupByLibrary.simpleMessage(
+      "将本地应用/进程走 DIRECT、策略组或指定节点",
+    ),
+    "appRoutingEdit": MessageLookupByLibrary.simpleMessage("编辑应用分流"),
+    "appRoutingEmpty": MessageLookupByLibrary.simpleMessage("还没有应用分流规则"),
+    "appRoutingEmptyDesc": MessageLookupByLibrary.simpleMessage(
+      "添加进程名（例如 chrome.exe 或 Cursor），并选择 DIRECT、REJECT、策略组或节点。",
+    ),
+    "appRoutingFindProcessTip": MessageLookupByLibrary.simpleMessage(
+      "进程分流必需。开启后会略微增加 CPU 开销。",
+    ),
+    "appRoutingProcessHint": MessageLookupByLibrary.simpleMessage(
+      "chrome.exe / Cursor / firefox",
+    ),
+    "appRoutingProcessName": MessageLookupByLibrary.simpleMessage("进程名"),
+    "appRoutingRules": MessageLookupByLibrary.simpleMessage("进程规则"),
+    "appRoutingTip": MessageLookupByLibrary.simpleMessage(
+      "这些规则使用 PROCESS-NAME 匹配，并作为全局附加规则生效。请开启「查找进程」，以便内核识别每条连接来自哪个应用。",
+    ),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage("追加系统DNS"),
     "applied": MessageLookupByLibrary.simpleMessage("已应用"),
     "applyNow": MessageLookupByLibrary.simpleMessage("立即应用"),
@@ -2196,6 +2217,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "transport": MessageLookupByLibrary.simpleMessage("传输协议"),
     "transportHeaders": m127,
     "trustCertificate": MessageLookupByLibrary.simpleMessage("信任证书"),
+    "tuiControllerTip": MessageLookupByLibrary.simpleMessage(
+      "桌面 TUI：开启外部控制器后，在另一终端运行 dart run tool/tui.dart。它通过 API 接入，不会抢 GUI 的单实例锁。",
+    ),
     "tun": MessageLookupByLibrary.simpleMessage("虚拟网卡"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(
       "虚拟网卡授权失败，已关闭。",

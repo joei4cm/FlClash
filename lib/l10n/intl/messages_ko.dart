@@ -402,6 +402,29 @@ class MessageLookup extends MessageLookupByLibrary {
     "appAccessControl": MessageLookupByLibrary.simpleMessage("앱 접근 제어"),
     "appIconDesign": MessageLookupByLibrary.simpleMessage("앱 아이콘 디자인"),
     "appProxiesEmpty": MessageLookupByLibrary.simpleMessage("로컬 프록시 없음"),
+    "appRouting": MessageLookupByLibrary.simpleMessage("앱 라우팅"),
+    "appRoutingAdd": MessageLookupByLibrary.simpleMessage("앱 라우트 추가"),
+    "appRoutingDesc": MessageLookupByLibrary.simpleMessage(
+      "로컬 앱/프로세스를 DIRECT, 그룹 또는 노드로 보냅니다",
+    ),
+    "appRoutingEdit": MessageLookupByLibrary.simpleMessage("앱 라우트 편집"),
+    "appRoutingEmpty": MessageLookupByLibrary.simpleMessage(
+      "앱 라우팅 규칙이 아직 없습니다",
+    ),
+    "appRoutingEmptyDesc": MessageLookupByLibrary.simpleMessage(
+      "프로세스 이름(예: chrome.exe 또는 Cursor)을 추가하고 DIRECT, REJECT, 그룹 또는 노드를 선택하세요.",
+    ),
+    "appRoutingFindProcessTip": MessageLookupByLibrary.simpleMessage(
+      "프로세스 기반 라우팅에 필요합니다. 켜면 CPU 사용량이 약간 늘어납니다.",
+    ),
+    "appRoutingProcessHint": MessageLookupByLibrary.simpleMessage(
+      "chrome.exe / Cursor / firefox",
+    ),
+    "appRoutingProcessName": MessageLookupByLibrary.simpleMessage("프로세스 이름"),
+    "appRoutingRules": MessageLookupByLibrary.simpleMessage("프로세스 규칙"),
+    "appRoutingTip": MessageLookupByLibrary.simpleMessage(
+      "이 규칙은 PROCESS-NAME 매칭을 사용하며 전역 추가 규칙으로 적용됩니다. 코어가 연결을 연 앱을 알 수 있도록 프로세스 찾기를 켜세요.",
+    ),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage("시스템 DNS 추가"),
     "applied": MessageLookupByLibrary.simpleMessage("적용했습니다"),
     "applyNow": MessageLookupByLibrary.simpleMessage("지금 적용"),
@@ -2471,6 +2494,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "transport": MessageLookupByLibrary.simpleMessage("전송"),
     "transportHeaders": m127,
     "trustCertificate": MessageLookupByLibrary.simpleMessage("인증서 신뢰"),
+    "tuiControllerTip": MessageLookupByLibrary.simpleMessage(
+      "데스크톱 TUI: 컨트롤러를 켠 뒤 다른 터미널에서 dart run tool/tui.dart 를 실행하세요. GUI 단일 인스턴스 잠금을 가져가지 않습니다.",
+    ),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(
       "TUN 권한을 얻지 못해 끄기로 되돌렸습니다.",

@@ -254,6 +254,9 @@ class SetupAction extends _$SetupAction {
     ref.read(trafficsProvider.notifier).clear();
     ref.read(currentTrafficProvider.notifier).value = const Traffic();
     ref.read(totalTrafficProvider.notifier).value = const Traffic();
+    if (system.isDesktop) {
+      await TuiControllerEndpoint.clear();
+    }
     // A silent Core is gone or hung; running again would proxy traffic to it.
     if (unanswered case (final error, final stackTrace)) {
       Error.throwWithStackTrace(error, stackTrace);
@@ -351,13 +354,22 @@ class SetupAction extends _$SetupAction {
         return;
       }
       final networkSetting = ref.read(networkSettingProvider);
+      final effective = _effectivePatchConfig(patchConfig);
       await _core.updateConfig(
-        _effectivePatchConfig(patchConfig).toUpdateParams(
+        effective.toUpdateParams(
           authentication: networkSetting.authentication.credentials,
           options: ref.read(coreOptionsProvider),
         ),
       );
+      await _syncTuiController(effective);
     });
+  }
+
+  Future<void> _syncTuiController(PatchClashConfig patch) {
+    return TuiControllerEndpoint.syncFromPatch(
+      patch,
+      isDesktop: system.isDesktop,
+    );
   }
 
   @protected
@@ -866,6 +878,7 @@ class SetupAction extends _$SetupAction {
       _appliedInputs = inputs;
       globalState.lastConfigCounts = realProfile.counts;
       await preloadInvoke?.call();
+      await _syncTuiController(realPatchConfig);
       return _SetupTaskResult.completed;
     }
     // Go answers a config it rejects by running its built-in default, which
@@ -929,6 +942,7 @@ class SetupAction extends _$SetupAction {
           await preferences.saveAppliedConfigMd5(yamlMd5);
         }
         await onUpdated?.call();
+        await _syncTuiController(realPatchConfig);
       },
       silence: true,
       tag: !silence ? LoadingTag.proxies : null,

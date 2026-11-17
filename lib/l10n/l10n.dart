@@ -7663,8 +7663,7 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one:
-          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',
@@ -11965,6 +11964,121 @@ class AppLocalizations {
     return Intl.message(
       'Edit Tailscale node',
       name: 'editTailscaleNode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App routing`
+  String get appRouting {
+    return Intl.message('App routing', name: 'appRouting', desc: '', args: []);
+  }
+
+  /// `Send a local app or process through DIRECT, a group, or a node`
+  String get appRoutingDesc {
+    return Intl.message(
+      'Send a local app or process through DIRECT, a group, or a node',
+      name: 'appRoutingDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `These rules use PROCESS-NAME matching and apply as global added rules. Turn on Find process so the Core can see which app opens each connection.`
+  String get appRoutingTip {
+    return Intl.message(
+      'These rules use PROCESS-NAME matching and apply as global added rules. Turn on Find process so the Core can see which app opens each connection.',
+      name: 'appRoutingTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Required for process-based routing. Slightly higher CPU when on.`
+  String get appRoutingFindProcessTip {
+    return Intl.message(
+      'Required for process-based routing. Slightly higher CPU when on.',
+      name: 'appRoutingFindProcessTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No app routing rules yet`
+  String get appRoutingEmpty {
+    return Intl.message(
+      'No app routing rules yet',
+      name: 'appRoutingEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a process name (for example chrome.exe or Cursor) and choose DIRECT, REJECT, a group, or a node.`
+  String get appRoutingEmptyDesc {
+    return Intl.message(
+      'Add a process name (for example chrome.exe or Cursor) and choose DIRECT, REJECT, a group, or a node.',
+      name: 'appRoutingEmptyDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Process rules`
+  String get appRoutingRules {
+    return Intl.message(
+      'Process rules',
+      name: 'appRoutingRules',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add app route`
+  String get appRoutingAdd {
+    return Intl.message(
+      'Add app route',
+      name: 'appRoutingAdd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit app route`
+  String get appRoutingEdit {
+    return Intl.message(
+      'Edit app route',
+      name: 'appRoutingEdit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Process name`
+  String get appRoutingProcessName {
+    return Intl.message(
+      'Process name',
+      name: 'appRoutingProcessName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `chrome.exe / Cursor / firefox`
+  String get appRoutingProcessHint {
+    return Intl.message(
+      'chrome.exe / Cursor / firefox',
+      name: 'appRoutingProcessHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Desktop TUI: with the controller enabled, run dart run tool/tui.dart in another terminal. It attaches without locking out the GUI.`
+  String get tuiControllerTip {
+    return Intl.message(
+      'Desktop TUI: with the controller enabled, run dart run tool/tui.dart in another terminal. It attaches without locking out the GUI.',
+      name: 'tuiControllerTip',
       desc: '',
       args: [],
     );
