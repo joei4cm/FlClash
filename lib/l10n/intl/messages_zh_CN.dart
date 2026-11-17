@@ -394,8 +394,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "appRoutingFindProcessTip": MessageLookupByLibrary.simpleMessage(
       "进程分流必需。开启后会略微增加 CPU 开销。",
     ),
+    "appRoutingNoProcesses": MessageLookupByLibrary.simpleMessage("未找到进程"),
+    "appRoutingPickProcess": MessageLookupByLibrary.simpleMessage("选择正在运行的进程"),
+    "appRoutingPickProcessDesc": MessageLookupByLibrary.simpleMessage(
+      "从本机当前运行的进程中选择",
+    ),
+    "appRoutingPickProcessTitle": MessageLookupByLibrary.simpleMessage(
+      "正在运行的进程",
+    ),
     "appRoutingProcessHint": MessageLookupByLibrary.simpleMessage(
       "chrome.exe / Cursor / firefox",
+    ),
+    "appRoutingProcessLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "无法列出进程",
     ),
     "appRoutingProcessName": MessageLookupByLibrary.simpleMessage("进程名"),
     "appRoutingRules": MessageLookupByLibrary.simpleMessage("进程规则"),
@@ -2218,7 +2229,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "transportHeaders": m127,
     "trustCertificate": MessageLookupByLibrary.simpleMessage("信任证书"),
     "tuiControllerTip": MessageLookupByLibrary.simpleMessage(
-      "桌面 TUI：开启外部控制器后，在另一终端运行 dart run tool/tui.dart。它通过 API 接入，不会抢 GUI 的单实例锁。",
+      "桌面 TUI：开启外部控制器后，在另一终端运行 dart run tool/tui.dart（或 dart run tool/tui.dart status）。它通过 API 接入，不会抢 GUI 的单实例锁。",
     ),
     "tun": MessageLookupByLibrary.simpleMessage("虚拟网卡"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(

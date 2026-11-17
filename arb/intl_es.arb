@@ -1487,5 +1487,10 @@
   "appRoutingEdit": "Editar ruta de app",
   "appRoutingProcessName": "Nombre del proceso",
   "appRoutingProcessHint": "chrome.exe / Cursor / firefox",
-  "tuiControllerTip": "TUI de escritorio: con el controlador activado, ejecuta dart run tool/tui.dart en otra terminal. Se conecta sin bloquear la GUI."
+  "tuiControllerTip": "TUI de escritorio: con el controlador activado, ejecuta dart run tool/tui.dart en otra terminal. Se conecta sin bloquear la GUI.",
+  "appRoutingPickProcess": "Elegir proceso en ejecución",
+  "appRoutingPickProcessDesc": "Elige entre los procesos en ejecución en este equipo",
+  "appRoutingPickProcessTitle": "Procesos en ejecución",
+  "appRoutingProcessLoadFailed": "No se pudieron listar los procesos",
+  "appRoutingNoProcesses": "No se encontraron procesos"
 }
