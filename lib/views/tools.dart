@@ -6,6 +6,7 @@ import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/views/about.dart';
 import 'package:fl_clash/views/access.dart';
+import 'package:fl_clash/views/app_routing.dart';
 import 'package:fl_clash/views/backup_and_restore.dart';
 import 'package:fl_clash/views/config/general.dart';
 import 'package:fl_clash/views/geo_identity.dart';
@@ -52,7 +53,12 @@ class _ToolViewState extends ConsumerState<ToolsView> {
   Widget _getFeatureList() {
     return generateSection(
       title: context.appLocalizations.features,
-      items: const [_TailscaleItem(), _GeoIdentityItem(), _StrategyLanesItem()],
+      items: const [
+        _AppRoutingItem(),
+        _TailscaleItem(),
+        _GeoIdentityItem(),
+        _StrategyLanesItem(),
+      ],
     );
   }
 
@@ -240,6 +246,20 @@ class _InfoItem extends StatelessWidget {
       leading: const GlyphIcon(AppGlyphs.info),
       title: Text(context.appLocalizations.about),
       widget: const AboutView(),
+    );
+  }
+}
+
+class _AppRoutingItem extends StatelessWidget {
+  const _AppRoutingItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListItem.open(
+      leading: const GlyphIcon(AppGlyphs.appsList),
+      title: Text(context.appLocalizations.appRouting),
+      subtitle: Text(context.appLocalizations.appRoutingDesc),
+      widget: const AppRoutingView(),
     );
   }
 }

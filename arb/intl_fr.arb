@@ -1475,5 +1475,17 @@
   "hideAdvanced": "Hide advanced",
   "showAdvanced": "Show advanced",
   "addTailscaleNode": "Add Tailscale node",
-  "editTailscaleNode": "Edit Tailscale node"
+  "editTailscaleNode": "Edit Tailscale node",
+  "appRouting": "Routage d’apps",
+  "appRoutingDesc": "Envoyer une app ou un processus local via DIRECT, un groupe ou un nœud",
+  "appRoutingTip": "Ces règles utilisent PROCESS-NAME et s’appliquent comme règles globales ajoutées. Activez « Trouver le processus » pour que le noyau voie quelle app ouvre chaque connexion.",
+  "appRoutingFindProcessTip": "Requis pour le routage par processus. Augmente légèrement le CPU.",
+  "appRoutingEmpty": "Aucune règle de routage d’apps",
+  "appRoutingEmptyDesc": "Ajoutez un nom de processus (par ex. chrome.exe ou Cursor) et choisissez DIRECT, REJECT, un groupe ou un nœud.",
+  "appRoutingRules": "Règles de processus",
+  "appRoutingAdd": "Ajouter un routage d’app",
+  "appRoutingEdit": "Modifier le routage d’app",
+  "appRoutingProcessName": "Nom du processus",
+  "appRoutingProcessHint": "chrome.exe / Cursor / firefox",
+  "tuiControllerTip": "TUI bureau : avec le contrôleur activé, lancez dart run tool/tui.dart dans un autre terminal. Il s’attache sans verrouiller l’instance GUI."
 }

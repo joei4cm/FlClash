@@ -1482,5 +1482,17 @@
   "hideAdvanced": "Hide advanced",
   "showAdvanced": "Show advanced",
   "addTailscaleNode": "Add Tailscale node",
-  "editTailscaleNode": "Edit Tailscale node"
+  "editTailscaleNode": "Edit Tailscale node",
+  "appRouting": "App routing",
+  "appRoutingDesc": "Send a local app or process through DIRECT, a group, or a node",
+  "appRoutingTip": "These rules use PROCESS-NAME matching and apply as global added rules. Turn on Find process so the Core can see which app opens each connection.",
+  "appRoutingFindProcessTip": "Required for process-based routing. Slightly higher CPU when on.",
+  "appRoutingEmpty": "No app routing rules yet",
+  "appRoutingEmptyDesc": "Add a process name (for example chrome.exe or Cursor) and choose DIRECT, REJECT, a group, or a node.",
+  "appRoutingRules": "Process rules",
+  "appRoutingAdd": "Add app route",
+  "appRoutingEdit": "Edit app route",
+  "appRoutingProcessName": "Process name",
+  "appRoutingProcessHint": "chrome.exe / Cursor / firefox",
+  "tuiControllerTip": "Desktop TUI: with the controller enabled, run dart run tool/tui.dart in another terminal. It attaches without locking out the GUI."
 }

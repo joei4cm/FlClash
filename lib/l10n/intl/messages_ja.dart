@@ -392,6 +392,29 @@ class MessageLookup extends MessageLookupByLibrary {
     "appAccessControl": MessageLookupByLibrary.simpleMessage("アプリアクセス制御"),
     "appIconDesign": MessageLookupByLibrary.simpleMessage("アプリアイコンのデザイン"),
     "appProxiesEmpty": MessageLookupByLibrary.simpleMessage("ローカルプロキシがありません"),
+    "appRouting": MessageLookupByLibrary.simpleMessage("アプリ振り分け"),
+    "appRoutingAdd": MessageLookupByLibrary.simpleMessage("アプリ振り分けを追加"),
+    "appRoutingDesc": MessageLookupByLibrary.simpleMessage(
+      "ローカルアプリ/プロセスを DIRECT・グループ・ノードへ送る",
+    ),
+    "appRoutingEdit": MessageLookupByLibrary.simpleMessage("アプリ振り分けを編集"),
+    "appRoutingEmpty": MessageLookupByLibrary.simpleMessage(
+      "アプリ振り分けルールはまだありません",
+    ),
+    "appRoutingEmptyDesc": MessageLookupByLibrary.simpleMessage(
+      "プロセス名（例: chrome.exe や Cursor）を追加し、DIRECT / REJECT / グループ / ノードを選んでください。",
+    ),
+    "appRoutingFindProcessTip": MessageLookupByLibrary.simpleMessage(
+      "プロセス振り分けに必要です。オンにすると CPU 使用がわずかに増えます。",
+    ),
+    "appRoutingProcessHint": MessageLookupByLibrary.simpleMessage(
+      "chrome.exe / Cursor / firefox",
+    ),
+    "appRoutingProcessName": MessageLookupByLibrary.simpleMessage("プロセス名"),
+    "appRoutingRules": MessageLookupByLibrary.simpleMessage("プロセスルール"),
+    "appRoutingTip": MessageLookupByLibrary.simpleMessage(
+      "これらのルールは PROCESS-NAME で一致し、グローバル追加ルールとして適用されます。「プロセス検出」をオンにして、どのアプリが接続を開いたかをコアが把握できるようにしてください。",
+    ),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage("システムDNSを追加"),
     "applied": MessageLookupByLibrary.simpleMessage("適用しました"),
     "applyNow": MessageLookupByLibrary.simpleMessage("今すぐ適用"),
@@ -2427,6 +2450,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "transport": MessageLookupByLibrary.simpleMessage("トランスポート"),
     "transportHeaders": m127,
     "trustCertificate": MessageLookupByLibrary.simpleMessage("証明書を信頼"),
+    "tuiControllerTip": MessageLookupByLibrary.simpleMessage(
+      "デスクトップ TUI: 外部コントローラーを有効にしたうえで、別ターミナルで dart run tool/tui.dart を実行します。GUI の単一インスタンスロックは取りません。",
+    ),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(
       "TUN の権限を取得できなかったため、オフにしました。",

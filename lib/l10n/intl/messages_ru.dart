@@ -462,6 +462,39 @@ class MessageLookup extends MessageLookupByLibrary {
     "appProxiesEmpty": MessageLookupByLibrary.simpleMessage(
       "Нет локальных прокси",
     ),
+    "appRouting": MessageLookupByLibrary.simpleMessage(
+      "Маршрутизация приложений",
+    ),
+    "appRoutingAdd": MessageLookupByLibrary.simpleMessage(
+      "Добавить маршрут приложения",
+    ),
+    "appRoutingDesc": MessageLookupByLibrary.simpleMessage(
+      "Направлять локальное приложение или процесс в DIRECT, группу или узел",
+    ),
+    "appRoutingEdit": MessageLookupByLibrary.simpleMessage(
+      "Изменить маршрут приложения",
+    ),
+    "appRoutingEmpty": MessageLookupByLibrary.simpleMessage(
+      "Пока нет правил маршрутизации приложений",
+    ),
+    "appRoutingEmptyDesc": MessageLookupByLibrary.simpleMessage(
+      "Добавьте имя процесса (например chrome.exe или Cursor) и выберите DIRECT, REJECT, группу или узел.",
+    ),
+    "appRoutingFindProcessTip": MessageLookupByLibrary.simpleMessage(
+      "Нужно для маршрутизации по процессу. Немного повышает нагрузку на CPU.",
+    ),
+    "appRoutingProcessHint": MessageLookupByLibrary.simpleMessage(
+      "chrome.exe / Cursor / firefox",
+    ),
+    "appRoutingProcessName": MessageLookupByLibrary.simpleMessage(
+      "Имя процесса",
+    ),
+    "appRoutingRules": MessageLookupByLibrary.simpleMessage(
+      "Правила процессов",
+    ),
+    "appRoutingTip": MessageLookupByLibrary.simpleMessage(
+      "Эти правила используют PROCESS-NAME и применяются как глобальные добавленные правила. Включите «Найти процесс», чтобы ядро видело, какое приложение открыло соединение.",
+    ),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage(
       "Добавлять системный DNS",
     ),
@@ -1487,9 +1520,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "installUpdate": MessageLookupByLibrary.simpleMessage(
       "Установить обновление",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Эта система не выдаёт список установленных приложений без разрешения. Предоставьте его, чтобы настроить прокси для отдельных приложений.",
     ),
@@ -2943,6 +2977,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "transportHeaders": m127,
     "trustCertificate": MessageLookupByLibrary.simpleMessage(
       "Доверять сертификату",
+    ),
+    "tuiControllerTip": MessageLookupByLibrary.simpleMessage(
+      "Настольный TUI: включив контроллер, выполните dart run tool/tui.dart в другом терминале. Он подключается без блокировки GUI.",
     ),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(

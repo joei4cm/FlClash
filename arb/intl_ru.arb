@@ -1475,5 +1475,17 @@
   "hideAdvanced": "Скрыть дополнительно",
   "showAdvanced": "Показать дополнительно",
   "addTailscaleNode": "Добавить узел Tailscale",
-  "editTailscaleNode": "Изменить узел Tailscale"
+  "editTailscaleNode": "Изменить узел Tailscale",
+  "appRouting": "Маршрутизация приложений",
+  "appRoutingDesc": "Направлять локальное приложение или процесс в DIRECT, группу или узел",
+  "appRoutingTip": "Эти правила используют PROCESS-NAME и применяются как глобальные добавленные правила. Включите «Найти процесс», чтобы ядро видело, какое приложение открыло соединение.",
+  "appRoutingFindProcessTip": "Нужно для маршрутизации по процессу. Немного повышает нагрузку на CPU.",
+  "appRoutingEmpty": "Пока нет правил маршрутизации приложений",
+  "appRoutingEmptyDesc": "Добавьте имя процесса (например chrome.exe или Cursor) и выберите DIRECT, REJECT, группу или узел.",
+  "appRoutingRules": "Правила процессов",
+  "appRoutingAdd": "Добавить маршрут приложения",
+  "appRoutingEdit": "Изменить маршрут приложения",
+  "appRoutingProcessName": "Имя процесса",
+  "appRoutingProcessHint": "chrome.exe / Cursor / firefox",
+  "tuiControllerTip": "Настольный TUI: включив контроллер, выполните dart run tool/tui.dart в другом терминале. Он подключается без блокировки GUI."
 }

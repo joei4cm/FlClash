@@ -472,6 +472,35 @@ class MessageLookup extends MessageLookupByLibrary {
     "appProxiesEmpty": MessageLookupByLibrary.simpleMessage(
       "No hay proxies locales",
     ),
+    "appRouting": MessageLookupByLibrary.simpleMessage("Enrutado de apps"),
+    "appRoutingAdd": MessageLookupByLibrary.simpleMessage("Añadir ruta de app"),
+    "appRoutingDesc": MessageLookupByLibrary.simpleMessage(
+      "Enviar una app o proceso local por DIRECT, un grupo o un nodo",
+    ),
+    "appRoutingEdit": MessageLookupByLibrary.simpleMessage(
+      "Editar ruta de app",
+    ),
+    "appRoutingEmpty": MessageLookupByLibrary.simpleMessage(
+      "Aún no hay reglas de enrutado de apps",
+    ),
+    "appRoutingEmptyDesc": MessageLookupByLibrary.simpleMessage(
+      "Añade un nombre de proceso (por ejemplo chrome.exe o Cursor) y elige DIRECT, REJECT, un grupo o un nodo.",
+    ),
+    "appRoutingFindProcessTip": MessageLookupByLibrary.simpleMessage(
+      "Necesario para el enrutado por proceso. Sube un poco el uso de CPU.",
+    ),
+    "appRoutingProcessHint": MessageLookupByLibrary.simpleMessage(
+      "chrome.exe / Cursor / firefox",
+    ),
+    "appRoutingProcessName": MessageLookupByLibrary.simpleMessage(
+      "Nombre del proceso",
+    ),
+    "appRoutingRules": MessageLookupByLibrary.simpleMessage(
+      "Reglas de proceso",
+    ),
+    "appRoutingTip": MessageLookupByLibrary.simpleMessage(
+      "Estas reglas usan PROCESS-NAME y se aplican como reglas globales añadidas. Activa «Buscar proceso» para que el núcleo vea qué app abre cada conexión.",
+    ),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage(
       "Añadir DNS del sistema",
     ),
@@ -1513,9 +1542,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "installUpdate": MessageLookupByLibrary.simpleMessage(
       "Instalar actualización",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Este sistema oculta la lista de apps instaladas hasta que se concede el permiso. Autorízalo para configurar el proxy por app.",
     ),
@@ -2981,6 +3011,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "transportHeaders": m127,
     "trustCertificate": MessageLookupByLibrary.simpleMessage(
       "Confiar en el certificado",
+    ),
+    "tuiControllerTip": MessageLookupByLibrary.simpleMessage(
+      "TUI de escritorio: con el controlador activado, ejecuta dart run tool/tui.dart en otra terminal. Se conecta sin bloquear la GUI.",
     ),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(
