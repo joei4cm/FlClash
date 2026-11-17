@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'ansi.dart';
 import 'api.dart';
 import 'format.dart';
@@ -18,6 +20,7 @@ class TuiApp {
   String _version = '?';
   String _up = '0 B/s';
   String _down = '0 B/s';
+  StreamSubscription<Map<String, dynamic>>? _trafficSub;
 
   Future<void> run() async {
     term
@@ -25,11 +28,14 @@ class TuiApp {
       ..hideCursor();
     try {
       await _refreshHeader();
+      await _startBackgroundTraffic();
       while (true) {
         await _drawHome();
-        final key = await term.readKey(timeout: const Duration(seconds: 1));
+        final key = await term.readKey(
+          timeout: const Duration(milliseconds: 400),
+        );
         if (key == null) {
-          await _refreshTrafficQuiet();
+          // Background SSE already updated rates; redraw the home header.
           continue;
         }
         if (key.kind == KeyKind.escape || key.matchesChar('q')) {
@@ -59,15 +65,38 @@ class TuiApp {
             await _browseGroups();
           case 'traffic':
             await _liveTraffic();
+            await _startBackgroundTraffic();
           case 'quit':
             return;
         }
       }
     } finally {
+      await _stopBackgroundTraffic();
       term
         ..clear()
         ..restore();
       term.writeln(paint('FlClash TUI closed.', dim));
+    }
+  }
+
+  Future<void> _startBackgroundTraffic() async {
+    await _stopBackgroundTraffic();
+    final sub = client.trafficStream().listen(
+      (sample) {
+        _up = formatRate(sample['up']);
+        _down = formatRate(sample['down']);
+      },
+      onError: (_) {},
+      cancelOnError: false,
+    );
+    _trafficSub = sub;
+  }
+
+  Future<void> _stopBackgroundTraffic() async {
+    final sub = _trafficSub;
+    _trafficSub = null;
+    if (sub != null) {
+      await sub.cancel();
     }
   }
 
@@ -171,23 +200,13 @@ class TuiApp {
     try {
       final version = await client.getVersion();
       final configs = await client.getConfigs();
-      final traffic = await client.getTrafficOnce();
       _version = version['version']?.toString() ?? '?';
       _mode = configs['mode']?.toString() ?? '?';
       _port = (configs['mixed-port'] ?? configs['port'] ?? '?').toString();
-      _up = formatRate(traffic['up']);
-      _down = formatRate(traffic['down']);
+      // Rates keep updating from the background /traffic stream.
     } on ClashApiException catch (error) {
       _flash('API error: $error');
     }
-  }
-
-  Future<void> _refreshTrafficQuiet() async {
-    try {
-      final traffic = await client.getTrafficOnce();
-      _up = formatRate(traffic['up']);
-      _down = formatRate(traffic['down']);
-    } catch (_) {}
   }
 
   Future<void> _switchMode() async {
@@ -334,31 +353,38 @@ class TuiApp {
   }
 
   Future<void> _liveTraffic() async {
+    await _stopBackgroundTraffic();
     term.write(clearScreen);
     term.writeln(paint('Live traffic', bold + fgCyan));
     term.writeln(paint('Esc or q to stop', dim));
     term.writeln();
-    try {
-      await for (final sample in client.trafficStream()) {
+    var stop = false;
+    final sub = client.trafficStream().listen(
+      (sample) {
         _up = formatRate(sample['up']);
         _down = formatRate(sample['down']);
         term.write(
           '\r$clearLine↑ ${paint(_up, fgGreen)}    ↓ ${paint(_down, fgCyan)}   ',
         );
+      },
+      onError: (Object error) {
+        stop = true;
+        _flash('Traffic error: $error');
+      },
+      cancelOnError: true,
+    );
+    try {
+      while (!stop) {
         final key = await term.readKey(
-          timeout: const Duration(milliseconds: 20),
+          timeout: const Duration(milliseconds: 200),
         );
         if (key != null &&
             (key.kind == KeyKind.escape || key.matchesChar('q'))) {
           break;
         }
       }
-    } on ClashApiException catch (error) {
-      await showMessage(
-        term,
-        title: 'Traffic failed',
-        lines: [paint(error.toString(), fgRed)],
-      );
+    } finally {
+      await sub.cancel();
     }
     term.writeln();
     _flash('Traffic watch stopped');
