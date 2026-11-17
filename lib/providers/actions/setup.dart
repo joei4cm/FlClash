@@ -255,7 +255,9 @@ class SetupAction extends _$SetupAction {
     ref.read(currentTrafficProvider.notifier).value = const Traffic();
     ref.read(totalTrafficProvider.notifier).value = const Traffic();
     if (system.isDesktop) {
-      await TuiControllerEndpoint.clear();
+      // Fire-and-forget: stop must not wait on discovery-file I/O (fake-async
+      // tests never settle real filesystem futures).
+      unawaited(TuiControllerEndpoint.clear());
     }
     // A silent Core is gone or hung; running again would proxy traffic to it.
     if (unanswered case (final error, final stackTrace)) {
@@ -341,7 +343,10 @@ class SetupAction extends _$SetupAction {
 
   @protected
   void resetCoreTraffic() {
-    _core.resetTraffic();
+    // Unstubbed mocks return null instead of a Future; stop must still finish.
+    try {
+      unawaited(_core.resetTraffic());
+    } catch (_) {}
   }
 
   @visibleForTesting

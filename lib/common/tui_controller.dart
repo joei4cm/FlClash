@@ -8,6 +8,9 @@ import 'package:path/path.dart';
 
 /// Desktop TUI discovery file written while the Core's external controller is
 /// open. The TUI reads it without taking the GUI single-instance lock.
+///
+/// File I/O is best-effort: stop/teardown must not fail when the data directory
+/// is unavailable (unit tests without path_provider, or a missing home dir).
 class TuiControllerEndpoint {
   static const fileName = 'tui-controller.json';
 
@@ -44,31 +47,35 @@ class TuiControllerEndpoint {
     AppPath? paths,
     String? homeDir,
   }) async {
-    final file = File(await pathFor(paths: paths, homeDir: homeDir));
-    final body = jsonEncode({
-      'address': address,
-      'secret': secret,
-      'url': 'http://$address',
+    await _bestEffort(() async {
+      final file = File(await pathFor(paths: paths, homeDir: homeDir));
+      final body = jsonEncode({
+        'address': address,
+        'secret': secret,
+        'url': 'http://$address',
+      });
+      await file.writeAsString(body);
     });
-    await file.writeAsString(body);
   }
 
   static Future<void> clear({AppPath? paths, String? homeDir}) async {
-    final file = File(await pathFor(paths: paths, homeDir: homeDir));
-    if (await file.exists()) {
-      await file.delete();
-    }
+    await _bestEffort(() async {
+      final file = File(await pathFor(paths: paths, homeDir: homeDir));
+      if (await file.exists()) {
+        await file.delete();
+      }
+    });
   }
 
   static Future<({String url, String secret})?> read({
     AppPath? paths,
     String? homeDir,
   }) async {
-    final file = File(await pathFor(paths: paths, homeDir: homeDir));
-    if (!await file.exists()) {
-      return null;
-    }
     try {
+      final file = File(await pathFor(paths: paths, homeDir: homeDir));
+      if (!await file.exists()) {
+        return null;
+      }
       final json =
           jsonDecode(await file.readAsString()) as Map<String, dynamic>;
       final url = (json['url'] as String?)?.trim();
@@ -79,6 +86,14 @@ class TuiControllerEndpoint {
       return (url: url, secret: secret);
     } catch (_) {
       return null;
+    }
+  }
+
+  static Future<void> _bestEffort(Future<void> Function() run) async {
+    try {
+      await run();
+    } catch (_) {
+      // Discovery file is optional; Core stop / config push must continue.
     }
   }
 }

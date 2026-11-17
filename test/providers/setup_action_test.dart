@@ -135,7 +135,9 @@ class TestSetupAction extends SetupAction {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  setUpAll(() {
+  late Directory appPathsRoot;
+
+  setUpAll(() async {
     registerFallbackValue(
       const SetupParams(
         selectedMap: {},
@@ -158,6 +160,16 @@ void main() {
         options: CoreOptions(testUrl: ''),
       ),
     );
+    // Desktop stop clears tui-controller.json via appPath; bind a real temp
+    // home so tearDown does not hit an unbound path_provider.
+    appPathsRoot = await Directory.systemTemp.createTemp('setup-action-');
+    await useAppPaths(appPathsRoot);
+  });
+
+  tearDownAll(() async {
+    if (await appPathsRoot.exists()) {
+      await appPathsRoot.delete(recursive: true);
+    }
   });
 
   late TestSetupAction action;
@@ -876,6 +888,10 @@ void main() {
         ],
       );
       addTearDown(scoped.dispose);
+      // Keep the auto-dispose patch config alive across the await, otherwise it
+      // rebuilds to the default (controller closed) before the final expect.
+      final hold = scoped.listen(patchClashConfigProvider, (_, _) {});
+      addTearDown(hold.close);
       scoped.read(setupActionProvider.notifier);
       scoped
           .read(patchClashConfigProvider.notifier)

@@ -360,10 +360,13 @@ class _ProcessPickerSheetState extends State<_ProcessPickerSheet> {
           onPressed: _loading ? null : _load,
         ),
       ],
-      body: _loading
-          ? const Center(child: ActivityIndicator.page())
-          : _error != null
-          ? ListView(
+      body: Builder(
+        builder: (context) {
+          if (_loading) {
+            return const Center(child: ActivityIndicator.page());
+          }
+          if (_error != null) {
+            return ListView(
               children: [
                 ListItem(
                   leading: const GlyphIcon(AppGlyphs.error),
@@ -372,9 +375,10 @@ class _ProcessPickerSheetState extends State<_ProcessPickerSheet> {
                   onTap: _load,
                 ),
               ],
-            )
-          : visible.isEmpty
-          ? ListView(
+            );
+          }
+          if (visible.isEmpty) {
+            return ListView(
               children: [
                 ListItem(
                   leading: const GlyphIcon(AppGlyphs.info),
@@ -385,19 +389,22 @@ class _ProcessPickerSheetState extends State<_ProcessPickerSheet> {
                   ),
                 ),
               ],
-            )
-          : ListView.builder(
-              padding: EdgeInsets.only(bottom: 20 + context.bottomInset),
-              itemCount: visible.length,
-              itemBuilder: (context, index) {
-                final name = visible[index];
-                return ListItem(
-                  leading: const GlyphIcon(AppGlyphs.appsList),
-                  title: Text(name),
-                  onTap: () => Navigator.of(context).pop(name),
-                );
-              },
-            ),
+            );
+          }
+          return PrismListView(
+            itemCount: visible.length,
+            itemBuilder: (context, index) {
+              final name = visible[index];
+              return ListItem(
+                leading: const GlyphIcon(AppGlyphs.appsList),
+                title: Text(name),
+                onTap: () => Navigator.of(context).pop(name),
+              );
+            },
+            padding: EdgeInsets.only(bottom: 20 + context.bottomInset),
+          );
+        },
+      ),
     );
   }
 }
