@@ -1,0 +1,47 @@
+# One-shot: upload FlClash-X.Y.Z_abcdef-* copies of an existing release's
+# bare FlClash-X.Y.Z-* assets and refresh SHA256SUMS. Needed so installs that
+# still embed the tag commit suffix in the download name can verify.
+name: alias-release-assets
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to alias (e.g. v0.9.19_45fc3b)'
+        required: true
+        type: string
+
+concurrency:
+  group: alias-release-assets-${{ inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  alias:
+    name: alias assets for ${{ inputs.tag }}
+    if: github.repository == 'joei4cm/FlClash'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          mkdir -p ./dist
+          gh release download "$TAG" -D ./dist
+          # Do not re-upload SHA256SUMS as a binary alias source.
+          rm -f ./dist/SHA256SUMS
+          bash .github/scripts/alias_tag_assets.sh "$TAG" ./dist
+          (
+            cd ./dist
+            sha256sum ./* > SHA256SUMS
+          )
+          mapfile -t files < <(find ./dist -type f ! -name '.*' | sort)
+          printf 'Uploading %s\n' "${files[@]}"
+          gh release upload "$TAG" "${files[@]}" --clobber

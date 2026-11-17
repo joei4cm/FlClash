@@ -55,7 +55,9 @@ String? selfUpdateAssetSuffix(Abi abi, {required bool windowsInstalled}) {
 }
 
 String releaseAssetName(String tag, String suffix) {
-  final version = tag.startsWith('v') ? tag.substring(1) : tag;
+  final raw = tag.startsWith('v') ? tag.substring(1) : tag;
+  // Tags are vX.Y.Z_abcdef; published artifacts are FlClash-X.Y.Z-….
+  final version = stripReleaseCommitSuffix(raw);
   return '$appName-$version-$suffix';
 }
 

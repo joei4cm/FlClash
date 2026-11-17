@@ -216,6 +216,11 @@ jobs:
     if: always() && !cancelled() && github.repository == 'joei4cm/FlClash'
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref != '' && inputs.ref || inputs.tag }}
+
       - name: Download macOS arm64 artifacts
         uses: actions/download-artifact@v4
         with:
@@ -239,6 +244,7 @@ jobs:
           TAG: ${{ inputs.tag }}
         run: |
           set -euo pipefail
+          bash .github/scripts/alias_tag_assets.sh "$TAG" ./dist
           mapfile -t files < <(find ./dist -type f ! -name '.*' | sort)
           printf 'Attaching %s\n' "${files[@]}"
           gh release upload "$TAG" "${files[@]}" --clobber

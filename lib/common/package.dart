@@ -14,14 +14,16 @@ extension PackageInfoExtension on PackageInfo {
 
 final _releaseCommitSuffix = RegExp(r'_[0-9a-fA-F]{6}$');
 
-String _stripReleaseCommitSuffix(String version) =>
+/// Release tags may carry a 6-hex commit suffix (`v0.9.19_45fc3b`). CI asset
+/// names and version compares use the bare `X.Y.Z` form.
+String stripReleaseCommitSuffix(String version) =>
     version.replaceFirst(_releaseCommitSuffix, '');
 
 int compareVersions(String version1, String version2) {
-  final List<String> v1 = _stripReleaseCommitSuffix(
+  final List<String> v1 = stripReleaseCommitSuffix(
     version1.split('+')[0],
   ).split('.');
-  final List<String> v2 = _stripReleaseCommitSuffix(
+  final List<String> v2 = stripReleaseCommitSuffix(
     version2.split('+')[0],
   ).split('.');
   final int major1 = int.parse(v1[0]);

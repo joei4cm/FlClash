@@ -754,7 +754,13 @@ jobs:
 
       - name: Generate sha256
         if: ${{ env.IS_STABLE == 'true' }}
+        env:
+          TAG: ${{ github.ref_name }}
         run: |
+          set -euo pipefail
+          # Dual-name assets so clients that still embed the tag commit suffix
+          # (FlClash-0.9.19_abcdef-…) can verify against SHA256SUMS.
+          bash .github/scripts/alias_tag_assets.sh "$TAG" ./dist
           cd ./dist
           sha256sum ./* > SHA256SUMS
 
@@ -800,6 +806,9 @@ jobs:
       needs.upload.result == 'success'
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Download macOS arm64
         uses: actions/download-artifact@v4
         continue-on-error: true
@@ -820,12 +829,14 @@ jobs:
             echo 'No macOS arm64 artifact; skipping attach (use macos-arm64-attach).'
             exit 0
           fi
+          bash .github/scripts/alias_tag_assets.sh "$TAG" ./dist
           mapfile -t files < <(find ./dist -type f ! -name '.*' | sort)
           printf 'Attaching %s\n' "${files[@]}"
           gh release upload "$TAG" "${files[@]}" --clobber
 
           mkdir -p /tmp/sums
           if gh release download "$TAG" -D /tmp/sums -p SHA256SUMS; then
+            # Drop both bare and tag-suffixed macOS arm64 lines before re-adding.
             grep -v 'macos-arm64' /tmp/sums/SHA256SUMS > /tmp/SHA256SUMS || true
           else
             : > /tmp/SHA256SUMS
