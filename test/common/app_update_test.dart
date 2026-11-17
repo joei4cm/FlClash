@@ -50,10 +50,18 @@ void main() {
     });
   });
 
-  test('releaseAssetName drops the tag prefix', () {
+  test('releaseAssetName drops the tag prefix and commit suffix', () {
     expect(
       releaseAssetName('v0.9.3', 'android-arm64-v8a.apk'),
       'FlClash-0.9.3-android-arm64-v8a.apk',
+    );
+    expect(
+      releaseAssetName('v0.9.19_45fc3b', 'android-arm64-v8a.apk'),
+      'FlClash-0.9.19-android-arm64-v8a.apk',
+    );
+    expect(
+      releaseAssetName('v0.9.19_45fc3b', 'windows-amd64-setup.exe'),
+      'FlClash-0.9.19-windows-amd64-setup.exe',
     );
   });
 
