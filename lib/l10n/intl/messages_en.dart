@@ -474,7 +474,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appRoutingRules": MessageLookupByLibrary.simpleMessage("Process rules"),
     "appRoutingTip": MessageLookupByLibrary.simpleMessage(
-      "These rules use PROCESS-NAME matching and apply as global added rules. Turn on Find process so the Core can see which app opens each connection.",
+      "These rules use PROCESS-NAME matching and apply as global added rules on standard (non-script) profiles. Turn on Find process so the Core can see which app opens each connection. On Android, use Access control instead.",
     ),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage(
       "Append system DNS",

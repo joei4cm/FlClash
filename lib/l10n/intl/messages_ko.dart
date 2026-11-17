@@ -423,7 +423,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "appRoutingProcessName": MessageLookupByLibrary.simpleMessage("프로세스 이름"),
     "appRoutingRules": MessageLookupByLibrary.simpleMessage("프로세스 규칙"),
     "appRoutingTip": MessageLookupByLibrary.simpleMessage(
-      "이 규칙은 PROCESS-NAME 매칭을 사용하며 전역 추가 규칙으로 적용됩니다. 코어가 연결을 연 앱을 알 수 있도록 프로세스 찾기를 켜세요.",
+      "이 규칙은 PROCESS-NAME 매칭을 사용하며 표준 확장(스크립트 아님) 프로필의 전역 추가 규칙으로 적용됩니다. 프로세스 찾기를 켜세요. Android에서는 액세스 제어를 사용하세요.",
     ),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage("시스템 DNS 추가"),
     "applied": MessageLookupByLibrary.simpleMessage("적용했습니다"),

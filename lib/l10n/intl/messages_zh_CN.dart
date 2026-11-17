@@ -400,7 +400,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "appRoutingProcessName": MessageLookupByLibrary.simpleMessage("进程名"),
     "appRoutingRules": MessageLookupByLibrary.simpleMessage("进程规则"),
     "appRoutingTip": MessageLookupByLibrary.simpleMessage(
-      "这些规则使用 PROCESS-NAME 匹配，并作为全局附加规则生效。请开启「查找进程」，以便内核识别每条连接来自哪个应用。",
+      "这些规则使用 PROCESS-NAME 匹配，并作为全局附加规则在标准扩展（非脚本）配置上生效。请开启「查找进程」，以便内核识别每条连接来自哪个应用。Android 请改用「访问控制」。",
     ),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage("追加系统DNS"),
     "applied": MessageLookupByLibrary.simpleMessage("已应用"),

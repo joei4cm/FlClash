@@ -493,7 +493,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Правила процессов",
     ),
     "appRoutingTip": MessageLookupByLibrary.simpleMessage(
-      "Эти правила используют PROCESS-NAME и применяются как глобальные добавленные правила. Включите «Найти процесс», чтобы ядро видело, какое приложение открыло соединение.",
+      "Эти правила используют PROCESS-NAME и применяются как глобальные добавленные правила на стандартных (не script) профилях. Включите «Найти процесс». На Android используйте контроль доступа.",
     ),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage(
       "Добавлять системный DNS",
