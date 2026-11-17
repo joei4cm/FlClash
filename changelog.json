@@ -2,6 +2,39 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.19",
+      "tag": "v0.9.19",
+      "date": "2026-11-17",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "b866879",
+              "scope": "tui",
+              "text": "Interactive desktop TUI with menus and live traffic"
+            },
+            {
+              "id": "bdb848d",
+              "scope": "tui",
+              "text": "Delay test, connections view, and richer dashboard"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "53c5664",
+              "scope": "tui",
+              "text": "Keep one background /traffic stream on the home screen"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.18",
       "tag": "v0.9.18",
       "date": "2026-11-17",

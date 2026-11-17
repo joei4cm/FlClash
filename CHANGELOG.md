@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.9.19 (2026-11-17)
+
+**Features**
+
+- **tui** Interactive desktop TUI with menus and live traffic (b866879)
+- **tui** Delay test, connections view, and richer dashboard (bdb848d)
+
+**Bug Fixes**
+
+- **tui** Keep one background /traffic stream on the home screen (53c5664)
+
 ## v0.9.18 (2026-11-17)
 
 **Features**
