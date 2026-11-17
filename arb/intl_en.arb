@@ -1494,7 +1494,7 @@
   "appRoutingEdit": "Edit app route",
   "appRoutingProcessName": "Process name",
   "appRoutingProcessHint": "chrome.exe / Cursor / firefox",
-  "tuiControllerTip": "Desktop TUI: with the controller enabled, run dart run tool/tui.dart (or dart run tool/tui.dart status) in another terminal. It attaches without locking out the GUI.",
+  "tuiControllerTip": "Desktop TUI: with the controller enabled, run dart run tool/tui.dart in another terminal for an interactive menu (groups, mode, live traffic). One-shot: dart run tool/tui.dart status. It attaches without locking out the GUI.",
   "appRoutingPickProcess": "Pick running process",
   "appRoutingPickProcessDesc": "Choose from processes currently running on this computer",
   "appRoutingPickProcessTitle": "Running processes",
