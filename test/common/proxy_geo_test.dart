@@ -4,9 +4,23 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('inferProxyGeoRegion detects common tags', () {
     expect(inferProxyGeoRegion('US-AWS-01'), 'US');
+    expect(inferProxyGeoRegion('US01'), 'US');
+    expect(inferProxyGeoRegion('USA02'), 'US');
+    expect(inferProxyGeoRegion('美国 IEPL'), 'US');
+    expect(inferProxyGeoRegion('专线US03'), 'US');
     expect(inferProxyGeoRegion('香港 IPLC'), 'HK');
+    expect(inferProxyGeoRegion('HKG1'), 'HK');
     expect(inferProxyGeoRegion('Tokyo Premium'), 'JP');
     expect(inferProxyGeoRegion('Random Node'), isNull);
+    expect(inferProxyGeoRegion('PLUS'), isNull);
+    expect(inferProxyGeoRegion('BUS'), isNull);
+  });
+
+  test('inferProxyGeoRegion keeps short codes from eating English words', () {
+    expect(inferProxyGeoRegion('MAIN'), isNull);
+    expect(inferProxyGeoRegion('GRID'), isNull);
+    expect(inferProxyGeoRegion('IN01'), 'IN');
+    expect(inferProxyGeoRegion('伦敦专线'), 'GB');
   });
 
   test('resolvePreferredStickyGeo uses configured then geo-identity US', () {
