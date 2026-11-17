@@ -44,7 +44,21 @@ class AppPath {
     _dataDir = ResolveOnce(supportDirectory);
     _downloadDir = ResolveOnce(downloadDirectory);
     _tempDir = ResolveOnce(temporaryDirectory);
-    cacheDirectory().then(cacheDir.complete);
+    // Without onError, a missing path_provider leaves an unhandled async error
+    // (and a Completer that never completes). completeError without a listener
+    // is itself unhandled, so fall back to the system temp directory.
+    cacheDirectory().then(
+      (directory) {
+        if (!cacheDir.isCompleted) {
+          cacheDir.complete(directory);
+        }
+      },
+      onError: (_) {
+        if (!cacheDir.isCompleted) {
+          cacheDir.complete(Directory.systemTemp);
+        }
+      },
+    );
   }
 
   factory AppPath() {
