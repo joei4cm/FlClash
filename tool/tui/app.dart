@@ -81,6 +81,8 @@ class TuiApp {
 
   Future<void> _startBackgroundTraffic() async {
     await _stopBackgroundTraffic();
+    // Cancelled in _stopBackgroundTraffic / run()'s finally.
+    // ignore: cancel_subscriptions
     final sub = client.trafficStream().listen(
       (sample) {
         _up = formatRate(sample['up']);
