@@ -466,8 +466,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "appRoutingFindProcessTip": MessageLookupByLibrary.simpleMessage(
       "Required for process-based routing. Slightly higher CPU when on.",
     ),
+    "appRoutingNoProcesses": MessageLookupByLibrary.simpleMessage(
+      "No processes found",
+    ),
+    "appRoutingPickProcess": MessageLookupByLibrary.simpleMessage(
+      "Pick running process",
+    ),
+    "appRoutingPickProcessDesc": MessageLookupByLibrary.simpleMessage(
+      "Choose from processes currently running on this computer",
+    ),
+    "appRoutingPickProcessTitle": MessageLookupByLibrary.simpleMessage(
+      "Running processes",
+    ),
     "appRoutingProcessHint": MessageLookupByLibrary.simpleMessage(
       "chrome.exe / Cursor / firefox",
+    ),
+    "appRoutingProcessLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "Could not list processes",
     ),
     "appRoutingProcessName": MessageLookupByLibrary.simpleMessage(
       "Process name",
@@ -2833,7 +2848,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Trust certificate",
     ),
     "tuiControllerTip": MessageLookupByLibrary.simpleMessage(
-      "Desktop TUI: with the controller enabled, run dart run tool/tui.dart in another terminal. It attaches without locking out the GUI.",
+      "Desktop TUI: with the controller enabled, run dart run tool/tui.dart (or dart run tool/tui.dart status) in another terminal. It attaches without locking out the GUI.",
     ),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(

@@ -208,6 +208,20 @@ class _AppRoutingFormState extends State<_AppRoutingForm> {
     );
   }
 
+  Future<void> _pickProcess() async {
+    final selected = await showSheet<String>(
+      context: context,
+      builder: (_) => const _ProcessPickerSheet(),
+    );
+    if (selected == null || !mounted) {
+      return;
+    }
+    setState(() {
+      _processController.text = selected;
+      _attempted = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.appLocalizations;
@@ -238,6 +252,13 @@ class _AppRoutingFormState extends State<_AppRoutingForm> {
                 onFieldSubmitted: (_) => _submit(),
               ),
             ),
+            ListItem(
+              leading: const GlyphIcon(AppGlyphs.appsList),
+              title: Text(l10n.appRoutingPickProcess),
+              subtitle: Text(l10n.appRoutingPickProcessDesc),
+              trailing: const GlyphIcon(AppGlyphs.chevronForward),
+              onTap: _pickProcess,
+            ),
             ListItem<RuleAction>.options(
               title: Text(l10n.proxyType),
               options: const [
@@ -263,6 +284,120 @@ class _AppRoutingFormState extends State<_AppRoutingForm> {
           ],
         ),
       ],
+    );
+  }
+}
+
+class _ProcessPickerSheet extends StatefulWidget {
+  const _ProcessPickerSheet();
+
+  @override
+  State<_ProcessPickerSheet> createState() => _ProcessPickerSheetState();
+}
+
+class _ProcessPickerSheetState extends State<_ProcessPickerSheet> {
+  var _query = '';
+  var _loading = true;
+  Object? _error;
+  List<String> _names = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final names = await desktopProcesses.listNames();
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _names = names;
+        _loading = false;
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _error = error;
+        _loading = false;
+      });
+    }
+  }
+
+  List<String> get _visible {
+    final query = _query.trim().toLowerCase();
+    if (query.isEmpty) {
+      return _names;
+    }
+    return [
+      for (final name in _names)
+        if (name.toLowerCase().contains(query)) name,
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.appLocalizations;
+    final visible = _visible;
+    return Scaffold(
+      title: l10n.appRoutingPickProcessTitle,
+      searchState: AppBarSearchState(
+        onSearch: (query) => setState(() => _query = query),
+      ),
+      searchInBar: true,
+      iconActions: [
+        IconButtonData(
+          glyph: AppGlyphs.refresh,
+          tooltip: l10n.sync,
+          onPressed: _loading ? null : _load,
+        ),
+      ],
+      body: _loading
+          ? const Center(child: ActivityIndicator.page())
+          : _error != null
+          ? ListView(
+              children: [
+                ListItem(
+                  leading: const GlyphIcon(AppGlyphs.error),
+                  title: Text(l10n.appRoutingProcessLoadFailed),
+                  subtitle: Text(_error.toString()),
+                  onTap: _load,
+                ),
+              ],
+            )
+          : visible.isEmpty
+          ? ListView(
+              children: [
+                ListItem(
+                  leading: const GlyphIcon(AppGlyphs.info),
+                  title: Text(
+                    _query.trim().isEmpty
+                        ? l10n.appRoutingNoProcesses
+                        : l10n.nullTip(l10n.appRoutingProcessName),
+                  ),
+                ),
+              ],
+            )
+          : ListView.builder(
+              padding: EdgeInsets.only(bottom: 20 + context.bottomInset),
+              itemCount: visible.length,
+              itemBuilder: (context, index) {
+                final name = visible[index];
+                return ListItem(
+                  leading: const GlyphIcon(AppGlyphs.appsList),
+                  title: Text(name),
+                  onTap: () => Navigator.of(context).pop(name),
+                );
+              },
+            ),
     );
   }
 }

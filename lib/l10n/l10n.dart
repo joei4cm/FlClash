@@ -12075,11 +12075,61 @@ class AppLocalizations {
     );
   }
 
-  /// `Desktop TUI: with the controller enabled, run dart run tool/tui.dart in another terminal. It attaches without locking out the GUI.`
+  /// `Desktop TUI: with the controller enabled, run dart run tool/tui.dart (or dart run tool/tui.dart status) in another terminal. It attaches without locking out the GUI.`
   String get tuiControllerTip {
     return Intl.message(
-      'Desktop TUI: with the controller enabled, run dart run tool/tui.dart in another terminal. It attaches without locking out the GUI.',
+      'Desktop TUI: with the controller enabled, run dart run tool/tui.dart (or dart run tool/tui.dart status) in another terminal. It attaches without locking out the GUI.',
       name: 'tuiControllerTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pick running process`
+  String get appRoutingPickProcess {
+    return Intl.message(
+      'Pick running process',
+      name: 'appRoutingPickProcess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose from processes currently running on this computer`
+  String get appRoutingPickProcessDesc {
+    return Intl.message(
+      'Choose from processes currently running on this computer',
+      name: 'appRoutingPickProcessDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Running processes`
+  String get appRoutingPickProcessTitle {
+    return Intl.message(
+      'Running processes',
+      name: 'appRoutingPickProcessTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not list processes`
+  String get appRoutingProcessLoadFailed {
+    return Intl.message(
+      'Could not list processes',
+      name: 'appRoutingProcessLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No processes found`
+  String get appRoutingNoProcesses {
+    return Intl.message(
+      'No processes found',
+      name: 'appRoutingNoProcesses',
       desc: '',
       args: [],
     );

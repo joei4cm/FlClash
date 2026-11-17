@@ -6,6 +6,8 @@
 // FlClash writes ~/.…/tui-controller.json when that is the case.
 //
 //   dart run tool/tui.dart
+//   dart run tool/tui.dart status
+//   dart run tool/tui.dart use PROXY "node-name"
 //   FLCLASH_API=http://127.0.0.1:9090 FLCLASH_SECRET=xxx dart run tool/tui.dart
 
 import 'dart:convert';
@@ -34,14 +36,16 @@ Or set FLCLASH_API and FLCLASH_SECRET manually.
 
   final client = ClashApi(endpoint.url, endpoint.secret);
   try {
-    final version = await client.getVersion();
-    stdout.writeln('FlClash TUI  ·  mihomo ${version['version'] ?? '?'}');
-    stdout.writeln('API ${endpoint.url}');
-    stdout.writeln(
-      'Commands: status | groups | use <group> <proxy> | traffic | quit',
-    );
-    stdout.writeln('');
-    await _repl(client);
+    if (args.isEmpty) {
+      final version = await client.getVersion();
+      stdout.writeln('FlClash TUI  ·  mihomo ${version['version'] ?? '?'}');
+      stdout.writeln('API ${endpoint.url}');
+      stdout.writeln(_helpText);
+      stdout.writeln('');
+      await _repl(client);
+      return;
+    }
+    await _runCommand(client, args);
   } on ClashApiException catch (error) {
     stderr.writeln('API error: $error');
     exit(1);
@@ -49,6 +53,10 @@ Or set FLCLASH_API and FLCLASH_SECRET manually.
     client.close();
   }
 }
+
+const _helpText =
+    'Commands: status | mode [rule|global|direct] | groups | group <name> | '
+    'use <group> <proxy> | traffic | watch [n] | quit';
 
 Future<({String url, String secret})?> _resolveEndpoint() async {
   final envUrl = Platform.environment['FLCLASH_API']?.trim();
@@ -113,38 +121,61 @@ Future<void> _repl(ClashApi client) async {
     }
     final parts = line.split(RegExp(r'\s+'));
     try {
-      switch (parts.first) {
-        case 'status':
-        case 's':
-          await _printStatus(client);
-        case 'groups':
-        case 'g':
-          await _printGroups(client);
-        case 'use':
-        case 'u':
-          if (parts.length < 3) {
-            stdout.writeln('usage: use <group> <proxy>');
-            break;
-          }
-          await client.selectProxy(parts[1], parts.sublist(2).join(' '));
-          stdout.writeln(
-            'selected ${parts.sublist(2).join(' ')} in ${parts[1]}',
-          );
-        case 'traffic':
-        case 't':
-          await _printTraffic(client);
-        case 'help':
-        case 'h':
-        case '?':
-          stdout.writeln(
-            'status | groups | use <group> <proxy> | traffic | quit',
-          );
-        default:
-          stdout.writeln('unknown command: ${parts.first} (try help)');
-      }
+      await _runCommand(client, parts);
     } on ClashApiException catch (error) {
       stdout.writeln('error: $error');
+    } on FormatException catch (error) {
+      stdout.writeln('error: $error');
     }
+  }
+}
+
+Future<void> _runCommand(ClashApi client, List<String> parts) async {
+  switch (parts.first) {
+    case 'status':
+    case 's':
+      await _printStatus(client);
+    case 'mode':
+    case 'm':
+      if (parts.length == 1) {
+        final configs = await client.getConfigs();
+        stdout.writeln('mode  ${configs['mode'] ?? '?'}');
+        break;
+      }
+      final mode = parts[1].toLowerCase();
+      if (mode != 'rule' && mode != 'global' && mode != 'direct') {
+        throw const FormatException('usage: mode [rule|global|direct]');
+      }
+      await client.patchConfigs({'mode': mode});
+      stdout.writeln('mode → $mode');
+    case 'groups':
+    case 'g':
+      await _printGroups(client);
+    case 'group':
+      if (parts.length < 2) {
+        throw const FormatException('usage: group <name>');
+      }
+      await _printGroup(client, parts.sublist(1).join(' '));
+    case 'use':
+    case 'u':
+      if (parts.length < 3) {
+        throw const FormatException('usage: use <group> <proxy>');
+      }
+      await client.selectProxy(parts[1], parts.sublist(2).join(' '));
+      stdout.writeln('selected ${parts.sublist(2).join(' ')} in ${parts[1]}');
+    case 'traffic':
+    case 't':
+      await _printTraffic(client);
+    case 'watch':
+    case 'w':
+      final count = parts.length > 1 ? int.tryParse(parts[1]) ?? 10 : 10;
+      await _watchTraffic(client, count.clamp(1, 120));
+    case 'help':
+    case 'h':
+    case '?':
+      stdout.writeln(_helpText);
+    default:
+      throw FormatException('unknown command: ${parts.first} (try help)');
   }
 }
 
@@ -163,16 +194,10 @@ Future<void> _printGroups(ClashApi client) async {
   final names = (proxies.keys.toList()..sort());
   for (final name in names) {
     final group = proxies[name];
-    if (group is! Map) {
+    if (group is! Map || !_isProxyGroup(group)) {
       continue;
     }
     final type = group['type']?.toString() ?? '';
-    if (type != 'Selector' &&
-        type != 'URLTest' &&
-        type != 'Fallback' &&
-        type != 'LoadBalance') {
-      continue;
-    }
     final now = group['now']?.toString() ?? '';
     final all = group['all'];
     final count = all is List ? all.length : 0;
@@ -180,11 +205,54 @@ Future<void> _printGroups(ClashApi client) async {
   }
 }
 
+Future<void> _printGroup(ClashApi client, String name) async {
+  final proxies = await client.getProxies();
+  final group = proxies[name];
+  if (group is! Map) {
+    stdout.writeln('group not found: $name');
+    return;
+  }
+  final type = group['type']?.toString() ?? '';
+  final now = group['now']?.toString() ?? '';
+  stdout.writeln('$name  [$type]  → $now');
+  final all = group['all'];
+  if (all is! List) {
+    return;
+  }
+  for (final item in all) {
+    final proxyName = item.toString();
+    final mark = proxyName == now ? '*' : ' ';
+    stdout.writeln('  $mark $proxyName');
+  }
+}
+
+bool _isProxyGroup(Map group) {
+  final type = group['type']?.toString() ?? '';
+  return type == 'Selector' ||
+      type == 'URLTest' ||
+      type == 'Fallback' ||
+      type == 'LoadBalance';
+}
+
 Future<void> _printTraffic(ClashApi client) async {
   final sample = await client.getTrafficOnce();
   final up = sample['up'] ?? 0;
   final down = sample['down'] ?? 0;
   stdout.writeln('↑ ${_formatRate(up)}   ↓ ${_formatRate(down)}');
+}
+
+Future<void> _watchTraffic(ClashApi client, int samples) async {
+  stdout.writeln('watching $samples samples (Ctrl+C to stop)…');
+  var seen = 0;
+  await for (final sample in client.trafficStream()) {
+    final up = sample['up'] ?? 0;
+    final down = sample['down'] ?? 0;
+    stdout.writeln('↑ ${_formatRate(up)}   ↓ ${_formatRate(down)}');
+    seen += 1;
+    if (seen >= samples) {
+      break;
+    }
+  }
 }
 
 String _formatRate(Object? bytesPerSec) {
@@ -221,6 +289,10 @@ class ClashApi {
   Future<Map<String, dynamic>> getConfigs() async =>
       _getJson('/configs') as Map<String, dynamic>;
 
+  Future<void> patchConfigs(Map<String, dynamic> body) async {
+    await _patchJson('/configs', body);
+  }
+
   Future<Map<String, dynamic>> getProxies() async {
     final body = await _getJson('/proxies') as Map<String, dynamic>;
     final proxies = body['proxies'];
@@ -238,7 +310,13 @@ class ClashApi {
   }
 
   Future<Map<String, dynamic>> getTrafficOnce() async {
-    // /traffic is an SSE stream; read the first event line.
+    await for (final sample in trafficStream()) {
+      return sample;
+    }
+    return {};
+  }
+
+  Stream<Map<String, dynamic>> trafficStream() async* {
     final request = await _client.getUrl(Uri.parse('$baseUrl/traffic'));
     _authorize(request);
     final response = await request.close();
@@ -256,13 +334,11 @@ class ClashApi {
           : trimmed;
       final json = jsonDecode(payload);
       if (json is Map<String, dynamic>) {
-        return json;
-      }
-      if (json is Map) {
-        return json.cast<String, dynamic>();
+        yield json;
+      } else if (json is Map) {
+        yield json.cast<String, dynamic>();
       }
     }
-    return {};
   }
 
   Future<Object?> _getJson(String path) async {
@@ -285,6 +361,18 @@ class ClashApi {
     final text = await response.transform(utf8.decoder).join();
     if (response.statusCode >= 400) {
       throw ClashApiException('HTTP ${response.statusCode} PUT $path: $text');
+    }
+  }
+
+  Future<void> _patchJson(String path, Map<String, dynamic> body) async {
+    final request = await _client.openUrl('PATCH', Uri.parse('$baseUrl$path'));
+    _authorize(request);
+    request.headers.contentType = ContentType.json;
+    request.write(jsonEncode(body));
+    final response = await request.close();
+    final text = await response.transform(utf8.decoder).join();
+    if (response.statusCode >= 400) {
+      throw ClashApiException('HTTP ${response.statusCode} PATCH $path: $text');
     }
   }
 

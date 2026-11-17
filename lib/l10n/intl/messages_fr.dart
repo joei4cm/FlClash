@@ -493,8 +493,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "appRoutingFindProcessTip": MessageLookupByLibrary.simpleMessage(
       "Requis pour le routage par processus. Augmente légèrement le CPU.",
     ),
+    "appRoutingNoProcesses": MessageLookupByLibrary.simpleMessage(
+      "Aucun processus trouvé",
+    ),
+    "appRoutingPickProcess": MessageLookupByLibrary.simpleMessage(
+      "Choisir un processus en cours",
+    ),
+    "appRoutingPickProcessDesc": MessageLookupByLibrary.simpleMessage(
+      "Choisir parmi les processus en cours sur cet ordinateur",
+    ),
+    "appRoutingPickProcessTitle": MessageLookupByLibrary.simpleMessage(
+      "Processus en cours",
+    ),
     "appRoutingProcessHint": MessageLookupByLibrary.simpleMessage(
       "chrome.exe / Cursor / firefox",
+    ),
+    "appRoutingProcessLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "Impossible de lister les processus",
     ),
     "appRoutingProcessName": MessageLookupByLibrary.simpleMessage(
       "Nom du processus",

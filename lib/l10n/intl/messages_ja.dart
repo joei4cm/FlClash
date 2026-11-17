@@ -407,8 +407,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "appRoutingFindProcessTip": MessageLookupByLibrary.simpleMessage(
       "プロセス振り分けに必要です。オンにすると CPU 使用がわずかに増えます。",
     ),
+    "appRoutingNoProcesses": MessageLookupByLibrary.simpleMessage(
+      "プロセスが見つかりません",
+    ),
+    "appRoutingPickProcess": MessageLookupByLibrary.simpleMessage(
+      "実行中のプロセスを選ぶ",
+    ),
+    "appRoutingPickProcessDesc": MessageLookupByLibrary.simpleMessage(
+      "このコンピュータで実行中のプロセスから選択",
+    ),
+    "appRoutingPickProcessTitle": MessageLookupByLibrary.simpleMessage(
+      "実行中のプロセス",
+    ),
     "appRoutingProcessHint": MessageLookupByLibrary.simpleMessage(
       "chrome.exe / Cursor / firefox",
+    ),
+    "appRoutingProcessLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "プロセス一覧を取得できませんでした",
     ),
     "appRoutingProcessName": MessageLookupByLibrary.simpleMessage("プロセス名"),
     "appRoutingRules": MessageLookupByLibrary.simpleMessage("プロセスルール"),

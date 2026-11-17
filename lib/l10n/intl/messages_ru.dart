@@ -483,8 +483,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "appRoutingFindProcessTip": MessageLookupByLibrary.simpleMessage(
       "Нужно для маршрутизации по процессу. Немного повышает нагрузку на CPU.",
     ),
+    "appRoutingNoProcesses": MessageLookupByLibrary.simpleMessage(
+      "Процессы не найдены",
+    ),
+    "appRoutingPickProcess": MessageLookupByLibrary.simpleMessage(
+      "Выбрать запущенный процесс",
+    ),
+    "appRoutingPickProcessDesc": MessageLookupByLibrary.simpleMessage(
+      "Выберите из процессов, запущенных на этом компьютере",
+    ),
+    "appRoutingPickProcessTitle": MessageLookupByLibrary.simpleMessage(
+      "Запущенные процессы",
+    ),
     "appRoutingProcessHint": MessageLookupByLibrary.simpleMessage(
       "chrome.exe / Cursor / firefox",
+    ),
+    "appRoutingProcessLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось получить список процессов",
     ),
     "appRoutingProcessName": MessageLookupByLibrary.simpleMessage(
       "Имя процесса",

@@ -1487,5 +1487,10 @@
   "appRoutingEdit": "アプリ振り分けを編集",
   "appRoutingProcessName": "プロセス名",
   "appRoutingProcessHint": "chrome.exe / Cursor / firefox",
-  "tuiControllerTip": "デスクトップ TUI: 外部コントローラーを有効にしたうえで、別ターミナルで dart run tool/tui.dart を実行します。GUI の単一インスタンスロックは取りません。"
+  "tuiControllerTip": "デスクトップ TUI: 外部コントローラーを有効にしたうえで、別ターミナルで dart run tool/tui.dart を実行します。GUI の単一インスタンスロックは取りません。",
+  "appRoutingPickProcess": "実行中のプロセスを選ぶ",
+  "appRoutingPickProcessDesc": "このコンピュータで実行中のプロセスから選択",
+  "appRoutingPickProcessTitle": "実行中のプロセス",
+  "appRoutingProcessLoadFailed": "プロセス一覧を取得できませんでした",
+  "appRoutingNoProcesses": "プロセスが見つかりません"
 }

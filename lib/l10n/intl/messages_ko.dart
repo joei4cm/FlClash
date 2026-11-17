@@ -417,8 +417,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "appRoutingFindProcessTip": MessageLookupByLibrary.simpleMessage(
       "프로세스 기반 라우팅에 필요합니다. 켜면 CPU 사용량이 약간 늘어납니다.",
     ),
+    "appRoutingNoProcesses": MessageLookupByLibrary.simpleMessage(
+      "프로세스를 찾을 수 없습니다",
+    ),
+    "appRoutingPickProcess": MessageLookupByLibrary.simpleMessage(
+      "실행 중인 프로세스 선택",
+    ),
+    "appRoutingPickProcessDesc": MessageLookupByLibrary.simpleMessage(
+      "이 컴퓨터에서 실행 중인 프로세스에서 선택",
+    ),
+    "appRoutingPickProcessTitle": MessageLookupByLibrary.simpleMessage(
+      "실행 중인 프로세스",
+    ),
     "appRoutingProcessHint": MessageLookupByLibrary.simpleMessage(
       "chrome.exe / Cursor / firefox",
+    ),
+    "appRoutingProcessLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "프로세스 목록을 가져올 수 없습니다",
     ),
     "appRoutingProcessName": MessageLookupByLibrary.simpleMessage("프로세스 이름"),
     "appRoutingRules": MessageLookupByLibrary.simpleMessage("프로세스 규칙"),
