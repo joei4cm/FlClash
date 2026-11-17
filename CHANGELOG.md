@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.9.18 (2026-11-17)
+
+**Features**
+
+- Desktop TUI attaches via external-controller alongside the GUI, plus App routing for PROCESS-NAME rules (3e41a9e)
+- **app-routing** Pick a running desktop process when adding an App routing rule; richer TUI commands (mode, group, watch) (e893d08)
+
+**Bug Fixes**
+
+- **proxies** Recognize US01-style names in Geo chips (d537806)
+
 ## v0.9.17 (2026-11-16)
 
 **Bug Fixes**
