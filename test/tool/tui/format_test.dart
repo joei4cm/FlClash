@@ -51,12 +51,6 @@ void main() {
       }),
       'Chrome · example.com:443 → HK01',
     );
-    expect(
-      connectionHost({
-        'host': '',
-        'destinationIP': '1.2.3.4',
-      }),
-      '1.2.3.4',
-    );
+    expect(connectionHost({'host': '', 'destinationIP': '1.2.3.4'}), '1.2.3.4');
   });
 }
