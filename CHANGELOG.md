@@ -1,100 +1,40 @@
 # Changelog
 
-## v0.9.19 (2026-11-17)
+## v0.9.20 (2026-11-17)
 
 **Features**
 
-- **tui** Interactive desktop TUI with menus and live traffic (b866879)
 - **tui** Delay test, connections view, and richer dashboard (bdb848d)
-
-**Bug Fixes**
-
-- **tui** Keep one background /traffic stream on the home screen (53c5664)
-- **tui** Stop desktop teardown from hanging Dart CI (0541913)
-
-## v0.9.18 (2026-11-17)
-
-**Features**
-
-- Desktop TUI attaches via external-controller alongside the GUI, plus App routing for PROCESS-NAME rules (3e41a9e)
-- **app-routing** Pick a running desktop process when adding an App routing rule; richer TUI commands (mode, group, watch) (e893d08)
-
-**Bug Fixes**
-
-- **proxies** Recognize US01-style names in Geo chips (d537806)
-
-## v0.9.17 (2026-11-16)
-
-**Bug Fixes**
-
-- **perf** Stop idle traffic chart redraws when the window is hidden (f94c2fb)
-
-## v0.9.16 (2026-11-16)
-
-**Features**
-
+- **tui** Interactive desktop TUI with menus and live traffic (b866879)
+- Process picker for app routing and richer desktop TUI (e893d08)
+- Desktop TUI attach + app process routing UI (3e41a9e)
 - **proxies** Geo region chips for auto-select groups (8d271bd)
-
-## v0.9.15 (2026-11-16)
+- Rebase fork onto upstream v0.9.3 and mihomo v1.19.34 (f3c213b)
+- **connections** Merged requests and connections; quick edit lists (52b975f)
+- **ui** iOS 27 transitions, press and text selection; smoother pages (bb47f2c)
+- **update** Download and install updates in the app (b8f84b3)
+- **core** One delay test timeout; VPN crash and startup fixes (2a5a42c)
+- **about** Windows can install an update from the app. (07c0e77)
+- **about** Android, Linux, and macOS can install an update from the app. (75369ce)
+- **dashboard** The dashboard shows the exit on a country map on desktop and on phones. (fbceba6)
+- **dashboard** The exit location map shows country outlines, with the exit country highlighted. (9a9fe5c)
+- **dashboard** Open exit location map from country badge (cee2ca0)
 
 **Bug Fixes**
 
+- **update** Match release asset names without tag commit suffix (567fb62)
+- **tui** Stop desktop teardown from hanging Dart CI (0541913)
+- **tui** Keep one background /traffic stream on the home screen (53c5664)
+- **app-routing** Desktop-only entry and standard-profile tip (dc144ab)
+- **proxies** Recognize US01-style names in Geo chips (d537806)
+- **perf** Stop idle traffic chart redraws when hidden (f94c2fb)
 - **memory** Cap live connection UI lists at 4k newest (7efb285)
 - **memory** Prune stale delays and release world map cache (43a657b)
 - **ci** Recover macOS arm64 builds under runner capacity pressure (2d5e008)
-
-## v0.9.14 (2026-11-12)
-
-**Features**
-
-- Rebase fork onto upstream v0.9.3 and mihomo v1.19.34 (f3c213b)
-- **core** Update Clash.Meta / mihomo to v1.19.34 (Snell v6, multi-user Shadowsocks, TUN/easytier fixes) (f3c213b)
-- **ui** Adopt upstream prism_ui, in-app update, and core protocol on the fork feature set (f3c213b)
-
-## v0.9.13 (2026-11-03)
-
-**Bug Fixes**
-
 - **security** Require update checksums, sanitize package names, and cap outbound member totals (5e565b1)
-
-## v0.9.12 (2026-11-01)
-
-**Bug Fixes**
-
-- **about** In-app update verify stays responsive, and cancel no longer blanks the screen. (e67197b)
-
-## v0.9.11 (2026-11-01)
-
-Internal improvements only.
-
-## v0.9.10 (2026-10-31)
-
-Internal improvements only.
-
-## v0.9.9 (2026-10-31)
-
-**Features**
-
-- **about** Windows can install an update from the app. (07c0e77)
-- **about** Android, Linux, and macOS can install an update from the app. (75369ce)
-
-## v0.9.8 (2026-10-31)
-
-**Features**
-
-- **dashboard** The dashboard shows the exit on a country map on desktop and on phones. (fbceba6)
-
-## v0.9.7 (2026-10-31)
-
-**Features**
-
-- **dashboard** The exit location map shows country outlines, with the exit country highlighted. (9a9fe5c)
-
-## v0.9.6 (2026-10-29)
-
-**Features**
-
-- **dashboard** Open exit location map from country badge (cee2ca0)
+- **core** Auto-select leaves an unusable first node at once (7d5db7e)
+- **access** Keep selections a filter hides (63aaf6d)
+- **about** bug (e67197b)
 
 ## v0.9.5 (2026-10-28)
 
@@ -108,20 +48,6 @@ Internal improvements only.
 **Features**
 
 - Tailscale, geo identity, strategy lanes, and sticky auto-select on upstream 0.9.2, with update checks on joei4cm/FlClash (3afd1da)
-
-## v0.9.3 (2026-11-04)
-
-**Features**
-
-- **connections** Merged requests and connections; quick edit lists (52b975f)
-- **ui** iOS 27 transitions, press and text selection; smoother pages (bb47f2c)
-- **update** Download and install updates in the app (b8f84b3)
-- **core** One delay test timeout; VPN crash and startup fixes (2a5a42c)
-
-**Bug Fixes**
-
-- **core** Auto-select leaves an unusable first node at once (7d5db7e)
-- **access** Keep selections a filter hides (63aaf6d)
 
 ## v0.9.2 (2026-10-24)
 
