@@ -31,6 +31,39 @@ class ProxyNode {
 
   final String name;
   final int? delayMs;
+
+  ProxyNode withDelay(int? delay) => ProxyNode(name: name, delayMs: delay);
+}
+
+class ConnectionSnapshot {
+  const ConnectionSnapshot({
+    required this.downloadTotal,
+    required this.uploadTotal,
+    required this.memory,
+    required this.connections,
+  });
+
+  final int downloadTotal;
+  final int uploadTotal;
+  final int memory;
+  final List<Map<String, dynamic>> connections;
+
+  int get count => connections.length;
+
+  factory ConnectionSnapshot.fromJson(Map<String, dynamic> json) {
+    final raw = json['connections'];
+    return ConnectionSnapshot(
+      downloadTotal: (json['downloadTotal'] as num?)?.toInt() ?? 0,
+      uploadTotal: (json['uploadTotal'] as num?)?.toInt() ?? 0,
+      memory: (json['memory'] as num?)?.toInt() ?? 0,
+      connections: raw is List
+          ? [
+              for (final item in raw)
+                if (item is Map) item.cast<String, dynamic>(),
+            ]
+          : const [],
+    );
+  }
 }
 
 class ClashApi {
@@ -44,6 +77,8 @@ class ClashApi {
   final String secret;
   final HttpClient _client;
   final bool _ownsClient;
+
+  static const defaultTestUrl = 'https://www.gstatic.com/generate_204';
 
   void close() {
     if (_ownsClient) {
@@ -145,7 +180,7 @@ class ClashApi {
   Future<int?> testDelay(
     String proxy, {
     Duration timeout = const Duration(seconds: 5),
-    String url = 'https://www.gstatic.com/generate_204',
+    String url = defaultTestUrl,
   }) async {
     final path =
         '/proxies/${Uri.encodeComponent(proxy)}/delay'
@@ -160,6 +195,46 @@ class ClashApi {
     }
     return null;
   }
+
+  /// Tests every member of a group. Returns name → delay ms (0 = fail/timeout).
+  Future<Map<String, int>> testGroupDelay(
+    String group, {
+    Duration timeout = const Duration(seconds: 5),
+    String url = defaultTestUrl,
+  }) async {
+    final path =
+        '/group/${Uri.encodeComponent(group)}/delay'
+        '?timeout=${timeout.inMilliseconds}&url=${Uri.encodeQueryComponent(url)}';
+    final body = await _getJson(path);
+    if (body is! Map) {
+      return {};
+    }
+    return {
+      for (final entry in body.entries)
+        if (entry.value is num) entry.key.toString(): (entry.value as num).round(),
+    };
+  }
+
+  Future<ConnectionSnapshot> getConnections() async {
+    final body = await _getJson('/connections');
+    if (body is Map<String, dynamic>) {
+      return ConnectionSnapshot.fromJson(body);
+    }
+    if (body is Map) {
+      return ConnectionSnapshot.fromJson(body.cast<String, dynamic>());
+    }
+    return const ConnectionSnapshot(
+      downloadTotal: 0,
+      uploadTotal: 0,
+      memory: 0,
+      connections: [],
+    );
+  }
+
+  Future<void> closeConnection(String id) =>
+      _delete('/connections/${Uri.encodeComponent(id)}');
+
+  Future<void> closeAllConnections() => _delete('/connections');
 
   Future<Map<String, dynamic>> getTrafficOnce() async {
     await for (final sample in trafficStream()) {
@@ -225,6 +300,16 @@ class ClashApi {
     final text = await response.transform(utf8.decoder).join();
     if (response.statusCode >= 400) {
       throw ClashApiException('HTTP ${response.statusCode} PATCH $path: $text');
+    }
+  }
+
+  Future<void> _delete(String path) async {
+    final request = await _client.deleteUrl(Uri.parse('$baseUrl$path'));
+    _authorize(request);
+    final response = await request.close();
+    final text = await response.transform(utf8.decoder).join();
+    if (response.statusCode >= 400) {
+      throw ClashApiException('HTTP ${response.statusCode} DELETE $path: $text');
     }
   }
 

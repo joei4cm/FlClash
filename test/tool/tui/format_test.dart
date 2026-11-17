@@ -9,6 +9,12 @@ void main() {
     expect(formatRate(2 * 1024 * 1024), '2.00 MB/s');
   });
 
+  test('formatBytes scales units', () {
+    expect(formatBytes(100), '100 B');
+    expect(formatBytes(2048), '2.0 KB');
+    expect(formatBytes(3 * 1024 * 1024), '3.00 MB');
+  });
+
   test('formatDelay and history', () {
     expect(formatDelay(null), '—');
     expect(formatDelay(0), 'timeout');
@@ -31,5 +37,26 @@ void main() {
     expect(isProxyGroupType('Selector'), isTrue);
     expect(isProxyGroupType('URLTest'), isTrue);
     expect(isProxyGroupType('Shadowsocks'), isFalse);
+  });
+
+  test('connectionLabel prefers host and process', () {
+    expect(
+      connectionLabel({
+        'metadata': {
+          'host': 'example.com',
+          'destinationPort': 443,
+          'process': 'Chrome',
+        },
+        'chains': ['HK01', 'Proxy'],
+      }),
+      'Chrome · example.com:443 → HK01',
+    );
+    expect(
+      connectionHost({
+        'host': '',
+        'destinationIP': '1.2.3.4',
+      }),
+      '1.2.3.4',
+    );
   });
 }

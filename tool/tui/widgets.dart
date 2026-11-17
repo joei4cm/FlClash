@@ -4,6 +4,15 @@ import 'keys.dart';
 import 'term.dart';
 
 typedef MenuItem = ({String id, String label, String? detail});
+typedef PickerItem = ({String id, String label, String? trailing});
+
+class PickerResult {
+  const PickerResult.select(this.id) : action = 'select';
+  const PickerResult.action(this.action, [this.id]);
+
+  final String action;
+  final String? id;
+}
 
 /// Arrow-key (or j/k) menu. Returns the selected item id, or null on cancel.
 Future<String?> showMenu(
@@ -83,13 +92,19 @@ Future<String?> showMenu(
   }
 }
 
-/// Filterable list picker. Type to filter; Enter confirms; Esc cancels.
-Future<String?> showFilteredPicker(
+/// Filterable list picker.
+///
+/// [hotkeys] maps a single character to an action id. When pressed, returns
+/// [PickerResult.action] with the focused item id (if any). Enter returns
+/// [PickerResult.select]. Esc returns null.
+Future<PickerResult?> showFilteredPicker(
   Terminal term, {
   required String title,
-  required List<({String id, String label, String? trailing})> items,
+  required List<PickerItem> items,
   String? currentId,
   String emptyLabel = 'No matches',
+  Map<String, String> hotkeys = const {},
+  String? footerHint,
 }) async {
   var query = '';
   var index = 0;
@@ -100,7 +115,7 @@ Future<String?> showFilteredPicker(
     }
   }
 
-  List<({String id, String label, String? trailing})> visibleOf() {
+  List<PickerItem> visibleOf() {
     final q = query.toLowerCase();
     if (q.isEmpty) {
       return items;
@@ -112,6 +127,10 @@ Future<String?> showFilteredPicker(
           item,
     ];
   }
+
+  final hotkeyHint = hotkeys.isEmpty
+      ? ''
+      : ' · ${[for (final e in hotkeys.entries) '${e.key}=${e.value}'].join(' · ')}';
 
   while (true) {
     final visible = visibleOf();
@@ -157,7 +176,8 @@ Future<String?> showFilteredPicker(
       ..writeln()
       ..writeln(
         paint(
-          'Type to filter · ↑↓ move · Enter select · Backspace delete · Ctrl+U clear · Esc back',
+          footerHint ??
+              'Type to filter · ↑↓ move · Enter select$hotkeyHint · Esc back',
           dim,
         ),
       );
@@ -180,7 +200,7 @@ Future<String?> showFilteredPicker(
         if (visible.isEmpty) {
           break;
         }
-        return visible[index].id;
+        return PickerResult.select(visible[index].id);
       case KeyKind.escape:
         return null;
       case KeyKind.backspace:
@@ -192,7 +212,16 @@ Future<String?> showFilteredPicker(
         query = '';
         index = 0;
       case KeyKind.char:
-        query += key.char!;
+        final ch = key.char!;
+        final action = hotkeys[ch] ?? hotkeys[ch.toLowerCase()];
+        if (action != null) {
+          // Global actions (no focused row required) use id null when empty.
+          if (visible.isEmpty) {
+            return PickerResult.action(action);
+          }
+          return PickerResult.action(action, visible[index].id);
+        }
+        query += ch;
         index = 0;
       default:
         break;
@@ -219,4 +248,22 @@ Future<void> showMessage(
     ..writeln(paint(prompt, dim));
   term.write(buffer.toString());
   await term.readKey();
+}
+
+Future<bool> confirm(
+  Terminal term, {
+  required String title,
+  required String message,
+}) async {
+  final result = await showMenu(
+    term,
+    title: title,
+    subtitle: message,
+    items: const [
+      (id: 'yes', label: 'Yes', detail: 'confirm'),
+      (id: 'no', label: 'No', detail: 'cancel'),
+    ],
+    initialIndex: 1,
+  );
+  return result == 'yes';
 }
