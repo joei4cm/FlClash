@@ -1487,7 +1487,7 @@
   "appRoutingEdit": "编辑应用分流",
   "appRoutingProcessName": "进程名",
   "appRoutingProcessHint": "chrome.exe / Cursor / firefox",
-  "tuiControllerTip": "桌面 TUI：开启外部控制器后，在另一终端运行 dart run tool/tui.dart（或 dart run tool/tui.dart status）。它通过 API 接入，不会抢 GUI 的单实例锁。",
+  "tuiControllerTip": "桌面 TUI：开启外部控制器后，在另一终端运行 dart run tool/tui.dart 进入交互菜单（策略组 / 模式 / 实时流量）。一次性命令：dart run tool/tui.dart status。通过 API 接入，不抢 GUI 单实例锁。",
   "appRoutingPickProcess": "选择正在运行的进程",
   "appRoutingPickProcessDesc": "从本机当前运行的进程中选择",
   "appRoutingPickProcessTitle": "正在运行的进程",

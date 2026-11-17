@@ -2229,7 +2229,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "transportHeaders": m127,
     "trustCertificate": MessageLookupByLibrary.simpleMessage("信任证书"),
     "tuiControllerTip": MessageLookupByLibrary.simpleMessage(
-      "桌面 TUI：开启外部控制器后，在另一终端运行 dart run tool/tui.dart（或 dart run tool/tui.dart status）。它通过 API 接入，不会抢 GUI 的单实例锁。",
+      "桌面 TUI：开启外部控制器后，在另一终端运行 dart run tool/tui.dart 进入交互菜单（策略组 / 模式 / 实时流量）。一次性命令：dart run tool/tui.dart status。通过 API 接入，不抢 GUI 单实例锁。",
     ),
     "tun": MessageLookupByLibrary.simpleMessage("虚拟网卡"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(
