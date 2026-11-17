@@ -1478,7 +1478,7 @@
   "editTailscaleNode": "Edit Tailscale node",
   "appRouting": "Enrutado de apps",
   "appRoutingDesc": "Enviar una app o proceso local por DIRECT, un grupo o un nodo",
-  "appRoutingTip": "Estas reglas usan PROCESS-NAME y se aplican como reglas globales añadidas. Activa «Buscar proceso» para que el núcleo vea qué app abre cada conexión.",
+  "appRoutingTip": "Estas reglas usan PROCESS-NAME y se aplican como reglas globales añadidas en perfiles estándar (no script). Activa «Buscar proceso». En Android usa el control de acceso.",
   "appRoutingFindProcessTip": "Necesario para el enrutado por proceso. Sube un poco el uso de CPU.",
   "appRoutingEmpty": "Aún no hay reglas de enrutado de apps",
   "appRoutingEmptyDesc": "Añade un nombre de proceso (por ejemplo chrome.exe o Cursor) y elige DIRECT, REJECT, un grupo o un nodo.",

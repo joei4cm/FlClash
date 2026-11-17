@@ -503,7 +503,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Règles de processus",
     ),
     "appRoutingTip": MessageLookupByLibrary.simpleMessage(
-      "Ces règles utilisent PROCESS-NAME et s’appliquent comme règles globales ajoutées. Activez « Trouver le processus » pour que le noyau voie quelle app ouvre chaque connexion.",
+      "Ces règles utilisent PROCESS-NAME et s’appliquent comme règles globales ajoutées sur les profils standard (hors script). Activez « Trouver le processus ». Sur Android, utilisez le contrôle d’accès.",
     ),
     "appendSystemDns": MessageLookupByLibrary.simpleMessage(
       "Ajouter le DNS du système",

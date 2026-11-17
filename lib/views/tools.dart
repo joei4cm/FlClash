@@ -53,11 +53,11 @@ class _ToolViewState extends ConsumerState<ToolsView> {
   Widget _getFeatureList() {
     return generateSection(
       title: context.appLocalizations.features,
-      items: const [
-        _AppRoutingItem(),
-        _TailscaleItem(),
-        _GeoIdentityItem(),
-        _StrategyLanesItem(),
+      items: [
+        if (system.isDesktop) const _AppRoutingItem(),
+        const _TailscaleItem(),
+        const _GeoIdentityItem(),
+        const _StrategyLanesItem(),
       ],
     );
   }

@@ -1478,7 +1478,7 @@
   "editTailscaleNode": "Tailscale ノードを編集",
   "appRouting": "アプリ振り分け",
   "appRoutingDesc": "ローカルアプリ/プロセスを DIRECT・グループ・ノードへ送る",
-  "appRoutingTip": "これらのルールは PROCESS-NAME で一致し、グローバル追加ルールとして適用されます。「プロセス検出」をオンにして、どのアプリが接続を開いたかをコアが把握できるようにしてください。",
+  "appRoutingTip": "これらのルールは PROCESS-NAME で一致し、標準拡張（スクリプト以外）プロファイルのグローバル追加ルールとして適用されます。「プロセス検出」をオンにしてください。Android ではアクセス制御を使ってください。",
   "appRoutingFindProcessTip": "プロセス振り分けに必要です。オンにすると CPU 使用がわずかに増えます。",
   "appRoutingEmpty": "アプリ振り分けルールはまだありません",
   "appRoutingEmptyDesc": "プロセス名（例: chrome.exe や Cursor）を追加し、DIRECT / REJECT / グループ / ノードを選んでください。",

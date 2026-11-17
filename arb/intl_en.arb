@@ -1485,7 +1485,7 @@
   "editTailscaleNode": "Edit Tailscale node",
   "appRouting": "App routing",
   "appRoutingDesc": "Send a local app or process through DIRECT, a group, or a node",
-  "appRoutingTip": "These rules use PROCESS-NAME matching and apply as global added rules. Turn on Find process so the Core can see which app opens each connection.",
+  "appRoutingTip": "These rules use PROCESS-NAME matching and apply as global added rules on standard (non-script) profiles. Turn on Find process so the Core can see which app opens each connection. On Android, use Access control instead.",
   "appRoutingFindProcessTip": "Required for process-based routing. Slightly higher CPU when on.",
   "appRoutingEmpty": "No app routing rules yet",
   "appRoutingEmptyDesc": "Add a process name (for example chrome.exe or Cursor) and choose DIRECT, REJECT, a group, or a node.",
