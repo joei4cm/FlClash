@@ -29,6 +29,11 @@
               "id": "53c5664",
               "scope": "tui",
               "text": "Keep one background /traffic stream on the home screen"
+            },
+            {
+              "id": "0541913",
+              "scope": "tui",
+              "text": "Stop desktop teardown from hanging Dart CI"
             }
           ]
         }

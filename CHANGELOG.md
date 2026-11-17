@@ -10,6 +10,7 @@
 **Bug Fixes**
 
 - **tui** Keep one background /traffic stream on the home screen (53c5664)
+- **tui** Stop desktop teardown from hanging Dart CI (0541913)
 
 ## v0.9.18 (2026-11-17)
 
