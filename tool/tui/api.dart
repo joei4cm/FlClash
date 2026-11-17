@@ -211,7 +211,8 @@ class ClashApi {
     }
     return {
       for (final entry in body.entries)
-        if (entry.value is num) entry.key.toString(): (entry.value as num).round(),
+        if (entry.value is num)
+          entry.key.toString(): (entry.value as num).round(),
     };
   }
 
@@ -309,7 +310,9 @@ class ClashApi {
     final response = await request.close();
     final text = await response.transform(utf8.decoder).join();
     if (response.statusCode >= 400) {
-      throw ClashApiException('HTTP ${response.statusCode} DELETE $path: $text');
+      throw ClashApiException(
+        'HTTP ${response.statusCode} DELETE $path: $text',
+      );
     }
   }
 

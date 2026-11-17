@@ -63,7 +63,10 @@ List<String> filterNames(List<String> names, String query) {
   if (q.isEmpty) {
     return names;
   }
-  return [for (final name in names) if (name.toLowerCase().contains(q)) name];
+  return [
+    for (final name in names)
+      if (name.toLowerCase().contains(q)) name,
+  ];
 }
 
 int clampIndex(int index, int length) {

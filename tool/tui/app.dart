@@ -255,7 +255,8 @@ class TuiApp {
           (g) => g.name == 'GLOBAL' || g.name.toLowerCase() == 'proxy',
           orElse: () => groups.first,
         );
-        _topGroupSummary = '→ ${primary.name}: ${primary.now.isEmpty ? '—' : primary.now}';
+        _topGroupSummary =
+            '→ ${primary.name}: ${primary.now.isEmpty ? '—' : primary.now}';
       }
 
       final snapshot = await client.getConnections();
@@ -506,10 +507,7 @@ class TuiApp {
     }
   }
 
-  Future<void> _delayTestNode(
-    String proxy,
-    Map<String, int> delayCache,
-  ) async {
+  Future<void> _delayTestNode(String proxy, Map<String, int> delayCache) async {
     term.write(clearScreen);
     term.writeln(paint('Delay test', bold + fgCyan));
     term.writeln('Testing ${paint(proxy, bold)}…');
@@ -519,11 +517,7 @@ class TuiApp {
       await showMessage(
         term,
         title: 'Delay result',
-        lines: [
-          paint(proxy, bold),
-          '',
-          paint('timeout / unreachable', fgRed),
-        ],
+        lines: [paint(proxy, bold), '', paint('timeout / unreachable', fgRed)],
       );
       _flash('$proxy → timeout');
       return;
@@ -577,11 +571,7 @@ class TuiApp {
             '↑${formatBytes(snapshot.uploadTotal)}  ·  '
             'mem ${formatBytes(snapshot.memory)}',
         emptyLabel: 'No open connections',
-        hotkeys: const {
-          'x': 'close',
-          'X': 'close-all',
-          'r': 'refresh',
-        },
+        hotkeys: const {'x': 'close', 'X': 'close-all', 'r': 'refresh'},
         footerHint:
             'Type to filter · ↑↓ · Enter details · x=close · X=close-all · r=refresh · Esc back',
         items: items.where((item) => item.id.isNotEmpty).toList(),
