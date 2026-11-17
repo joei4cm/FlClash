@@ -2,6 +2,39 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.18",
+      "tag": "v0.9.18",
+      "date": "2026-11-17",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "3e41a9e",
+              "scope": null,
+              "text": "Desktop TUI attaches via external-controller alongside the GUI, plus App routing for PROCESS-NAME rules"
+            },
+            {
+              "id": "e893d08",
+              "scope": "app-routing",
+              "text": "Pick a running desktop process when adding an App routing rule; richer TUI commands (mode, group, watch)"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "d537806",
+              "scope": "proxies",
+              "text": "Recognize US01-style names in Geo chips"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.17",
       "tag": "v0.9.17",
       "date": "2026-11-16",
