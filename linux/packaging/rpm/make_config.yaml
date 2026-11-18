@@ -21,7 +21,9 @@ spec_macros:
 
 postinstall_scripts:
   - 'update-desktop-database %{_datadir}/applications &> /dev/null || :'
-  - 'ln -sfn /opt/FlClash/flclash-tui /usr/bin/flclash-tui'
+  # RPM installs the bundle under %{_datadir}/%{name} (e.g. /usr/share/FlClash),
+  # not /opt/FlClash like the .deb.
+  - 'ln -sfn %{_datadir}/%{name}/flclash-tui %{_bindir}/flclash-tui'
 
 # The Helper unit is written on demand by the app, not at install time, so only
 # its teardown belongs here; the binary is already gone when %postun runs.
