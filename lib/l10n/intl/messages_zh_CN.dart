@@ -2210,15 +2210,23 @@ class MessageLookup extends MessageLookupByLibrary {
       "已启用，但还没有节点。请先添加一个节点。",
     ),
     "tailscaleStatusReady": m124,
+    "tailscaleTestConfigFailed": MessageLookupByLibrary.simpleMessage(
+      "未能加入尾网。请检查认证密钥、「启用 Tailscale」，以及 FlClash VPN 是否已启动。",
+    ),
+    "tailscaleTestConfigOk": MessageLookupByLibrary.simpleMessage(
+      "Tailscale 配置有效 — 节点已加入尾网。",
+    ),
     "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
       "请先打开“启用 Tailscale”再测试。",
     ),
     "tailscaleTestNeedStart": MessageLookupByLibrary.simpleMessage(
       "请先启动 FlClash VPN 再测试连接。",
     ),
-    "tailscaleTestNode": MessageLookupByLibrary.simpleMessage("测试连接"),
+    "tailscaleTestNode": MessageLookupByLibrary.simpleMessage(
+      "测试 Tailscale 配置",
+    ),
     "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
-      "点击节点旁的测速按钮，检查 Tailscale 出站是否能拨号。显示延迟表示连接正常；显示超时请检查认证密钥、“启用”开关，以及 FlClash VPN 是否已启动。",
+      "点击节点旁的测试按钮，检查认证密钥是否已成功加入尾网。显示延迟表示配置有效；显示超时请检查密钥、「启用 Tailscale」以及 FlClash VPN 是否已启动。此测试不检查公网连通。",
     ),
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP 转发"),
     "tapIconToRetry": MessageLookupByLibrary.simpleMessage("点击图标重试"),
