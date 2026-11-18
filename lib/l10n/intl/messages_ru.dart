@@ -1535,9 +1535,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "installUpdate": MessageLookupByLibrary.simpleMessage(
       "Установить обновление",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Эта система не выдаёт список установленных приложений без разрешения. Предоставьте его, чтобы настроить прокси для отдельных приложений.",
     ),
@@ -2792,6 +2793,36 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage(
       "Принимать маршруты",
     ),
+    "tailscaleAndroidConflictApp": MessageLookupByLibrary.simpleMessage(
+      "Tailscale app detected. FlClash VPN is off so Tailscale can own the tunnel.",
+    ),
+    "tailscaleAndroidConflictBuiltin": MessageLookupByLibrary.simpleMessage(
+      "Tailscale app detected. Keep its VPN off while FlClash VPN is on, or this VPN will drop when Tailscale connects.",
+    ),
+    "tailscaleAndroidModeAppApplied": MessageLookupByLibrary.simpleMessage(
+      "Applied: FlClash VPN off. Start the Tailscale app VPN if you need the tunnel there; start FlClash only as a local proxy if needed.",
+    ),
+    "tailscaleAndroidModeAppBody": MessageLookupByLibrary.simpleMessage(
+      "Turn FlClash VPN off so the Tailscale app can own the tunnel. FlClash will not route system traffic until you switch back.",
+    ),
+    "tailscaleAndroidModeAppTitle": MessageLookupByLibrary.simpleMessage(
+      "Tailscale app as VPN",
+    ),
+    "tailscaleAndroidModeDesc": MessageLookupByLibrary.simpleMessage(
+      "Android allows only one VPN at a time. Pick how FlClash and the Tailscale app should share this phone.",
+    ),
+    "tailscaleAndroidModeFlclashApplied": MessageLookupByLibrary.simpleMessage(
+      "Applied: FlClash VPN + embedded Tailscale. Disable VPN inside the Tailscale app if it is installed.",
+    ),
+    "tailscaleAndroidModeFlclashBody": MessageLookupByLibrary.simpleMessage(
+      "Keep FlClash\'s VPN on and use embedded Tailscale nodes below for your tailnet. Turn the Tailscale app\'s VPN switch off.",
+    ),
+    "tailscaleAndroidModeFlclashTitle": MessageLookupByLibrary.simpleMessage(
+      "FlClash as VPN (recommended)",
+    ),
+    "tailscaleAndroidModeTitle": MessageLookupByLibrary.simpleMessage(
+      "Android VPN coexistence",
+    ),
     "tailscaleAndroidStep1": MessageLookupByLibrary.simpleMessage(
       "Получите ключ аутентификации в консоли администратора Tailscale (Settings → Keys).",
     ),
@@ -2799,10 +2830,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Добавьте узел, вставьте ключ и укажите IP или имя MagicDNS домашнего устройства в пунктах назначения маршрута.",
     ),
     "tailscaleAndroidStep3": MessageLookupByLibrary.simpleMessage(
-      "Включите Tailscale. «Оставлять трафик напрямую» обычно выключайте, если приложение Tailscale на телефоне не установлено.",
+      "Pick a coexistence mode at the top (FlClash as VPN recommended). Then turn on Enable Tailscale.",
     ),
     "tailscaleAndroidStep4": MessageLookupByLibrary.simpleMessage(
-      "Запустите VPN FlClash, затем нажмите кнопку ping у узла, чтобы проверить соединение.",
+      "Add a node with an auth key and route destinations, start FlClash VPN, then tap ping on a node. Keep the Tailscale app VPN off in FlClash-as-VPN mode.",
     ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage(
       "Ключ аутентификации",

@@ -55,6 +55,7 @@ export 'strategy_lane.dart';
 export 'string.dart';
 export 'system.dart';
 export 'system_fonts.dart';
+export 'tailscale_android.dart';
 export 'task.dart';
 export 'task_pool.dart';
 export 'tui_controller.dart';
