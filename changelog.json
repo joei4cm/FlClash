@@ -2,14 +2,19 @@
   "schemaVersion": 2,
   "versions": [
     {
-      "version": "0.9.20",
-      "tag": "v0.9.20",
-      "date": "2026-11-17",
+      "version": "0.9.21",
+      "tag": "v0.9.21",
+      "date": "2026-11-18",
       "prerelease": false,
       "groups": [
         {
           "type": "feat",
           "entries": [
+            {
+              "id": "3172d8b",
+              "scope": "android",
+              "text": "Graphical Tailscale VPN coexistence picker"
+            },
             {
               "id": "bdb848d",
               "scope": "tui",

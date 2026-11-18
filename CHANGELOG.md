@@ -1,9 +1,10 @@
 # Changelog
 
-## v0.9.20 (2026-11-17)
+## v0.9.21 (2026-11-18)
 
 **Features**
 
+- **android** Graphical Tailscale VPN coexistence picker (3172d8b)
 - **tui** Delay test, connections view, and richer dashboard (bdb848d)
 - **tui** Interactive desktop TUI with menus and live traffic (b866879)
 - Process picker for app routing and richer desktop TUI (e893d08)
