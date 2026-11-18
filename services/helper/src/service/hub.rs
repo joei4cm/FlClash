@@ -1170,9 +1170,8 @@ mod tests {
     fn a_core_that_exits_on_its_own_is_reaped() {
         let _state = lock_process_state();
         let session_id = "0123456789abcdef0123456789abcdef";
-        *lock_surviving_poison(&MANAGED_CORE) = Some(
-            ManagedCore::adopt(session_id.to_string(), spawn_soon_exiting_core()).unwrap(),
-        );
+        *lock_surviving_poison(&MANAGED_CORE) =
+            Some(ManagedCore::adopt(session_id.to_string(), spawn_soon_exiting_core()).unwrap());
 
         {
             let mut managed = lock_surviving_poison(&MANAGED_CORE);
