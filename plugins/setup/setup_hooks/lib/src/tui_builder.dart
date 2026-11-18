@@ -30,10 +30,7 @@ class TuiBuilder {
   Future<BuildExecution> build(Target target) async {
     final outDir = p.join(rootDir, config.outputDir, target.platformDir);
     ensureDir(outDir);
-    final outFile = p.join(
-      outDir,
-      '$binaryName${target.executableExtension}',
-    );
+    final outFile = p.join(outDir, '$binaryName${target.executableExtension}');
 
     return cache.run(
       key: '${target.platformDir}-${target.goarch}-tui',
@@ -51,17 +48,13 @@ class TuiBuilder {
         try {
           ensureDir(stagingDir.path);
           _log.info('Compiling desktop TUI: $target');
-          await runCommandStream(
-            'dart',
-            [
-              'compile',
-              'exe',
-              'tool/tui.dart',
-              '-o',
-              staged,
-            ],
-            workingDirectory: rootDir,
-          );
+          await runCommandStream('dart', [
+            'compile',
+            'exe',
+            'tool/tui.dart',
+            '-o',
+            staged,
+          ], workingDirectory: rootDir);
           replaceFile(staged, outFile);
           if (!Platform.isWindows) {
             runCommand('chmod', ['+x', outFile]);
