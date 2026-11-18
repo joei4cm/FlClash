@@ -11,6 +11,10 @@
           "type": "feat",
           "entries": [
             {
+              "id": "memory-tui",
+              "text": "Trim idle RSS and ship flclash-tui on PATH (packaging)"
+            },
+            {
               "id": "3172d8b",
               "scope": "android",
               "text": "Graphical Tailscale VPN coexistence picker"
@@ -92,6 +96,16 @@
         {
           "type": "fix",
           "entries": [
+            {
+              "id": "ts-join-probe",
+              "scope": "tailscale",
+              "text": "Test button probes MagicDNS join, not public internet"
+            },
+            {
+              "id": "helper-reap",
+              "scope": "helper",
+              "text": "Stop Windows reaping test from racing job assign"
+            },
             {
               "id": "567fb62",
               "scope": "update",
