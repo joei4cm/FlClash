@@ -93,6 +93,16 @@ abstract class TailscaleProps with _$TailscaleProps {
   const factory TailscaleProps({
     @Default(false) bool enable,
     @Default(false) bool bypassTraffic,
+
+    /// User API access token (`tskey-api-…`) or OAuth access token used to mint
+    /// device auth keys. Stored with the same accidental-disclosure obfuscation
+    /// as node auth keys.
+    @JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey)
+    @Default('')
+    String apiAccessToken,
+
+    /// Optional tags when minting keys (required for OAuth `auth_keys` clients).
+    @Default([]) List<String> apiTags,
     @Default([]) List<TailscaleProxy> proxies,
   }) = _TailscaleProps;
 

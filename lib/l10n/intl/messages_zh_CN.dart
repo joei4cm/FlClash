@@ -2070,6 +2070,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tabAnimation": MessageLookupByLibrary.simpleMessage("选项卡动画"),
     "tailscale": MessageLookupByLibrary.simpleMessage("Tailscale"),
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("接受路由"),
+    "tailscaleAdvancedTitle": MessageLookupByLibrary.simpleMessage("高级"),
     "tailscaleAndroidConflictApp": MessageLookupByLibrary.simpleMessage(
       "检测到 Tailscale 应用。已关闭 FlClash VPN，由 Tailscale 接管隧道。",
     ),
@@ -2112,9 +2113,41 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAndroidStep4": MessageLookupByLibrary.simpleMessage(
       "添加带授权密钥与路由目标的节点，启动 FlClash VPN，再点节点上的连通测试。FlClash 作 VPN 时请关闭 Tailscale 应用内的 VPN。",
     ),
+    "tailscaleApiTagsField": MessageLookupByLibrary.simpleMessage("标签（可选）"),
+    "tailscaleApiTagsHint": MessageLookupByLibrary.simpleMessage(
+      "逗号分隔，如 tag:flclash。使用带 auth_keys 权限的 OAuth 客户端时必填。",
+    ),
+    "tailscaleApiTokenAdd": MessageLookupByLibrary.simpleMessage("添加 API 访问令牌"),
+    "tailscaleApiTokenConfigured": MessageLookupByLibrary.simpleMessage(
+      "已保存 API 访问令牌",
+    ),
+    "tailscaleApiTokenConfiguredDesc": MessageLookupByLibrary.simpleMessage(
+      "添加节点时可一键生成认证密钥。",
+    ),
+    "tailscaleApiTokenDesc": MessageLookupByLibrary.simpleMessage(
+      "粘贴 Tailscale API access token，即可自动生成认证密钥；节点里仍可手动填写覆盖。",
+    ),
+    "tailscaleApiTokenField": MessageLookupByLibrary.simpleMessage("API 访问令牌"),
+    "tailscaleApiTokenHint": MessageLookupByLibrary.simpleMessage(
+      "来自 Tailscale 管理后台 → 设置 → Keys → API access tokens（或短期 OAuth access token）。",
+    ),
+    "tailscaleApiTokenMissing": MessageLookupByLibrary.simpleMessage(
+      "请先在 Tailscale 页添加 API 访问令牌。",
+    ),
+    "tailscaleApiTokenTitle": MessageLookupByLibrary.simpleMessage("API 访问令牌"),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("认证密钥"),
+    "tailscaleAuthKeyGenerate": MessageLookupByLibrary.simpleMessage(
+      "用 API 令牌生成认证密钥",
+    ),
+    "tailscaleAuthKeyGenerated": MessageLookupByLibrary.simpleMessage(
+      "已生成认证密钥，保存前仍可修改。",
+    ),
+    "tailscaleAuthKeyGenerating": MessageLookupByLibrary.simpleMessage("正在生成…"),
     "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
       "来自 Tailscale 管理后台 → 设置 → Keys，用于对节点进行认证。",
+    ),
+    "tailscaleAuthKeyOverrideHint": MessageLookupByLibrary.simpleMessage(
+      "可点下方按钮用 API 令牌生成，也可手动粘贴自己的认证密钥覆盖。",
     ),
     "tailscaleBypass": MessageLookupByLibrary.simpleMessage(
       "保持 Tailscale 流量直连",
@@ -2153,6 +2186,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
       "将 Tailscale 节点作为出站注入。关闭后 Tailscale 将不再处理流量，普通流量不受影响。",
     ),
+    "tailscaleEnableDescShort": MessageLookupByLibrary.simpleMessage(
+      "将内置 Tailscale 节点注入当前配置。",
+    ),
     "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage("临时节点"),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("出口节点"),
     "tailscaleExitNodeAllowLanAccess": MessageLookupByLibrary.simpleMessage(
@@ -2179,6 +2215,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleRoutesCount": m123,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "经由该节点转发的域名或 IP，每行一个（例如你家用电脑的 Tailscale IP 或 MagicDNS 名称）。",
+    ),
+    "tailscaleRoutesHintCidr": MessageLookupByLibrary.simpleMessage(
+      "经由该节点的目标，每行一个。提示：100.64.0.0/10 覆盖 Tailscale IP；ts.net 覆盖 MagicDNS。",
     ),
     "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
       "请只保留 FlClash 作为 VPN。不要同时开启 Tailscale 应用的 VPN（Android 同一时间只允许一个）。在下方添加内置 Tailscale 节点，并把家里的设备填入“路由目标”。",
@@ -2229,6 +2268,31 @@ class MessageLookup extends MessageLookupByLibrary {
       "点击节点旁的测试按钮，检查认证密钥是否已成功加入尾网。显示延迟表示配置有效；显示超时请检查密钥、「启用 Tailscale」以及 FlClash VPN 是否已启动。此测试不检查公网连通。",
     ),
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP 转发"),
+    "tailscaleUsageDesc": MessageLookupByLibrary.simpleMessage(
+      "选一种即可。需要微调时再打开「高级」。",
+    ),
+    "tailscaleUsageEmbeddedApplied": MessageLookupByLibrary.simpleMessage(
+      "已切换为 FlClash 内置 Tailscale。",
+    ),
+    "tailscaleUsageEmbeddedBody": MessageLookupByLibrary.simpleMessage(
+      "由 FlClash 加入尾网，并按你添加的路由目标转发。安卓请关闭 Tailscale 应用里的 VPN。",
+    ),
+    "tailscaleUsageEmbeddedTitle": MessageLookupByLibrary.simpleMessage(
+      "FlClash 内置节点",
+    ),
+    "tailscaleUsageSystemApplied": MessageLookupByLibrary.simpleMessage(
+      "已优先使用系统 Tailscale 应用。",
+    ),
+    "tailscaleUsageSystemBodyAndroid": MessageLookupByLibrary.simpleMessage(
+      "把 VPN 交给 Tailscale 应用。FlClash 不再占用 Android VPN。",
+    ),
+    "tailscaleUsageSystemBodyDesktop": MessageLookupByLibrary.simpleMessage(
+      "保持本机 Tailscale 应用/服务流量直连，避免被 FlClash 劫持。仍可选用内置节点。",
+    ),
+    "tailscaleUsageSystemTitle": MessageLookupByLibrary.simpleMessage(
+      "系统 Tailscale 应用",
+    ),
+    "tailscaleUsageTitle": MessageLookupByLibrary.simpleMessage("使用方式"),
     "tapIconToRetry": MessageLookupByLibrary.simpleMessage("点击图标重试"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("点击授权"),
     "tapToRetry": MessageLookupByLibrary.simpleMessage("点按重试"),

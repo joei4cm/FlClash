@@ -10,6 +10,14 @@ _TailscaleProps _$TailscalePropsFromJson(Map<String, dynamic> json) =>
     _TailscaleProps(
       enable: json['enable'] as bool? ?? false,
       bypassTraffic: json['bypassTraffic'] as bool? ?? false,
+      apiAccessToken: json['apiAccessToken'] == null
+          ? ''
+          : _decodeTailscaleAuthKey(json['apiAccessToken'] as String?),
+      apiTags:
+          (json['apiTags'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
       proxies:
           (json['proxies'] as List<dynamic>?)
               ?.map((e) => TailscaleProxy.fromJson(e as Map<String, dynamic>))
@@ -21,6 +29,8 @@ Map<String, dynamic> _$TailscalePropsToJson(_TailscaleProps instance) =>
     <String, dynamic>{
       'enable': instance.enable,
       'bypassTraffic': instance.bypassTraffic,
+      'apiAccessToken': _encodeTailscaleAuthKey(instance.apiAccessToken),
+      'apiTags': instance.apiTags,
       'proxies': instance.proxies,
     };
 

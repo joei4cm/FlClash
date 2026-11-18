@@ -2297,6 +2297,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tabAnimation": MessageLookupByLibrary.simpleMessage("タブアニメーション"),
     "tailscale": MessageLookupByLibrary.simpleMessage("Tailscale"),
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("ルートを受け入れる"),
+    "tailscaleAdvancedTitle": MessageLookupByLibrary.simpleMessage("Advanced"),
     "tailscaleAndroidConflictApp": MessageLookupByLibrary.simpleMessage(
       "Tailscale アプリを検出しました。FlClash VPN はオフで、Tailscale がトンネルを所有します。",
     ),
@@ -2339,9 +2340,51 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAndroidStep4": MessageLookupByLibrary.simpleMessage(
       "認証キーとルート先を入れたノードを追加し、FlClash VPN を開始して ping で確認します。FlClash を VPN にする場合は Tailscale アプリの VPN をオフにしてください。",
     ),
+    "tailscaleApiTagsField": MessageLookupByLibrary.simpleMessage(
+      "Tags (optional)",
+    ),
+    "tailscaleApiTagsHint": MessageLookupByLibrary.simpleMessage(
+      "Comma-separated tags such as tag:flclash. Required when using an OAuth client with auth_keys scope.",
+    ),
+    "tailscaleApiTokenAdd": MessageLookupByLibrary.simpleMessage(
+      "Add API access token",
+    ),
+    "tailscaleApiTokenConfigured": MessageLookupByLibrary.simpleMessage(
+      "API access token saved",
+    ),
+    "tailscaleApiTokenConfiguredDesc": MessageLookupByLibrary.simpleMessage(
+      "New nodes can generate an auth key from this token.",
+    ),
+    "tailscaleApiTokenDesc": MessageLookupByLibrary.simpleMessage(
+      "Paste a Tailscale API access token to mint auth keys automatically. You can still paste an auth key by hand on each node.",
+    ),
+    "tailscaleApiTokenField": MessageLookupByLibrary.simpleMessage(
+      "API access token",
+    ),
+    "tailscaleApiTokenHint": MessageLookupByLibrary.simpleMessage(
+      "From Tailscale admin → Settings → Keys → API access tokens (or a short-lived OAuth access token).",
+    ),
+    "tailscaleApiTokenMissing": MessageLookupByLibrary.simpleMessage(
+      "Add an API access token on the Tailscale page first.",
+    ),
+    "tailscaleApiTokenTitle": MessageLookupByLibrary.simpleMessage(
+      "API access token",
+    ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("認証キー"),
+    "tailscaleAuthKeyGenerate": MessageLookupByLibrary.simpleMessage(
+      "Generate auth key from API token",
+    ),
+    "tailscaleAuthKeyGenerated": MessageLookupByLibrary.simpleMessage(
+      "Auth key generated. You can still edit it before saving.",
+    ),
+    "tailscaleAuthKeyGenerating": MessageLookupByLibrary.simpleMessage(
+      "Generating…",
+    ),
     "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
       "Tailscale 管理コンソール → 設定 → Keys から取得します。ノードの認証に必要です。",
+    ),
+    "tailscaleAuthKeyOverrideHint": MessageLookupByLibrary.simpleMessage(
+      "Leave blank to generate from the API token, or paste your own auth key to override.",
     ),
     "tailscaleBypass": MessageLookupByLibrary.simpleMessage(
       "Tailscale のトラフィックを直結に保つ",
@@ -2384,6 +2427,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
       "Tailscale ノードをアウトバウンドとして注入します。オフにすると Tailscale はトラフィックを処理しなくなりますが、通常のトラフィックには影響しません。",
     ),
+    "tailscaleEnableDescShort": MessageLookupByLibrary.simpleMessage(
+      "Inject embedded Tailscale nodes into the active profile.",
+    ),
     "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage("エフェメラル"),
     "tailscaleExitNode": MessageLookupByLibrary.simpleMessage("出口ノード"),
     "tailscaleExitNodeAllowLanAccess": MessageLookupByLibrary.simpleMessage(
@@ -2412,6 +2458,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleRoutesCount": m123,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "このノード経由で送るドメインまたは IP（1 行に 1 つ、例: 自宅 PC の Tailscale IP や MagicDNS 名）。",
+    ),
+    "tailscaleRoutesHintCidr": MessageLookupByLibrary.simpleMessage(
+      "Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale IPs; ts.net covers MagicDNS names.",
     ),
     "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
       "VPN は FlClash だけにしてください。Tailscale アプリの VPN と同時には使えません（Android は VPN を 1 つだけ許可）。下で内蔵 Tailscale ノードを追加し、自宅デバイスをルーティング先に入れてください。",
@@ -2464,6 +2513,33 @@ class MessageLookup extends MessageLookupByLibrary {
       "ノード横のテストで、認証キーが tailnet に参加できたか確認します。遅延表示は設定が有効、タイムアウトは参加失敗です。キー・Enable Tailscale・FlClash VPN を確認してください。これは公衆ネット到達性のテストではありません。",
     ),
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP リレー"),
+    "tailscaleUsageDesc": MessageLookupByLibrary.simpleMessage(
+      "Pick one path. Advanced overrides stay under Advanced.",
+    ),
+    "tailscaleUsageEmbeddedApplied": MessageLookupByLibrary.simpleMessage(
+      "Using FlClash embedded Tailscale.",
+    ),
+    "tailscaleUsageEmbeddedBody": MessageLookupByLibrary.simpleMessage(
+      "FlClash joins your tailnet and routes the destinations you add. On Android, keep the Tailscale app VPN off.",
+    ),
+    "tailscaleUsageEmbeddedTitle": MessageLookupByLibrary.simpleMessage(
+      "FlClash embedded node",
+    ),
+    "tailscaleUsageSystemApplied": MessageLookupByLibrary.simpleMessage(
+      "Preferring the system Tailscale app.",
+    ),
+    "tailscaleUsageSystemBodyAndroid": MessageLookupByLibrary.simpleMessage(
+      "Let the Tailscale app own VPN. FlClash will not take the Android VPN slot.",
+    ),
+    "tailscaleUsageSystemBodyDesktop": MessageLookupByLibrary.simpleMessage(
+      "Keep Tailscale app/service traffic direct so FlClash does not hijack it. Optional embedded nodes still work.",
+    ),
+    "tailscaleUsageSystemTitle": MessageLookupByLibrary.simpleMessage(
+      "System Tailscale app",
+    ),
+    "tailscaleUsageTitle": MessageLookupByLibrary.simpleMessage(
+      "How to use Tailscale",
+    ),
     "tapIconToRetry": MessageLookupByLibrary.simpleMessage("アイコンをタップして再試行"),
     "tapToAuthorize": MessageLookupByLibrary.simpleMessage("タップして許可"),
     "tapToRetry": MessageLookupByLibrary.simpleMessage("タップして再試行"),
