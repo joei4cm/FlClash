@@ -56,7 +56,11 @@ void main() {
       findsOneWidget,
     );
     expect(
-      find.text(AppLocalizations.current.tailscaleGuideTitle),
+      find.text(AppLocalizations.current.tailscaleUsageTitle),
+      findsOneWidget,
+    );
+    expect(
+      find.text(AppLocalizations.current.tailscaleAdvancedTitle),
       findsOneWidget,
     );
   });
@@ -157,6 +161,15 @@ void main() {
       container.read(tailscaleSettingProvider.notifier).setEnable(true);
 
       await _pumpView(tester, container, const TailscaleView());
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(AppLocalizations.current.tailscaleUsageTitle),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.text(AppLocalizations.current.tailscaleAdvancedTitle),
+      );
       await tester.pumpAndSettle();
 
       expect(
