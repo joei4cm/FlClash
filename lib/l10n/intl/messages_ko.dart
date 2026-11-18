@@ -2540,7 +2540,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "transportHeaders": m127,
     "trustCertificate": MessageLookupByLibrary.simpleMessage("인증서 신뢰"),
     "tuiControllerTip": MessageLookupByLibrary.simpleMessage(
-      "데스크톱 TUI: 컨트롤러를 켠 뒤 다른 터미널에서 dart run tool/tui.dart 를 실행하세요. GUI 단일 인스턴스 잠금을 가져가지 않습니다.",
+      "데스크톱 TUI: 컨트롤러를 켠 뒤 다른 터미널에서 flclash-tui 를 실행하세요. 일회성: flclash-tui status. macOS 는 /Applications/FlClash.app/Contents/MacOS/flclash-tui (또는 PATH 링크). GUI 단일 인스턴스 잠금을 가져가지 않습니다.",
     ),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(

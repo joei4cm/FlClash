@@ -1497,7 +1497,7 @@
   "appRoutingEdit": "Изменить маршрут приложения",
   "appRoutingProcessName": "Имя процесса",
   "appRoutingProcessHint": "chrome.exe / Cursor / firefox",
-  "tuiControllerTip": "Настольный TUI: включив контроллер, выполните dart run tool/tui.dart в другом терминале. Он подключается без блокировки GUI.",
+  "tuiControllerTip": "Настольный TUI: включив контроллер, выполните flclash-tui в другом терминале. Разовая команда: flclash-tui status. На macOS: /Applications/FlClash.app/Contents/MacOS/flclash-tui. Подключается без блокировки GUI.",
   "appRoutingPickProcess": "Выбрать запущенный процесс",
   "appRoutingPickProcessDesc": "Выберите из процессов, запущенных на этом компьютере",
   "appRoutingPickProcessTitle": "Запущенные процессы",

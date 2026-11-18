@@ -5,12 +5,10 @@
 // owner) to have the Core running with external controller + secret enabled;
 // FlClash writes tui-controller.json when that is the case.
 //
-// Interactive:
+// Installed builds ship `flclash-tui` on PATH (Linux/Windows) or inside the
+// macOS app bundle. From a source checkout:
 //   dart run tool/tui.dart
-//
-// One-shot:
 //   dart run tool/tui.dart status
-//   dart run tool/tui.dart use PROXY "node-name"
 //   FLCLASH_API=http://127.0.0.1:9090 FLCLASH_SECRET=xxx dart run tool/tui.dart
 
 import 'dart:io';
@@ -41,7 +39,7 @@ No FlClash controller endpoint found.
 1. Open FlClash GUI → Tools → General
 2. Enable External controller and set a secret
 3. Start the proxy
-4. Re-run: dart run tool/tui.dart
+4. Re-run: flclash-tui
 
 Or set FLCLASH_API and FLCLASH_SECRET manually.
 ''');
@@ -55,7 +53,7 @@ Or set FLCLASH_API and FLCLASH_SECRET manually.
       if (!term.hasTerminal) {
         stderr.writeln(
           'No TTY detected. Use one-shot commands, for example:\n'
-          '  dart run tool/tui.dart status\n'
+          '  flclash-tui status\n'
           'Or run inside a real terminal for the interactive UI.',
         );
         await runCli(client, const ['status']);

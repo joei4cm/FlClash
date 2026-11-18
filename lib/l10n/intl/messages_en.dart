@@ -2879,7 +2879,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Trust certificate",
     ),
     "tuiControllerTip": MessageLookupByLibrary.simpleMessage(
-      "Desktop TUI: with the controller enabled, run dart run tool/tui.dart in another terminal for an interactive menu (groups, mode, live traffic). One-shot: dart run tool/tui.dart status. It attaches without locking out the GUI.",
+      "Desktop TUI: with the controller enabled, run flclash-tui in another terminal for an interactive menu (groups, mode, live traffic). One-shot: flclash-tui status. On macOS use /Applications/FlClash.app/Contents/MacOS/flclash-tui (or symlink it into PATH). It attaches without locking out the GUI.",
     ),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(

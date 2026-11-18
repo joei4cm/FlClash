@@ -3024,7 +3024,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Доверять сертификату",
     ),
     "tuiControllerTip": MessageLookupByLibrary.simpleMessage(
-      "Настольный TUI: включив контроллер, выполните dart run tool/tui.dart в другом терминале. Он подключается без блокировки GUI.",
+      "Настольный TUI: включив контроллер, выполните flclash-tui в другом терминале. Разовая команда: flclash-tui status. На macOS: /Applications/FlClash.app/Contents/MacOS/flclash-tui. Подключается без блокировки GUI.",
     ),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(

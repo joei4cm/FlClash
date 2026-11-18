@@ -30,6 +30,7 @@
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		F5131FDD2EF0F1A500A1748D /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = F5131FDC2EF0F1A500A1748D /* LaunchAtLogin */; };
 		F51BB7CB2EF0267400E05D67 /* FlClashCore in Copy Core */ = {isa = PBXBuildFile; fileRef = F51BB7CA2EF0267400E05D67 /* FlClashCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		F51BB7CE2EF0267400E05D68 /* flclash-tui in Copy Core */ = {isa = PBXBuildFile; fileRef = F51BB7CD2EF0267400E05D68 /* flclash-tui */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,7 @@
 			dstSubfolderSpec = 6;
 			files = (
 				F51BB7CB2EF0267400E05D67 /* FlClashCore in Copy Core */,
+				F51BB7CE2EF0267400E05D68 /* flclash-tui in Copy Core */,
 			);
 			name = "Copy Core";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -94,6 +96,7 @@
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		F51BB7CA2EF0267400E05D67 /* FlClashCore */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = FlClashCore; sourceTree = BUILT_PRODUCTS_DIR; };
+		F51BB7CD2EF0267400E05D68 /* flclash-tui */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "flclash-tui"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +142,7 @@
 			isa = PBXGroup;
 			children = (
 				F51BB7CA2EF0267400E05D67 /* FlClashCore */,
+				F51BB7CD2EF0267400E05D68 /* flclash-tui */,
 				33FAB671232836740065AC1E /* Runner */,
 				33CEB47122A05771004F2AC0 /* Flutter */,
 				331C80D6294CF71000263BE5 /* RunnerTests */,
@@ -365,10 +369,11 @@
 			);
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/FlClashCore",
+				"$(BUILT_PRODUCTS_DIR)/flclash-tui",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "core=\"$SRCROOT/../libclash/macos/FlClashCore\"\nif [ ! -f \"$core\" ]; then\n  echo \"error: $core is missing; the setup build hook produced no Core\"\n  exit 1\nfi\nslices=\"$(lipo -archs \"$core\")\"\nfor arch in $ARCHS; do\n  case \" $slices \" in\n    *\" $arch \"*) ;;\n    *) echo \"error: $core has no $arch slice (has: $slices)\"; exit 1 ;;\n  esac\ndone\nif ! cmp -s \"$core\" \"$BUILT_PRODUCTS_DIR/FlClashCore\"; then\n  cp -f \"$core\" \"$BUILT_PRODUCTS_DIR/FlClashCore\"\nfi\n";
+			shellScript = "core=\"$SRCROOT/../libclash/macos/FlClashCore\"\nif [ ! -f \"$core\" ]; then\n  echo \"error: $core is missing; the setup build hook produced no Core\"\n  exit 1\nfi\nslices=\"$(lipo -archs \"$core\")\"\nfor arch in $ARCHS; do\n  case \" $slices \" in\n    *\" $arch \"*) ;;\n    *) echo \"error: $core has no $arch slice (has: $slices)\"; exit 1 ;;\n  esac\ndone\nif ! cmp -s \"$core\" \"$BUILT_PRODUCTS_DIR/FlClashCore\"; then\n  cp -f \"$core\" \"$BUILT_PRODUCTS_DIR/FlClashCore\"\nfi\ntui=\"$SRCROOT/../libclash/macos/flclash-tui\"\nif [ ! -f \"$tui\" ]; then\n  echo \"error: $tui is missing; the setup build hook produced no flclash-tui\"\n  exit 1\nfi\nif ! cmp -s \"$tui\" \"$BUILT_PRODUCTS_DIR/flclash-tui\"; then\n  cp -f \"$tui\" \"$BUILT_PRODUCTS_DIR/flclash-tui\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

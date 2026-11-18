@@ -8,21 +8,23 @@ const helpText = '''
 FlClash desktop TUI
 
 Interactive (TTY):
-  dart run tool/tui.dart
+  flclash-tui
 
 One-shot:
-  dart run tool/tui.dart status
-  dart run tool/tui.dart mode [rule|global|direct]
-  dart run tool/tui.dart groups
-  dart run tool/tui.dart group <name>
-  dart run tool/tui.dart use <group> <proxy>
-  dart run tool/tui.dart delay <proxy>
-  dart run tool/tui.dart delay-group <group>
-  dart run tool/tui.dart connections
-  dart run tool/tui.dart close <id>
-  dart run tool/tui.dart close-all
-  dart run tool/tui.dart traffic
-  dart run tool/tui.dart watch [n]
+  flclash-tui status
+  flclash-tui mode [rule|global|direct]
+  flclash-tui groups
+  flclash-tui group <name>
+  flclash-tui use <group> <proxy>
+  flclash-tui delay <proxy>
+  flclash-tui delay-group <group>
+  flclash-tui connections
+  flclash-tui close <id>
+  flclash-tui close-all
+  flclash-tui traffic
+  flclash-tui watch [n]
+
+From a source checkout: dart run tool/tui.dart …
 
 Env:
   FLCLASH_API=http://127.0.0.1:9090

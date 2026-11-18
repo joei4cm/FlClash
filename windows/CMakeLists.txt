@@ -123,6 +123,7 @@ install(CODE "
 install(FILES
   "${CORE_ARTIFACTS_DIR}/FlClashCore.exe"
   "${CORE_ARTIFACTS_DIR}/FlClashHelperService.exe"
+  "${CORE_ARTIFACTS_DIR}/flclash-tui.exe"
   "${CORE_ARTIFACTS_DIR}/manifest.json"
   DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
   COMPONENT Runtime)
