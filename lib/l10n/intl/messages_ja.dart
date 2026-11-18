@@ -2496,7 +2496,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "transportHeaders": m127,
     "trustCertificate": MessageLookupByLibrary.simpleMessage("証明書を信頼"),
     "tuiControllerTip": MessageLookupByLibrary.simpleMessage(
-      "デスクトップ TUI: 外部コントローラーを有効にしたうえで、別ターミナルで dart run tool/tui.dart を実行します。GUI の単一インスタンスロックは取りません。",
+      "デスクトップ TUI: 外部コントローラーを有効にしたうえで、別ターミナルで flclash-tui を実行します。ワンショット: flclash-tui status。macOS は /Applications/FlClash.app/Contents/MacOS/flclash-tui（または PATH へリンク）。GUI の単一インスタンスロックは取りません。",
     ),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(

@@ -14,10 +14,14 @@ dependencies:
   - libayatana-appindicator3-1
   - libsecret-1-0
 
+postinstall_scripts:
+  - 'ln -sfn /opt/FlClash/flclash-tui /usr/bin/flclash-tui'
+
 # The Helper unit is written on demand by the app, not at install time, so only
 # its teardown belongs here; the binary is already gone when postrm runs.
 postuninstall_scripts:
   - 'case "${1:-}" in remove|purge) ;; *) exit 0 ;; esac'
+  - 'rm -f /usr/bin/flclash-tui'
   - 'systemctl disable --now flclash-helper.service >/dev/null 2>&1 || true'
   - 'rm -f /etc/systemd/system/flclash-helper.service'
   - 'systemctl daemon-reload >/dev/null 2>&1 || true'

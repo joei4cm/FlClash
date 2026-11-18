@@ -7,6 +7,7 @@ import 'go_builder.dart';
 import 'options.dart';
 import 'rust_builder.dart';
 import 'target.dart';
+import 'tui_builder.dart';
 import 'util.dart';
 
 final _log = Logger('setup_hooks');
@@ -61,9 +62,18 @@ Future<BuildReport> buildPlatform(BuildRequest request) async {
     notice: notice,
     harnessInputs: harnessInputs,
   ).build(target);
+  final tui = await TuiBuilder(
+    rootDir: rootDir,
+    config: config,
+    cache: cache,
+    notice: notice,
+  ).build(target);
   if (!target.hasHelper) {
-    _log.info('Done in ${stopwatch.elapsed}: ${core.primaryOutput}');
-    return _report([core]);
+    _log.info(
+      'Done in ${stopwatch.elapsed}: ${core.primaryOutput}, '
+      '${tui.primaryOutput}',
+    );
+    return _report([core, tui]);
   }
 
   final coreSha256 = await calcSha256(core.primaryOutput);
@@ -84,9 +94,9 @@ Future<BuildReport> buildPlatform(BuildRequest request) async {
 
   _log.info(
     'Done in ${stopwatch.elapsed}: ${core.primaryOutput}, '
-    '${helper.primaryOutput}',
+    '${helper.primaryOutput}, ${tui.primaryOutput}',
   );
-  return _report([core, helper], extraOutputs: [manifestPath]);
+  return _report([core, helper, tui], extraOutputs: [manifestPath]);
 }
 
 BuildReport _report(

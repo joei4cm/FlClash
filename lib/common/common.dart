@@ -39,6 +39,7 @@ export 'network_error.dart';
 export 'num.dart';
 export 'outbound_location.dart';
 export 'world_map.dart';
+export 'image_cache_budget.dart';
 export 'package.dart';
 export 'path.dart';
 export 'picker.dart';

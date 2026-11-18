@@ -77,12 +77,17 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
   }
 
   void _updateVisible(AppLifecycleState? state) {
-    ref.read(appVisibleProvider.notifier).value = switch (state) {
+    final visible = switch (state) {
       null || AppLifecycleState.resumed || AppLifecycleState.inactive => true,
       AppLifecycleState.hidden ||
       AppLifecycleState.paused ||
       AppLifecycleState.detached => false,
     };
+    final wasVisible = ref.read(appVisibleProvider);
+    ref.read(appVisibleProvider.notifier).value = visible;
+    if (wasVisible && !visible) {
+      releaseImageCacheBudget();
+    }
   }
 
   @override

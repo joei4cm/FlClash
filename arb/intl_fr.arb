@@ -1497,7 +1497,7 @@
   "appRoutingEdit": "Modifier le routage d’app",
   "appRoutingProcessName": "Nom du processus",
   "appRoutingProcessHint": "chrome.exe / Cursor / firefox",
-  "tuiControllerTip": "TUI bureau : avec le contrôleur activé, lancez dart run tool/tui.dart dans un autre terminal. Il s’attache sans verrouiller l’instance GUI.",
+  "tuiControllerTip": "TUI bureau : avec le contrôleur activé, lancez flclash-tui dans un autre terminal. Ponctuel : flclash-tui status. Sur macOS : /Applications/FlClash.app/Contents/MacOS/flclash-tui. Il s’attache sans verrouiller l’instance GUI.",
   "appRoutingPickProcess": "Choisir un processus en cours",
   "appRoutingPickProcessDesc": "Choisir parmi les processus en cours sur cet ordinateur",
   "appRoutingPickProcessTitle": "Processus en cours",

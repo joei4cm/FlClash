@@ -180,16 +180,16 @@ const profilesStoreKey = PageStorageKey<String>('profiles');
 
 const defaultPrimaryColor = 0xFF007AFF;
 
-const maxLogsLength = 5000;
-const maxRequestsLength = 2000;
-const maxDnsQueriesLength = 3000;
+const maxLogsLength = 1500;
+const maxRequestsLength = 1000;
+const maxDnsQueriesLength = 1500;
 const pausedMaxLogsLength = maxLogsLength * 2;
 const pausedMaxRequestsLength = maxRequestsLength * 2;
 const pausedMaxDnsQueriesLength = maxDnsQueriesLength * 2;
 
 /// Newest open connections kept in the live UI. The Core snapshot can be
 /// larger; the dashboard count still reports the full total.
-const maxLiveConnectionsLength = pausedMaxRequestsLength;
+const maxLiveConnectionsLength = 800;
 
 const trafficSampleLength = 30;
 

@@ -3064,7 +3064,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Approuver le certificat",
     ),
     "tuiControllerTip": MessageLookupByLibrary.simpleMessage(
-      "TUI bureau : avec le contrôleur activé, lancez dart run tool/tui.dart dans un autre terminal. Il s’attache sans verrouiller l’instance GUI.",
+      "TUI bureau : avec le contrôleur activé, lancez flclash-tui dans un autre terminal. Ponctuel : flclash-tui status. Sur macOS : /Applications/FlClash.app/Contents/MacOS/flclash-tui. Il s’attache sans verrouiller l’instance GUI.",
     ),
     "tun": MessageLookupByLibrary.simpleMessage("TUN"),
     "tunAuthorizationFailed": MessageLookupByLibrary.simpleMessage(
