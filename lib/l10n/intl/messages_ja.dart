@@ -2297,6 +2297,36 @@ class MessageLookup extends MessageLookupByLibrary {
     "tabAnimation": MessageLookupByLibrary.simpleMessage("タブアニメーション"),
     "tailscale": MessageLookupByLibrary.simpleMessage("Tailscale"),
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("ルートを受け入れる"),
+    "tailscaleAndroidConflictApp": MessageLookupByLibrary.simpleMessage(
+      "Tailscale アプリを検出しました。FlClash VPN はオフで、Tailscale がトンネルを所有します。",
+    ),
+    "tailscaleAndroidConflictBuiltin": MessageLookupByLibrary.simpleMessage(
+      "Tailscale アプリを検出しました。FlClash VPN 使用中はその VPN をオフにしてください。オンにすると本 VPN が切断されます。",
+    ),
+    "tailscaleAndroidModeAppApplied": MessageLookupByLibrary.simpleMessage(
+      "適用済み: FlClash VPN をオフにしました。トンネルが必要なら Tailscale アプリ側の VPN を開始し、FlClash は必要ならローカルプロキシとして使います。",
+    ),
+    "tailscaleAndroidModeAppBody": MessageLookupByLibrary.simpleMessage(
+      "FlClash VPN をオフにし、Tailscale アプリにトンネルを任せます。戻すまで FlClash はシステム通信を扱いません。",
+    ),
+    "tailscaleAndroidModeAppTitle": MessageLookupByLibrary.simpleMessage(
+      "Tailscale アプリを VPN に",
+    ),
+    "tailscaleAndroidModeDesc": MessageLookupByLibrary.simpleMessage(
+      "Android は VPN を同時に 1 つだけ許可します。FlClash と Tailscale アプリの使い方を選んでください。",
+    ),
+    "tailscaleAndroidModeFlclashApplied": MessageLookupByLibrary.simpleMessage(
+      "適用済み: FlClash VPN + 内蔵 Tailscale。Tailscale アプリがある場合はその VPN をオフにしてください。",
+    ),
+    "tailscaleAndroidModeFlclashBody": MessageLookupByLibrary.simpleMessage(
+      "FlClash の VPN を維持し、下の内蔵 Tailscale ノードで tailnet にアクセスします。Tailscale アプリの VPN はオフにしてください。",
+    ),
+    "tailscaleAndroidModeFlclashTitle": MessageLookupByLibrary.simpleMessage(
+      "FlClash を VPN に（推奨）",
+    ),
+    "tailscaleAndroidModeTitle": MessageLookupByLibrary.simpleMessage(
+      "Android VPN の共存",
+    ),
     "tailscaleAndroidStep1": MessageLookupByLibrary.simpleMessage(
       "Tailscale 管理コンソール（設定 → Keys）で認証キーを取得します。",
     ),
@@ -2304,10 +2334,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "ノードを追加し、認証キーを貼り付け、ルーティング先に自宅デバイスの IP または MagicDNS 名を入れます。",
     ),
     "tailscaleAndroidStep3": MessageLookupByLibrary.simpleMessage(
-      "「Tailscale を有効化」をオンにします。Tailscale アプリも入れている場合以外は「直結に保つ」はオフのままで構いません。",
+      "上部で共存モードを選び（FlClash を VPN に推奨）、次に Enable Tailscale をオンにします。",
     ),
     "tailscaleAndroidStep4": MessageLookupByLibrary.simpleMessage(
-      "FlClash VPN を開始し、ノード横のピンボタンで接続を確認します。",
+      "認証キーとルート先を入れたノードを追加し、FlClash VPN を開始して ping で確認します。FlClash を VPN にする場合は Tailscale アプリの VPN をオフにしてください。",
     ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("認証キー"),
     "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(

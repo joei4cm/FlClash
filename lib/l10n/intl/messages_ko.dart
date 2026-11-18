@@ -2331,6 +2331,36 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage(
       "Accept routes",
     ),
+    "tailscaleAndroidConflictApp": MessageLookupByLibrary.simpleMessage(
+      "Tailscale app detected. FlClash VPN is off so Tailscale can own the tunnel.",
+    ),
+    "tailscaleAndroidConflictBuiltin": MessageLookupByLibrary.simpleMessage(
+      "Tailscale app detected. Keep its VPN off while FlClash VPN is on, or this VPN will drop when Tailscale connects.",
+    ),
+    "tailscaleAndroidModeAppApplied": MessageLookupByLibrary.simpleMessage(
+      "Applied: FlClash VPN off. Start the Tailscale app VPN if you need the tunnel there; start FlClash only as a local proxy if needed.",
+    ),
+    "tailscaleAndroidModeAppBody": MessageLookupByLibrary.simpleMessage(
+      "Turn FlClash VPN off so the Tailscale app can own the tunnel. FlClash will not route system traffic until you switch back.",
+    ),
+    "tailscaleAndroidModeAppTitle": MessageLookupByLibrary.simpleMessage(
+      "Tailscale app as VPN",
+    ),
+    "tailscaleAndroidModeDesc": MessageLookupByLibrary.simpleMessage(
+      "Android allows only one VPN at a time. Pick how FlClash and the Tailscale app should share this phone.",
+    ),
+    "tailscaleAndroidModeFlclashApplied": MessageLookupByLibrary.simpleMessage(
+      "Applied: FlClash VPN + embedded Tailscale. Disable VPN inside the Tailscale app if it is installed.",
+    ),
+    "tailscaleAndroidModeFlclashBody": MessageLookupByLibrary.simpleMessage(
+      "Keep FlClash\'s VPN on and use embedded Tailscale nodes below for your tailnet. Turn the Tailscale app\'s VPN switch off.",
+    ),
+    "tailscaleAndroidModeFlclashTitle": MessageLookupByLibrary.simpleMessage(
+      "FlClash as VPN (recommended)",
+    ),
+    "tailscaleAndroidModeTitle": MessageLookupByLibrary.simpleMessage(
+      "Android VPN coexistence",
+    ),
     "tailscaleAndroidStep1": MessageLookupByLibrary.simpleMessage(
       "Get an auth key from the Tailscale admin console (Settings → Keys).",
     ),
@@ -2338,10 +2368,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Add a node, paste the auth key, and put your home device IP or MagicDNS name in Route destinations.",
     ),
     "tailscaleAndroidStep3": MessageLookupByLibrary.simpleMessage(
-      "Turn on Enable Tailscale. Leave \"Keep Tailscale traffic direct\" off unless the Tailscale app is also installed.",
+      "Pick a coexistence mode at the top (FlClash as VPN recommended). Then turn on Enable Tailscale.",
     ),
     "tailscaleAndroidStep4": MessageLookupByLibrary.simpleMessage(
-      "Start FlClash VPN, then tap the ping button on a node to verify the connection.",
+      "Add a node with an auth key and route destinations, start FlClash VPN, then tap ping on a node. Keep the Tailscale app VPN off in FlClash-as-VPN mode.",
     ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("Auth key"),
     "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(

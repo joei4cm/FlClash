@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
@@ -5,6 +7,9 @@ import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+/// One-shot package load for Tailscale-app detection on Android.
+bool _tailscalePackagesRequested = false;
 
 class TailscaleView extends ConsumerWidget {
   const TailscaleView({super.key});
@@ -77,7 +82,6 @@ class TailscaleView extends ConsumerWidget {
 
   Widget _buildScenarioCard(BuildContext context) {
     final appLocalizations = context.appLocalizations;
-    final isAndroid = system.isAndroid;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       child: Container(
@@ -92,16 +96,14 @@ class TailscaleView extends ConsumerWidget {
             Row(
               children: [
                 GlyphIcon(
-                  isAndroid ? AppGlyphs.devices : AppGlyphs.devices,
+                  AppGlyphs.devices,
                   size: 20,
                   color: context.colorScheme.primary,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    isAndroid
-                        ? appLocalizations.tailscaleScenarioAndroidTitle
-                        : appLocalizations.tailscaleScenarioDesktopTitle,
+                    appLocalizations.tailscaleScenarioDesktopTitle,
                     style: AppTextStyle.subheadline.of(
                       context,
                       emphasized: true,
@@ -112,15 +114,130 @@ class TailscaleView extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              isAndroid
-                  ? appLocalizations.tailscaleScenarioAndroidBody
-                  : appLocalizations.tailscaleScenarioDesktopBody,
+              appLocalizations.tailscaleScenarioDesktopBody,
               style: AppTextStyle.footnote
                   .of(context)
                   .copyWith(color: context.colorScheme.onSurfaceVariant),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _applyAndroidMode(
+    WidgetRef ref,
+    AndroidTailscaleMode mode,
+  ) async {
+    final settings = androidTailscaleModeSettings(mode);
+    ref
+        .read(vpnSettingProvider.notifier)
+        .update((state) => state.copyWith(enable: settings.vpnEnable));
+    ref
+        .read(tailscaleSettingProvider.notifier)
+        .setEnable(settings.tailscaleEnable);
+    ref
+        .read(tailscaleSettingProvider.notifier)
+        .setBypassTraffic(settings.bypassTraffic);
+    await _applyTailscaleConfig(ref);
+  }
+
+  Widget _buildAndroidModePicker(
+    BuildContext context,
+    WidgetRef ref, {
+    required AndroidTailscaleMode selected,
+    required bool tailscaleAppInstalled,
+  }) {
+    final appLocalizations = context.appLocalizations;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            appLocalizations.tailscaleAndroidModeTitle,
+            style: AppTextStyle.subheadline.of(context, emphasized: true),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            appLocalizations.tailscaleAndroidModeDesc,
+            style: AppTextStyle.footnote
+                .of(context)
+                .copyWith(color: context.colorScheme.onSurfaceVariant),
+          ),
+          const SizedBox(height: 12),
+          generateSection(
+            items: [
+              for (final mode in AndroidTailscaleMode.values)
+                DecorationListItem(
+                  isSelected: mode == selected,
+                  leading: GlyphIcon(
+                    mode == AndroidTailscaleMode.flclashVpn
+                        ? AppGlyphs.vpn
+                        : AppGlyphs.devices,
+                  ),
+                  title: Text(
+                    mode == AndroidTailscaleMode.flclashVpn
+                        ? appLocalizations.tailscaleAndroidModeFlclashTitle
+                        : appLocalizations.tailscaleAndroidModeAppTitle,
+                  ),
+                  subtitle: Text(
+                    mode == AndroidTailscaleMode.flclashVpn
+                        ? appLocalizations.tailscaleAndroidModeFlclashBody
+                        : appLocalizations.tailscaleAndroidModeAppBody,
+                  ),
+                  trailing: mode == selected
+                      ? const SelectionBadge(size: 24)
+                      : null,
+                  onPressed: () async {
+                    if (mode == selected) {
+                      return;
+                    }
+                    await _applyAndroidMode(ref, mode);
+                    dialogs.showBanner(
+                      mode == AndroidTailscaleMode.flclashVpn
+                          ? appLocalizations.tailscaleAndroidModeFlclashApplied
+                          : appLocalizations.tailscaleAndroidModeAppApplied,
+                    );
+                  },
+                ),
+            ],
+          ),
+          if (tailscaleAppInstalled) ...[
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: ShapeDecoration(
+                color: context.colorScheme.tertiaryContainer.opacity38,
+                shape: AppShape.md,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GlyphIcon(
+                    AppGlyphs.info,
+                    size: 18,
+                    color: context.colorScheme.tertiary,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      selected == AndroidTailscaleMode.flclashVpn
+                          ? appLocalizations.tailscaleAndroidConflictBuiltin
+                          : appLocalizations.tailscaleAndroidConflictApp,
+                      style: AppTextStyle.footnote
+                          .of(context)
+                          .copyWith(
+                            color: context.colorScheme.onTertiaryContainer,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -381,6 +498,21 @@ class TailscaleView extends ConsumerWidget {
       (sum, proxy) => sum + proxy.routes.length,
     );
     final bypassRecommended = system.isDesktop;
+    final vpnEnable = ref.watch(
+      vpnSettingProvider.select((state) => state.enable),
+    );
+    final androidMode = resolveAndroidTailscaleMode(
+      vpnEnable: vpnEnable,
+      tailscaleEnable: enable,
+    );
+    final packages = ref.watch(packagesProvider);
+    final tailscaleAppInstalled = packagesIncludeTailscaleApp(packages);
+    if (system.isAndroid && packages.isEmpty && !_tailscalePackagesRequested) {
+      _tailscalePackagesRequested = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        unawaited(ref.read(systemActionProvider.notifier).getPackages());
+      });
+    }
     // Header block is always index 0; nodes follow.
     final itemCount = proxies.isEmpty ? 1 : proxies.length + 1;
     return Scaffold(
@@ -402,7 +534,15 @@ class TailscaleView extends ConsumerWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildScenarioCard(context),
+                if (system.isAndroid)
+                  _buildAndroidModePicker(
+                    context,
+                    ref,
+                    selected: androidMode,
+                    tailscaleAppInstalled: tailscaleAppInstalled,
+                  )
+                else
+                  _buildScenarioCard(context),
                 ListItem.toggle(
                   leading: const GlyphIcon(AppGlyphs.key),
                   title: Text(appLocalizations.tailscaleEnable),

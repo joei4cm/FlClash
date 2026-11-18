@@ -7663,8 +7663,7 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one:
-          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',
@@ -10735,6 +10734,106 @@ class AppLocalizations {
     );
   }
 
+  /// `Android VPN coexistence`
+  String get tailscaleAndroidModeTitle {
+    return Intl.message(
+      'Android VPN coexistence',
+      name: 'tailscaleAndroidModeTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Android allows only one VPN at a time. Pick how FlClash and the Tailscale app should share this phone.`
+  String get tailscaleAndroidModeDesc {
+    return Intl.message(
+      'Android allows only one VPN at a time. Pick how FlClash and the Tailscale app should share this phone.',
+      name: 'tailscaleAndroidModeDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `FlClash as VPN (recommended)`
+  String get tailscaleAndroidModeFlclashTitle {
+    return Intl.message(
+      'FlClash as VPN (recommended)',
+      name: 'tailscaleAndroidModeFlclashTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep FlClash's VPN on and use embedded Tailscale nodes below for your tailnet. Turn the Tailscale app's VPN switch off.`
+  String get tailscaleAndroidModeFlclashBody {
+    return Intl.message(
+      'Keep FlClash\'s VPN on and use embedded Tailscale nodes below for your tailnet. Turn the Tailscale app\'s VPN switch off.',
+      name: 'tailscaleAndroidModeFlclashBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tailscale app as VPN`
+  String get tailscaleAndroidModeAppTitle {
+    return Intl.message(
+      'Tailscale app as VPN',
+      name: 'tailscaleAndroidModeAppTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Turn FlClash VPN off so the Tailscale app can own the tunnel. FlClash will not route system traffic until you switch back.`
+  String get tailscaleAndroidModeAppBody {
+    return Intl.message(
+      'Turn FlClash VPN off so the Tailscale app can own the tunnel. FlClash will not route system traffic until you switch back.',
+      name: 'tailscaleAndroidModeAppBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Applied: FlClash VPN + embedded Tailscale. Disable VPN inside the Tailscale app if it is installed.`
+  String get tailscaleAndroidModeFlclashApplied {
+    return Intl.message(
+      'Applied: FlClash VPN + embedded Tailscale. Disable VPN inside the Tailscale app if it is installed.',
+      name: 'tailscaleAndroidModeFlclashApplied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Applied: FlClash VPN off. Start the Tailscale app VPN if you need the tunnel there; start FlClash only as a local proxy if needed.`
+  String get tailscaleAndroidModeAppApplied {
+    return Intl.message(
+      'Applied: FlClash VPN off. Start the Tailscale app VPN if you need the tunnel there; start FlClash only as a local proxy if needed.',
+      name: 'tailscaleAndroidModeAppApplied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tailscale app detected. Keep its VPN off while FlClash VPN is on, or this VPN will drop when Tailscale connects.`
+  String get tailscaleAndroidConflictBuiltin {
+    return Intl.message(
+      'Tailscale app detected. Keep its VPN off while FlClash VPN is on, or this VPN will drop when Tailscale connects.',
+      name: 'tailscaleAndroidConflictBuiltin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tailscale app detected. FlClash VPN is off so Tailscale can own the tunnel.`
+  String get tailscaleAndroidConflictApp {
+    return Intl.message(
+      'Tailscale app detected. FlClash VPN is off so Tailscale can own the tunnel.',
+      name: 'tailscaleAndroidConflictApp',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Desktop / host setup`
   String get tailscaleScenarioDesktopTitle {
     return Intl.message(
@@ -10775,20 +10874,20 @@ class AppLocalizations {
     );
   }
 
-  /// `Turn on Enable Tailscale. Leave "Keep Tailscale traffic direct" off unless the Tailscale app is also installed.`
+  /// `Pick a coexistence mode at the top (FlClash as VPN recommended). Then turn on Enable Tailscale.`
   String get tailscaleAndroidStep3 {
     return Intl.message(
-      'Turn on Enable Tailscale. Leave "Keep Tailscale traffic direct" off unless the Tailscale app is also installed.',
+      'Pick a coexistence mode at the top (FlClash as VPN recommended). Then turn on Enable Tailscale.',
       name: 'tailscaleAndroidStep3',
       desc: '',
       args: [],
     );
   }
 
-  /// `Start FlClash VPN, then tap the ping button on a node to verify the connection.`
+  /// `Add a node with an auth key and route destinations, start FlClash VPN, then tap ping on a node. Keep the Tailscale app VPN off in FlClash-as-VPN mode.`
   String get tailscaleAndroidStep4 {
     return Intl.message(
-      'Start FlClash VPN, then tap the ping button on a node to verify the connection.',
+      'Add a node with an auth key and route destinations, start FlClash VPN, then tap ping on a node. Keep the Tailscale app VPN off in FlClash-as-VPN mode.',
       name: 'tailscaleAndroidStep4',
       desc: '',
       args: [],

@@ -2070,6 +2070,36 @@ class MessageLookup extends MessageLookupByLibrary {
     "tabAnimation": MessageLookupByLibrary.simpleMessage("选项卡动画"),
     "tailscale": MessageLookupByLibrary.simpleMessage("Tailscale"),
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage("接受路由"),
+    "tailscaleAndroidConflictApp": MessageLookupByLibrary.simpleMessage(
+      "检测到 Tailscale 应用。已关闭 FlClash VPN，由 Tailscale 接管隧道。",
+    ),
+    "tailscaleAndroidConflictBuiltin": MessageLookupByLibrary.simpleMessage(
+      "检测到 Tailscale 应用。使用 FlClash VPN 时请关闭其 VPN，否则一连接就会把本 VPN 顶掉。",
+    ),
+    "tailscaleAndroidModeAppApplied": MessageLookupByLibrary.simpleMessage(
+      "已应用：已关闭 FlClash VPN。需要隧道时请在 Tailscale 应用内开启 VPN；FlClash 仅在需要时作为本地代理使用。",
+    ),
+    "tailscaleAndroidModeAppBody": MessageLookupByLibrary.simpleMessage(
+      "关闭 FlClash VPN，让 Tailscale 应用接管隧道。在切回前 FlClash 不会接管系统流量。",
+    ),
+    "tailscaleAndroidModeAppTitle": MessageLookupByLibrary.simpleMessage(
+      "Tailscale 应用作 VPN",
+    ),
+    "tailscaleAndroidModeDesc": MessageLookupByLibrary.simpleMessage(
+      "Android 同一时间只允许一个 VPN。请选择 FlClash 与 Tailscale 应用如何共用本机。",
+    ),
+    "tailscaleAndroidModeFlclashApplied": MessageLookupByLibrary.simpleMessage(
+      "已应用：FlClash VPN + 内置 Tailscale。若已安装 Tailscale 应用，请在其内关闭 VPN。",
+    ),
+    "tailscaleAndroidModeFlclashBody": MessageLookupByLibrary.simpleMessage(
+      "保持 FlClash VPN，并用下方内置 Tailscale 节点访问尾网。请关闭 Tailscale 应用里的 VPN 开关。",
+    ),
+    "tailscaleAndroidModeFlclashTitle": MessageLookupByLibrary.simpleMessage(
+      "FlClash 作 VPN（推荐）",
+    ),
+    "tailscaleAndroidModeTitle": MessageLookupByLibrary.simpleMessage(
+      "Android VPN 共存方式",
+    ),
     "tailscaleAndroidStep1": MessageLookupByLibrary.simpleMessage(
       "在 Tailscale 管理后台（设置 → Keys）获取认证密钥。",
     ),
@@ -2077,10 +2107,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "添加节点，粘贴认证密钥，并在“路由目标”中填入家里设备的 IP 或 MagicDNS 名称。",
     ),
     "tailscaleAndroidStep3": MessageLookupByLibrary.simpleMessage(
-      "打开“启用 Tailscale”。除非本机也安装了 Tailscale 应用，否则请关闭“保持 Tailscale 流量直连”。",
+      "先在顶部选择共存方式（推荐「FlClash 作 VPN」），再打开「启用 Tailscale」。",
     ),
     "tailscaleAndroidStep4": MessageLookupByLibrary.simpleMessage(
-      "启动 FlClash VPN，然后点击节点旁的测速按钮检查连接。",
+      "添加带授权密钥与路由目标的节点，启动 FlClash VPN，再点节点上的连通测试。FlClash 作 VPN 时请关闭 Tailscale 应用内的 VPN。",
     ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage("认证密钥"),
     "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
