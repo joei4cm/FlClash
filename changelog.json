@@ -11,8 +11,13 @@
           "type": "feat",
           "entries": [
             {
-              "id": "memory-tui",
-              "text": "Trim idle RSS and ship flclash-tui on PATH (packaging)"
+              "id": "c53ad89",
+              "scope": "tailscale",
+              "text": "API token setup and simpler usage modes"
+            },
+            {
+              "id": "ec3c89e",
+              "text": "Trim idle RSS and ship flclash-tui on PATH"
             },
             {
               "id": "3172d8b",
@@ -97,14 +102,19 @@
           "type": "fix",
           "entries": [
             {
-              "id": "ts-join-probe",
+              "id": "364ae42",
               "scope": "tailscale",
-              "text": "Test button probes MagicDNS join, not public internet"
+              "text": "Test button checks join, not public internet"
             },
             {
-              "id": "helper-reap",
+              "id": "d78c066",
               "scope": "helper",
               "text": "Stop Windows reaping test from racing job assign"
+            },
+            {
+              "id": "46cf7ff",
+              "scope": "packaging",
+              "text": "Point rpm flclash-tui symlink at %{_datadir}"
             },
             {
               "id": "567fb62",

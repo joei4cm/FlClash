@@ -4,7 +4,8 @@
 
 **Features**
 
-- Trim idle RSS and ship `flclash-tui` on PATH (packaging)
+- **tailscale** API token setup and simpler usage modes (c53ad89)
+- Trim idle RSS and ship flclash-tui on PATH (ec3c89e)
 - **android** Graphical Tailscale VPN coexistence picker (3172d8b)
 - **tui** Delay test, connections view, and richer dashboard (bdb848d)
 - **tui** Interactive desktop TUI with menus and live traffic (b866879)
@@ -24,8 +25,9 @@
 
 **Bug Fixes**
 
-- **tailscale** Test button probes MagicDNS join, not public internet
-- **helper** Stop Windows reaping test from racing job assign
+- **tailscale** Test button checks join, not public internet (364ae42)
+- **helper** Stop Windows reaping test from racing job assign (d78c066)
+- **packaging** Point rpm flclash-tui symlink at %{_datadir} (46cf7ff)
 - **update** Match release asset names without tag commit suffix (567fb62)
 - **tui** Stop desktop teardown from hanging Dart CI (0541913)
 - **tui** Keep one background /traffic stream on the home screen (53c5664)
