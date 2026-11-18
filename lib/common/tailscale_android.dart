@@ -1,6 +1,8 @@
 import 'package:fl_clash/models/models.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
+import 'tailscale_setup.dart';
+
 /// Official Tailscale Android package id.
 const tailscaleAndroidPackageName = 'com.tailscale.ipn';
 
@@ -19,27 +21,25 @@ AndroidTailscaleMode resolveAndroidTailscaleMode({
   required bool vpnEnable,
   required bool tailscaleEnable,
 }) {
-  if (!vpnEnable) {
-    return AndroidTailscaleMode.tailscaleAppVpn;
-  }
-  return AndroidTailscaleMode.flclashVpn;
+  final mode = resolveTailscaleUsageMode(
+    isAndroid: true,
+    vpnEnable: vpnEnable,
+    tailscaleEnable: tailscaleEnable,
+    bypassTraffic: false,
+  );
+  return switch (mode) {
+    TailscaleUsageMode.embedded => AndroidTailscaleMode.flclashVpn,
+    TailscaleUsageMode.systemApp => AndroidTailscaleMode.tailscaleAppVpn,
+  };
 }
 
 /// Settings applied when the user picks a coexistence mode.
 ({bool vpnEnable, bool tailscaleEnable, bool bypassTraffic})
 androidTailscaleModeSettings(AndroidTailscaleMode mode) {
-  return switch (mode) {
-    AndroidTailscaleMode.flclashVpn => (
-      vpnEnable: true,
-      tailscaleEnable: true,
-      bypassTraffic: false,
-    ),
-    AndroidTailscaleMode.tailscaleAppVpn => (
-      vpnEnable: false,
-      tailscaleEnable: false,
-      bypassTraffic: false,
-    ),
-  };
+  return tailscaleUsageModeSettings(switch (mode) {
+    AndroidTailscaleMode.flclashVpn => TailscaleUsageMode.embedded,
+    AndroidTailscaleMode.tailscaleAppVpn => TailscaleUsageMode.systemApp,
+  }, isAndroid: true);
 }
 
 bool packagesIncludeTailscaleApp(Iterable<Package> packages) {

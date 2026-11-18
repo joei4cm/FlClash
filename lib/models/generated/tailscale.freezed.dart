@@ -16,7 +16,11 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TailscaleProps {
 
- bool get enable; bool get bypassTraffic; List<TailscaleProxy> get proxies;
+ bool get enable; bool get bypassTraffic;/// User API access token (`tskey-api-…`) or OAuth access token used to mint
+/// device auth keys. Stored with the same accidental-disclosure obfuscation
+/// as node auth keys.
+@JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey) String get apiAccessToken;/// Optional tags when minting keys (required for OAuth `auth_keys` clients).
+ List<String> get apiTags; List<TailscaleProxy> get proxies;
 /// Create a copy of TailscaleProps
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,20 +34,20 @@ $TailscalePropsCopyWith<TailscaleProps> get copyWith => _$TailscalePropsCopyWith
 @override
 bool operator ==(Object other) {
   final _this = this as TailscaleProps;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TailscaleProps&&(identical(other.enable, _this.enable) || other.enable == _this.enable)&&(identical(other.bypassTraffic, _this.bypassTraffic) || other.bypassTraffic == _this.bypassTraffic)&&const DeepCollectionEquality().equals(other.proxies, _this.proxies));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TailscaleProps&&(identical(other.enable, _this.enable) || other.enable == _this.enable)&&(identical(other.bypassTraffic, _this.bypassTraffic) || other.bypassTraffic == _this.bypassTraffic)&&(identical(other.apiAccessToken, _this.apiAccessToken) || other.apiAccessToken == _this.apiAccessToken)&&const DeepCollectionEquality().equals(other.apiTags, _this.apiTags)&&const DeepCollectionEquality().equals(other.proxies, _this.proxies));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as TailscaleProps;
-  return Object.hash(runtimeType,_this.enable,_this.bypassTraffic,const DeepCollectionEquality().hash(_this.proxies));
+  return Object.hash(runtimeType,_this.enable,_this.bypassTraffic,_this.apiAccessToken,const DeepCollectionEquality().hash(_this.apiTags),const DeepCollectionEquality().hash(_this.proxies));
 }
 
 @override
 String toString() {
   final _this = this as TailscaleProps;
-  return 'TailscaleProps(enable: ${_this.enable}, bypassTraffic: ${_this.bypassTraffic}, proxies: ${_this.proxies})';
+  return 'TailscaleProps(enable: ${_this.enable}, bypassTraffic: ${_this.bypassTraffic}, apiAccessToken: ${_this.apiAccessToken}, apiTags: ${_this.apiTags}, proxies: ${_this.proxies})';
 }
 
 
@@ -54,7 +58,7 @@ abstract mixin class $TailscalePropsCopyWith<$Res>  {
   factory $TailscalePropsCopyWith(TailscaleProps value, $Res Function(TailscaleProps) _then) = _$TailscalePropsCopyWithImpl;
 @useResult
 $Res call({
- bool enable, bool bypassTraffic, List<TailscaleProxy> proxies
+ bool enable, bool bypassTraffic,@JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey) String apiAccessToken, List<String> apiTags, List<TailscaleProxy> proxies
 });
 
 
@@ -71,11 +75,13 @@ class _$TailscalePropsCopyWithImpl<$Res>
 
 /// Create a copy of TailscaleProps
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? enable = null,Object? bypassTraffic = null,Object? proxies = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? enable = null,Object? bypassTraffic = null,Object? apiAccessToken = null,Object? apiTags = null,Object? proxies = null,}) {
   return _then(TailscaleProps(
 enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
 as bool,bypassTraffic: null == bypassTraffic ? _self.bypassTraffic : bypassTraffic // ignore: cast_nullable_to_non_nullable
-as bool,proxies: null == proxies ? _self.proxies : proxies // ignore: cast_nullable_to_non_nullable
+as bool,apiAccessToken: null == apiAccessToken ? _self.apiAccessToken : apiAccessToken // ignore: cast_nullable_to_non_nullable
+as String,apiTags: null == apiTags ? _self.apiTags : apiTags // ignore: cast_nullable_to_non_nullable
+as List<String>,proxies: null == proxies ? _self.proxies : proxies // ignore: cast_nullable_to_non_nullable
 as List<TailscaleProxy>,
   ));
 }
@@ -161,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  bool bypassTraffic,  List<TailscaleProxy> proxies)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool enable,  bool bypassTraffic, @JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey)  String apiAccessToken,  List<String> apiTags,  List<TailscaleProxy> proxies)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TailscaleProps() when $default != null:
-return $default(_that.enable,_that.bypassTraffic,_that.proxies);case _:
+return $default(_that.enable,_that.bypassTraffic,_that.apiAccessToken,_that.apiTags,_that.proxies);case _:
   return orElse();
 
 }
@@ -182,10 +188,10 @@ return $default(_that.enable,_that.bypassTraffic,_that.proxies);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  bool bypassTraffic,  List<TailscaleProxy> proxies)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool enable,  bool bypassTraffic, @JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey)  String apiAccessToken,  List<String> apiTags,  List<TailscaleProxy> proxies)  $default,) {final _that = this;
 switch (_that) {
 case _TailscaleProps():
-return $default(_that.enable,_that.bypassTraffic,_that.proxies);case _:
+return $default(_that.enable,_that.bypassTraffic,_that.apiAccessToken,_that.apiTags,_that.proxies);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +208,10 @@ return $default(_that.enable,_that.bypassTraffic,_that.proxies);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  bool bypassTraffic,  List<TailscaleProxy> proxies)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool enable,  bool bypassTraffic, @JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey)  String apiAccessToken,  List<String> apiTags,  List<TailscaleProxy> proxies)?  $default,) {final _that = this;
 switch (_that) {
 case _TailscaleProps() when $default != null:
-return $default(_that.enable,_that.bypassTraffic,_that.proxies);case _:
+return $default(_that.enable,_that.bypassTraffic,_that.apiAccessToken,_that.apiTags,_that.proxies);case _:
   return null;
 
 }
@@ -217,11 +223,24 @@ return $default(_that.enable,_that.bypassTraffic,_that.proxies);case _:
 @JsonSerializable()
 
 class _TailscaleProps implements TailscaleProps {
-  const _TailscaleProps({this.enable = false, this.bypassTraffic = false,  List<TailscaleProxy> proxies = const []}): _proxies = proxies;
+  const _TailscaleProps({this.enable = false, this.bypassTraffic = false, @JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey) this.apiAccessToken = '',  List<String> apiTags = const [],  List<TailscaleProxy> proxies = const []}): _apiTags = apiTags,_proxies = proxies;
   factory _TailscaleProps.fromJson(Map<String, dynamic> json) => _$TailscalePropsFromJson(json);
 
 @override@JsonKey() final  bool enable;
 @override@JsonKey() final  bool bypassTraffic;
+/// User API access token (`tskey-api-…`) or OAuth access token used to mint
+/// device auth keys. Stored with the same accidental-disclosure obfuscation
+/// as node auth keys.
+@override@JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey) final  String apiAccessToken;
+/// Optional tags when minting keys (required for OAuth `auth_keys` clients).
+ final  List<String> _apiTags;
+/// Optional tags when minting keys (required for OAuth `auth_keys` clients).
+@override@JsonKey() List<String> get apiTags {
+  if (_apiTags is EqualUnmodifiableListView) return _apiTags;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_apiTags);
+}
+
  final  List<TailscaleProxy> _proxies;
 @override@JsonKey() List<TailscaleProxy> get proxies {
   if (_proxies is EqualUnmodifiableListView) return _proxies;
@@ -243,18 +262,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TailscaleProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.bypassTraffic, bypassTraffic) || other.bypassTraffic == bypassTraffic)&&const DeepCollectionEquality().equals(other.proxies, _proxies));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TailscaleProps&&(identical(other.enable, enable) || other.enable == enable)&&(identical(other.bypassTraffic, bypassTraffic) || other.bypassTraffic == bypassTraffic)&&(identical(other.apiAccessToken, apiAccessToken) || other.apiAccessToken == apiAccessToken)&&const DeepCollectionEquality().equals(other.apiTags, _apiTags)&&const DeepCollectionEquality().equals(other.proxies, _proxies));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,enable,bypassTraffic,const DeepCollectionEquality().hash(_proxies));
+    return Object.hash(runtimeType,enable,bypassTraffic,apiAccessToken,const DeepCollectionEquality().hash(_apiTags),const DeepCollectionEquality().hash(_proxies));
 }
 
 @override
 String toString() {
-    return 'TailscaleProps(enable: $enable, bypassTraffic: $bypassTraffic, proxies: $proxies)';
+    return 'TailscaleProps(enable: $enable, bypassTraffic: $bypassTraffic, apiAccessToken: $apiAccessToken, apiTags: $apiTags, proxies: $proxies)';
 }
 
 
@@ -265,7 +284,7 @@ abstract mixin class _$TailscalePropsCopyWith<$Res> implements $TailscalePropsCo
   factory _$TailscalePropsCopyWith(_TailscaleProps value, $Res Function(_TailscaleProps) _then) = __$TailscalePropsCopyWithImpl;
 @override @useResult
 $Res call({
- bool enable, bool bypassTraffic, List<TailscaleProxy> proxies
+ bool enable, bool bypassTraffic,@JsonKey(fromJson: _decodeTailscaleAuthKey, toJson: _encodeTailscaleAuthKey) String apiAccessToken, List<String> apiTags, List<TailscaleProxy> proxies
 });
 
 
@@ -282,11 +301,13 @@ class __$TailscalePropsCopyWithImpl<$Res>
 
 /// Create a copy of TailscaleProps
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? enable = null,Object? bypassTraffic = null,Object? proxies = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? enable = null,Object? bypassTraffic = null,Object? apiAccessToken = null,Object? apiTags = null,Object? proxies = null,}) {
   return _then(_TailscaleProps(
 enable: null == enable ? _self.enable : enable // ignore: cast_nullable_to_non_nullable
 as bool,bypassTraffic: null == bypassTraffic ? _self.bypassTraffic : bypassTraffic // ignore: cast_nullable_to_non_nullable
-as bool,proxies: null == proxies ? _self._proxies : proxies // ignore: cast_nullable_to_non_nullable
+as bool,apiAccessToken: null == apiAccessToken ? _self.apiAccessToken : apiAccessToken // ignore: cast_nullable_to_non_nullable
+as String,apiTags: null == apiTags ? _self._apiTags : apiTags // ignore: cast_nullable_to_non_nullable
+as List<String>,proxies: null == proxies ? _self._proxies : proxies // ignore: cast_nullable_to_non_nullable
 as List<TailscaleProxy>,
   ));
 }

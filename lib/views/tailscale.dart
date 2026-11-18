@@ -24,13 +24,15 @@ class TailscaleView extends ConsumerWidget {
     WidgetRef ref, [
     TailscaleProxy? proxy,
   ]) async {
-    final existingNames = ref
-        .read(tailscaleSettingProvider)
-        .proxies
-        .map((item) => item.name)
-        .toList();
+    final props = ref.read(tailscaleSettingProvider);
+    final existingNames = props.proxies.map((item) => item.name).toList();
     final res = await dialogs.showCommonDialog<TailscaleProxy>(
-      child: TailscaleNodeDialog(proxy: proxy, existingNames: existingNames),
+      child: TailscaleNodeDialog(
+        proxy: proxy,
+        existingNames: existingNames,
+        apiAccessToken: props.apiAccessToken,
+        apiTags: props.apiTags,
+      ),
     );
     if (res == null) {
       return;
@@ -91,56 +93,11 @@ class TailscaleView extends ConsumerWidget {
     }
   }
 
-  Widget _buildScenarioCard(BuildContext context) {
-    final appLocalizations = context.appLocalizations;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: ShapeDecoration(
-          color: context.colorScheme.primaryContainer.opacity38,
-          shape: AppShape.md,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                GlyphIcon(
-                  AppGlyphs.devices,
-                  size: 20,
-                  color: context.colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    appLocalizations.tailscaleScenarioDesktopTitle,
-                    style: AppTextStyle.subheadline.of(
-                      context,
-                      emphasized: true,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              appLocalizations.tailscaleScenarioDesktopBody,
-              style: AppTextStyle.footnote
-                  .of(context)
-                  .copyWith(color: context.colorScheme.onSurfaceVariant),
-            ),
-          ],
-        ),
-      ),
+  Future<void> _applyUsageMode(WidgetRef ref, TailscaleUsageMode mode) async {
+    final settings = tailscaleUsageModeSettings(
+      mode,
+      isAndroid: system.isAndroid,
     );
-  }
-
-  Future<void> _applyAndroidMode(
-    WidgetRef ref,
-    AndroidTailscaleMode mode,
-  ) async {
-    final settings = androidTailscaleModeSettings(mode);
     ref
         .read(vpnSettingProvider.notifier)
         .update((state) => state.copyWith(enable: settings.vpnEnable));
@@ -153,10 +110,10 @@ class TailscaleView extends ConsumerWidget {
     await _applyTailscaleConfig(ref);
   }
 
-  Widget _buildAndroidModePicker(
+  Widget _buildUsageModePicker(
     BuildContext context,
     WidgetRef ref, {
-    required AndroidTailscaleMode selected,
+    required TailscaleUsageMode selected,
     required bool tailscaleAppInstalled,
   }) {
     final appLocalizations = context.appLocalizations;
@@ -166,12 +123,12 @@ class TailscaleView extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            appLocalizations.tailscaleAndroidModeTitle,
+            appLocalizations.tailscaleUsageTitle,
             style: AppTextStyle.subheadline.of(context, emphasized: true),
           ),
           const SizedBox(height: 4),
           Text(
-            appLocalizations.tailscaleAndroidModeDesc,
+            appLocalizations.tailscaleUsageDesc,
             style: AppTextStyle.footnote
                 .of(context)
                 .copyWith(color: context.colorScheme.onSurfaceVariant),
@@ -179,23 +136,25 @@ class TailscaleView extends ConsumerWidget {
           const SizedBox(height: 12),
           generateSection(
             items: [
-              for (final mode in AndroidTailscaleMode.values)
+              for (final mode in TailscaleUsageMode.values)
                 DecorationListItem(
                   isSelected: mode == selected,
                   leading: GlyphIcon(
-                    mode == AndroidTailscaleMode.flclashVpn
+                    mode == TailscaleUsageMode.embedded
                         ? AppGlyphs.vpn
                         : AppGlyphs.devices,
                   ),
                   title: Text(
-                    mode == AndroidTailscaleMode.flclashVpn
-                        ? appLocalizations.tailscaleAndroidModeFlclashTitle
-                        : appLocalizations.tailscaleAndroidModeAppTitle,
+                    mode == TailscaleUsageMode.embedded
+                        ? appLocalizations.tailscaleUsageEmbeddedTitle
+                        : appLocalizations.tailscaleUsageSystemTitle,
                   ),
                   subtitle: Text(
-                    mode == AndroidTailscaleMode.flclashVpn
-                        ? appLocalizations.tailscaleAndroidModeFlclashBody
-                        : appLocalizations.tailscaleAndroidModeAppBody,
+                    mode == TailscaleUsageMode.embedded
+                        ? appLocalizations.tailscaleUsageEmbeddedBody
+                        : system.isAndroid
+                        ? appLocalizations.tailscaleUsageSystemBodyAndroid
+                        : appLocalizations.tailscaleUsageSystemBodyDesktop,
                   ),
                   trailing: mode == selected
                       ? const SelectionBadge(size: 24)
@@ -204,17 +163,17 @@ class TailscaleView extends ConsumerWidget {
                     if (mode == selected) {
                       return;
                     }
-                    await _applyAndroidMode(ref, mode);
+                    await _applyUsageMode(ref, mode);
                     dialogs.showBanner(
-                      mode == AndroidTailscaleMode.flclashVpn
-                          ? appLocalizations.tailscaleAndroidModeFlclashApplied
-                          : appLocalizations.tailscaleAndroidModeAppApplied,
+                      mode == TailscaleUsageMode.embedded
+                          ? appLocalizations.tailscaleUsageEmbeddedApplied
+                          : appLocalizations.tailscaleUsageSystemApplied,
                     );
                   },
                 ),
             ],
           ),
-          if (tailscaleAppInstalled) ...[
+          if (system.isAndroid && tailscaleAppInstalled) ...[
             const SizedBox(height: 12),
             Container(
               width: double.infinity,
@@ -234,7 +193,7 @@ class TailscaleView extends ConsumerWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      selected == AndroidTailscaleMode.flclashVpn
+                      selected == TailscaleUsageMode.embedded
                           ? appLocalizations.tailscaleAndroidConflictBuiltin
                           : appLocalizations.tailscaleAndroidConflictApp,
                       style: AppTextStyle.footnote
@@ -251,6 +210,118 @@ class TailscaleView extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildApiTokenSection(
+    BuildContext context,
+    WidgetRef ref, {
+    required TailscaleProps props,
+  }) {
+    final appLocalizations = context.appLocalizations;
+    final hasToken = props.apiAccessToken.trim().isNotEmpty;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            appLocalizations.tailscaleApiTokenTitle,
+            style: AppTextStyle.subheadline.of(context, emphasized: true),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            appLocalizations.tailscaleApiTokenDesc,
+            style: AppTextStyle.footnote
+                .of(context)
+                .copyWith(color: context.colorScheme.onSurfaceVariant),
+          ),
+          const SizedBox(height: 8),
+          ListItem(
+            leading: const GlyphIcon(AppGlyphs.key),
+            title: Text(
+              hasToken
+                  ? appLocalizations.tailscaleApiTokenConfigured
+                  : appLocalizations.tailscaleApiTokenAdd,
+            ),
+            subtitle: Text(
+              hasToken
+                  ? appLocalizations.tailscaleApiTokenConfiguredDesc
+                  : appLocalizations.tailscaleApiTokenHint,
+            ),
+            trailing: const GlyphIcon(AppGlyphs.chevronForward),
+            onTap: () => _handleEditApiToken(context, ref, props),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _handleEditApiToken(
+    BuildContext context,
+    WidgetRef ref,
+    TailscaleProps props,
+  ) async {
+    final appLocalizations = context.appLocalizations;
+    final tokenController = TextEditingController(text: props.apiAccessToken);
+    final tagsController = TextEditingController(
+      text: props.apiTags.join(', '),
+    );
+    final result = await dialogs
+        .showCommonDialog<({String token, String tags})>(
+          child: AlertDialog(
+            title: appLocalizations.tailscaleApiTokenTitle,
+            hasFields: true,
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(appLocalizations.cancel),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop((
+                    token: tokenController.text.trim(),
+                    tags: tagsController.text.trim(),
+                  ));
+                },
+                child: Text(appLocalizations.confirm),
+              ),
+            ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: tokenController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    hintText: appLocalizations.tailscaleApiTokenField,
+                    helperText: appLocalizations.tailscaleApiTokenHint,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: tagsController,
+                  decoration: InputDecoration(
+                    hintText: appLocalizations.tailscaleApiTagsField,
+                    helperText: appLocalizations.tailscaleApiTagsHint,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+    tokenController.dispose();
+    tagsController.dispose();
+    if (result == null) {
+      return;
+    }
+    final tags = result.tags
+        .split(RegExp(r'[\s,]'))
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList();
+    ref.read(tailscaleSettingProvider.notifier).setApiAccessToken(result.token);
+    ref.read(tailscaleSettingProvider.notifier).setApiTags(tags);
   }
 
   Widget _buildGuideStep(BuildContext context, int number, String text) {
@@ -508,13 +579,14 @@ class TailscaleView extends ConsumerWidget {
       0,
       (sum, proxy) => sum + proxy.routes.length,
     );
-    final bypassRecommended = system.isDesktop;
     final vpnEnable = ref.watch(
       vpnSettingProvider.select((state) => state.enable),
     );
-    final androidMode = resolveAndroidTailscaleMode(
+    final usageMode = resolveTailscaleUsageMode(
+      isAndroid: system.isAndroid,
       vpnEnable: vpnEnable,
       tailscaleEnable: enable,
+      bypassTraffic: props.bypassTraffic,
     );
     final packages = ref.watch(packagesProvider);
     final tailscaleAppInstalled = packagesIncludeTailscaleApp(packages);
@@ -545,55 +617,50 @@ class TailscaleView extends ConsumerWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (system.isAndroid)
-                  _buildAndroidModePicker(
-                    context,
-                    ref,
-                    selected: androidMode,
-                    tailscaleAppInstalled: tailscaleAppInstalled,
-                  )
-                else
-                  _buildScenarioCard(context),
-                ListItem.toggle(
-                  leading: const GlyphIcon(AppGlyphs.key),
-                  title: Text(appLocalizations.tailscaleEnable),
-                  subtitle: Text(appLocalizations.tailscaleEnableDesc),
-                  value: enable,
-                  onChanged: (value) async {
-                    ref
-                        .read(tailscaleSettingProvider.notifier)
-                        .setEnable(value);
-                    if (value &&
-                        bypassRecommended &&
-                        !ref.read(tailscaleSettingProvider).bypassTraffic) {
-                      dialogs.showBanner(
-                        appLocalizations.tailscaleBypassNudge,
-                        onTap: () async {
+                _buildUsageModePicker(
+                  context,
+                  ref,
+                  selected: usageMode,
+                  tailscaleAppInstalled: tailscaleAppInstalled,
+                ),
+                _buildApiTokenSection(context, ref, props: props),
+                if (usageMode == TailscaleUsageMode.embedded ||
+                    !system.isAndroid)
+                  ListItem.toggle(
+                    leading: const GlyphIcon(AppGlyphs.toggleOn),
+                    title: Text(appLocalizations.tailscaleEnable),
+                    subtitle: Text(appLocalizations.tailscaleEnableDescShort),
+                    value: enable,
+                    onChanged: (value) async {
+                      ref
+                          .read(tailscaleSettingProvider.notifier)
+                          .setEnable(value);
+                      await _applyTailscaleConfig(ref);
+                    },
+                  ),
+                _ExpandableGuide(
+                  title: appLocalizations.tailscaleAdvancedTitle,
+                  child: Column(
+                    children: [
+                      ListItem.toggle(
+                        leading: const GlyphIcon(AppGlyphs.split),
+                        title: Text(appLocalizations.tailscaleBypass),
+                        subtitle: Text(
+                          system.isDesktop
+                              ? appLocalizations.tailscaleBypassRecommended
+                              : appLocalizations.tailscaleBypassAndroidHint,
+                        ),
+                        value: props.bypassTraffic,
+                        onChanged: (value) async {
                           ref
                               .read(tailscaleSettingProvider.notifier)
-                              .setBypassTraffic(true);
+                              .setBypassTraffic(value);
                           await _applyTailscaleConfig(ref);
                         },
-                      );
-                    }
-                    await _applyTailscaleConfig(ref);
-                  },
-                ),
-                ListItem.toggle(
-                  leading: const GlyphIcon(AppGlyphs.split),
-                  title: Text(appLocalizations.tailscaleBypass),
-                  subtitle: Text(
-                    bypassRecommended
-                        ? appLocalizations.tailscaleBypassRecommended
-                        : appLocalizations.tailscaleBypassAndroidHint,
+                      ),
+                      _buildGuide(context),
+                    ],
                   ),
-                  value: props.bypassTraffic,
-                  onChanged: (value) async {
-                    ref
-                        .read(tailscaleSettingProvider.notifier)
-                        .setBypassTraffic(value);
-                    await _applyTailscaleConfig(ref);
-                  },
                 ),
                 _buildStatusBanner(
                   context,
@@ -603,13 +670,6 @@ class TailscaleView extends ConsumerWidget {
                   routeCount: routeCount,
                 ),
                 const Divider(height: 16),
-                if (proxies.isEmpty)
-                  _buildGuide(context)
-                else
-                  _ExpandableGuide(
-                    title: appLocalizations.tailscaleShowSetupGuide,
-                    child: _buildGuide(context),
-                  ),
                 if (proxies.isEmpty)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
@@ -654,11 +714,15 @@ class TailscaleView extends ConsumerWidget {
 class TailscaleNodeDialog extends StatefulWidget {
   final TailscaleProxy? proxy;
   final List<String> existingNames;
+  final String apiAccessToken;
+  final List<String> apiTags;
 
   const TailscaleNodeDialog({
     super.key,
     this.proxy,
     this.existingNames = const [],
+    this.apiAccessToken = '',
+    this.apiTags = const [],
   });
 
   @override
@@ -680,18 +744,24 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
   late bool _exitNodeAllowLanAccess;
   late bool _showAdvanced;
   late bool _obscureAuthKey;
+  var _generatingAuthKey = false;
 
   @override
   void initState() {
     super.initState();
     final proxy = widget.proxy ?? const TailscaleProxy(name: '');
+    final isNew = widget.proxy == null;
     _nameController = TextEditingController(text: proxy.name);
     _authKeyController = TextEditingController(text: proxy.authKey);
     _hostnameController = TextEditingController(text: proxy.hostname);
     _controlUrlController = TextEditingController(text: proxy.controlUrl);
     _stateDirController = TextEditingController(text: proxy.stateDir);
     _exitNodeController = TextEditingController(text: proxy.exitNode);
-    _routesController = TextEditingController(text: proxy.routes.join('\n'));
+    _routesController = TextEditingController(
+      text: proxy.routes.isNotEmpty
+          ? proxy.routes.join('\n')
+          : (isNew ? defaultTailscaleRouteSuggestions.join('\n') : ''),
+    );
     _ephemeral = proxy.ephemeral;
     _udp = proxy.udp;
     _acceptRoutes = proxy.acceptRoutes;
@@ -706,6 +776,43 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
         !proxy.udp ||
         proxy.acceptRoutes ||
         proxy.exitNodeAllowLanAccess;
+  }
+
+  Future<void> _generateAuthKey() async {
+    final appLocalizations = context.appLocalizations;
+    final token = widget.apiAccessToken.trim();
+    if (token.isEmpty) {
+      dialogs.showBanner(appLocalizations.tailscaleApiTokenMissing);
+      return;
+    }
+    setState(() => _generatingAuthKey = true);
+    try {
+      final created = await createTailscaleAuthKey(
+        accessToken: token,
+        dio: request.dio,
+        tags: widget.apiTags,
+        ephemeral: _ephemeral,
+        description: _nameController.text.trim().isEmpty
+            ? 'FlClash'
+            : _nameController.text.trim(),
+      );
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _authKeyController.text = created.key;
+        _obscureAuthKey = false;
+      });
+      dialogs.showBanner(appLocalizations.tailscaleAuthKeyGenerated);
+    } on TailscaleApiException catch (error) {
+      dialogs.showBanner(error.message);
+    } catch (error) {
+      dialogs.showBanner(error.toString());
+    } finally {
+      if (mounted) {
+        setState(() => _generatingAuthKey = false);
+      }
+    }
   }
 
   @override
@@ -829,7 +936,9 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
               _buildTextField(
                 controller: _authKeyController,
                 label: appLocalizations.tailscaleAuthKey,
-                helperText: appLocalizations.tailscaleAuthKeyHint,
+                helperText: widget.apiAccessToken.trim().isEmpty
+                    ? appLocalizations.tailscaleAuthKeyHint
+                    : appLocalizations.tailscaleAuthKeyOverrideHint,
                 obscureText: _obscureAuthKey,
                 suffixIcon: IconButton(
                   tooltip: _obscureAuthKey
@@ -852,10 +961,32 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
                   return null;
                 },
               ),
+              if (widget.apiAccessToken.trim().isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton.icon(
+                      onPressed: _generatingAuthKey ? null : _generateAuthKey,
+                      icon: _generatingAuthKey
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: ActivityIndicator(size: 16),
+                            )
+                          : const GlyphIcon(AppGlyphs.key),
+                      label: Text(
+                        _generatingAuthKey
+                            ? appLocalizations.tailscaleAuthKeyGenerating
+                            : appLocalizations.tailscaleAuthKeyGenerate,
+                      ),
+                    ),
+                  ),
+                ),
               _buildTextField(
                 controller: _routesController,
                 label: appLocalizations.tailscaleRoutes,
-                helperText: appLocalizations.tailscaleRoutesHint,
+                helperText: appLocalizations.tailscaleRoutesHintCidr,
                 maxLines: 3,
               ),
               Align(

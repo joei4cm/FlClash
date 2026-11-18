@@ -103,6 +103,14 @@ class TailscaleSetting extends _$TailscaleSetting
     update((state) => state.copyWith(bypassTraffic: bypassTraffic));
   }
 
+  void setApiAccessToken(String apiAccessToken) {
+    update((state) => state.copyWith(apiAccessToken: apiAccessToken));
+  }
+
+  void setApiTags(List<String> apiTags) {
+    update((state) => state.copyWith(apiTags: apiTags));
+  }
+
   void addOrUpdate(TailscaleProxy proxy, {String? previousName}) {
     update((state) {
       final next = List<TailscaleProxy>.from(state.proxies);

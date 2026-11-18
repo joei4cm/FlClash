@@ -2792,6 +2792,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAcceptRoutes": MessageLookupByLibrary.simpleMessage(
       "Принимать маршруты",
     ),
+    "tailscaleAdvancedTitle": MessageLookupByLibrary.simpleMessage("Advanced"),
     "tailscaleAndroidConflictApp": MessageLookupByLibrary.simpleMessage(
       "Tailscale app detected. FlClash VPN is off so Tailscale can own the tunnel.",
     ),
@@ -2834,11 +2835,53 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleAndroidStep4": MessageLookupByLibrary.simpleMessage(
       "Add a node with an auth key and route destinations, start FlClash VPN, then tap ping on a node. Keep the Tailscale app VPN off in FlClash-as-VPN mode.",
     ),
+    "tailscaleApiTagsField": MessageLookupByLibrary.simpleMessage(
+      "Tags (optional)",
+    ),
+    "tailscaleApiTagsHint": MessageLookupByLibrary.simpleMessage(
+      "Comma-separated tags such as tag:flclash. Required when using an OAuth client with auth_keys scope.",
+    ),
+    "tailscaleApiTokenAdd": MessageLookupByLibrary.simpleMessage(
+      "Add API access token",
+    ),
+    "tailscaleApiTokenConfigured": MessageLookupByLibrary.simpleMessage(
+      "API access token saved",
+    ),
+    "tailscaleApiTokenConfiguredDesc": MessageLookupByLibrary.simpleMessage(
+      "New nodes can generate an auth key from this token.",
+    ),
+    "tailscaleApiTokenDesc": MessageLookupByLibrary.simpleMessage(
+      "Paste a Tailscale API access token to mint auth keys automatically. You can still paste an auth key by hand on each node.",
+    ),
+    "tailscaleApiTokenField": MessageLookupByLibrary.simpleMessage(
+      "API access token",
+    ),
+    "tailscaleApiTokenHint": MessageLookupByLibrary.simpleMessage(
+      "From Tailscale admin → Settings → Keys → API access tokens (or a short-lived OAuth access token).",
+    ),
+    "tailscaleApiTokenMissing": MessageLookupByLibrary.simpleMessage(
+      "Add an API access token on the Tailscale page first.",
+    ),
+    "tailscaleApiTokenTitle": MessageLookupByLibrary.simpleMessage(
+      "API access token",
+    ),
     "tailscaleAuthKey": MessageLookupByLibrary.simpleMessage(
       "Ключ аутентификации",
     ),
+    "tailscaleAuthKeyGenerate": MessageLookupByLibrary.simpleMessage(
+      "Generate auth key from API token",
+    ),
+    "tailscaleAuthKeyGenerated": MessageLookupByLibrary.simpleMessage(
+      "Auth key generated. You can still edit it before saving.",
+    ),
+    "tailscaleAuthKeyGenerating": MessageLookupByLibrary.simpleMessage(
+      "Generating…",
+    ),
     "tailscaleAuthKeyHint": MessageLookupByLibrary.simpleMessage(
       "Из консоли администратора Tailscale → Settings → Keys. Требуется для аутентификации узла.",
+    ),
+    "tailscaleAuthKeyOverrideHint": MessageLookupByLibrary.simpleMessage(
+      "Leave blank to generate from the API token, or paste your own auth key to override.",
     ),
     "tailscaleBypass": MessageLookupByLibrary.simpleMessage(
       "Оставлять трафик Tailscale напрямую",
@@ -2885,6 +2928,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleEnableDesc": MessageLookupByLibrary.simpleMessage(
       "Добавлять узлы Tailscale как исходящие. При отключении Tailscale перестаёт обрабатывать трафик; обычный трафик не затрагивается.",
     ),
+    "tailscaleEnableDescShort": MessageLookupByLibrary.simpleMessage(
+      "Inject embedded Tailscale nodes into the active profile.",
+    ),
     "tailscaleEphemeral": MessageLookupByLibrary.simpleMessage(
       "Временный узел",
     ),
@@ -2919,6 +2965,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "tailscaleRoutesCount": m123,
     "tailscaleRoutesHint": MessageLookupByLibrary.simpleMessage(
       "Домены или IP, направляемые через этот узел, по одному в строке (например, Tailscale IP или имя MagicDNS вашего домашнего ПК).",
+    ),
+    "tailscaleRoutesHintCidr": MessageLookupByLibrary.simpleMessage(
+      "Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale IPs; ts.net covers MagicDNS names.",
     ),
     "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
       "Оставьте FlClash единственным VPN. Не запускайте VPN приложения Tailscale одновременно (Android допускает только один). Добавьте встроенный узел Tailscale ниже и укажите домашнее устройство в пунктах назначения маршрута.",
@@ -2973,6 +3022,33 @@ class MessageLookup extends MessageLookupByLibrary {
       "Tap the test button on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.",
     ),
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("Ретрансляция UDP"),
+    "tailscaleUsageDesc": MessageLookupByLibrary.simpleMessage(
+      "Pick one path. Advanced overrides stay under Advanced.",
+    ),
+    "tailscaleUsageEmbeddedApplied": MessageLookupByLibrary.simpleMessage(
+      "Using FlClash embedded Tailscale.",
+    ),
+    "tailscaleUsageEmbeddedBody": MessageLookupByLibrary.simpleMessage(
+      "FlClash joins your tailnet and routes the destinations you add. On Android, keep the Tailscale app VPN off.",
+    ),
+    "tailscaleUsageEmbeddedTitle": MessageLookupByLibrary.simpleMessage(
+      "FlClash embedded node",
+    ),
+    "tailscaleUsageSystemApplied": MessageLookupByLibrary.simpleMessage(
+      "Preferring the system Tailscale app.",
+    ),
+    "tailscaleUsageSystemBodyAndroid": MessageLookupByLibrary.simpleMessage(
+      "Let the Tailscale app own VPN. FlClash will not take the Android VPN slot.",
+    ),
+    "tailscaleUsageSystemBodyDesktop": MessageLookupByLibrary.simpleMessage(
+      "Keep Tailscale app/service traffic direct so FlClash does not hijack it. Optional embedded nodes still work.",
+    ),
+    "tailscaleUsageSystemTitle": MessageLookupByLibrary.simpleMessage(
+      "System Tailscale app",
+    ),
+    "tailscaleUsageTitle": MessageLookupByLibrary.simpleMessage(
+      "How to use Tailscale",
+    ),
     "tapIconToRetry": MessageLookupByLibrary.simpleMessage(
       "Нажмите на значок, чтобы повторить",
     ),

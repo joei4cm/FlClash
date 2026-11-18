@@ -12254,6 +12254,266 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `How to use Tailscale`
+  String get tailscaleUsageTitle {
+    return Intl.message(
+      'How to use Tailscale',
+      name: 'tailscaleUsageTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pick one path. Advanced overrides stay under Advanced.`
+  String get tailscaleUsageDesc {
+    return Intl.message(
+      'Pick one path. Advanced overrides stay under Advanced.',
+      name: 'tailscaleUsageDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `FlClash embedded node`
+  String get tailscaleUsageEmbeddedTitle {
+    return Intl.message(
+      'FlClash embedded node',
+      name: 'tailscaleUsageEmbeddedTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `FlClash joins your tailnet and routes the destinations you add. On Android, keep the Tailscale app VPN off.`
+  String get tailscaleUsageEmbeddedBody {
+    return Intl.message(
+      'FlClash joins your tailnet and routes the destinations you add. On Android, keep the Tailscale app VPN off.',
+      name: 'tailscaleUsageEmbeddedBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System Tailscale app`
+  String get tailscaleUsageSystemTitle {
+    return Intl.message(
+      'System Tailscale app',
+      name: 'tailscaleUsageSystemTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Let the Tailscale app own VPN. FlClash will not take the Android VPN slot.`
+  String get tailscaleUsageSystemBodyAndroid {
+    return Intl.message(
+      'Let the Tailscale app own VPN. FlClash will not take the Android VPN slot.',
+      name: 'tailscaleUsageSystemBodyAndroid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep Tailscale app/service traffic direct so FlClash does not hijack it. Optional embedded nodes still work.`
+  String get tailscaleUsageSystemBodyDesktop {
+    return Intl.message(
+      'Keep Tailscale app/service traffic direct so FlClash does not hijack it. Optional embedded nodes still work.',
+      name: 'tailscaleUsageSystemBodyDesktop',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Using FlClash embedded Tailscale.`
+  String get tailscaleUsageEmbeddedApplied {
+    return Intl.message(
+      'Using FlClash embedded Tailscale.',
+      name: 'tailscaleUsageEmbeddedApplied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Preferring the system Tailscale app.`
+  String get tailscaleUsageSystemApplied {
+    return Intl.message(
+      'Preferring the system Tailscale app.',
+      name: 'tailscaleUsageSystemApplied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `API access token`
+  String get tailscaleApiTokenTitle {
+    return Intl.message(
+      'API access token',
+      name: 'tailscaleApiTokenTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paste a Tailscale API access token to mint auth keys automatically. You can still paste an auth key by hand on each node.`
+  String get tailscaleApiTokenDesc {
+    return Intl.message(
+      'Paste a Tailscale API access token to mint auth keys automatically. You can still paste an auth key by hand on each node.',
+      name: 'tailscaleApiTokenDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add API access token`
+  String get tailscaleApiTokenAdd {
+    return Intl.message(
+      'Add API access token',
+      name: 'tailscaleApiTokenAdd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `API access token saved`
+  String get tailscaleApiTokenConfigured {
+    return Intl.message(
+      'API access token saved',
+      name: 'tailscaleApiTokenConfigured',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New nodes can generate an auth key from this token.`
+  String get tailscaleApiTokenConfiguredDesc {
+    return Intl.message(
+      'New nodes can generate an auth key from this token.',
+      name: 'tailscaleApiTokenConfiguredDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `From Tailscale admin → Settings → Keys → API access tokens (or a short-lived OAuth access token).`
+  String get tailscaleApiTokenHint {
+    return Intl.message(
+      'From Tailscale admin → Settings → Keys → API access tokens (or a short-lived OAuth access token).',
+      name: 'tailscaleApiTokenHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `API access token`
+  String get tailscaleApiTokenField {
+    return Intl.message(
+      'API access token',
+      name: 'tailscaleApiTokenField',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tags (optional)`
+  String get tailscaleApiTagsField {
+    return Intl.message(
+      'Tags (optional)',
+      name: 'tailscaleApiTagsField',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Comma-separated tags such as tag:flclash. Required when using an OAuth client with auth_keys scope.`
+  String get tailscaleApiTagsHint {
+    return Intl.message(
+      'Comma-separated tags such as tag:flclash. Required when using an OAuth client with auth_keys scope.',
+      name: 'tailscaleApiTagsHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add an API access token on the Tailscale page first.`
+  String get tailscaleApiTokenMissing {
+    return Intl.message(
+      'Add an API access token on the Tailscale page first.',
+      name: 'tailscaleApiTokenMissing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Generate auth key from API token`
+  String get tailscaleAuthKeyGenerate {
+    return Intl.message(
+      'Generate auth key from API token',
+      name: 'tailscaleAuthKeyGenerate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Generating…`
+  String get tailscaleAuthKeyGenerating {
+    return Intl.message(
+      'Generating…',
+      name: 'tailscaleAuthKeyGenerating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Auth key generated. You can still edit it before saving.`
+  String get tailscaleAuthKeyGenerated {
+    return Intl.message(
+      'Auth key generated. You can still edit it before saving.',
+      name: 'tailscaleAuthKeyGenerated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Leave blank to generate from the API token, or paste your own auth key to override.`
+  String get tailscaleAuthKeyOverrideHint {
+    return Intl.message(
+      'Leave blank to generate from the API token, or paste your own auth key to override.',
+      name: 'tailscaleAuthKeyOverrideHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale IPs; ts.net covers MagicDNS names.`
+  String get tailscaleRoutesHintCidr {
+    return Intl.message(
+      'Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale IPs; ts.net covers MagicDNS names.',
+      name: 'tailscaleRoutesHintCidr',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Inject embedded Tailscale nodes into the active profile.`
+  String get tailscaleEnableDescShort {
+    return Intl.message(
+      'Inject embedded Tailscale nodes into the active profile.',
+      name: 'tailscaleEnableDescShort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Advanced`
+  String get tailscaleAdvancedTitle {
+    return Intl.message(
+      'Advanced',
+      name: 'tailscaleAdvancedTitle',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
