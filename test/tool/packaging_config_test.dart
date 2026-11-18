@@ -59,4 +59,41 @@ void main() {
     expect(macros, contains('%global debug_package %{nil}'));
     expect(macros, contains('%global __os_install_post %{nil}'));
   });
+
+  test('flclash-tui PATH symlinks match each format install root', () {
+    final deb =
+        loadYaml(
+              File('linux/packaging/deb/make_config.yaml').readAsStringSync(),
+            )
+            as YamlMap;
+    final rpm =
+        loadYaml(
+              File('linux/packaging/rpm/make_config.yaml').readAsStringSync(),
+            )
+            as YamlMap;
+
+    expect(
+      (deb['postinstall_scripts'] as YamlList).cast<String>(),
+      contains('ln -sfn /opt/FlClash/flclash-tui /usr/bin/flclash-tui'),
+    );
+    expect(
+      (rpm['postinstall_scripts'] as YamlList).cast<String>(),
+      contains(
+        'ln -sfn %{_datadir}/%{name}/flclash-tui %{_bindir}/flclash-tui',
+      ),
+    );
+    for (final format in ['deb', 'rpm']) {
+      final config =
+          loadYaml(
+                File(
+                  'linux/packaging/$format/make_config.yaml',
+                ).readAsStringSync(),
+              )
+              as YamlMap;
+      expect(
+        (config['postuninstall_scripts'] as YamlList).cast<String>(),
+        contains('rm -f /usr/bin/flclash-tui'),
+      );
+    }
+  });
 }
