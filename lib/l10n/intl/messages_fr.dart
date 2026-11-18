@@ -2997,6 +2997,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enabled, but no nodes yet. Add a node to get started.",
     ),
     "tailscaleStatusReady": m124,
+    "tailscaleTestConfigFailed": MessageLookupByLibrary.simpleMessage(
+      "Could not join the tailnet. Check the auth key, Enable Tailscale, and that FlClash VPN is running.",
+    ),
+    "tailscaleTestConfigOk": MessageLookupByLibrary.simpleMessage(
+      "Tailscale config is valid — this node has joined the tailnet.",
+    ),
     "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
       "Turn on Enable Tailscale before testing.",
     ),
@@ -3004,10 +3010,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Start FlClash VPN before testing the connection.",
     ),
     "tailscaleTestNode": MessageLookupByLibrary.simpleMessage(
-      "Test connection",
+      "Test Tailscale config",
     ),
     "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
-      "Use the ping button next to a node to check whether the Tailscale outbound can dial out. A latency value means the connection is working; Timeout means check the auth key, Enable switch, and that FlClash VPN is started.",
+      "Tap the test button on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.",
     ),
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP relay"),
     "tapIconToRetry": MessageLookupByLibrary.simpleMessage(

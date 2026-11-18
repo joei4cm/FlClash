@@ -11064,10 +11064,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Test connection`
+  /// `Test Tailscale config`
   String get tailscaleTestNode {
     return Intl.message(
-      'Test connection',
+      'Test Tailscale config',
       name: 'tailscaleTestNode',
       desc: '',
       args: [],
@@ -11114,11 +11114,31 @@ class AppLocalizations {
     );
   }
 
-  /// `Use the ping button next to a node to check whether the Tailscale outbound can dial out. A latency value means the connection is working; Timeout means check the auth key, Enable switch, and that FlClash VPN is started.`
+  /// `Tap the test button on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.`
   String get tailscaleTestTip {
     return Intl.message(
-      'Use the ping button next to a node to check whether the Tailscale outbound can dial out. A latency value means the connection is working; Timeout means check the auth key, Enable switch, and that FlClash VPN is started.',
+      'Tap the test button on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.',
       name: 'tailscaleTestTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tailscale config is valid — this node has joined the tailnet.`
+  String get tailscaleTestConfigOk {
+    return Intl.message(
+      'Tailscale config is valid — this node has joined the tailnet.',
+      name: 'tailscaleTestConfigOk',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not join the tailnet. Check the auth key, Enable Tailscale, and that FlClash VPN is running.`
+  String get tailscaleTestConfigFailed {
+    return Intl.message(
+      'Could not join the tailnet. Check the auth key, Enable Tailscale, and that FlClash VPN is running.',
+      name: 'tailscaleTestConfigFailed',
       desc: '',
       args: [],
     );

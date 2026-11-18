@@ -2445,15 +2445,23 @@ class MessageLookup extends MessageLookupByLibrary {
       "有効ですが、ノードがありません。まずノードを追加してください。",
     ),
     "tailscaleStatusReady": m124,
+    "tailscaleTestConfigFailed": MessageLookupByLibrary.simpleMessage(
+      "tailnet に参加できませんでした。認証キー、Enable Tailscale、FlClash VPN を確認してください。",
+    ),
+    "tailscaleTestConfigOk": MessageLookupByLibrary.simpleMessage(
+      "Tailscale 設定は有効です — ノードは tailnet に参加済みです。",
+    ),
     "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
       "テストする前に「Tailscale を有効化」をオンにしてください。",
     ),
     "tailscaleTestNeedStart": MessageLookupByLibrary.simpleMessage(
       "接続をテストする前に FlClash VPN を開始してください。",
     ),
-    "tailscaleTestNode": MessageLookupByLibrary.simpleMessage("接続をテスト"),
+    "tailscaleTestNode": MessageLookupByLibrary.simpleMessage(
+      "Tailscale 設定をテスト",
+    ),
     "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
-      "ノード横のピンボタンで、Tailscale アウトバウンドが発信できるか確認できます。遅延が表示されれば接続は正常です。Timeout の場合は認証キー、「有効化」、FlClash VPN の起動を確認してください。",
+      "ノード横のテストで、認証キーが tailnet に参加できたか確認します。遅延表示は設定が有効、タイムアウトは参加失敗です。キー・Enable Tailscale・FlClash VPN を確認してください。これは公衆ネット到達性のテストではありません。",
     ),
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP リレー"),
     "tapIconToRetry": MessageLookupByLibrary.simpleMessage("アイコンをタップして再試行"),

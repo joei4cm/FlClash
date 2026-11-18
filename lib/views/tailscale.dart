@@ -78,6 +78,17 @@ class TailscaleView extends ConsumerWidget {
     await ref
         .read(proxiesActionProvider.notifier)
         .proxyDelayTest(Proxy(name: proxy.name, type: tailscaleProxyType));
+    if (!context.mounted) {
+      return;
+    }
+    final delay = ref.read(delayProvider(proxyName: proxy.name));
+    if (delay != null && delay > 0) {
+      dialogs.showBanner(appLocalizations.tailscaleTestConfigOk);
+      return;
+    }
+    if (delay != null && delay < 0) {
+      dialogs.showBanner(appLocalizations.tailscaleTestConfigFailed);
+    }
   }
 
   Widget _buildScenarioCard(BuildContext context) {

@@ -2955,6 +2955,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Включено, но узлов ещё нет. Добавьте узел, чтобы начать.",
     ),
     "tailscaleStatusReady": m124,
+    "tailscaleTestConfigFailed": MessageLookupByLibrary.simpleMessage(
+      "Could not join the tailnet. Check the auth key, Enable Tailscale, and that FlClash VPN is running.",
+    ),
+    "tailscaleTestConfigOk": MessageLookupByLibrary.simpleMessage(
+      "Tailscale config is valid — this node has joined the tailnet.",
+    ),
     "tailscaleTestNeedEnable": MessageLookupByLibrary.simpleMessage(
       "Перед проверкой включите Tailscale.",
     ),
@@ -2962,10 +2968,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Перед проверкой соединения запустите VPN FlClash.",
     ),
     "tailscaleTestNode": MessageLookupByLibrary.simpleMessage(
-      "Проверить соединение",
+      "Test Tailscale config",
     ),
     "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
-      "Кнопка ping рядом с узлом проверяет, может ли исходящий Tailscale установить соединение. Задержка означает, что связь есть; Timeout — проверьте ключ, переключатель включения и что VPN FlClash запущен.",
+      "Tap the test button on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.",
     ),
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("Ретрансляция UDP"),
     "tapIconToRetry": MessageLookupByLibrary.simpleMessage(
