@@ -893,6 +893,29 @@ mod tests {
             .expect("spawn placeholder Core")
     }
 
+    /// Stays alive briefly so Windows can assign it to a job object before exit.
+    /// Instant-exit placeholders race `AssignProcessToJobObject` and flake with
+    /// `Access is denied` once the child has already terminated.
+    fn spawn_soon_exiting_core() -> Child {
+        #[cfg(windows)]
+        let mut command = {
+            let mut command = Command::new("ping");
+            command.args(["-n", "2", "127.0.0.1"]);
+            command
+        };
+        #[cfg(not(windows))]
+        let mut command = {
+            let mut command = Command::new("sleep");
+            command.arg("0.2");
+            command
+        };
+        command
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn soon-exiting Core")
+    }
+
     fn spawn_running_core() -> Child {
         #[cfg(windows)]
         let mut command = {
@@ -1147,8 +1170,22 @@ mod tests {
     fn a_core_that_exits_on_its_own_is_reaped() {
         let _state = lock_process_state();
         let session_id = "0123456789abcdef0123456789abcdef";
-        *lock_surviving_poison(&MANAGED_CORE) =
-            Some(ManagedCore::adopt(session_id.to_string(), spawn_placeholder_core()).unwrap());
+        *lock_surviving_poison(&MANAGED_CORE) = Some(
+            ManagedCore::adopt(session_id.to_string(), spawn_soon_exiting_core()).unwrap(),
+        );
+
+        {
+            let mut managed = lock_surviving_poison(&MANAGED_CORE);
+            let child = &mut managed.as_mut().unwrap().child;
+            let deadline = Instant::now() + Duration::from_secs(5);
+            while child.try_wait().unwrap().is_none() {
+                assert!(
+                    Instant::now() < deadline,
+                    "placeholder core did not exit in time"
+                );
+                std::thread::sleep(Duration::from_millis(50));
+            }
+        }
 
         reap_exited_core(session_id);
 
