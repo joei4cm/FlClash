@@ -1543,5 +1543,9 @@
   "launcherIconMascotCloud": "구름",
   "launcherIconMascotFox": "여우",
   "launcherIconMascotPenguin": "펭귄",
-  "launcherIconMascotRobot": "로봇"
+  "launcherIconMascotRobot": "로봇",
+  "launcherIconKittyOrange": "주황 고양이",
+  "launcherIconKittyGray": "회색 고양이",
+  "launcherIconPuppyGolden": "골든 강아지",
+  "launcherIconPuppyShiba": "시바 강아지"
 }

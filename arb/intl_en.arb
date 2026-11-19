@@ -1550,5 +1550,9 @@
   "launcherIconMascotCloud": "Cloud",
   "launcherIconMascotFox": "Fox",
   "launcherIconMascotPenguin": "Penguin",
-  "launcherIconMascotRobot": "Robot"
+  "launcherIconMascotRobot": "Robot",
+  "launcherIconKittyOrange": "Orange kitty",
+  "launcherIconKittyGray": "Gray kitty",
+  "launcherIconPuppyGolden": "Golden puppy",
+  "launcherIconPuppyShiba": "Shiba puppy"
 }

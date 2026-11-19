@@ -1543,5 +1543,9 @@
   "launcherIconMascotCloud": "Nube",
   "launcherIconMascotFox": "Zorro",
   "launcherIconMascotPenguin": "Pingüino",
-  "launcherIconMascotRobot": "Robot"
+  "launcherIconMascotRobot": "Robot",
+  "launcherIconKittyOrange": "Gatito naranja",
+  "launcherIconKittyGray": "Gatito gris",
+  "launcherIconPuppyGolden": "Cachorro dorado",
+  "launcherIconPuppyShiba": "Shiba"
 }

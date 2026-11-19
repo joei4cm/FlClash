@@ -1607,6 +1607,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "launcherIconFrost": MessageLookupByLibrary.simpleMessage("Frost"),
     "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("Graphite"),
     "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("Indigo"),
+    "launcherIconKittyGray": MessageLookupByLibrary.simpleMessage("Gray kitty"),
+    "launcherIconKittyOrange": MessageLookupByLibrary.simpleMessage(
+      "Orange kitty",
+    ),
     "launcherIconMascotCloud": MessageLookupByLibrary.simpleMessage("Cloud"),
     "launcherIconMascotFox": MessageLookupByLibrary.simpleMessage("Fox"),
     "launcherIconMascotPenguin": MessageLookupByLibrary.simpleMessage(
@@ -1614,6 +1618,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "launcherIconMascotRobot": MessageLookupByLibrary.simpleMessage("Robot"),
     "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Midnight"),
+    "launcherIconPuppyGolden": MessageLookupByLibrary.simpleMessage(
+      "Golden puppy",
+    ),
+    "launcherIconPuppyShiba": MessageLookupByLibrary.simpleMessage(
+      "Shiba puppy",
+    ),
     "launcherIconTide": MessageLookupByLibrary.simpleMessage("Tide"),
     "layout": MessageLookupByLibrary.simpleMessage("Layout"),
     "light": MessageLookupByLibrary.simpleMessage("Light"),

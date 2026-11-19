@@ -76,6 +76,10 @@ class _LauncherIconItem extends ConsumerWidget {
       LauncherIcon.mascotFox => l10n.launcherIconMascotFox,
       LauncherIcon.mascotPenguin => l10n.launcherIconMascotPenguin,
       LauncherIcon.mascotRobot => l10n.launcherIconMascotRobot,
+      LauncherIcon.kittyOrange => l10n.launcherIconKittyOrange,
+      LauncherIcon.kittyGray => l10n.launcherIconKittyGray,
+      LauncherIcon.puppyGolden => l10n.launcherIconPuppyGolden,
+      LauncherIcon.puppyShiba => l10n.launcherIconPuppyShiba,
     };
   }
 

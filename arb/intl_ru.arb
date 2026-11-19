@@ -1543,5 +1543,9 @@
   "launcherIconMascotCloud": "Облако",
   "launcherIconMascotFox": "Лиса",
   "launcherIconMascotPenguin": "Пингвин",
-  "launcherIconMascotRobot": "Робот"
+  "launcherIconMascotRobot": "Робот",
+  "launcherIconKittyOrange": "Рыжий котёнок",
+  "launcherIconKittyGray": "Серый котёнок",
+  "launcherIconPuppyGolden": "Золотистый щенок",
+  "launcherIconPuppyShiba": "Сиба"
 }

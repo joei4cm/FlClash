@@ -205,6 +205,58 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
+        <activity-alias
+            android:name=".IconKittyOrange"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_kitty_orange"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_kitty_orange_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconKittyGray"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_kitty_gray"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_kitty_gray_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconPuppyGolden"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_puppy_golden"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_puppy_golden_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconPuppyShiba"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_puppy_shiba"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_puppy_shiba_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
         <activity
             android:name=".QuickActionActivity"

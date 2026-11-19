@@ -26,5 +26,9 @@ object Components {
         "mascot_fox" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconMascotFox"),
         "mascot_penguin" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconMascotPenguin"),
         "mascot_robot" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconMascotRobot"),
+        "kitty_orange" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconKittyOrange"),
+        "kitty_gray" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconKittyGray"),
+        "puppy_golden" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconPuppyGolden"),
+        "puppy_shiba" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconPuppyShiba"),
     )
 }

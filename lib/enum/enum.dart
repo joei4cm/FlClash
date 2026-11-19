@@ -833,13 +833,21 @@ enum LauncherIcon {
   mascotCloud,
   mascotFox,
   mascotPenguin,
-  mascotRobot;
+  mascotRobot,
+  kittyOrange,
+  kittyGray,
+  puppyGolden,
+  puppyShiba;
 
   String get id => switch (this) {
     LauncherIcon.mascotCloud => 'mascot_cloud',
     LauncherIcon.mascotFox => 'mascot_fox',
     LauncherIcon.mascotPenguin => 'mascot_penguin',
     LauncherIcon.mascotRobot => 'mascot_robot',
+    LauncherIcon.kittyOrange => 'kitty_orange',
+    LauncherIcon.kittyGray => 'kitty_gray',
+    LauncherIcon.puppyGolden => 'puppy_golden',
+    LauncherIcon.puppyShiba => 'puppy_shiba',
     _ => name,
   };
 

@@ -12624,6 +12624,46 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Orange kitty`
+  String get launcherIconKittyOrange {
+    return Intl.message(
+      'Orange kitty',
+      name: 'launcherIconKittyOrange',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gray kitty`
+  String get launcherIconKittyGray {
+    return Intl.message(
+      'Gray kitty',
+      name: 'launcherIconKittyGray',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Golden puppy`
+  String get launcherIconPuppyGolden {
+    return Intl.message(
+      'Golden puppy',
+      name: 'launcherIconPuppyGolden',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shiba puppy`
+  String get launcherIconPuppyShiba {
+    return Intl.message(
+      'Shiba puppy',
+      name: 'launcherIconPuppyShiba',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -1672,6 +1672,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "launcherIconFrost": MessageLookupByLibrary.simpleMessage("Иней"),
     "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("Графит"),
     "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("Индиго"),
+    "launcherIconKittyGray": MessageLookupByLibrary.simpleMessage(
+      "Серый котёнок",
+    ),
+    "launcherIconKittyOrange": MessageLookupByLibrary.simpleMessage(
+      "Рыжий котёнок",
+    ),
     "launcherIconMascotCloud": MessageLookupByLibrary.simpleMessage("Облако"),
     "launcherIconMascotFox": MessageLookupByLibrary.simpleMessage("Лиса"),
     "launcherIconMascotPenguin": MessageLookupByLibrary.simpleMessage(
@@ -1679,6 +1685,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "launcherIconMascotRobot": MessageLookupByLibrary.simpleMessage("Робот"),
     "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Полночь"),
+    "launcherIconPuppyGolden": MessageLookupByLibrary.simpleMessage(
+      "Золотистый щенок",
+    ),
+    "launcherIconPuppyShiba": MessageLookupByLibrary.simpleMessage("Сиба"),
     "launcherIconTide": MessageLookupByLibrary.simpleMessage("Прилив"),
     "layout": MessageLookupByLibrary.simpleMessage("Макет"),
     "light": MessageLookupByLibrary.simpleMessage("Светлая"),
