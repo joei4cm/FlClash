@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "versions": [
     {
-      "version": "0.9.22",
-      "tag": "v0.9.22",
+      "version": "0.9.23",
+      "tag": "v0.9.23",
       "date": "2026-11-19",
       "prerelease": false,
       "groups": [
@@ -106,6 +106,21 @@
         {
           "type": "fix",
           "entries": [
+            {
+              "id": "989e6f9",
+              "scope": "theme",
+              "text": "Ship icon previews and make app name edits stick (#89)"
+            },
+            {
+              "id": "b8b050a",
+              "scope": "tailscale",
+              "text": "Keep settings and node dialog content reachable (#88)"
+            },
+            {
+              "id": "28ed728",
+              "scope": "ci",
+              "text": "Repair launcherIcons list and format l10n (#87)"
+            },
             {
               "id": "b2e3550",
               "scope": "ci",
