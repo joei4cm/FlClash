@@ -1,9 +1,10 @@
 # Changelog
 
-## v0.9.21 (2026-11-18)
+## v0.9.22 (2026-11-19)
 
 **Features**
 
+- **android** Selectable icons, cute animals, and custom app name (#85) (076feeb)
 - **tailscale** API token setup and simpler usage modes (c53ad89)
 - Trim idle RSS and ship flclash-tui on PATH (ec3c89e)
 - **android** Graphical Tailscale VPN coexistence picker (3172d8b)
@@ -25,6 +26,8 @@
 
 **Bug Fixes**
 
+- **ci** Keep release upload off macos-15-intel cancels (#84) (b2e3550)
+- **changelog** Regenerate v0.9.21 from changelog.json (c6c2988)
 - **tailscale** Test button checks join, not public internet (364ae42)
 - **helper** Stop Windows reaping test from racing job assign (d78c066)
 - **packaging** Point rpm flclash-tui symlink at %{_datadir} (46cf7ff)

@@ -2,14 +2,19 @@
   "schemaVersion": 2,
   "versions": [
     {
-      "version": "0.9.21",
-      "tag": "v0.9.21",
-      "date": "2026-11-18",
+      "version": "0.9.22",
+      "tag": "v0.9.22",
+      "date": "2026-11-19",
       "prerelease": false,
       "groups": [
         {
           "type": "feat",
           "entries": [
+            {
+              "id": "076feeb",
+              "scope": "android",
+              "text": "Selectable icons, cute animals, and custom app name (#85)"
+            },
             {
               "id": "c53ad89",
               "scope": "tailscale",
@@ -101,6 +106,16 @@
         {
           "type": "fix",
           "entries": [
+            {
+              "id": "b2e3550",
+              "scope": "ci",
+              "text": "Keep release upload off macos-15-intel cancels (#84)"
+            },
+            {
+              "id": "c6c2988",
+              "scope": "changelog",
+              "text": "Regenerate v0.9.21 from changelog.json"
+            },
             {
               "id": "364ae42",
               "scope": "tailscale",
