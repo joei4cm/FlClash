@@ -279,9 +279,15 @@ the patch when pubspec still names an already tagged one), prints the notes the 
 
 ```bash
 tool/release.sh pre --dry-run     # plan and notes, changes nothing
-tool/release.sh pre --push        # bump, tag vX.Y.Z-pre.N, push
-tool/release.sh stable --push     # changelog, chore(release) commit, tag, push
+tool/release.sh pre --push        # bump, refresh geo, tag vX.Y.Z-pre.N, push
+tool/release.sh stable --push     # geo assets, changelog, chore(release) commit, tag, push
+bash tool/update_geo_assets.sh    # refresh MMDB/ASN/GEOIP/GEOSITE alone
 ```
+
+Stable and pre releases download MetaCubeX `meta-rules-dat` latest into `assets/data/`
+(`GEOIP.metadb`, `ASN.mmdb`, `GEOIP.dat`, `GEOSITE.dat`) unless `--skip-geo` is passed, so the
+packaged app seeds current databases. Pass `--skip-geo` only when the network cannot reach
+GitHub and the already-committed assets must ship.
 
 The release commit comes before the tag on purpose: the generated wording is reviewable in the diff before it ships, and
 the tag is what `render release` reads. CI never writes back to the repository; it only runs `verify`. Wording in

@@ -10,13 +10,15 @@ want_version=""
 do_push=0
 assume_yes=0
 dry_run=0
+skip_geo=0
 
 usage() {
   cat <<'EOF'
 Usage: tool/release.sh <pre|stable> [options]
 
   pre                Tag the next vX.Y.Z-pre.N prerelease.
-  stable             Write the changelog, commit it, and tag vX.Y.Z.
+  stable             Refresh geo assets, write the changelog, commit, and
+                     tag vX.Y.Z.
 
 Options:
   --version X.Y.Z    Target app version. Defaults to the pubspec version,
@@ -24,6 +26,7 @@ Options:
   --push             Push the branch and the tag once the local steps pass.
   --yes              Skip the confirmation prompt.
   --dry-run          Report the plan and exit without changing anything.
+  --skip-geo         Do not refresh MMDB/ASN/GEOIP/GEOSITE before tagging.
   -h, --help         Show this help.
 
 Examples:
@@ -51,6 +54,7 @@ while (($#)); do
     --push) do_push=1 ;;
     --yes | -y) assume_yes=1 ;;
     --dry-run) dry_run=1 ;;
+    --skip-geo) skip_geo=1 ;;
     -h | --help)
       usage
       exit 0
@@ -133,13 +137,18 @@ else
   echo "changelog : CHANGELOG.md + changelog.json regenerated and committed"
   echo "publishes : GitHub release with artifacts and SHA256SUMS"
 fi
+if ((skip_geo)); then
+  echo "geo       : skipped (--skip-geo)"
+else
+  echo "geo       : refresh MMDB/ASN/GEOIP/GEOSITE from MetaCubeX latest"
+fi
 echo "push      : $([[ $do_push == 1 ]] && echo yes || echo 'no (printed at the end)')"
 echo
 
 committed=0
 restore() {
   ((committed)) && return 0
-  git checkout -- pubspec.yaml changelog.json CHANGELOG.md 2>/dev/null || true
+  git checkout -- pubspec.yaml changelog.json CHANGELOG.md assets/data 2>/dev/null || true
 }
 trap restore EXIT
 
@@ -183,17 +192,23 @@ if ((assume_yes == 0)); then
   done
 fi
 
+if ((skip_geo == 0)); then
+  echo "Refreshing bundled geo databases..."
+  bash "$script_dir/update_geo_assets.sh"
+  echo
+fi
+
 if [[ "$mode" == "stable" ]]; then
   dart run tool/changelog.dart release --version "$version"
   echo
-  git --no-pager diff --stat -- CHANGELOG.md changelog.json pubspec.yaml
+  git --no-pager diff --stat -- CHANGELOG.md changelog.json pubspec.yaml assets/data
   echo
-  git add CHANGELOG.md changelog.json pubspec.yaml
+  git add CHANGELOG.md changelog.json pubspec.yaml assets/data
   git commit -m "chore(release): v$version"
   committed=1
   dart run tool/changelog.dart verify
-elif ! git diff --quiet -- pubspec.yaml; then
-  git add pubspec.yaml
+elif ! git diff --quiet -- pubspec.yaml assets/data; then
+  git add pubspec.yaml assets/data
   git commit -m "chore: bump version to $(sed -n 's/^version: //p' pubspec.yaml)"
   committed=1
 else
