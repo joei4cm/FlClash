@@ -822,6 +822,27 @@ enum RestoreStrategy { compatible, override }
 
 enum TabAnimation { slide, fade }
 
+/// Android phone launcher looks (activity-aliases). Desktop keeps the packaged icon.
+enum LauncherIcon {
+  classic,
+  frost,
+  midnight,
+  indigo,
+  tide,
+  graphite;
+
+  String get id => name;
+
+  String get asset => 'assets/images/app_icons/$name.png';
+
+  static LauncherIcon fromId(String? id) {
+    return LauncherIcon.values.firstWhere(
+      (value) => value.id == id,
+      orElse: () => LauncherIcon.classic,
+    );
+  }
+}
+
 enum LiquidGlassMode { none, standard, ultra }
 
 enum Language { yaml, javaScript, json, ini, xml, text }

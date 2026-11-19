@@ -1259,6 +1259,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "launchInterruptedTip": MessageLookupByLibrary.simpleMessage(
       "应用上次在启动过程中意外退出。已跳过本次自动配置，你可以手动启动重试。",
     ),
+    "launcherIcon": MessageLookupByLibrary.simpleMessage("应用图标"),
+    "launcherIconClassic": MessageLookupByLibrary.simpleMessage("经典"),
+    "launcherIconFrost": MessageLookupByLibrary.simpleMessage("霜白"),
+    "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("石墨"),
+    "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("靛蓝"),
+    "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("午夜"),
+    "launcherIconTide": MessageLookupByLibrary.simpleMessage("潮汐"),
     "layout": MessageLookupByLibrary.simpleMessage("布局"),
     "light": MessageLookupByLibrary.simpleMessage("浅色"),
     "lineIssueTip": m59,

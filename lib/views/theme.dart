@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/providers/state.dart';
@@ -31,6 +32,10 @@ class ThemeView extends StatelessWidget {
           const SizedBox(height: 16),
           const _ThemeModeItem(),
           const SizedBox(height: 16),
+          if (system.isAndroid) ...const [
+            _LauncherIconItem(),
+            SizedBox(height: 16),
+          ],
           const _PureBlackItem(),
           const SizedBox(height: 16),
           const _PrimaryColorItem(),
@@ -50,6 +55,57 @@ class ThemeView extends StatelessWidget {
           const _TextScaleFactorItem(),
         ],
       ),
+    );
+  }
+}
+
+class _LauncherIconItem extends ConsumerWidget {
+  const _LauncherIconItem();
+
+  String _label(AppLocalizations l10n, LauncherIcon icon) {
+    return switch (icon) {
+      LauncherIcon.classic => l10n.launcherIconClassic,
+      LauncherIcon.frost => l10n.launcherIconFrost,
+      LauncherIcon.midnight => l10n.launcherIconMidnight,
+      LauncherIcon.indigo => l10n.launcherIconIndigo,
+      LauncherIcon.tide => l10n.launcherIconTide,
+      LauncherIcon.graphite => l10n.launcherIconGraphite,
+    };
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appLocalizations = context.appLocalizations;
+    final selected = LauncherIcon.fromId(
+      ref.watch(appSettingProvider.select((state) => state.launcherIcon)),
+    );
+    return PreviewChoiceGroup<LauncherIcon>(
+      info: Info(
+        label: appLocalizations.launcherIcon,
+        glyph: AppGlyphs.iconTile,
+      ),
+      value: selected,
+      choices: [
+        for (final icon in LauncherIcon.values)
+          PreviewChoice(
+            value: icon,
+            label: _label(appLocalizations, icon),
+            pictogram: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                icon.asset,
+                width: 48,
+                height: 48,
+                filterQuality: FilterQuality.medium,
+              ),
+            ),
+          ),
+      ],
+      onChanged: (value) {
+        ref
+            .read(appSettingProvider.notifier)
+            .update((state) => state.copyWith(launcherIcon: value.id));
+      },
     );
   }
 }

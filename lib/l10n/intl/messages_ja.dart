@@ -1388,6 +1388,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "launchInterruptedTip": MessageLookupByLibrary.simpleMessage(
       "前回、アプリは起動中に予期せず終了しました。今回の自動セットアップはスキップしました。手動で起動して再試行できます。",
     ),
+    "launcherIcon": MessageLookupByLibrary.simpleMessage("アプリアイコン"),
+    "launcherIconClassic": MessageLookupByLibrary.simpleMessage("クラシック"),
+    "launcherIconFrost": MessageLookupByLibrary.simpleMessage("フロスト"),
+    "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("グラファイト"),
+    "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("インディゴ"),
+    "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("ミッドナイト"),
+    "launcherIconTide": MessageLookupByLibrary.simpleMessage("タイド"),
     "layout": MessageLookupByLibrary.simpleMessage("レイアウト"),
     "light": MessageLookupByLibrary.simpleMessage("ライト"),
     "lineIssueTip": m59,

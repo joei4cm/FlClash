@@ -230,6 +230,19 @@ class App {
     return methodChannel.invokeMethod<bool>('openAppSettings');
   }
 
+  Future<String?> getLauncherIcon() async {
+    if (!Platform.isAndroid) return null;
+    return methodChannel.invokeMethod<String>('getLauncherIcon');
+  }
+
+  Future<bool> setLauncherIcon(String id) async {
+    if (!Platform.isAndroid) return false;
+    return await methodChannel.invokeMethod<bool>('setLauncherIcon', {
+          'id': id,
+        }) ??
+        false;
+  }
+
   Future<({bool user, bool system, bool root})> locateCaCertificate(
     List<int> der,
   ) async {

@@ -1536,6 +1536,61 @@ class AppLocalizations {
     );
   }
 
+  /// `App icon`
+  String get launcherIcon {
+    return Intl.message('App icon', name: 'launcherIcon', desc: '', args: []);
+  }
+
+  /// `Classic`
+  String get launcherIconClassic {
+    return Intl.message(
+      'Classic',
+      name: 'launcherIconClassic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Frost`
+  String get launcherIconFrost {
+    return Intl.message('Frost', name: 'launcherIconFrost', desc: '', args: []);
+  }
+
+  /// `Midnight`
+  String get launcherIconMidnight {
+    return Intl.message(
+      'Midnight',
+      name: 'launcherIconMidnight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Indigo`
+  String get launcherIconIndigo {
+    return Intl.message(
+      'Indigo',
+      name: 'launcherIconIndigo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tide`
+  String get launcherIconTide {
+    return Intl.message('Tide', name: 'launcherIconTide', desc: '', args: []);
+  }
+
+  /// `Graphite`
+  String get launcherIconGraphite {
+    return Intl.message(
+      'Graphite',
+      name: 'launcherIconGraphite',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Auto close connections`
   String get autoCloseConnections {
     return Intl.message(
@@ -7663,8 +7718,7 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one:
-          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',

@@ -1557,9 +1557,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "installUpdate": MessageLookupByLibrary.simpleMessage(
       "Instalar actualización",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Este sistema oculta la lista de apps instaladas hasta que se concede el permiso. Autorízalo para configurar el proxy por app.",
     ),
@@ -1693,6 +1694,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "launchInterruptedTip": MessageLookupByLibrary.simpleMessage(
       "La última vez, la app se cerró inesperadamente mientras se iniciaba. En este inicio se ha omitido la configuración automática; puedes iniciarla manualmente para reintentarlo.",
     ),
+    "launcherIcon": MessageLookupByLibrary.simpleMessage("Icono de la app"),
+    "launcherIconClassic": MessageLookupByLibrary.simpleMessage("Clásico"),
+    "launcherIconFrost": MessageLookupByLibrary.simpleMessage("Escarcha"),
+    "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("Grafito"),
+    "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("Índigo"),
+    "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Medianoche"),
+    "launcherIconTide": MessageLookupByLibrary.simpleMessage("Marea"),
     "layout": MessageLookupByLibrary.simpleMessage("Diseño"),
     "light": MessageLookupByLibrary.simpleMessage("Claro"),
     "lineIssueTip": m59,

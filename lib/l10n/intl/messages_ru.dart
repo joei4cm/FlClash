@@ -1535,9 +1535,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "installUpdate": MessageLookupByLibrary.simpleMessage(
       "Установить обновление",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Эта система не выдаёт список установленных приложений без разрешения. Предоставьте его, чтобы настроить прокси для отдельных приложений.",
     ),
@@ -1663,6 +1664,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "launchInterruptedTip": MessageLookupByLibrary.simpleMessage(
       "В прошлый раз приложение неожиданно завершилось во время запуска. Автоматическая настройка для этого запуска пропущена; вы можете запустить её вручную.",
     ),
+    "launcherIcon": MessageLookupByLibrary.simpleMessage("Значок приложения"),
+    "launcherIconClassic": MessageLookupByLibrary.simpleMessage("Классический"),
+    "launcherIconFrost": MessageLookupByLibrary.simpleMessage("Иней"),
+    "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("Графит"),
+    "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("Индиго"),
+    "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Полночь"),
+    "launcherIconTide": MessageLookupByLibrary.simpleMessage("Прилив"),
     "layout": MessageLookupByLibrary.simpleMessage("Макет"),
     "light": MessageLookupByLibrary.simpleMessage("Светлая"),
     "lineIssueTip": m59,

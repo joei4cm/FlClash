@@ -1472,9 +1472,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Certificate installed",
     ),
     "installUpdate": MessageLookupByLibrary.simpleMessage("Install update"),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
     ),
@@ -1598,6 +1599,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "launchInterruptedTip": MessageLookupByLibrary.simpleMessage(
       "The app exited unexpectedly while it was starting up last time. Automatic setup was skipped for this launch; you can start it manually to retry.",
     ),
+    "launcherIcon": MessageLookupByLibrary.simpleMessage("App icon"),
+    "launcherIconClassic": MessageLookupByLibrary.simpleMessage("Classic"),
+    "launcherIconFrost": MessageLookupByLibrary.simpleMessage("Frost"),
+    "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("Graphite"),
+    "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("Indigo"),
+    "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Midnight"),
+    "launcherIconTide": MessageLookupByLibrary.simpleMessage("Tide"),
     "layout": MessageLookupByLibrary.simpleMessage("Layout"),
     "light": MessageLookupByLibrary.simpleMessage("Light"),
     "lineIssueTip": m59,

@@ -13,4 +13,14 @@ object Components {
 
     val serviceBroadcastReceiver =
         ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.ServiceBroadcastReceiver")
+
+    /** Phone launcher icons (activity-aliases targeting [mainActivity]). */
+    val launcherIcons = listOf(
+        "classic" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconClassic"),
+        "frost" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconFrost"),
+        "midnight" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconMidnight"),
+        "indigo" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconIndigo"),
+        "tide" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconTide"),
+        "graphite" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconGraphite"),
+    )
 }

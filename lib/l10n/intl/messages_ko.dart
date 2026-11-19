@@ -1406,6 +1406,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "launchInterruptedTip": MessageLookupByLibrary.simpleMessage(
       "지난번 시작하는 중에 앱이 예기치 않게 종료되었습니다. 이번 실행에서는 자동 설정을 건너뛰었으니 직접 시작하여 다시 시도하세요.",
     ),
+    "launcherIcon": MessageLookupByLibrary.simpleMessage("앱 아이콘"),
+    "launcherIconClassic": MessageLookupByLibrary.simpleMessage("클래식"),
+    "launcherIconFrost": MessageLookupByLibrary.simpleMessage("프로스트"),
+    "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("그래파이트"),
+    "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("인디고"),
+    "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("미드나잇"),
+    "launcherIconTide": MessageLookupByLibrary.simpleMessage("타이드"),
     "layout": MessageLookupByLibrary.simpleMessage("레이아웃"),
     "light": MessageLookupByLibrary.simpleMessage("라이트"),
     "lineIssueTip": m59,

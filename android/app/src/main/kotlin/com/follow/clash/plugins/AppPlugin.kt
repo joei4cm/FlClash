@@ -243,6 +243,19 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                 result.success(openAppSettings())
             }
 
+            "getLauncherIcon" -> {
+                result.success(currentLauncherIcon())
+            }
+
+            "setLauncherIcon" -> {
+                val id = call.argument<String>("id")
+                if (id.isNullOrBlank()) {
+                    result.error("INVALID_ARGUMENT", "Launcher icon id is required", null)
+                } else {
+                    result.success(setLauncherIcon(id))
+                }
+            }
+
 
             "getLastExitInfo" -> reply(result) {
                 GlobalState.lastExitInfo()
@@ -585,6 +598,38 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         } catch (_: Exception) {
             false
         }
+    }
+
+    private fun currentLauncherIcon(): String {
+        val pm = GlobalState.application.packageManager
+        for ((id, component) in Components.launcherIcons) {
+            val state = pm.getComponentEnabledSetting(component)
+            val enabled = when (state) {
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED -> true
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED -> false
+                else -> component.className.endsWith(".IconClassic")
+            }
+            if (enabled) return id
+        }
+        return "classic"
+    }
+
+    private fun setLauncherIcon(id: String): Boolean {
+        val match = Components.launcherIcons.firstOrNull { it.first == id } ?: return false
+        val pm = GlobalState.application.packageManager
+        for ((_, component) in Components.launcherIcons) {
+            val enable = component == match.second
+            pm.setComponentEnabledSetting(
+                component,
+                if (enable) {
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                } else {
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                },
+                PackageManager.DONT_KILL_APP,
+            )
+        }
+        return true
     }
 
     @Suppress("DEPRECATION")
