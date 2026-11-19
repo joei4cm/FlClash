@@ -40,6 +40,7 @@ import com.follow.clash.common.Components
 import com.follow.clash.common.GlobalState
 import com.follow.clash.common.PendingCallback
 import com.follow.clash.common.QuickAction
+import com.follow.clash.common.R as CommonR
 import com.follow.clash.common.quickIntent
 import com.follow.clash.common.registerReceiverCompat
 import com.follow.clash.common.shortcutId
@@ -640,7 +641,7 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
 
     private fun setAppDisplayName(name: String) {
         val label = name.ifBlank {
-            GlobalState.application.getString(R.string.app_name)
+            GlobalState.application.getString(CommonR.string.app_name)
         }
         GlobalState.application
             .getSharedPreferences(DISPLAY_PREFS, Context.MODE_PRIVATE)

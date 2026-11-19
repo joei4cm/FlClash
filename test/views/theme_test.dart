@@ -226,12 +226,15 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      final add = find.byTooltip('Add');
       await tester.scrollUntilVisible(
-        find.byTooltip('Add'),
-        200,
+        add,
+        100,
         scrollable: find.byType(Scrollable).first,
       );
-      await tester.tap(find.byTooltip('Add'));
+      await tester.ensureVisible(add);
+      await tester.pumpAndSettle();
+      await tester.tap(add);
       await tester.pumpAndSettle();
 
       final pad = tester.getRect(
