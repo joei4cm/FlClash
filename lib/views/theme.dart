@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/features/form/form.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/config.dart';
@@ -83,7 +82,11 @@ String launcherIconLabel(AppLocalizations l10n, LauncherIcon icon) {
   };
 }
 
-Widget launcherIconThumb(BuildContext context, LauncherIcon icon) {
+Widget launcherIconThumb(
+  BuildContext context,
+  LauncherIcon icon, {
+  double size = 48,
+}) {
   return ClipPath(
     clipper: ShapeBorderClipper(
       shape: AppShape.sm,
@@ -91,8 +94,8 @@ Widget launcherIconThumb(BuildContext context, LauncherIcon icon) {
     ),
     child: Image.asset(
       icon.asset,
-      width: 36,
-      height: 36,
+      width: size,
+      height: size,
       filterQuality: FilterQuality.medium,
     ),
   );
@@ -201,45 +204,82 @@ class LauncherIconView extends ConsumerWidget {
     LauncherIcon.otter,
   ];
 
+  List<PreviewChoice<LauncherIcon>> _choices(
+    BuildContext context,
+    AppLocalizations appLocalizations,
+    List<LauncherIcon> icons,
+  ) {
+    return [
+      for (final icon in icons)
+        PreviewChoice(
+          value: icon,
+          label: launcherIconLabel(appLocalizations, icon),
+          pictogram: launcherIconThumb(context, icon),
+        ),
+    ];
+  }
+
+  void _select(WidgetRef ref, LauncherIcon value) {
+    ref
+        .read(appSettingProvider.notifier)
+        .update((state) => state.copyWith(launcherIcon: value.id));
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
-    return SelectionSheet<LauncherIcon>(
+    final selected = LauncherIcon.fromId(
+      ref.watch(appSettingProvider.select((state) => state.launcherIcon)),
+    );
+    return BaseScaffold(
       title: appLocalizations.launcherIcon,
-      sections: [
-        SelectionSection(
-          label: appLocalizations.launcherIconSectionBrand,
-          items: _brand,
+      body: ListView(
+        padding: EdgeInsets.only(
+          top: context.appBarInset,
+          bottom: 32 + context.bottomInset,
         ),
-        SelectionSection(
-          label: appLocalizations.launcherIconSectionKitty,
-          items: _kitties,
-        ),
-        SelectionSection(
-          label: appLocalizations.launcherIconSectionPuppy,
-          items: _puppies,
-        ),
-        SelectionSection(
-          label: appLocalizations.launcherIconSectionAnimal,
-          items: _animals,
-        ),
-      ],
-      labelBuilder: (icon) => launcherIconLabel(appLocalizations, icon),
-      titleBuilder: (icon, title) => Row(
-        spacing: 12,
         children: [
-          launcherIconThumb(context, icon),
-          Expanded(child: title),
+          PreviewChoiceGroup(
+            info: Info(
+              label: appLocalizations.launcherIconSectionBrand,
+              glyph: AppGlyphs.iconTile,
+            ),
+            value: selected,
+            choices: _choices(context, appLocalizations, _brand),
+            onChanged: (value) => _select(ref, value),
+          ),
+          const SizedBox(height: 16),
+          PreviewChoiceGroup(
+            info: Info(
+              label: appLocalizations.launcherIconSectionKitty,
+              glyph: AppGlyphs.iconTile,
+            ),
+            value: selected,
+            choices: _choices(context, appLocalizations, _kitties),
+            onChanged: (value) => _select(ref, value),
+          ),
+          const SizedBox(height: 16),
+          PreviewChoiceGroup(
+            info: Info(
+              label: appLocalizations.launcherIconSectionPuppy,
+              glyph: AppGlyphs.iconTile,
+            ),
+            value: selected,
+            choices: _choices(context, appLocalizations, _puppies),
+            onChanged: (value) => _select(ref, value),
+          ),
+          const SizedBox(height: 16),
+          PreviewChoiceGroup(
+            info: Info(
+              label: appLocalizations.launcherIconSectionAnimal,
+              glyph: AppGlyphs.iconTile,
+            ),
+            value: selected,
+            choices: _choices(context, appLocalizations, _animals),
+            onChanged: (value) => _select(ref, value),
+          ),
         ],
       ),
-      selectedOf: (ref) => LauncherIcon.fromId(
-        ref.watch(appSettingProvider.select((state) => state.launcherIcon)),
-      ),
-      onSelected: (value) {
-        ref
-            .read(appSettingProvider.notifier)
-            .update((state) => state.copyWith(launcherIcon: value.id));
-      },
     );
   }
 }
@@ -251,11 +291,15 @@ class _AppDisplayNameItem extends ConsumerWidget {
     final appLocalizations = context.appLocalizations;
     final current = ref.read(appSettingProvider).appDisplayName;
     final next = await dialogs.showCommonDialog<String>(
+      context: context,
       child: InputDialog(
         title: appLocalizations.appDisplayName,
         value: current,
         labelText: appLocalizations.appDisplayName,
         hintText: appName,
+        resetValue: '',
+        selectAll: true,
+        keyboardType: TextInputType.text,
         inputFormatters: TextInputLimits.limit(TextInputLimits.name),
       ),
     );

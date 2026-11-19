@@ -626,4 +626,68 @@ void main() {
       expect(find.text('100%'), findsOneWidget);
     });
   });
+
+  group('app display name', () {
+    testWidgets('saves a custom label from the theme settings', (tester) async {
+      await pumpThemeView(tester);
+
+      await tester.ensureVisible(find.text('App name'));
+      await tester.tap(find.text('App name'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextFormField), 'Cheese Cat');
+      await tester.tap(find.text('Submit'));
+      await tester.pumpAndSettle();
+
+      expect(container.read(appSettingProvider).appDisplayName, 'Cheese Cat');
+      expect(find.text('Cheese Cat'), findsWidgets);
+    });
+
+    testWidgets('reset clears the custom label back to the default tip', (
+      tester,
+    ) async {
+      container
+          .read(appSettingProvider.notifier)
+          .update((state) => state.copyWith(appDisplayName: 'Custom'));
+
+      await pumpThemeView(tester);
+      await tester.ensureVisible(find.text('App name'));
+      await tester.tap(find.text('App name'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Reset'));
+      await tester.pumpAndSettle();
+
+      expect(container.read(appSettingProvider).appDisplayName, '');
+      expect(
+        find.textContaining('home-screen label depends on the launcher'),
+        findsOneWidget,
+      );
+    });
+  });
+
+  group('launcher icon picker', () {
+    testWidgets('shows preview thumbs and applies a look', (tester) async {
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const TestApp(child: LauncherIconView()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(Image), findsWidgets);
+      expect(find.text('Classic'), findsOneWidget);
+      expect(find.text('Cheese kitty'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('Cheese kitty'));
+      await tester.tap(find.text('Cheese kitty'));
+      await tester.pumpAndSettle();
+
+      expect(
+        container.read(appSettingProvider).launcherIcon,
+        LauncherIcon.kittyCheese.id,
+      );
+    });
+  });
 }
