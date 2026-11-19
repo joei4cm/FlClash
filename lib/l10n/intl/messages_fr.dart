@@ -1565,9 +1565,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "installUpdate": MessageLookupByLibrary.simpleMessage(
       "Installer la mise à jour",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Ce système masque la liste des apps installées tant que l’autorisation n’est pas accordée. Accordez-la pour configurer le proxy par app.",
     ),
@@ -1715,19 +1716,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "launcherIconKittyCheese": MessageLookupByLibrary.simpleMessage(
       "Chat fromage",
     ),
-    "launcherIconKittyGray": MessageLookupByLibrary.simpleMessage("Chat gris"),
     "launcherIconKittyOrange": MessageLookupByLibrary.simpleMessage(
       "Chat roux",
     ),
-    "launcherIconKittyWhite": MessageLookupByLibrary.simpleMessage(
-      "Chat blanc",
-    ),
-    "launcherIconMascotCloud": MessageLookupByLibrary.simpleMessage("Nuage"),
-    "launcherIconMascotFox": MessageLookupByLibrary.simpleMessage("Renard"),
-    "launcherIconMascotPenguin": MessageLookupByLibrary.simpleMessage(
-      "Pingouin",
-    ),
-    "launcherIconMascotRobot": MessageLookupByLibrary.simpleMessage("Robot"),
     "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Minuit"),
     "launcherIconOtter": MessageLookupByLibrary.simpleMessage("Loutre"),
     "launcherIconPuppyBulldog": MessageLookupByLibrary.simpleMessage(
@@ -1737,14 +1728,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "launcherIconPuppyDachshund": MessageLookupByLibrary.simpleMessage(
       "Teckel",
     ),
-    "launcherIconPuppyGolden": MessageLookupByLibrary.simpleMessage(
-      "Chiot doré",
+    "launcherIconSectionAnimal": MessageLookupByLibrary.simpleMessage(
+      "Animaux",
     ),
-    "launcherIconPuppySamoyed": MessageLookupByLibrary.simpleMessage(
-      "Samoyède",
-    ),
-    "launcherIconPuppyShiba": MessageLookupByLibrary.simpleMessage("Shiba"),
-    "launcherIconRedPanda": MessageLookupByLibrary.simpleMessage("Panda roux"),
+    "launcherIconSectionBrand": MessageLookupByLibrary.simpleMessage("Marque"),
+    "launcherIconSectionKitty": MessageLookupByLibrary.simpleMessage("Chats"),
+    "launcherIconSectionPuppy": MessageLookupByLibrary.simpleMessage("Chiens"),
     "launcherIconTide": MessageLookupByLibrary.simpleMessage("Marée"),
     "layout": MessageLookupByLibrary.simpleMessage("Disposition"),
     "light": MessageLookupByLibrary.simpleMessage("Clair"),

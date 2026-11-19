@@ -1539,9 +1539,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "installUpdate": MessageLookupByLibrary.simpleMessage(
       "Установить обновление",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Эта система не выдаёт список установленных приложений без разрешения. Предоставьте его, чтобы настроить прокси для отдельных приложений.",
     ),
@@ -1683,34 +1684,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "launcherIconKittyCheese": MessageLookupByLibrary.simpleMessage(
       "Сырный котёнок",
     ),
-    "launcherIconKittyGray": MessageLookupByLibrary.simpleMessage(
-      "Серый котёнок",
-    ),
     "launcherIconKittyOrange": MessageLookupByLibrary.simpleMessage(
       "Рыжий котёнок",
     ),
-    "launcherIconKittyWhite": MessageLookupByLibrary.simpleMessage(
-      "Белый котёнок",
-    ),
-    "launcherIconMascotCloud": MessageLookupByLibrary.simpleMessage("Облако"),
-    "launcherIconMascotFox": MessageLookupByLibrary.simpleMessage("Лиса"),
-    "launcherIconMascotPenguin": MessageLookupByLibrary.simpleMessage(
-      "Пингвин",
-    ),
-    "launcherIconMascotRobot": MessageLookupByLibrary.simpleMessage("Робот"),
     "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Полночь"),
     "launcherIconOtter": MessageLookupByLibrary.simpleMessage("Выдра"),
     "launcherIconPuppyBulldog": MessageLookupByLibrary.simpleMessage("Бульдог"),
     "launcherIconPuppyCorgi": MessageLookupByLibrary.simpleMessage("Корги"),
     "launcherIconPuppyDachshund": MessageLookupByLibrary.simpleMessage("Такса"),
-    "launcherIconPuppyGolden": MessageLookupByLibrary.simpleMessage(
-      "Золотистый щенок",
+    "launcherIconSectionAnimal": MessageLookupByLibrary.simpleMessage(
+      "Зверушки",
     ),
-    "launcherIconPuppySamoyed": MessageLookupByLibrary.simpleMessage("Самоед"),
-    "launcherIconPuppyShiba": MessageLookupByLibrary.simpleMessage("Сиба"),
-    "launcherIconRedPanda": MessageLookupByLibrary.simpleMessage(
-      "Красная панда",
-    ),
+    "launcherIconSectionBrand": MessageLookupByLibrary.simpleMessage("Бренд"),
+    "launcherIconSectionKitty": MessageLookupByLibrary.simpleMessage("Котики"),
+    "launcherIconSectionPuppy": MessageLookupByLibrary.simpleMessage("Собачки"),
     "launcherIconTide": MessageLookupByLibrary.simpleMessage("Прилив"),
     "layout": MessageLookupByLibrary.simpleMessage("Макет"),
     "light": MessageLookupByLibrary.simpleMessage("Светлая"),

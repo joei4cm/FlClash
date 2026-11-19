@@ -1476,9 +1476,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Certificate installed",
     ),
     "installUpdate": MessageLookupByLibrary.simpleMessage("Install update"),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
     ),
@@ -1618,19 +1619,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "launcherIconKittyCheese": MessageLookupByLibrary.simpleMessage(
       "Cheese kitty",
     ),
-    "launcherIconKittyGray": MessageLookupByLibrary.simpleMessage("Gray kitty"),
     "launcherIconKittyOrange": MessageLookupByLibrary.simpleMessage(
       "Orange kitty",
     ),
-    "launcherIconKittyWhite": MessageLookupByLibrary.simpleMessage(
-      "White kitty",
-    ),
-    "launcherIconMascotCloud": MessageLookupByLibrary.simpleMessage("Cloud"),
-    "launcherIconMascotFox": MessageLookupByLibrary.simpleMessage("Fox"),
-    "launcherIconMascotPenguin": MessageLookupByLibrary.simpleMessage(
-      "Penguin",
-    ),
-    "launcherIconMascotRobot": MessageLookupByLibrary.simpleMessage("Robot"),
     "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Midnight"),
     "launcherIconOtter": MessageLookupByLibrary.simpleMessage("Otter"),
     "launcherIconPuppyBulldog": MessageLookupByLibrary.simpleMessage("Bulldog"),
@@ -1638,14 +1629,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "launcherIconPuppyDachshund": MessageLookupByLibrary.simpleMessage(
       "Dachshund",
     ),
-    "launcherIconPuppyGolden": MessageLookupByLibrary.simpleMessage(
-      "Golden puppy",
+    "launcherIconSectionAnimal": MessageLookupByLibrary.simpleMessage(
+      "Animals",
     ),
-    "launcherIconPuppySamoyed": MessageLookupByLibrary.simpleMessage("Samoyed"),
-    "launcherIconPuppyShiba": MessageLookupByLibrary.simpleMessage(
-      "Shiba puppy",
-    ),
-    "launcherIconRedPanda": MessageLookupByLibrary.simpleMessage("Red panda"),
+    "launcherIconSectionBrand": MessageLookupByLibrary.simpleMessage("Brand"),
+    "launcherIconSectionKitty": MessageLookupByLibrary.simpleMessage("Cats"),
+    "launcherIconSectionPuppy": MessageLookupByLibrary.simpleMessage("Dogs"),
     "launcherIconTide": MessageLookupByLibrary.simpleMessage("Tide"),
     "layout": MessageLookupByLibrary.simpleMessage("Layout"),
     "light": MessageLookupByLibrary.simpleMessage("Light"),

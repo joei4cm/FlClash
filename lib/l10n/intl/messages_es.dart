@@ -1561,9 +1561,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "installUpdate": MessageLookupByLibrary.simpleMessage(
       "Instalar actualización",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Este sistema oculta la lista de apps instaladas hasta que se concede el permiso. Autorízalo para configurar el proxy por app.",
     ),
@@ -1713,21 +1714,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "launcherIconKittyCheese": MessageLookupByLibrary.simpleMessage(
       "Gatito queso",
     ),
-    "launcherIconKittyGray": MessageLookupByLibrary.simpleMessage(
-      "Gatito gris",
-    ),
     "launcherIconKittyOrange": MessageLookupByLibrary.simpleMessage(
       "Gatito naranja",
     ),
-    "launcherIconKittyWhite": MessageLookupByLibrary.simpleMessage(
-      "Gatito blanco",
-    ),
-    "launcherIconMascotCloud": MessageLookupByLibrary.simpleMessage("Nube"),
-    "launcherIconMascotFox": MessageLookupByLibrary.simpleMessage("Zorro"),
-    "launcherIconMascotPenguin": MessageLookupByLibrary.simpleMessage(
-      "Pingüino",
-    ),
-    "launcherIconMascotRobot": MessageLookupByLibrary.simpleMessage("Robot"),
     "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Medianoche"),
     "launcherIconOtter": MessageLookupByLibrary.simpleMessage("Nutria"),
     "launcherIconPuppyBulldog": MessageLookupByLibrary.simpleMessage("Bulldog"),
@@ -1735,14 +1724,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "launcherIconPuppyDachshund": MessageLookupByLibrary.simpleMessage(
       "Teckel",
     ),
-    "launcherIconPuppyGolden": MessageLookupByLibrary.simpleMessage(
-      "Cachorro dorado",
+    "launcherIconSectionAnimal": MessageLookupByLibrary.simpleMessage(
+      "Animales",
     ),
-    "launcherIconPuppySamoyed": MessageLookupByLibrary.simpleMessage(
-      "Samoyedo",
-    ),
-    "launcherIconPuppyShiba": MessageLookupByLibrary.simpleMessage("Shiba"),
-    "launcherIconRedPanda": MessageLookupByLibrary.simpleMessage("Panda rojo"),
+    "launcherIconSectionBrand": MessageLookupByLibrary.simpleMessage("Marca"),
+    "launcherIconSectionKitty": MessageLookupByLibrary.simpleMessage("Gatos"),
+    "launcherIconSectionPuppy": MessageLookupByLibrary.simpleMessage("Perros"),
     "launcherIconTide": MessageLookupByLibrary.simpleMessage("Marea"),
     "layout": MessageLookupByLibrary.simpleMessage("Diseño"),
     "light": MessageLookupByLibrary.simpleMessage("Claro"),

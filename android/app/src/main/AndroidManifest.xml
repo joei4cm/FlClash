@@ -154,110 +154,6 @@
             </intent-filter>
         </activity-alias>
         <activity-alias
-            android:name=".IconMascotCloud"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_mascot_cloud"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_mascot_cloud_round"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        <activity-alias
-            android:name=".IconMascotFox"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_mascot_fox"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_mascot_fox_round"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        <activity-alias
-            android:name=".IconMascotPenguin"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_mascot_penguin"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_mascot_penguin_round"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        <activity-alias
-            android:name=".IconMascotRobot"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_mascot_robot"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_mascot_robot_round"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        <activity-alias
-            android:name=".IconKittyOrange"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_kitty_orange"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_kitty_orange_round"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        <activity-alias
-            android:name=".IconKittyGray"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_kitty_gray"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_kitty_gray_round"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        <activity-alias
-            android:name=".IconPuppyGolden"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_puppy_golden"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_puppy_golden_round"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        <activity-alias
-            android:name=".IconPuppyShiba"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_puppy_shiba"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_puppy_shiba_round"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        <activity-alias
             android:name=".IconKittyCheese"
             android:enabled="false"
             android:exported="true"
@@ -271,12 +167,12 @@
             </intent-filter>
         </activity-alias>
         <activity-alias
-            android:name=".IconKittyWhite"
+            android:name=".IconKittyOrange"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_kitty_white"
+            android:icon="@mipmap/ic_launcher_kitty_orange"
             android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_kitty_white_round"
+            android:roundIcon="@mipmap/ic_launcher_kitty_orange_round"
             android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -310,12 +206,12 @@
             </intent-filter>
         </activity-alias>
         <activity-alias
-            android:name=".IconPuppyDachshund"
+            android:name=".IconPuppyCorgi"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_puppy_dachshund"
+            android:icon="@mipmap/ic_launcher_puppy_corgi"
             android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_puppy_dachshund_round"
+            android:roundIcon="@mipmap/ic_launcher_puppy_corgi_round"
             android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -323,12 +219,12 @@
             </intent-filter>
         </activity-alias>
         <activity-alias
-            android:name=".IconPuppySamoyed"
+            android:name=".IconPuppyDachshund"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_puppy_samoyed"
+            android:icon="@mipmap/ic_launcher_puppy_dachshund"
             android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_puppy_samoyed_round"
+            android:roundIcon="@mipmap/ic_launcher_puppy_dachshund_round"
             android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -349,38 +245,12 @@
             </intent-filter>
         </activity-alias>
         <activity-alias
-            android:name=".IconPuppyCorgi"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_puppy_corgi"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_puppy_corgi_round"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        <activity-alias
             android:name=".IconBunny"
             android:enabled="false"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_bunny"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_bunny_round"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        <activity-alias
-            android:name=".IconRedPanda"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_red_panda"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_red_panda_round"
             android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

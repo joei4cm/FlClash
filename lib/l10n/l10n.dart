@@ -7718,8 +7718,7 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one:
-          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',
@@ -12585,46 +12584,6 @@ class AppLocalizations {
     );
   }
 
-  /// `Cloud`
-  String get launcherIconMascotCloud {
-    return Intl.message(
-      'Cloud',
-      name: 'launcherIconMascotCloud',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Fox`
-  String get launcherIconMascotFox {
-    return Intl.message(
-      'Fox',
-      name: 'launcherIconMascotFox',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Penguin`
-  String get launcherIconMascotPenguin {
-    return Intl.message(
-      'Penguin',
-      name: 'launcherIconMascotPenguin',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Robot`
-  String get launcherIconMascotRobot {
-    return Intl.message(
-      'Robot',
-      name: 'launcherIconMascotRobot',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Orange kitty`
   String get launcherIconKittyOrange {
     return Intl.message(
@@ -12635,51 +12594,11 @@ class AppLocalizations {
     );
   }
 
-  /// `Gray kitty`
-  String get launcherIconKittyGray {
-    return Intl.message(
-      'Gray kitty',
-      name: 'launcherIconKittyGray',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Golden puppy`
-  String get launcherIconPuppyGolden {
-    return Intl.message(
-      'Golden puppy',
-      name: 'launcherIconPuppyGolden',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Shiba puppy`
-  String get launcherIconPuppyShiba {
-    return Intl.message(
-      'Shiba puppy',
-      name: 'launcherIconPuppyShiba',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Cheese kitty`
   String get launcherIconKittyCheese {
     return Intl.message(
       'Cheese kitty',
       name: 'launcherIconKittyCheese',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `White kitty`
-  String get launcherIconKittyWhite {
-    return Intl.message(
-      'White kitty',
-      name: 'launcherIconKittyWhite',
       desc: '',
       args: [],
     );
@@ -12715,16 +12634,6 @@ class AppLocalizations {
     );
   }
 
-  /// `Samoyed`
-  String get launcherIconPuppySamoyed {
-    return Intl.message(
-      'Samoyed',
-      name: 'launcherIconPuppySamoyed',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Bulldog`
   String get launcherIconPuppyBulldog {
     return Intl.message(
@@ -12750,16 +12659,6 @@ class AppLocalizations {
     return Intl.message('Bunny', name: 'launcherIconBunny', desc: '', args: []);
   }
 
-  /// `Red panda`
-  String get launcherIconRedPanda {
-    return Intl.message(
-      'Red panda',
-      name: 'launcherIconRedPanda',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Hamster`
   String get launcherIconHamster {
     return Intl.message(
@@ -12773,6 +12672,46 @@ class AppLocalizations {
   /// `Otter`
   String get launcherIconOtter {
     return Intl.message('Otter', name: 'launcherIconOtter', desc: '', args: []);
+  }
+
+  /// `Brand`
+  String get launcherIconSectionBrand {
+    return Intl.message(
+      'Brand',
+      name: 'launcherIconSectionBrand',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cats`
+  String get launcherIconSectionKitty {
+    return Intl.message(
+      'Cats',
+      name: 'launcherIconSectionKitty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dogs`
+  String get launcherIconSectionPuppy {
+    return Intl.message(
+      'Dogs',
+      name: 'launcherIconSectionPuppy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Animals`
+  String get launcherIconSectionAnimal {
+    return Intl.message(
+      'Animals',
+      name: 'launcherIconSectionAnimal',
+      desc: '',
+      args: [],
+    );
   }
 }
 

@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/features/form/form.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/config.dart';
@@ -61,72 +62,180 @@ class ThemeView extends StatelessWidget {
   }
 }
 
+String launcherIconLabel(AppLocalizations l10n, LauncherIcon icon) {
+  return switch (icon) {
+    LauncherIcon.classic => l10n.launcherIconClassic,
+    LauncherIcon.frost => l10n.launcherIconFrost,
+    LauncherIcon.midnight => l10n.launcherIconMidnight,
+    LauncherIcon.indigo => l10n.launcherIconIndigo,
+    LauncherIcon.tide => l10n.launcherIconTide,
+    LauncherIcon.graphite => l10n.launcherIconGraphite,
+    LauncherIcon.kittyCheese => l10n.launcherIconKittyCheese,
+    LauncherIcon.kittyOrange => l10n.launcherIconKittyOrange,
+    LauncherIcon.kittyBlack => l10n.launcherIconKittyBlack,
+    LauncherIcon.kittyCalico => l10n.launcherIconKittyCalico,
+    LauncherIcon.puppyCorgi => l10n.launcherIconPuppyCorgi,
+    LauncherIcon.puppyDachshund => l10n.launcherIconPuppyDachshund,
+    LauncherIcon.puppyBulldog => l10n.launcherIconPuppyBulldog,
+    LauncherIcon.bunny => l10n.launcherIconBunny,
+    LauncherIcon.hamster => l10n.launcherIconHamster,
+    LauncherIcon.otter => l10n.launcherIconOtter,
+  };
+}
+
+Widget launcherIconThumb(BuildContext context, LauncherIcon icon) {
+  return ClipPath(
+    clipper: ShapeBorderClipper(
+      shape: AppShape.sm,
+      textDirection: Directionality.of(context),
+    ),
+    child: Image.asset(
+      icon.asset,
+      width: 36,
+      height: 36,
+      filterQuality: FilterQuality.medium,
+    ),
+  );
+}
+
 class _LauncherIconItem extends ConsumerWidget {
   const _LauncherIconItem();
-
-  String _label(AppLocalizations l10n, LauncherIcon icon) {
-    return switch (icon) {
-      LauncherIcon.classic => l10n.launcherIconClassic,
-      LauncherIcon.frost => l10n.launcherIconFrost,
-      LauncherIcon.midnight => l10n.launcherIconMidnight,
-      LauncherIcon.indigo => l10n.launcherIconIndigo,
-      LauncherIcon.tide => l10n.launcherIconTide,
-      LauncherIcon.graphite => l10n.launcherIconGraphite,
-      LauncherIcon.mascotCloud => l10n.launcherIconMascotCloud,
-      LauncherIcon.mascotFox => l10n.launcherIconMascotFox,
-      LauncherIcon.mascotPenguin => l10n.launcherIconMascotPenguin,
-      LauncherIcon.mascotRobot => l10n.launcherIconMascotRobot,
-      LauncherIcon.kittyOrange => l10n.launcherIconKittyOrange,
-      LauncherIcon.kittyGray => l10n.launcherIconKittyGray,
-      LauncherIcon.puppyGolden => l10n.launcherIconPuppyGolden,
-      LauncherIcon.puppyShiba => l10n.launcherIconPuppyShiba,
-      LauncherIcon.kittyCheese => l10n.launcherIconKittyCheese,
-      LauncherIcon.kittyWhite => l10n.launcherIconKittyWhite,
-      LauncherIcon.kittyBlack => l10n.launcherIconKittyBlack,
-      LauncherIcon.kittyCalico => l10n.launcherIconKittyCalico,
-      LauncherIcon.puppyDachshund => l10n.launcherIconPuppyDachshund,
-      LauncherIcon.puppySamoyed => l10n.launcherIconPuppySamoyed,
-      LauncherIcon.puppyBulldog => l10n.launcherIconPuppyBulldog,
-      LauncherIcon.puppyCorgi => l10n.launcherIconPuppyCorgi,
-      LauncherIcon.bunny => l10n.launcherIconBunny,
-      LauncherIcon.redPanda => l10n.launcherIconRedPanda,
-      LauncherIcon.hamster => l10n.launcherIconHamster,
-      LauncherIcon.otter => l10n.launcherIconOtter,
-    };
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
+    final colorScheme = context.colorScheme;
     final selected = LauncherIcon.fromId(
       ref.watch(appSettingProvider.select((state) => state.launcherIcon)),
     );
-    return PreviewChoiceGroup<LauncherIcon>(
-      info: Info(
-        label: appLocalizations.launcherIcon,
-        glyph: AppGlyphs.iconTile,
-      ),
-      value: selected,
-      choices: [
-        for (final icon in LauncherIcon.values)
-          PreviewChoice(
-            value: icon,
-            label: _label(appLocalizations, icon),
-            pictogram: ClipPath(
-              clipper: ShapeBorderClipper(
-                shape: AppShape.lg,
-                textDirection: Directionality.of(context),
-              ),
-              child: Image.asset(
-                icon.asset,
-                width: 48,
-                height: 48,
-                filterQuality: FilterQuality.medium,
-              ),
+    final preview = Padding(
+      padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
+      child: Row(
+        spacing: 12,
+        children: [
+          launcherIconThumb(context, selected),
+          Expanded(
+            child: Text(
+              launcherIconLabel(appLocalizations, selected),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyle.subheadline
+                  .of(context)
+                  .copyWith(color: colorScheme.onSurfaceVariant),
             ),
           ),
+          GlyphIcon(
+            AppGlyphs.chevronForward,
+            size: 20,
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ],
+      ),
+    );
+    final cardColor = context.raisedSurfaceLevel.colorOf(colorScheme);
+    Widget card(VoidCallback onTap) => PressSurface(
+      fill: cardColor,
+      shape: AppShape.lg,
+      childFills: true,
+      clipsChild: true,
+      onPressed: onTap,
+      child: preview,
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InfoHeader(
+          info: Info(
+            label: appLocalizations.launcherIcon,
+            glyph: AppGlyphs.iconTile,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: context.isMobileView
+              ? OpenContainer<void>(
+                  closedShape: AppShape.lg,
+                  closedBuilder: (_, open) => card(open),
+                  openBuilder: (_, _) => const LauncherIconView(),
+                )
+              : card(
+                  () => showSheet<void>(
+                    context: context,
+                    builder: (_) => const LauncherIconView(),
+                  ),
+                ),
+        ),
       ],
-      onChanged: (value) {
+    );
+  }
+}
+
+class LauncherIconView extends ConsumerWidget {
+  const LauncherIconView({super.key});
+
+  static const _brand = [
+    LauncherIcon.classic,
+    LauncherIcon.frost,
+    LauncherIcon.midnight,
+    LauncherIcon.indigo,
+    LauncherIcon.tide,
+    LauncherIcon.graphite,
+  ];
+
+  static const _kitties = [
+    LauncherIcon.kittyCheese,
+    LauncherIcon.kittyOrange,
+    LauncherIcon.kittyBlack,
+    LauncherIcon.kittyCalico,
+  ];
+
+  static const _puppies = [
+    LauncherIcon.puppyCorgi,
+    LauncherIcon.puppyDachshund,
+    LauncherIcon.puppyBulldog,
+  ];
+
+  static const _animals = [
+    LauncherIcon.bunny,
+    LauncherIcon.hamster,
+    LauncherIcon.otter,
+  ];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appLocalizations = context.appLocalizations;
+    return SelectionSheet<LauncherIcon>(
+      title: appLocalizations.launcherIcon,
+      sections: [
+        SelectionSection(
+          label: appLocalizations.launcherIconSectionBrand,
+          items: _brand,
+        ),
+        SelectionSection(
+          label: appLocalizations.launcherIconSectionKitty,
+          items: _kitties,
+        ),
+        SelectionSection(
+          label: appLocalizations.launcherIconSectionPuppy,
+          items: _puppies,
+        ),
+        SelectionSection(
+          label: appLocalizations.launcherIconSectionAnimal,
+          items: _animals,
+        ),
+      ],
+      labelBuilder: (icon) => launcherIconLabel(appLocalizations, icon),
+      titleBuilder: (icon, title) => Row(
+        spacing: 12,
+        children: [
+          launcherIconThumb(context, icon),
+          Expanded(child: title),
+        ],
+      ),
+      selectedOf: (ref) => LauncherIcon.fromId(
+        ref.watch(appSettingProvider.select((state) => state.launcherIcon)),
+      ),
+      onSelected: (value) {
         ref
             .read(appSettingProvider.notifier)
             .update((state) => state.copyWith(launcherIcon: value.id));
