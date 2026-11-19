@@ -16,8 +16,10 @@ Hotfix releases (3.47.x) carry only cherry-picks listed in the SDK's `CHANGELOG.
   `macos_deployment_target_migration` rewrites any older `MACOSX_DEPLOYMENT_TARGET` (including 10.13 High
   Sierra) back to 12.0, and `FlutterMacOS.framework` is built for 12. High Sierra / Mojave / Catalina /
   Big Sur cannot run this app line without dropping below Flutter 3.47.
-- **Intel:** Release CI still builds `macos-amd64.dmg` on `macos-15-intel` (`arch: amd64`). Keep that matrix
-  entry while users need Intel; Flutter warns that Intel host/dual-arch builds will become errors later.
+- **Intel:** Release CI still builds `macos-amd64.dmg` on `macos-15-intel` via the out-of-matrix
+  `build-macos-amd64*` jobs (not the main `build` matrix — a capacity cancel there used to skip
+  upload). Keep those jobs while users need Intel; Flutter warns that Intel host/dual-arch builds
+  will become errors later.
 - **Declare:** `macos/Runner.xcodeproj` sets `MACOSX_DEPLOYMENT_TARGET = 12.0`; `Info.plist` exposes it as
   `LSMinimumSystemVersion`. Do not lower it to advertise older OS support the engine cannot load.
 
@@ -28,7 +30,7 @@ Hotfix releases (3.47.x) carry only cherry-picks listed in the SDK's `CHANGELOG.
   animating, and text can render garbled. Apple Silicon is not affected.
 - **Fix upstream:** landed on `main` before 2026-08-25 and verified on `3.48.0-1.0.pre-404`; it is not in any
   3.47.x hotfix (checked through 3.47.6).
-- **Workaround:** the release job for `macos-15-intel` (`arch: amd64`) runs
+- **Workaround:** `build-macos-amd64*` on `macos-15-intel` runs
   `plutil -replace FLTEnableImpeller -bool NO macos/Runner/Info.plist` before `dart setup.dart`, so only the Intel
   DMG falls back to Skia. The checked-in `Info.plist` does not set the key, so local builds and the arm64 DMG keep
   Impeller. The macOS embedder reads the key at launch in `FlutterDartProject.mm` (`enableImpeller`), release
