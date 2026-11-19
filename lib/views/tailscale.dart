@@ -534,38 +534,37 @@ class TailscaleView extends ConsumerWidget {
     required TailscaleProxy proxy,
   }) {
     final appLocalizations = context.appLocalizations;
-    return ListItem(
-      leading: const GlyphIcon(AppGlyphs.devices),
-      title: Text(proxy.name, maxLines: 1, overflow: TextOverflow.ellipsis),
-      subtitle: Text(
-        _buildSubtitle(context, proxy),
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
+    return ContextMenuRegion(
+      menuItems: [
+        PopupMenuItem(
+          glyph: AppGlyphs.speed,
+          label: appLocalizations.tailscaleTestNode,
+          onPressed: () {
+            unawaited(_handleTest(context, ref, proxy));
+          },
+        ),
+        PopupMenuItem(
+          danger: true,
+          glyph: AppGlyphs.delete,
+          label: appLocalizations.delete,
+          onPressed: () {
+            unawaited(_handleDelete(context, ref, proxy));
+          },
+        ),
+      ],
+      child: ListItem(
+        leading: const GlyphIcon(AppGlyphs.devices),
+        title: Text(proxy.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+        subtitle: Text(
+          _buildSubtitle(context, proxy),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: _buildNodeDelay(context, ref, proxy.name),
+        onTap: () {
+          unawaited(_handleAddOrEdit(context, ref, proxy));
+        },
       ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildNodeDelay(context, ref, proxy.name),
-          const SizedBox(width: 4),
-          IconButton(
-            tooltip: appLocalizations.tailscaleTestNode,
-            onPressed: () {
-              _handleTest(context, ref, proxy);
-            },
-            icon: const GlyphIcon(AppGlyphs.speed),
-          ),
-          IconButton(
-            tooltip: appLocalizations.delete,
-            onPressed: () {
-              _handleDelete(context, ref, proxy);
-            },
-            icon: const GlyphIcon(AppGlyphs.delete),
-          ),
-        ],
-      ),
-      onTap: () {
-        _handleAddOrEdit(context, ref, proxy);
-      },
     );
   }
 
@@ -596,8 +595,6 @@ class TailscaleView extends ConsumerWidget {
         unawaited(ref.read(systemActionProvider.notifier).getPackages());
       });
     }
-    // Header block is always index 0; nodes follow.
-    final itemCount = proxies.isEmpty ? 1 : proxies.length + 1;
     return Scaffold(
       title: appLocalizations.tailscale,
       iconActions: [
@@ -605,107 +602,98 @@ class TailscaleView extends ConsumerWidget {
           glyph: AppGlyphs.add,
           tooltip: appLocalizations.addTailscaleNode,
           onPressed: () {
-            _handleAddOrEdit(context, ref);
+            unawaited(_handleAddOrEdit(context, ref));
           },
         ),
       ],
-      body: PrismListView(
-        padding: const EdgeInsets.only(bottom: 20),
-        itemCount: itemCount,
-        itemBuilder: (_, index) {
-          if (index == 0) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: ListView(
+        padding: EdgeInsets.only(
+          top: context.sectionsTopPadding,
+          bottom: 20 + context.bottomInset,
+        ),
+        children: [
+          _buildUsageModePicker(
+            context,
+            ref,
+            selected: usageMode,
+            tailscaleAppInstalled: tailscaleAppInstalled,
+          ),
+          _buildApiTokenSection(context, ref, props: props),
+          if (usageMode == TailscaleUsageMode.embedded || !system.isAndroid)
+            ListItem.toggle(
+              leading: const GlyphIcon(AppGlyphs.toggleOn),
+              title: Text(appLocalizations.tailscaleEnable),
+              subtitle: Text(appLocalizations.tailscaleEnableDescShort),
+              value: enable,
+              onChanged: (value) async {
+                ref.read(tailscaleSettingProvider.notifier).setEnable(value);
+                await _applyTailscaleConfig(ref);
+              },
+            ),
+          _ExpandableGuide(
+            title: appLocalizations.tailscaleAdvancedTitle,
+            child: Column(
               children: [
-                _buildUsageModePicker(
-                  context,
-                  ref,
-                  selected: usageMode,
-                  tailscaleAppInstalled: tailscaleAppInstalled,
-                ),
-                _buildApiTokenSection(context, ref, props: props),
-                if (usageMode == TailscaleUsageMode.embedded ||
-                    !system.isAndroid)
-                  ListItem.toggle(
-                    leading: const GlyphIcon(AppGlyphs.toggleOn),
-                    title: Text(appLocalizations.tailscaleEnable),
-                    subtitle: Text(appLocalizations.tailscaleEnableDescShort),
-                    value: enable,
-                    onChanged: (value) async {
-                      ref
-                          .read(tailscaleSettingProvider.notifier)
-                          .setEnable(value);
-                      await _applyTailscaleConfig(ref);
-                    },
+                ListItem.toggle(
+                  leading: const GlyphIcon(AppGlyphs.split),
+                  title: Text(appLocalizations.tailscaleBypass),
+                  subtitle: Text(
+                    system.isDesktop
+                        ? appLocalizations.tailscaleBypassRecommended
+                        : appLocalizations.tailscaleBypassAndroidHint,
                   ),
-                _ExpandableGuide(
-                  title: appLocalizations.tailscaleAdvancedTitle,
-                  child: Column(
-                    children: [
-                      ListItem.toggle(
-                        leading: const GlyphIcon(AppGlyphs.split),
-                        title: Text(appLocalizations.tailscaleBypass),
-                        subtitle: Text(
-                          system.isDesktop
-                              ? appLocalizations.tailscaleBypassRecommended
-                              : appLocalizations.tailscaleBypassAndroidHint,
-                        ),
-                        value: props.bypassTraffic,
-                        onChanged: (value) async {
-                          ref
-                              .read(tailscaleSettingProvider.notifier)
-                              .setBypassTraffic(value);
-                          await _applyTailscaleConfig(ref);
-                        },
-                      ),
-                      _buildGuide(context),
-                    ],
-                  ),
+                  value: props.bypassTraffic,
+                  onChanged: (value) async {
+                    ref
+                        .read(tailscaleSettingProvider.notifier)
+                        .setBypassTraffic(value);
+                    await _applyTailscaleConfig(ref);
+                  },
                 ),
-                _buildStatusBanner(
-                  context,
-                  ref,
-                  enable: enable,
-                  nodeCount: proxies.length,
-                  routeCount: routeCount,
-                ),
-                const Divider(height: 16),
-                if (proxies.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-                    child: Column(
-                      children: [
-                        NullStatus(
-                          label: appLocalizations.tailscaleEmptyTip,
-                          illustration: NullStatusIllustration.tun,
-                        ),
-                        const SizedBox(height: 24),
-                        FilledButton.icon(
-                          onPressed: () {
-                            _handleAddOrEdit(context, ref);
-                          },
-                          icon: const GlyphIcon(AppGlyphs.add, fill: 1),
-                          label: Text(appLocalizations.addTailscaleNode),
-                        ),
-                      ],
-                    ),
-                  )
-                else
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                    child: Text(
-                      appLocalizations.tailscaleNodesTitle,
-                      style: AppTextStyle.subheadline.of(
-                        context,
-                        emphasized: true,
-                      ),
-                    ),
-                  ),
+                _buildGuide(context),
               ],
-            );
-          }
-          return _buildNodeTile(context, ref, proxy: proxies[index - 1]);
-        },
+            ),
+          ),
+          _buildStatusBanner(
+            context,
+            ref,
+            enable: enable,
+            nodeCount: proxies.length,
+            routeCount: routeCount,
+          ),
+          const Divider(height: 16),
+          if (proxies.isEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+              child: Column(
+                children: [
+                  NullStatus(
+                    label: appLocalizations.tailscaleEmptyTip,
+                    illustration: NullStatusIllustration.tun,
+                  ),
+                  const SizedBox(height: 24),
+                  FilledButton.icon(
+                    onPressed: () {
+                      unawaited(_handleAddOrEdit(context, ref));
+                    },
+                    icon: const GlyphIcon(AppGlyphs.add, fill: 1),
+                    label: Text(appLocalizations.addTailscaleNode),
+                  ),
+                ],
+              ),
+            )
+          else ...[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: Text(
+                appLocalizations.tailscaleNodesTitle,
+                style: AppTextStyle.subheadline.of(context, emphasized: true),
+              ),
+            ),
+            for (final proxy in proxies)
+              _buildNodeTile(context, ref, proxy: proxy),
+          ],
+        ],
       ),
     );
   }
@@ -767,15 +755,17 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
     _acceptRoutes = proxy.acceptRoutes;
     _exitNodeAllowLanAccess = proxy.exitNodeAllowLanAccess;
     _obscureAuthKey = true;
+    // Default udp is false; do not treat that alone as “advanced customized”,
+    // or every new-node dialog opens fully expanded and clips on short screens.
     _showAdvanced =
         proxy.hostname.isNotEmpty ||
         proxy.controlUrl.isNotEmpty ||
         proxy.stateDir.isNotEmpty ||
         proxy.exitNode.isNotEmpty ||
         proxy.ephemeral ||
-        !proxy.udp ||
         proxy.acceptRoutes ||
-        proxy.exitNodeAllowLanAccess;
+        proxy.exitNodeAllowLanAccess ||
+        (widget.proxy != null && !proxy.udp);
   }
 
   Future<void> _generateAuthKey() async {
@@ -909,178 +899,178 @@ class _TailscaleNodeDialogState extends State<TailscaleNodeDialog> {
           child: Text(appLocalizations.confirm),
         ),
       ],
+      // AlertDialog already scrolls its body; a nested scroll view blocks
+      // focus-driven scrolling when the keyboard is up.
       child: Form(
         key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 8),
-              _buildTextField(
-                controller: _nameController,
-                label: appLocalizations.name,
-                helperText: appLocalizations.tailscaleNameHelper,
-                validator: (value) {
-                  final name = value?.trim() ?? '';
-                  if (name.isEmpty) {
-                    return appLocalizations.emptyTip(appLocalizations.name);
-                  }
-                  final isEditingSame = widget.proxy?.name == name;
-                  if (!isEditingSame && widget.existingNames.contains(name)) {
-                    return appLocalizations.tailscaleNameExistsTip;
-                  }
-                  return null;
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8),
+            _buildTextField(
+              controller: _nameController,
+              label: appLocalizations.name,
+              helperText: appLocalizations.tailscaleNameHelper,
+              validator: (value) {
+                final name = value?.trim() ?? '';
+                if (name.isEmpty) {
+                  return appLocalizations.emptyTip(appLocalizations.name);
+                }
+                final isEditingSame = widget.proxy?.name == name;
+                if (!isEditingSame && widget.existingNames.contains(name)) {
+                  return appLocalizations.tailscaleNameExistsTip;
+                }
+                return null;
+              },
+            ),
+            _buildTextField(
+              controller: _authKeyController,
+              label: appLocalizations.tailscaleAuthKey,
+              helperText: widget.apiAccessToken.trim().isEmpty
+                  ? appLocalizations.tailscaleAuthKeyHint
+                  : appLocalizations.tailscaleAuthKeyOverrideHint,
+              obscureText: _obscureAuthKey,
+              suffixIcon: IconButton(
+                tooltip: _obscureAuthKey
+                    ? appLocalizations.showPassword
+                    : appLocalizations.hidePassword,
+                onPressed: () {
+                  setState(() => _obscureAuthKey = !_obscureAuthKey);
                 },
-              ),
-              _buildTextField(
-                controller: _authKeyController,
-                label: appLocalizations.tailscaleAuthKey,
-                helperText: widget.apiAccessToken.trim().isEmpty
-                    ? appLocalizations.tailscaleAuthKeyHint
-                    : appLocalizations.tailscaleAuthKeyOverrideHint,
-                obscureText: _obscureAuthKey,
-                suffixIcon: IconButton(
-                  tooltip: _obscureAuthKey
-                      ? appLocalizations.showPassword
-                      : appLocalizations.hidePassword,
-                  onPressed: () {
-                    setState(() => _obscureAuthKey = !_obscureAuthKey);
-                  },
-                  icon: GlyphIcon(
-                    _obscureAuthKey ? AppGlyphs.eye : AppGlyphs.eyeOff,
-                  ),
+                icon: GlyphIcon(
+                  _obscureAuthKey ? AppGlyphs.eye : AppGlyphs.eyeOff,
                 ),
-                validator: (value) {
-                  final key = value?.trim() ?? '';
-                  if (key.isEmpty) {
-                    return appLocalizations.emptyTip(
-                      appLocalizations.tailscaleAuthKey,
-                    );
-                  }
-                  return null;
-                },
               ),
-              if (widget.apiAccessToken.trim().isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: _generatingAuthKey ? null : _generateAuthKey,
-                      icon: _generatingAuthKey
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: ActivityIndicator(size: 16),
-                            )
-                          : const GlyphIcon(AppGlyphs.key),
-                      label: Text(
-                        _generatingAuthKey
-                            ? appLocalizations.tailscaleAuthKeyGenerating
-                            : appLocalizations.tailscaleAuthKeyGenerate,
-                      ),
+              validator: (value) {
+                final key = value?.trim() ?? '';
+                if (key.isEmpty) {
+                  return appLocalizations.emptyTip(
+                    appLocalizations.tailscaleAuthKey,
+                  );
+                }
+                return null;
+              },
+            ),
+            if (widget.apiAccessToken.trim().isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    onPressed: _generatingAuthKey ? null : _generateAuthKey,
+                    icon: _generatingAuthKey
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: ActivityIndicator(size: 16),
+                          )
+                        : const GlyphIcon(AppGlyphs.key),
+                    label: Text(
+                      _generatingAuthKey
+                          ? appLocalizations.tailscaleAuthKeyGenerating
+                          : appLocalizations.tailscaleAuthKeyGenerate,
                     ),
                   ),
                 ),
+              ),
+            _buildTextField(
+              controller: _routesController,
+              label: appLocalizations.tailscaleRoutes,
+              helperText: appLocalizations.tailscaleRoutesHintCidr,
+              maxLines: 3,
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () {
+                  setState(() => _showAdvanced = !_showAdvanced);
+                },
+                icon: GlyphIcon(
+                  _showAdvanced ? AppGlyphs.chevronUp : AppGlyphs.chevronDown,
+                ),
+                label: Text(
+                  _showAdvanced
+                      ? appLocalizations.hideAdvanced
+                      : appLocalizations.showAdvanced,
+                ),
+              ),
+            ),
+            if (_showAdvanced) ...[
               _buildTextField(
-                controller: _routesController,
-                label: appLocalizations.tailscaleRoutes,
-                helperText: appLocalizations.tailscaleRoutesHintCidr,
-                maxLines: 3,
+                controller: _hostnameController,
+                label: appLocalizations.tailscaleHostname,
+                helperText: appLocalizations.tailscaleHostnameHint,
               ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton.icon(
-                  onPressed: () {
-                    setState(() => _showAdvanced = !_showAdvanced);
-                  },
-                  icon: GlyphIcon(
-                    _showAdvanced ? AppGlyphs.chevronUp : AppGlyphs.chevronDown,
-                  ),
-                  label: Text(
-                    _showAdvanced
-                        ? appLocalizations.hideAdvanced
-                        : appLocalizations.showAdvanced,
-                  ),
-                ),
+              _buildTextField(
+                controller: _controlUrlController,
+                label: appLocalizations.tailscaleControlUrl,
+                helperText: appLocalizations.tailscaleControlUrlHint,
+                validator: (value) {
+                  final url = value?.trim() ?? '';
+                  if (url.isEmpty || isSafeTailscaleControlUrl(url)) {
+                    return null;
+                  }
+                  return appLocalizations.invalidLinkTip;
+                },
               ),
-              if (_showAdvanced) ...[
-                _buildTextField(
-                  controller: _hostnameController,
-                  label: appLocalizations.tailscaleHostname,
-                  helperText: appLocalizations.tailscaleHostnameHint,
-                ),
-                _buildTextField(
-                  controller: _controlUrlController,
-                  label: appLocalizations.tailscaleControlUrl,
-                  helperText: appLocalizations.tailscaleControlUrlHint,
-                  validator: (value) {
-                    final url = value?.trim() ?? '';
-                    if (url.isEmpty || isSafeTailscaleControlUrl(url)) {
-                      return null;
-                    }
-                    return appLocalizations.invalidLinkTip;
-                  },
-                ),
-                _buildTextField(
-                  controller: _stateDirController,
-                  label: appLocalizations.tailscaleStateDir,
-                  helperText: appLocalizations.tailscaleStateDirHint,
-                  validator: (value) {
-                    final dir = value?.trim() ?? '';
-                    if (dir.isEmpty || isSafeTailscaleStateDir(dir)) {
-                      return null;
-                    }
-                    return appLocalizations.emptyTip(
-                      appLocalizations.tailscaleStateDir,
-                    );
-                  },
-                ),
-                _buildTextField(
-                  controller: _exitNodeController,
-                  label: appLocalizations.tailscaleExitNode,
-                  helperText: appLocalizations.tailscaleExitNodeHint,
-                ),
-                _buildSwitch(
-                  label: appLocalizations.tailscaleEphemeral,
-                  value: _ephemeral,
-                  onChanged: (value) {
-                    setState(() {
-                      _ephemeral = value;
-                    });
-                  },
-                ),
-                _buildSwitch(
-                  label: appLocalizations.tailscaleUdp,
-                  value: _udp,
-                  onChanged: (value) {
-                    setState(() {
-                      _udp = value;
-                    });
-                  },
-                ),
-                _buildSwitch(
-                  label: appLocalizations.tailscaleAcceptRoutes,
-                  value: _acceptRoutes,
-                  onChanged: (value) {
-                    setState(() {
-                      _acceptRoutes = value;
-                    });
-                  },
-                ),
-                _buildSwitch(
-                  label: appLocalizations.tailscaleExitNodeAllowLanAccess,
-                  value: _exitNodeAllowLanAccess,
-                  onChanged: (value) {
-                    setState(() {
-                      _exitNodeAllowLanAccess = value;
-                    });
-                  },
-                ),
-              ],
+              _buildTextField(
+                controller: _stateDirController,
+                label: appLocalizations.tailscaleStateDir,
+                helperText: appLocalizations.tailscaleStateDirHint,
+                validator: (value) {
+                  final dir = value?.trim() ?? '';
+                  if (dir.isEmpty || isSafeTailscaleStateDir(dir)) {
+                    return null;
+                  }
+                  return appLocalizations.emptyTip(
+                    appLocalizations.tailscaleStateDir,
+                  );
+                },
+              ),
+              _buildTextField(
+                controller: _exitNodeController,
+                label: appLocalizations.tailscaleExitNode,
+                helperText: appLocalizations.tailscaleExitNodeHint,
+              ),
+              _buildSwitch(
+                label: appLocalizations.tailscaleEphemeral,
+                value: _ephemeral,
+                onChanged: (value) {
+                  setState(() {
+                    _ephemeral = value;
+                  });
+                },
+              ),
+              _buildSwitch(
+                label: appLocalizations.tailscaleUdp,
+                value: _udp,
+                onChanged: (value) {
+                  setState(() {
+                    _udp = value;
+                  });
+                },
+              ),
+              _buildSwitch(
+                label: appLocalizations.tailscaleAcceptRoutes,
+                value: _acceptRoutes,
+                onChanged: (value) {
+                  setState(() {
+                    _acceptRoutes = value;
+                  });
+                },
+              ),
+              _buildSwitch(
+                label: appLocalizations.tailscaleExitNodeAllowLanAccess,
+                value: _exitNodeAllowLanAccess,
+                onChanged: (value) {
+                  setState(() {
+                    _exitNodeAllowLanAccess = value;
+                  });
+                },
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );

@@ -176,6 +176,11 @@ void main() {
         find.text(AppLocalizations.current.tailscaleBypass),
         findsOneWidget,
       );
+      await tester.scrollUntilVisible(
+        find.text(AppLocalizations.current.addTailscaleNode),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       expect(
         find.text(AppLocalizations.current.addTailscaleNode),
         findsWidgets,
@@ -202,7 +207,12 @@ void main() {
       findsOneWidget,
     );
     expect(find.text(AppLocalizations.current.tailscaleRoutes), findsOneWidget);
-    // Default proxy has udp=false, so advanced fields start expanded.
+    // New nodes keep advanced collapsed so the dialog fits short screens.
+    expect(find.text(AppLocalizations.current.showAdvanced), findsOneWidget);
+    expect(find.text(AppLocalizations.current.tailscaleHostname), findsNothing);
+
+    await tester.tap(find.text(AppLocalizations.current.showAdvanced));
+    await tester.pumpAndSettle();
     expect(find.text(AppLocalizations.current.hideAdvanced), findsOneWidget);
     expect(
       find.text(AppLocalizations.current.tailscaleHostname),
@@ -212,10 +222,6 @@ void main() {
       find.text(AppLocalizations.current.tailscaleControlUrl),
       findsOneWidget,
     );
-
-    await tester.tap(find.text(AppLocalizations.current.hideAdvanced));
-    await tester.pumpAndSettle();
-    expect(find.text(AppLocalizations.current.showAdvanced), findsOneWidget);
   });
 
   testWidgets('TailscaleNodeDialog edit mode expands hostname fields', (
