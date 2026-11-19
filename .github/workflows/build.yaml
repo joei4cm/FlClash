@@ -344,11 +344,9 @@ jobs:
           - platform: linux
             os: ubuntu-22.04
             arch: amd64
-          - platform: macos
-            os: macos-15-intel
-            arch: amd64
-          # arm64 is built in build-macos-arm64* jobs so capacity misses can retry
-          # without wiping the rest of the matrix.
+          # macOS amd64 (Intel) and arm64 are built outside this matrix so a
+          # capacity cancel on macos-15-intel cannot mark the whole build job
+          # cancelled and skip upload (see build-macos-amd64* / build-macos-arm64*).
           - platform: windows
             os: windows-11-arm
             arch: arm64
@@ -407,12 +405,6 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: ${{ env.BRANCH_CACHE }}
 
-      - name: Setup Xcode
-        if: startsWith(matrix.platform,'macos')
-        run: |
-          sudo xcode-select -s /Applications/Xcode_26.3.app || sudo xcode-select -s /Applications/Xcode_26.2.app
-          xcodebuild -version
-
       - name: Setup NDK
         if: startsWith(matrix.platform,'android')
         uses: nttld/setup-ndk@v1
@@ -426,11 +418,6 @@ jobs:
         run: |
           flutter --version
           flutter pub get
-
-      # See .agents/flutter-upgrade.md before bumping FLUTTER_VERSION.
-      - name: Disable Impeller on Intel macOS
-        if: matrix.platform == 'macos' && matrix.arch == 'amd64'
-        run: plutil -replace FLTEnableImpeller -bool NO macos/Runner/Info.plist
 
       # The core embeds this bundle and FlClashHttpOverrides.trustCoreRoots loads it for Dart.
       # Pinned by hash, so a new bundle from https://curl.se/docs/caextract.html is a reviewed bump.
@@ -473,6 +460,200 @@ jobs:
           name: artifact-${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) }}
           path: ./dist
           overwrite: true
+
+  # macOS Intel runners are also capacity-starved. Keep amd64 outside the main
+  # matrix so a queued cancel cannot set needs.build.result to cancelled and
+  # skip release upload. Retries must fire on cancelled — `if: failure()` does
+  # not match cancelled. Late DMGs attach via attach-macos.
+  build-macos-amd64:
+    name: build (macos, amd64, ${{ matrix.runner }})
+    if: github.repository == 'joei4cm/FlClash' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        # Standard hosted Intel labels only (macos-*-large are billed larger runners).
+        runner: [macos-15-intel]
+    runs-on: ${{ matrix.runner }}
+    steps: &macos-amd64-steps
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: ${{ env.BRANCH_CACHE }}
+          cache-dependency-path: core/go.sum
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: ${{ env.BRANCH_CACHE }}
+
+      - name: Setup Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.3.app || \
+            sudo xcode-select -s /Applications/Xcode_26.2.app || \
+            sudo xcode-select -s /Applications/Xcode_16.4.app || \
+            sudo xcode-select -s /Applications/Xcode.app
+          xcodebuild -version
+          uname -m
+
+      - name: Require Intel host
+        run: |
+          arch="$(uname -m)"
+          test "$arch" = 'x86_64' || {
+            echo "Runner is $arch; need x86_64 for the Intel DMG" >&2
+            exit 1
+          }
+
+      - name: Get Flutter Dependency
+        run: |
+          flutter --version
+          flutter pub get
+
+      # See .agents/flutter-upgrade.md before bumping FLUTTER_VERSION.
+      - name: Disable Impeller on Intel macOS
+        run: plutil -replace FLTEnableImpeller -bool NO macos/Runner/Info.plist
+
+      - name: Fetch CA certificates
+        shell: bash
+        env:
+          CA_BUNDLE: cacert-2026-09-25.pem
+          CA_BUNDLE_SHA256: a41b5d356aea97a529fe27e0f7316d2f9d946d75927476cf9cf1b90637d00505
+        run: |
+          bundle=core/Clash.Meta/component/ca/ca-certificates.crt
+          curl -fsSL --retry 3 -o "$bundle" "https://curl.se/ca/$CA_BUNDLE"
+          echo "$CA_BUNDLE_SHA256  $bundle" | sha256sum -c -
+
+      - name: Prefetch Go modules
+        shell: bash
+        working-directory: core
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+        run: |
+          for i in 1 2 3 4 5; do
+            if go mod download; then
+              exit 0
+            fi
+            echo "go mod download failed (attempt $i); retrying..." >&2
+            sleep $((i * 20))
+          done
+          exit 1
+
+      - name: Setup
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+        run: dart setup.dart macos ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-macos-amd64-${{ matrix.runner }}-${{ github.job }}
+          path: ./dist
+          overwrite: true
+
+  wait-macos-amd64-retry:
+    name: wait before macOS amd64 retry
+    needs: [build-macos-amd64]
+    if: |
+      always() &&
+      !cancelled() &&
+      github.repository == 'joei4cm/FlClash' &&
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    outputs:
+      needed: ${{ steps.publish.outputs.needed }}
+    steps:
+      - name: Download any amd64 artifact
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: artifact-macos-amd64-*
+          path: ./dist
+          merge-multiple: true
+      - name: Publish needed flag
+        id: publish
+        run: |
+          if compgen -G './dist/*macos-amd64*' > /dev/null; then
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+            sleep 600
+          fi
+
+  build-macos-amd64-retry:
+    name: build (macos, amd64, retry, ${{ matrix.runner }})
+    needs: [wait-macos-amd64-retry]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.wait-macos-amd64-retry.outputs.needed == 'true' &&
+      github.repository == 'joei4cm/FlClash' &&
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/tags/v')
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15-intel]
+    runs-on: ${{ matrix.runner }}
+    steps: *macos-amd64-steps
+
+  wait-macos-amd64-retry-2:
+    name: wait before macOS amd64 retry 2
+    needs: [wait-macos-amd64-retry, build-macos-amd64-retry]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.wait-macos-amd64-retry.outputs.needed == 'true' &&
+      github.repository == 'joei4cm/FlClash' &&
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    outputs:
+      needed: ${{ steps.publish.outputs.needed }}
+    steps:
+      - name: Download any amd64 artifact
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: artifact-macos-amd64-*
+          path: ./dist
+          merge-multiple: true
+      - name: Publish needed flag
+        id: publish
+        run: |
+          if compgen -G './dist/*macos-amd64*' > /dev/null; then
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+            sleep 900
+          fi
+
+  build-macos-amd64-retry-2:
+    name: build (macos, amd64, retry 2, ${{ matrix.runner }})
+    needs: [wait-macos-amd64-retry-2]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.wait-macos-amd64-retry-2.outputs.needed == 'true' &&
+      github.repository == 'joei4cm/FlClash' &&
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/tags/v')
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15-intel]
+    runs-on: ${{ matrix.runner }}
+    steps: *macos-amd64-steps
 
   # macOS arm64 runners are frequently capacity-starved (queued jobs cancel
   # with no runner). Build outside the main matrix; try several Apple Silicon
@@ -669,8 +850,9 @@ jobs:
   upload:
     permissions:
       contents: write
-    # Do not wait on macOS arm64 retries — those jobs attach later if they win
-    # a runner. Blocking here left releases stuck behind capacity cancels.
+    # Do not wait on macOS amd64/arm64 retries — those jobs attach later if they
+    # win a runner. Blocking on them left releases stuck behind capacity cancels
+    # (and a cancelled macos-15-intel matrix cell used to skip this job entirely).
     needs: [build, dart, plugins, go, android, rust, windows-helper-test]
     if: |
       always() &&
@@ -745,6 +927,12 @@ jobs:
           tag="${{ github.ref_name }}"
           version=$(printf '%s' "$tag" | sed -E 's/^v//; s/_[0-9a-fA-F]{6}$//')
           sed -e "s|vVERSION|$tag|g" -e "s|VERSION|$version|g" ./.github/release_template.md >> release.md
+          if ! compgen -G './dist/*macos-amd64*' > /dev/null; then
+            {
+              echo
+              echo '> **macOS Intel:** the amd64 DMG was not ready when this release published (GitHub runner capacity). A follow-up upload may attach it to this tag; otherwise re-run the release or macos attach workflow later.'
+            } >> release.md
+          fi
           if ! compgen -G './dist/*macos-arm64*' > /dev/null; then
             {
               echo
@@ -782,16 +970,21 @@ jobs:
           pip install requests
           python release_telegram.py
 
-  # Best-effort: attach arm64 if a retry eventually gets a runner.
-  # Also refreshes SHA256SUMS so in-app update verification accepts the DMG.
-  # If this still misses, dispatch workflow macos-arm64-attach for the tag.
-  attach-macos-arm64:
-    name: attach macOS arm64
+  # Best-effort: attach Intel/arm64 macOS DMGs if a retry eventually gets a
+  # runner. Also refreshes SHA256SUMS so in-app update verification accepts them.
+  # If arm64 still misses, dispatch workflow macos-arm64-attach for the tag.
+  attach-macos:
+    name: attach macOS
     permissions:
       contents: write
     needs:
       [
         upload,
+        build-macos-amd64,
+        wait-macos-amd64-retry,
+        build-macos-amd64-retry,
+        wait-macos-amd64-retry-2,
+        build-macos-amd64-retry-2,
         build-macos-arm64,
         wait-macos-arm64-retry,
         build-macos-arm64-retry,
@@ -809,6 +1002,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Download macOS amd64
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          path: ./dist/
+          pattern: artifact-macos-amd64-*
+          merge-multiple: true
+
       - name: Download macOS arm64
         uses: actions/download-artifact@v4
         continue-on-error: true
@@ -825,8 +1026,9 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
-          if ! compgen -G './dist/*macos-arm64*' > /dev/null; then
-            echo 'No macOS arm64 artifact; skipping attach (use macos-arm64-attach).'
+          if ! compgen -G './dist/*macos-amd64*' > /dev/null && \
+             ! compgen -G './dist/*macos-arm64*' > /dev/null; then
+            echo 'No macOS artifacts; skipping attach (use macos-arm64-attach for arm64).'
             exit 0
           fi
           bash .github/scripts/alias_tag_assets.sh "$TAG" ./dist
@@ -836,8 +1038,8 @@ jobs:
 
           mkdir -p /tmp/sums
           if gh release download "$TAG" -D /tmp/sums -p SHA256SUMS; then
-            # Drop both bare and tag-suffixed macOS arm64 lines before re-adding.
-            grep -v 'macos-arm64' /tmp/sums/SHA256SUMS > /tmp/SHA256SUMS || true
+            # Drop both bare and tag-suffixed macOS lines before re-adding.
+            grep -vE 'macos-(amd64|arm64)' /tmp/sums/SHA256SUMS > /tmp/SHA256SUMS || true
           else
             : > /tmp/SHA256SUMS
           fi
