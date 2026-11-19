@@ -30,5 +30,17 @@ object Components {
         "kitty_gray" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconKittyGray"),
         "puppy_golden" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconPuppyGolden"),
         "puppy_shiba" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconPuppyShiba"),
+        "kitty_cheese" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconKittyCheese"),
+        "kitty_white" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconKittyWhite"),
+        "kitty_black" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconKittyBlack"),
+        "kitty_calico" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconKittyCalico"),
+        "puppy_dachshund" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconPuppyDachshund"),
+        "puppy_samoyed" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconPuppySamoyed"),
+        "puppy_bulldog" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconPuppyBulldog"),
+        "puppy_corgi" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconPuppyCorgi"),
+        "bunny" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconBunny"),
+        "red_panda" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconRedPanda"),
+        "hamster" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconHamster"),
+        "otter" to ComponentName(GlobalState.packageName, "${PACKAGE_NAME}.IconOtter"),
     )
 }

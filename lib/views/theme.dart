@@ -80,6 +80,18 @@ class _LauncherIconItem extends ConsumerWidget {
       LauncherIcon.kittyGray => l10n.launcherIconKittyGray,
       LauncherIcon.puppyGolden => l10n.launcherIconPuppyGolden,
       LauncherIcon.puppyShiba => l10n.launcherIconPuppyShiba,
+      LauncherIcon.kittyCheese => l10n.launcherIconKittyCheese,
+      LauncherIcon.kittyWhite => l10n.launcherIconKittyWhite,
+      LauncherIcon.kittyBlack => l10n.launcherIconKittyBlack,
+      LauncherIcon.kittyCalico => l10n.launcherIconKittyCalico,
+      LauncherIcon.puppyDachshund => l10n.launcherIconPuppyDachshund,
+      LauncherIcon.puppySamoyed => l10n.launcherIconPuppySamoyed,
+      LauncherIcon.puppyBulldog => l10n.launcherIconPuppyBulldog,
+      LauncherIcon.puppyCorgi => l10n.launcherIconPuppyCorgi,
+      LauncherIcon.bunny => l10n.launcherIconBunny,
+      LauncherIcon.redPanda => l10n.launcherIconRedPanda,
+      LauncherIcon.hamster => l10n.launcherIconHamster,
+      LauncherIcon.otter => l10n.launcherIconOtter,
     };
   }
 

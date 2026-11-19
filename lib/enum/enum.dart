@@ -837,19 +837,32 @@ enum LauncherIcon {
   kittyOrange,
   kittyGray,
   puppyGolden,
-  puppyShiba;
+  puppyShiba,
+  kittyCheese,
+  kittyWhite,
+  kittyBlack,
+  kittyCalico,
+  puppyDachshund,
+  puppySamoyed,
+  puppyBulldog,
+  puppyCorgi,
+  bunny,
+  redPanda,
+  hamster,
+  otter;
 
-  String get id => switch (this) {
-    LauncherIcon.mascotCloud => 'mascot_cloud',
-    LauncherIcon.mascotFox => 'mascot_fox',
-    LauncherIcon.mascotPenguin => 'mascot_penguin',
-    LauncherIcon.mascotRobot => 'mascot_robot',
-    LauncherIcon.kittyOrange => 'kitty_orange',
-    LauncherIcon.kittyGray => 'kitty_gray',
-    LauncherIcon.puppyGolden => 'puppy_golden',
-    LauncherIcon.puppyShiba => 'puppy_shiba',
-    _ => name,
-  };
+  String get id {
+    final buffer = StringBuffer();
+    for (var i = 0; i < name.length; i++) {
+      final ch = name[i];
+      final lower = ch.toLowerCase();
+      if (ch != lower && i > 0) {
+        buffer.write('_');
+      }
+      buffer.write(lower);
+    }
+    return buffer.toString();
+  }
 
   String get asset => 'assets/images/app_icons/$id.png';
 

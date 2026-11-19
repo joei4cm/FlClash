@@ -1603,13 +1603,27 @@ class MessageLookup extends MessageLookupByLibrary {
       "The app exited unexpectedly while it was starting up last time. Automatic setup was skipped for this launch; you can start it manually to retry.",
     ),
     "launcherIcon": MessageLookupByLibrary.simpleMessage("App icon"),
+    "launcherIconBunny": MessageLookupByLibrary.simpleMessage("Bunny"),
     "launcherIconClassic": MessageLookupByLibrary.simpleMessage("Classic"),
     "launcherIconFrost": MessageLookupByLibrary.simpleMessage("Frost"),
     "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("Graphite"),
+    "launcherIconHamster": MessageLookupByLibrary.simpleMessage("Hamster"),
     "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("Indigo"),
+    "launcherIconKittyBlack": MessageLookupByLibrary.simpleMessage(
+      "Black kitty",
+    ),
+    "launcherIconKittyCalico": MessageLookupByLibrary.simpleMessage(
+      "Calico kitty",
+    ),
+    "launcherIconKittyCheese": MessageLookupByLibrary.simpleMessage(
+      "Cheese kitty",
+    ),
     "launcherIconKittyGray": MessageLookupByLibrary.simpleMessage("Gray kitty"),
     "launcherIconKittyOrange": MessageLookupByLibrary.simpleMessage(
       "Orange kitty",
+    ),
+    "launcherIconKittyWhite": MessageLookupByLibrary.simpleMessage(
+      "White kitty",
     ),
     "launcherIconMascotCloud": MessageLookupByLibrary.simpleMessage("Cloud"),
     "launcherIconMascotFox": MessageLookupByLibrary.simpleMessage("Fox"),
@@ -1618,12 +1632,20 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "launcherIconMascotRobot": MessageLookupByLibrary.simpleMessage("Robot"),
     "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Midnight"),
+    "launcherIconOtter": MessageLookupByLibrary.simpleMessage("Otter"),
+    "launcherIconPuppyBulldog": MessageLookupByLibrary.simpleMessage("Bulldog"),
+    "launcherIconPuppyCorgi": MessageLookupByLibrary.simpleMessage("Corgi"),
+    "launcherIconPuppyDachshund": MessageLookupByLibrary.simpleMessage(
+      "Dachshund",
+    ),
     "launcherIconPuppyGolden": MessageLookupByLibrary.simpleMessage(
       "Golden puppy",
     ),
+    "launcherIconPuppySamoyed": MessageLookupByLibrary.simpleMessage("Samoyed"),
     "launcherIconPuppyShiba": MessageLookupByLibrary.simpleMessage(
       "Shiba puppy",
     ),
+    "launcherIconRedPanda": MessageLookupByLibrary.simpleMessage("Red panda"),
     "launcherIconTide": MessageLookupByLibrary.simpleMessage("Tide"),
     "layout": MessageLookupByLibrary.simpleMessage("Layout"),
     "light": MessageLookupByLibrary.simpleMessage("Light"),

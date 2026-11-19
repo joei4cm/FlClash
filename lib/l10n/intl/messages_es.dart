@@ -1698,15 +1698,29 @@ class MessageLookup extends MessageLookupByLibrary {
       "La última vez, la app se cerró inesperadamente mientras se iniciaba. En este inicio se ha omitido la configuración automática; puedes iniciarla manualmente para reintentarlo.",
     ),
     "launcherIcon": MessageLookupByLibrary.simpleMessage("Icono de la app"),
+    "launcherIconBunny": MessageLookupByLibrary.simpleMessage("Conejito"),
     "launcherIconClassic": MessageLookupByLibrary.simpleMessage("Clásico"),
     "launcherIconFrost": MessageLookupByLibrary.simpleMessage("Escarcha"),
     "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("Grafito"),
+    "launcherIconHamster": MessageLookupByLibrary.simpleMessage("Hámster"),
     "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("Índigo"),
+    "launcherIconKittyBlack": MessageLookupByLibrary.simpleMessage(
+      "Gatito negro",
+    ),
+    "launcherIconKittyCalico": MessageLookupByLibrary.simpleMessage(
+      "Gatito calicó",
+    ),
+    "launcherIconKittyCheese": MessageLookupByLibrary.simpleMessage(
+      "Gatito queso",
+    ),
     "launcherIconKittyGray": MessageLookupByLibrary.simpleMessage(
       "Gatito gris",
     ),
     "launcherIconKittyOrange": MessageLookupByLibrary.simpleMessage(
       "Gatito naranja",
+    ),
+    "launcherIconKittyWhite": MessageLookupByLibrary.simpleMessage(
+      "Gatito blanco",
     ),
     "launcherIconMascotCloud": MessageLookupByLibrary.simpleMessage("Nube"),
     "launcherIconMascotFox": MessageLookupByLibrary.simpleMessage("Zorro"),
@@ -1715,10 +1729,20 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "launcherIconMascotRobot": MessageLookupByLibrary.simpleMessage("Robot"),
     "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Medianoche"),
+    "launcherIconOtter": MessageLookupByLibrary.simpleMessage("Nutria"),
+    "launcherIconPuppyBulldog": MessageLookupByLibrary.simpleMessage("Bulldog"),
+    "launcherIconPuppyCorgi": MessageLookupByLibrary.simpleMessage("Corgi"),
+    "launcherIconPuppyDachshund": MessageLookupByLibrary.simpleMessage(
+      "Teckel",
+    ),
     "launcherIconPuppyGolden": MessageLookupByLibrary.simpleMessage(
       "Cachorro dorado",
     ),
+    "launcherIconPuppySamoyed": MessageLookupByLibrary.simpleMessage(
+      "Samoyedo",
+    ),
     "launcherIconPuppyShiba": MessageLookupByLibrary.simpleMessage("Shiba"),
+    "launcherIconRedPanda": MessageLookupByLibrary.simpleMessage("Panda rojo"),
     "launcherIconTide": MessageLookupByLibrary.simpleMessage("Marea"),
     "layout": MessageLookupByLibrary.simpleMessage("Diseño"),
     "light": MessageLookupByLibrary.simpleMessage("Claro"),

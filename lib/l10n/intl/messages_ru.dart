@@ -1668,15 +1668,29 @@ class MessageLookup extends MessageLookupByLibrary {
       "В прошлый раз приложение неожиданно завершилось во время запуска. Автоматическая настройка для этого запуска пропущена; вы можете запустить её вручную.",
     ),
     "launcherIcon": MessageLookupByLibrary.simpleMessage("Значок приложения"),
+    "launcherIconBunny": MessageLookupByLibrary.simpleMessage("Кролик"),
     "launcherIconClassic": MessageLookupByLibrary.simpleMessage("Классический"),
     "launcherIconFrost": MessageLookupByLibrary.simpleMessage("Иней"),
     "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("Графит"),
+    "launcherIconHamster": MessageLookupByLibrary.simpleMessage("Хомяк"),
     "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("Индиго"),
+    "launcherIconKittyBlack": MessageLookupByLibrary.simpleMessage(
+      "Чёрный котёнок",
+    ),
+    "launcherIconKittyCalico": MessageLookupByLibrary.simpleMessage(
+      "Трёхцветный котёнок",
+    ),
+    "launcherIconKittyCheese": MessageLookupByLibrary.simpleMessage(
+      "Сырный котёнок",
+    ),
     "launcherIconKittyGray": MessageLookupByLibrary.simpleMessage(
       "Серый котёнок",
     ),
     "launcherIconKittyOrange": MessageLookupByLibrary.simpleMessage(
       "Рыжий котёнок",
+    ),
+    "launcherIconKittyWhite": MessageLookupByLibrary.simpleMessage(
+      "Белый котёнок",
     ),
     "launcherIconMascotCloud": MessageLookupByLibrary.simpleMessage("Облако"),
     "launcherIconMascotFox": MessageLookupByLibrary.simpleMessage("Лиса"),
@@ -1685,10 +1699,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "launcherIconMascotRobot": MessageLookupByLibrary.simpleMessage("Робот"),
     "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Полночь"),
+    "launcherIconOtter": MessageLookupByLibrary.simpleMessage("Выдра"),
+    "launcherIconPuppyBulldog": MessageLookupByLibrary.simpleMessage("Бульдог"),
+    "launcherIconPuppyCorgi": MessageLookupByLibrary.simpleMessage("Корги"),
+    "launcherIconPuppyDachshund": MessageLookupByLibrary.simpleMessage("Такса"),
     "launcherIconPuppyGolden": MessageLookupByLibrary.simpleMessage(
       "Золотистый щенок",
     ),
+    "launcherIconPuppySamoyed": MessageLookupByLibrary.simpleMessage("Самоед"),
     "launcherIconPuppyShiba": MessageLookupByLibrary.simpleMessage("Сиба"),
+    "launcherIconRedPanda": MessageLookupByLibrary.simpleMessage(
+      "Красная панда",
+    ),
     "launcherIconTide": MessageLookupByLibrary.simpleMessage("Прилив"),
     "layout": MessageLookupByLibrary.simpleMessage("Макет"),
     "light": MessageLookupByLibrary.simpleMessage("Светлая"),

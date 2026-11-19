@@ -7,6 +7,9 @@ void main() {
     expect(LauncherIcon.fromId('mascot_fox'), LauncherIcon.mascotFox);
     expect(LauncherIcon.fromId('kitty_orange'), LauncherIcon.kittyOrange);
     expect(LauncherIcon.fromId('puppy_shiba'), LauncherIcon.puppyShiba);
+    expect(LauncherIcon.fromId('kitty_cheese'), LauncherIcon.kittyCheese);
+    expect(LauncherIcon.fromId('puppy_corgi'), LauncherIcon.puppyCorgi);
+    expect(LauncherIcon.fromId('red_panda'), LauncherIcon.redPanda);
     expect(LauncherIcon.fromId(null), LauncherIcon.classic);
     expect(LauncherIcon.fromId('missing'), LauncherIcon.classic);
   });

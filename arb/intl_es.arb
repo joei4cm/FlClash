@@ -1547,5 +1547,17 @@
   "launcherIconKittyOrange": "Gatito naranja",
   "launcherIconKittyGray": "Gatito gris",
   "launcherIconPuppyGolden": "Cachorro dorado",
-  "launcherIconPuppyShiba": "Shiba"
+  "launcherIconPuppyShiba": "Shiba",
+  "launcherIconKittyCheese": "Gatito queso",
+  "launcherIconKittyWhite": "Gatito blanco",
+  "launcherIconKittyBlack": "Gatito negro",
+  "launcherIconKittyCalico": "Gatito calicó",
+  "launcherIconPuppyDachshund": "Teckel",
+  "launcherIconPuppySamoyed": "Samoyedo",
+  "launcherIconPuppyBulldog": "Bulldog",
+  "launcherIconPuppyCorgi": "Corgi",
+  "launcherIconBunny": "Conejito",
+  "launcherIconRedPanda": "Panda rojo",
+  "launcherIconHamster": "Hámster",
+  "launcherIconOtter": "Nutria"
 }

@@ -12664,6 +12664,116 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Cheese kitty`
+  String get launcherIconKittyCheese {
+    return Intl.message(
+      'Cheese kitty',
+      name: 'launcherIconKittyCheese',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `White kitty`
+  String get launcherIconKittyWhite {
+    return Intl.message(
+      'White kitty',
+      name: 'launcherIconKittyWhite',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Black kitty`
+  String get launcherIconKittyBlack {
+    return Intl.message(
+      'Black kitty',
+      name: 'launcherIconKittyBlack',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Calico kitty`
+  String get launcherIconKittyCalico {
+    return Intl.message(
+      'Calico kitty',
+      name: 'launcherIconKittyCalico',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dachshund`
+  String get launcherIconPuppyDachshund {
+    return Intl.message(
+      'Dachshund',
+      name: 'launcherIconPuppyDachshund',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Samoyed`
+  String get launcherIconPuppySamoyed {
+    return Intl.message(
+      'Samoyed',
+      name: 'launcherIconPuppySamoyed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bulldog`
+  String get launcherIconPuppyBulldog {
+    return Intl.message(
+      'Bulldog',
+      name: 'launcherIconPuppyBulldog',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Corgi`
+  String get launcherIconPuppyCorgi {
+    return Intl.message(
+      'Corgi',
+      name: 'launcherIconPuppyCorgi',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bunny`
+  String get launcherIconBunny {
+    return Intl.message('Bunny', name: 'launcherIconBunny', desc: '', args: []);
+  }
+
+  /// `Red panda`
+  String get launcherIconRedPanda {
+    return Intl.message(
+      'Red panda',
+      name: 'launcherIconRedPanda',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hamster`
+  String get launcherIconHamster {
+    return Intl.message(
+      'Hamster',
+      name: 'launcherIconHamster',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Otter`
+  String get launcherIconOtter {
+    return Intl.message('Otter', name: 'launcherIconOtter', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

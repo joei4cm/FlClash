@@ -1554,5 +1554,17 @@
   "launcherIconKittyOrange": "Orange kitty",
   "launcherIconKittyGray": "Gray kitty",
   "launcherIconPuppyGolden": "Golden puppy",
-  "launcherIconPuppyShiba": "Shiba puppy"
+  "launcherIconPuppyShiba": "Shiba puppy",
+  "launcherIconKittyCheese": "Cheese kitty",
+  "launcherIconKittyWhite": "White kitty",
+  "launcherIconKittyBlack": "Black kitty",
+  "launcherIconKittyCalico": "Calico kitty",
+  "launcherIconPuppyDachshund": "Dachshund",
+  "launcherIconPuppySamoyed": "Samoyed",
+  "launcherIconPuppyBulldog": "Bulldog",
+  "launcherIconPuppyCorgi": "Corgi",
+  "launcherIconBunny": "Bunny",
+  "launcherIconRedPanda": "Red panda",
+  "launcherIconHamster": "Hamster",
+  "launcherIconOtter": "Otter"
 }

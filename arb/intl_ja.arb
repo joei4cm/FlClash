@@ -1547,5 +1547,17 @@
   "launcherIconKittyOrange": "茶トラ猫",
   "launcherIconKittyGray": "グレー猫",
   "launcherIconPuppyGolden": "ゴールデン子犬",
-  "launcherIconPuppyShiba": "しばいぬ"
+  "launcherIconPuppyShiba": "しばいぬ",
+  "launcherIconKittyCheese": "チーズ猫",
+  "launcherIconKittyWhite": "白猫",
+  "launcherIconKittyBlack": "黒猫",
+  "launcherIconKittyCalico": "三毛猫",
+  "launcherIconPuppyDachshund": "ダックス",
+  "launcherIconPuppySamoyed": "サモエド",
+  "launcherIconPuppyBulldog": "ブルドッグ",
+  "launcherIconPuppyCorgi": "コーギー",
+  "launcherIconBunny": "うさぎ",
+  "launcherIconRedPanda": "レッサーパンダ",
+  "launcherIconHamster": "ハムスター",
+  "launcherIconOtter": "カワウソ"
 }

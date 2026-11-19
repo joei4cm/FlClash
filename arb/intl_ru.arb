@@ -1547,5 +1547,17 @@
   "launcherIconKittyOrange": "Рыжий котёнок",
   "launcherIconKittyGray": "Серый котёнок",
   "launcherIconPuppyGolden": "Золотистый щенок",
-  "launcherIconPuppyShiba": "Сиба"
+  "launcherIconPuppyShiba": "Сиба",
+  "launcherIconKittyCheese": "Сырный котёнок",
+  "launcherIconKittyWhite": "Белый котёнок",
+  "launcherIconKittyBlack": "Чёрный котёнок",
+  "launcherIconKittyCalico": "Трёхцветный котёнок",
+  "launcherIconPuppyDachshund": "Такса",
+  "launcherIconPuppySamoyed": "Самоед",
+  "launcherIconPuppyBulldog": "Бульдог",
+  "launcherIconPuppyCorgi": "Корги",
+  "launcherIconBunny": "Кролик",
+  "launcherIconRedPanda": "Красная панда",
+  "launcherIconHamster": "Хомяк",
+  "launcherIconOtter": "Выдра"
 }
