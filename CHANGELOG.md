@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.9.22 (2026-11-19)
+## v0.9.23 (2026-11-19)
 
 **Features**
 
@@ -26,6 +26,9 @@
 
 **Bug Fixes**
 
+- **theme** Ship icon previews and make app name edits stick (#89) (989e6f9)
+- **tailscale** Keep settings and node dialog content reachable (#88) (b8b050a)
+- **ci** Repair launcherIcons list and format l10n (#87) (28ed728)
 - **ci** Keep release upload off macos-15-intel cancels (#84) (b2e3550)
 - **changelog** Regenerate v0.9.21 from changelog.json (c6c2988)
 - **tailscale** Test button checks join, not public internet (364ae42)
