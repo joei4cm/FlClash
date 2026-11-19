@@ -639,15 +639,14 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         return true
     }
 
-    private fun setAppDisplayName(name: String) {
-        val label = name.ifBlank {
-            GlobalState.application.getString(CommonR.string.app_name)
-        }
-        GlobalState.application
+    private fun savedDisplayName(): String {
+        val prefs = GlobalState.application
             .getSharedPreferences(DISPLAY_PREFS, Context.MODE_PRIVATE)
-            .edit()
-            .putString(DISPLAY_NAME_KEY, label)
-            .apply()
+        return prefs.getString(DISPLAY_NAME_KEY, null)?.takeIf { it.isNotBlank() }
+            ?: GlobalState.application.getString(CommonR.string.app_name)
+    }
+
+    private fun applyTaskDescription(label: String) {
         onMainThread {
             val current = activity ?: return@onMainThread
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -661,6 +660,18 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                 current.setTaskDescription(ActivityManager.TaskDescription(label))
             }
         }
+    }
+
+    private fun setAppDisplayName(name: String) {
+        val label = name.ifBlank {
+            GlobalState.application.getString(CommonR.string.app_name)
+        }
+        GlobalState.application
+            .getSharedPreferences(DISPLAY_PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putString(DISPLAY_NAME_KEY, label)
+            .apply()
+        applyTaskDescription(label)
     }
 
     @Suppress("DEPRECATION")
@@ -847,6 +858,7 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         activity = binding.activity
         binding.addActivityResultListener(activityResultListener)
         binding.addRequestPermissionsResultListener(permissionsResultListener)
+        applyTaskDescription(savedDisplayName())
         if (isTelevision) {
             ViewCompat.setOnApplyWindowInsetsListener(
                 binding.activity.window.decorView,
