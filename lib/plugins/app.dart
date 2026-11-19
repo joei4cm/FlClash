@@ -243,6 +243,11 @@ class App {
         false;
   }
 
+  Future<void> setAppDisplayName(String name) async {
+    if (!Platform.isAndroid) return;
+    await methodChannel.invokeMethod<void>('setAppDisplayName', {'name': name});
+  }
+
   Future<({bool user, bool system, bool root})> locateCaCertificate(
     List<int> der,
   ) async {

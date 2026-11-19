@@ -256,6 +256,12 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                 }
             }
 
+            "setAppDisplayName" -> {
+                val name = call.argument<String>("name").orEmpty()
+                setAppDisplayName(name)
+                result.success(null)
+            }
+
 
             "getLastExitInfo" -> reply(result) {
                 GlobalState.lastExitInfo()
@@ -632,6 +638,30 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         return true
     }
 
+    private fun setAppDisplayName(name: String) {
+        val label = name.ifBlank {
+            GlobalState.application.getString(R.string.app_name)
+        }
+        GlobalState.application
+            .getSharedPreferences(DISPLAY_PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putString(DISPLAY_NAME_KEY, label)
+            .apply()
+        onMainThread {
+            val current = activity ?: return@onMainThread
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                current.setTaskDescription(
+                    ActivityManager.TaskDescription.Builder()
+                        .setLabel(label)
+                        .build(),
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                current.setTaskDescription(ActivityManager.TaskDescription(label))
+            }
+        }
+    }
+
     @Suppress("DEPRECATION")
     private fun updateExcludeFromRecents(value: Boolean?) {
         val taskId = activity?.taskId ?: return
@@ -909,5 +939,7 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         const val INSTALLED_APPS_PERMISSION_REQUEST_CODE = 1003
         const val LOCAL_NETWORK_PERMISSION_REQUEST_CODE = 1004
         const val INSTALL_STATUS_ACTION = "${Components.PACKAGE_NAME}.action.INSTALL_STATUS"
+        const val DISPLAY_PREFS = "flclash_display"
+        const val DISPLAY_NAME_KEY = "app_display_name"
     }
 }

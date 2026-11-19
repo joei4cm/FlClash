@@ -449,6 +449,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "appAccessControl": MessageLookupByLibrary.simpleMessage(
       "App access control",
     ),
+    "appDisplayName": MessageLookupByLibrary.simpleMessage("App name"),
+    "appDisplayNameDefaultTip": MessageLookupByLibrary.simpleMessage(
+      "Default: FlClash (home-screen label depends on the launcher)",
+    ),
     "appIconDesign": MessageLookupByLibrary.simpleMessage("App icon design"),
     "appProxiesEmpty": MessageLookupByLibrary.simpleMessage("No local proxies"),
     "appRouting": MessageLookupByLibrary.simpleMessage("App routing"),
@@ -1603,6 +1607,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "launcherIconFrost": MessageLookupByLibrary.simpleMessage("Frost"),
     "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("Graphite"),
     "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("Indigo"),
+    "launcherIconMascotCloud": MessageLookupByLibrary.simpleMessage("Cloud"),
+    "launcherIconMascotFox": MessageLookupByLibrary.simpleMessage("Fox"),
+    "launcherIconMascotPenguin": MessageLookupByLibrary.simpleMessage(
+      "Penguin",
+    ),
+    "launcherIconMascotRobot": MessageLookupByLibrary.simpleMessage("Robot"),
     "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Midnight"),
     "launcherIconTide": MessageLookupByLibrary.simpleMessage("Tide"),
     "layout": MessageLookupByLibrary.simpleMessage("Layout"),

@@ -829,11 +829,21 @@ enum LauncherIcon {
   midnight,
   indigo,
   tide,
-  graphite;
+  graphite,
+  mascotCloud,
+  mascotFox,
+  mascotPenguin,
+  mascotRobot;
 
-  String get id => name;
+  String get id => switch (this) {
+    LauncherIcon.mascotCloud => 'mascot_cloud',
+    LauncherIcon.mascotFox => 'mascot_fox',
+    LauncherIcon.mascotPenguin => 'mascot_penguin',
+    LauncherIcon.mascotRobot => 'mascot_robot',
+    _ => name,
+  };
 
-  String get asset => 'assets/images/app_icons/$name.png';
+  String get asset => 'assets/images/app_icons/$id.png';
 
   static LauncherIcon fromId(String? id) {
     return LauncherIcon.values.firstWhere(

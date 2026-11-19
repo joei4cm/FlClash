@@ -153,6 +153,58 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
+        <activity-alias
+            android:name=".IconMascotCloud"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_mascot_cloud"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_mascot_cloud_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconMascotFox"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_mascot_fox"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_mascot_fox_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconMascotPenguin"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_mascot_penguin"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_mascot_penguin_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".IconMascotRobot"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_mascot_robot"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_mascot_robot_round"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
         <activity
             android:name=".QuickActionActivity"

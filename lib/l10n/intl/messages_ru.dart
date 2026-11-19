@@ -456,6 +456,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "appAccessControl": MessageLookupByLibrary.simpleMessage(
       "Контроль доступа приложений",
     ),
+    "appDisplayName": MessageLookupByLibrary.simpleMessage("Имя приложения"),
+    "appDisplayNameDefaultTip": MessageLookupByLibrary.simpleMessage(
+      "По умолчанию: FlClash (подпись на экране зависит от лаунчера)",
+    ),
     "appIconDesign": MessageLookupByLibrary.simpleMessage(
       "Дизайн значка приложения",
     ),
@@ -1668,6 +1672,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "launcherIconFrost": MessageLookupByLibrary.simpleMessage("Иней"),
     "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("Графит"),
     "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("Индиго"),
+    "launcherIconMascotCloud": MessageLookupByLibrary.simpleMessage("Облако"),
+    "launcherIconMascotFox": MessageLookupByLibrary.simpleMessage("Лиса"),
+    "launcherIconMascotPenguin": MessageLookupByLibrary.simpleMessage(
+      "Пингвин",
+    ),
+    "launcherIconMascotRobot": MessageLookupByLibrary.simpleMessage("Робот"),
     "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Полночь"),
     "launcherIconTide": MessageLookupByLibrary.simpleMessage("Прилив"),
     "layout": MessageLookupByLibrary.simpleMessage("Макет"),

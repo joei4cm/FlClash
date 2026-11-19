@@ -12569,6 +12569,61 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `App name`
+  String get appDisplayName {
+    return Intl.message('App name', name: 'appDisplayName', desc: '', args: []);
+  }
+
+  /// `Default: FlClash (home-screen label depends on the launcher)`
+  String get appDisplayNameDefaultTip {
+    return Intl.message(
+      'Default: FlClash (home-screen label depends on the launcher)',
+      name: 'appDisplayNameDefaultTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cloud`
+  String get launcherIconMascotCloud {
+    return Intl.message(
+      'Cloud',
+      name: 'launcherIconMascotCloud',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fox`
+  String get launcherIconMascotFox {
+    return Intl.message(
+      'Fox',
+      name: 'launcherIconMascotFox',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Penguin`
+  String get launcherIconMascotPenguin {
+    return Intl.message(
+      'Penguin',
+      name: 'launcherIconMascotPenguin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Robot`
+  String get launcherIconMascotRobot {
+    return Intl.message(
+      'Robot',
+      name: 'launcherIconMascotRobot',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

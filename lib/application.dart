@@ -173,7 +173,11 @@ class ApplicationState extends ConsumerState<Application> {
               child: child!,
             );
           },
-          title: appName,
+          title: resolveAppDisplayName(
+            ref.watch(
+              appSettingProvider.select((state) => state.appDisplayName),
+            ),
+          ),
           locale: getLocaleForString(locale),
           supportedLocales: AppLocalizations.delegate.supportedLocales,
           themeMode: themeProps.themeMode,

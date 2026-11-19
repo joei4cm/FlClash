@@ -32,6 +32,8 @@ class ThemeView extends StatelessWidget {
           const SizedBox(height: 16),
           const _ThemeModeItem(),
           const SizedBox(height: 16),
+          const _AppDisplayNameItem(),
+          const SizedBox(height: 16),
           if (system.isAndroid) ...const [
             _LauncherIconItem(),
             SizedBox(height: 16),
@@ -70,6 +72,10 @@ class _LauncherIconItem extends ConsumerWidget {
       LauncherIcon.indigo => l10n.launcherIconIndigo,
       LauncherIcon.tide => l10n.launcherIconTide,
       LauncherIcon.graphite => l10n.launcherIconGraphite,
+      LauncherIcon.mascotCloud => l10n.launcherIconMascotCloud,
+      LauncherIcon.mascotFox => l10n.launcherIconMascotFox,
+      LauncherIcon.mascotPenguin => l10n.launcherIconMascotPenguin,
+      LauncherIcon.mascotRobot => l10n.launcherIconMascotRobot,
     };
   }
 
@@ -90,8 +96,11 @@ class _LauncherIconItem extends ConsumerWidget {
           PreviewChoice(
             value: icon,
             label: _label(appLocalizations, icon),
-            pictogram: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+            pictogram: ClipPath(
+              clipper: ShapeBorderClipper(
+                shape: AppShape.lg,
+                textDirection: Directionality.of(context),
+              ),
               child: Image.asset(
                 icon.asset,
                 width: 48,
@@ -106,6 +115,49 @@ class _LauncherIconItem extends ConsumerWidget {
             .read(appSettingProvider.notifier)
             .update((state) => state.copyWith(launcherIcon: value.id));
       },
+    );
+  }
+}
+
+class _AppDisplayNameItem extends ConsumerWidget {
+  const _AppDisplayNameItem();
+
+  Future<void> _edit(BuildContext context, WidgetRef ref) async {
+    final appLocalizations = context.appLocalizations;
+    final current = ref.read(appSettingProvider).appDisplayName;
+    final next = await dialogs.showCommonDialog<String>(
+      child: InputDialog(
+        title: appLocalizations.appDisplayName,
+        value: current,
+        labelText: appLocalizations.appDisplayName,
+        hintText: appName,
+        inputFormatters: TextInputLimits.limit(TextInputLimits.name),
+      ),
+    );
+    if (next == null || !context.mounted) {
+      return;
+    }
+    ref
+        .read(appSettingProvider.notifier)
+        .update((state) => state.copyWith(appDisplayName: next.trim()));
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appLocalizations = context.appLocalizations;
+    final custom = ref.watch(
+      appSettingProvider.select((state) => state.appDisplayName),
+    );
+    final display = resolveAppDisplayName(custom);
+    return ListItem(
+      leading: const GlyphIcon(AppGlyphs.edit),
+      title: Text(appLocalizations.appDisplayName),
+      subtitle: Text(
+        custom.trim().isEmpty
+            ? appLocalizations.appDisplayNameDefaultTip
+            : display,
+      ),
+      onTap: () => unawaited(_edit(context, ref)),
     );
   }
 }

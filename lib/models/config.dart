@@ -308,6 +308,9 @@ abstract class AppSettingProps with _$AppSettingProps {
 
     /// Android launcher icon activity-alias id (`classic`, `frost`, …).
     @Default('classic') String launcherIcon,
+
+    /// User-facing app label; empty keeps the default [appName].
+    @Default('') String appDisplayName,
   }) = _AppSettingProps;
 
   factory AppSettingProps.fromJson(Map<String, Object?> json) =>

@@ -1537,5 +1537,11 @@
   "tailscaleAuthKeyOverrideHint": "Leave blank to generate from the API token, or paste your own auth key to override.",
   "tailscaleRoutesHintCidr": "Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale IPs; ts.net covers MagicDNS names.",
   "tailscaleEnableDescShort": "Inject embedded Tailscale nodes into the active profile.",
-  "tailscaleAdvancedTitle": "Advanced"
+  "tailscaleAdvancedTitle": "Advanced",
+  "appDisplayName": "Имя приложения",
+  "appDisplayNameDefaultTip": "По умолчанию: FlClash (подпись на экране зависит от лаунчера)",
+  "launcherIconMascotCloud": "Облако",
+  "launcherIconMascotFox": "Лиса",
+  "launcherIconMascotPenguin": "Пингвин",
+  "launcherIconMascotRobot": "Робот"
 }

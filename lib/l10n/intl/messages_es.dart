@@ -466,6 +466,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "appAccessControl": MessageLookupByLibrary.simpleMessage(
       "Control de acceso de apps",
     ),
+    "appDisplayName": MessageLookupByLibrary.simpleMessage("Nombre de la app"),
+    "appDisplayNameDefaultTip": MessageLookupByLibrary.simpleMessage(
+      "Predeterminado: FlClash (el nombre en la pantalla de inicio depende del lanzador)",
+    ),
     "appIconDesign": MessageLookupByLibrary.simpleMessage(
       "Diseño del icono de la app",
     ),
@@ -1698,6 +1702,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "launcherIconFrost": MessageLookupByLibrary.simpleMessage("Escarcha"),
     "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("Grafito"),
     "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("Índigo"),
+    "launcherIconMascotCloud": MessageLookupByLibrary.simpleMessage("Nube"),
+    "launcherIconMascotFox": MessageLookupByLibrary.simpleMessage("Zorro"),
+    "launcherIconMascotPenguin": MessageLookupByLibrary.simpleMessage(
+      "Pingüino",
+    ),
+    "launcherIconMascotRobot": MessageLookupByLibrary.simpleMessage("Robot"),
     "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Medianoche"),
     "launcherIconTide": MessageLookupByLibrary.simpleMessage("Marea"),
     "layout": MessageLookupByLibrary.simpleMessage("Diseño"),

@@ -406,7 +406,15 @@ class _WindowHeaderState extends ConsumerState<WindowHeader> {
       backdropOpacity: backdropOpacity,
       onDragStart: desktopWindow.startDragging,
       onDoubleTap: caption.toggleMaximized,
-      title: system.isMacOS ? const Text(appName) : null,
+      title: system.isMacOS
+          ? Text(
+              resolveAppDisplayName(
+                ref.watch(
+                  appSettingProvider.select((state) => state.appDisplayName),
+                ),
+              ),
+            )
+          : null,
       actions: system.isMacOS
           ? null
           : WindowHeaderActions(

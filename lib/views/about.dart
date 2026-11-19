@@ -70,6 +70,11 @@ class AboutView extends ConsumerWidget {
         ),
         children: [
           _AboutHero(
+            displayName: resolveAppDisplayName(
+              ref.watch(
+                appSettingProvider.select((state) => state.appDisplayName),
+              ),
+            ),
             isCheckingUpdate: isLoading,
             onCheckUpdate: () {
               _checkUpdate(context, ref);
@@ -140,11 +145,13 @@ class AboutView extends ConsumerWidget {
 }
 
 class _AboutHero extends StatelessWidget {
+  final String displayName;
   final bool isCheckingUpdate;
   final VoidCallback onCheckUpdate;
   final VoidCallback onEnterDeveloperMode;
 
   const _AboutHero({
+    required this.displayName,
     required this.isCheckingUpdate,
     required this.onCheckUpdate,
     required this.onEnterDeveloperMode,
@@ -180,7 +187,7 @@ class _AboutHero extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            appName,
+            displayName,
             style: AppTextStyle.title2.of(context, emphasized: true),
           ),
           const SizedBox(height: 10),

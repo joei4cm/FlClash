@@ -36,6 +36,16 @@ class _AndroidContainerState extends ConsumerState<AndroidManager>
     ) {
       unawaited(app?.setLauncherIcon(next) ?? Future<bool>.value(false));
     }, fireImmediately: true);
+    ref.listenManual(
+      appSettingProvider.select((state) => state.appDisplayName),
+      (prev, next) {
+        unawaited(
+          app?.setAppDisplayName(resolveAppDisplayName(next)) ??
+              Future<void>.value(),
+        );
+      },
+      fireImmediately: true,
+    );
     ref.listenManual(loadedLocaleProvider, (prev, next) {
       if (prev != null && prev != next && !safeModeBuild) {
         app?.initShortcuts();
