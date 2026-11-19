@@ -40,6 +40,7 @@ import com.follow.clash.common.Components
 import com.follow.clash.common.GlobalState
 import com.follow.clash.common.PendingCallback
 import com.follow.clash.common.QuickAction
+import com.follow.clash.common.R as CommonR
 import com.follow.clash.common.quickIntent
 import com.follow.clash.common.registerReceiverCompat
 import com.follow.clash.common.shortcutId
@@ -241,6 +242,25 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
 
             "openAppSettings" -> {
                 result.success(openAppSettings())
+            }
+
+            "getLauncherIcon" -> {
+                result.success(currentLauncherIcon())
+            }
+
+            "setLauncherIcon" -> {
+                val id = call.argument<String>("id")
+                if (id.isNullOrBlank()) {
+                    result.error("INVALID_ARGUMENT", "Launcher icon id is required", null)
+                } else {
+                    result.success(setLauncherIcon(id))
+                }
+            }
+
+            "setAppDisplayName" -> {
+                val name = call.argument<String>("name").orEmpty()
+                setAppDisplayName(name)
+                result.success(null)
             }
 
 
@@ -587,6 +607,62 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         }
     }
 
+    private fun currentLauncherIcon(): String {
+        val pm = GlobalState.application.packageManager
+        for ((id, component) in Components.launcherIcons) {
+            val state = pm.getComponentEnabledSetting(component)
+            val enabled = when (state) {
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED -> true
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED -> false
+                else -> component.className.endsWith(".IconClassic")
+            }
+            if (enabled) return id
+        }
+        return "classic"
+    }
+
+    private fun setLauncherIcon(id: String): Boolean {
+        val match = Components.launcherIcons.firstOrNull { it.first == id } ?: return false
+        val pm = GlobalState.application.packageManager
+        for ((_, component) in Components.launcherIcons) {
+            val enable = component == match.second
+            pm.setComponentEnabledSetting(
+                component,
+                if (enable) {
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                } else {
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                },
+                PackageManager.DONT_KILL_APP,
+            )
+        }
+        return true
+    }
+
+    private fun setAppDisplayName(name: String) {
+        val label = name.ifBlank {
+            GlobalState.application.getString(CommonR.string.app_name)
+        }
+        GlobalState.application
+            .getSharedPreferences(DISPLAY_PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putString(DISPLAY_NAME_KEY, label)
+            .apply()
+        onMainThread {
+            val current = activity ?: return@onMainThread
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                current.setTaskDescription(
+                    ActivityManager.TaskDescription.Builder()
+                        .setLabel(label)
+                        .build(),
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                current.setTaskDescription(ActivityManager.TaskDescription(label))
+            }
+        }
+    }
+
     @Suppress("DEPRECATION")
     private fun updateExcludeFromRecents(value: Boolean?) {
         val taskId = activity?.taskId ?: return
@@ -864,5 +940,7 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
         const val INSTALLED_APPS_PERMISSION_REQUEST_CODE = 1003
         const val LOCAL_NETWORK_PERMISSION_REQUEST_CODE = 1004
         const val INSTALL_STATUS_ACTION = "${Components.PACKAGE_NAME}.action.INSTALL_STATUS"
+        const val DISPLAY_PREFS = "flclash_display"
+        const val DISPLAY_NAME_KEY = "app_display_name"
     }
 }

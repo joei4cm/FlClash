@@ -1536,6 +1536,61 @@ class AppLocalizations {
     );
   }
 
+  /// `App icon`
+  String get launcherIcon {
+    return Intl.message('App icon', name: 'launcherIcon', desc: '', args: []);
+  }
+
+  /// `Classic`
+  String get launcherIconClassic {
+    return Intl.message(
+      'Classic',
+      name: 'launcherIconClassic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Frost`
+  String get launcherIconFrost {
+    return Intl.message('Frost', name: 'launcherIconFrost', desc: '', args: []);
+  }
+
+  /// `Midnight`
+  String get launcherIconMidnight {
+    return Intl.message(
+      'Midnight',
+      name: 'launcherIconMidnight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Indigo`
+  String get launcherIconIndigo {
+    return Intl.message(
+      'Indigo',
+      name: 'launcherIconIndigo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tide`
+  String get launcherIconTide {
+    return Intl.message('Tide', name: 'launcherIconTide', desc: '', args: []);
+  }
+
+  /// `Graphite`
+  String get launcherIconGraphite {
+    return Intl.message(
+      'Graphite',
+      name: 'launcherIconGraphite',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Auto close connections`
   String get autoCloseConnections {
     return Intl.message(
@@ -7663,8 +7718,7 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one:
-          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',
@@ -12510,6 +12564,151 @@ class AppLocalizations {
     return Intl.message(
       'Advanced',
       name: 'tailscaleAdvancedTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App name`
+  String get appDisplayName {
+    return Intl.message('App name', name: 'appDisplayName', desc: '', args: []);
+  }
+
+  /// `Default: FlClash (home-screen label depends on the launcher)`
+  String get appDisplayNameDefaultTip {
+    return Intl.message(
+      'Default: FlClash (home-screen label depends on the launcher)',
+      name: 'appDisplayNameDefaultTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Orange kitty`
+  String get launcherIconKittyOrange {
+    return Intl.message(
+      'Orange kitty',
+      name: 'launcherIconKittyOrange',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cheese kitty`
+  String get launcherIconKittyCheese {
+    return Intl.message(
+      'Cheese kitty',
+      name: 'launcherIconKittyCheese',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Black kitty`
+  String get launcherIconKittyBlack {
+    return Intl.message(
+      'Black kitty',
+      name: 'launcherIconKittyBlack',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Calico kitty`
+  String get launcherIconKittyCalico {
+    return Intl.message(
+      'Calico kitty',
+      name: 'launcherIconKittyCalico',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dachshund`
+  String get launcherIconPuppyDachshund {
+    return Intl.message(
+      'Dachshund',
+      name: 'launcherIconPuppyDachshund',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bulldog`
+  String get launcherIconPuppyBulldog {
+    return Intl.message(
+      'Bulldog',
+      name: 'launcherIconPuppyBulldog',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Corgi`
+  String get launcherIconPuppyCorgi {
+    return Intl.message(
+      'Corgi',
+      name: 'launcherIconPuppyCorgi',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bunny`
+  String get launcherIconBunny {
+    return Intl.message('Bunny', name: 'launcherIconBunny', desc: '', args: []);
+  }
+
+  /// `Hamster`
+  String get launcherIconHamster {
+    return Intl.message(
+      'Hamster',
+      name: 'launcherIconHamster',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Otter`
+  String get launcherIconOtter {
+    return Intl.message('Otter', name: 'launcherIconOtter', desc: '', args: []);
+  }
+
+  /// `Brand`
+  String get launcherIconSectionBrand {
+    return Intl.message(
+      'Brand',
+      name: 'launcherIconSectionBrand',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cats`
+  String get launcherIconSectionKitty {
+    return Intl.message(
+      'Cats',
+      name: 'launcherIconSectionKitty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dogs`
+  String get launcherIconSectionPuppy {
+    return Intl.message(
+      'Dogs',
+      name: 'launcherIconSectionPuppy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Animals`
+  String get launcherIconSectionAnimal {
+    return Intl.message(
+      'Animals',
+      name: 'launcherIconSectionAnimal',
       desc: '',
       args: [],
     );

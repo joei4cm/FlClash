@@ -468,6 +468,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "appAccessControl": MessageLookupByLibrary.simpleMessage(
       "Contrôle d’accès des apps",
     ),
+    "appDisplayName": MessageLookupByLibrary.simpleMessage("Nom de l’app"),
+    "appDisplayNameDefaultTip": MessageLookupByLibrary.simpleMessage(
+      "Par défaut : FlClash (le libellé sur l’écran d’accueil dépend du lanceur)",
+    ),
     "appIconDesign": MessageLookupByLibrary.simpleMessage(
       "Conception de l’icône de l’app",
     ),
@@ -1561,9 +1565,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "installUpdate": MessageLookupByLibrary.simpleMessage(
       "Installer la mise à jour",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "L’autorisation de la liste des apps a été refusée ; les apps installées ne peuvent donc pas être listées. Veuillez l’accorder manuellement dans les réglages du système.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Ce système masque la liste des apps installées tant que l’autorisation n’est pas accordée. Accordez-la pour configurer le proxy par app.",
     ),
@@ -1697,6 +1702,39 @@ class MessageLookup extends MessageLookupByLibrary {
     "launchInterruptedTip": MessageLookupByLibrary.simpleMessage(
       "L’app s’est arrêtée de façon inattendue lors de son dernier démarrage. La configuration automatique a été ignorée pour ce lancement ; vous pouvez la démarrer manuellement pour réessayer.",
     ),
+    "launcherIcon": MessageLookupByLibrary.simpleMessage("Icône de l’app"),
+    "launcherIconBunny": MessageLookupByLibrary.simpleMessage("Lapin"),
+    "launcherIconClassic": MessageLookupByLibrary.simpleMessage("Classique"),
+    "launcherIconFrost": MessageLookupByLibrary.simpleMessage("Givre"),
+    "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("Graphite"),
+    "launcherIconHamster": MessageLookupByLibrary.simpleMessage("Hamster"),
+    "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("Indigo"),
+    "launcherIconKittyBlack": MessageLookupByLibrary.simpleMessage("Chat noir"),
+    "launcherIconKittyCalico": MessageLookupByLibrary.simpleMessage(
+      "Chat calico",
+    ),
+    "launcherIconKittyCheese": MessageLookupByLibrary.simpleMessage(
+      "Chat fromage",
+    ),
+    "launcherIconKittyOrange": MessageLookupByLibrary.simpleMessage(
+      "Chat roux",
+    ),
+    "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Minuit"),
+    "launcherIconOtter": MessageLookupByLibrary.simpleMessage("Loutre"),
+    "launcherIconPuppyBulldog": MessageLookupByLibrary.simpleMessage(
+      "Bouledogue",
+    ),
+    "launcherIconPuppyCorgi": MessageLookupByLibrary.simpleMessage("Corgi"),
+    "launcherIconPuppyDachshund": MessageLookupByLibrary.simpleMessage(
+      "Teckel",
+    ),
+    "launcherIconSectionAnimal": MessageLookupByLibrary.simpleMessage(
+      "Animaux",
+    ),
+    "launcherIconSectionBrand": MessageLookupByLibrary.simpleMessage("Marque"),
+    "launcherIconSectionKitty": MessageLookupByLibrary.simpleMessage("Chats"),
+    "launcherIconSectionPuppy": MessageLookupByLibrary.simpleMessage("Chiens"),
+    "launcherIconTide": MessageLookupByLibrary.simpleMessage("Marée"),
     "layout": MessageLookupByLibrary.simpleMessage("Disposition"),
     "light": MessageLookupByLibrary.simpleMessage("Clair"),
     "lineIssueTip": m59,

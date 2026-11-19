@@ -456,6 +456,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "appAccessControl": MessageLookupByLibrary.simpleMessage(
       "Контроль доступа приложений",
     ),
+    "appDisplayName": MessageLookupByLibrary.simpleMessage("Имя приложения"),
+    "appDisplayNameDefaultTip": MessageLookupByLibrary.simpleMessage(
+      "По умолчанию: FlClash (подпись на экране зависит от лаунчера)",
+    ),
     "appIconDesign": MessageLookupByLibrary.simpleMessage(
       "Дизайн значка приложения",
     ),
@@ -1535,9 +1539,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "installUpdate": MessageLookupByLibrary.simpleMessage(
       "Установить обновление",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Разрешение на список приложений отклонено, поэтому установленные приложения недоступны. Предоставьте его вручную в системных настройках.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Эта система не выдаёт список установленных приложений без разрешения. Предоставьте его, чтобы настроить прокси для отдельных приложений.",
     ),
@@ -1663,6 +1668,37 @@ class MessageLookup extends MessageLookupByLibrary {
     "launchInterruptedTip": MessageLookupByLibrary.simpleMessage(
       "В прошлый раз приложение неожиданно завершилось во время запуска. Автоматическая настройка для этого запуска пропущена; вы можете запустить её вручную.",
     ),
+    "launcherIcon": MessageLookupByLibrary.simpleMessage("Значок приложения"),
+    "launcherIconBunny": MessageLookupByLibrary.simpleMessage("Кролик"),
+    "launcherIconClassic": MessageLookupByLibrary.simpleMessage("Классический"),
+    "launcherIconFrost": MessageLookupByLibrary.simpleMessage("Иней"),
+    "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("Графит"),
+    "launcherIconHamster": MessageLookupByLibrary.simpleMessage("Хомяк"),
+    "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("Индиго"),
+    "launcherIconKittyBlack": MessageLookupByLibrary.simpleMessage(
+      "Чёрный котёнок",
+    ),
+    "launcherIconKittyCalico": MessageLookupByLibrary.simpleMessage(
+      "Трёхцветный котёнок",
+    ),
+    "launcherIconKittyCheese": MessageLookupByLibrary.simpleMessage(
+      "Сырный котёнок",
+    ),
+    "launcherIconKittyOrange": MessageLookupByLibrary.simpleMessage(
+      "Рыжий котёнок",
+    ),
+    "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Полночь"),
+    "launcherIconOtter": MessageLookupByLibrary.simpleMessage("Выдра"),
+    "launcherIconPuppyBulldog": MessageLookupByLibrary.simpleMessage("Бульдог"),
+    "launcherIconPuppyCorgi": MessageLookupByLibrary.simpleMessage("Корги"),
+    "launcherIconPuppyDachshund": MessageLookupByLibrary.simpleMessage("Такса"),
+    "launcherIconSectionAnimal": MessageLookupByLibrary.simpleMessage(
+      "Зверушки",
+    ),
+    "launcherIconSectionBrand": MessageLookupByLibrary.simpleMessage("Бренд"),
+    "launcherIconSectionKitty": MessageLookupByLibrary.simpleMessage("Котики"),
+    "launcherIconSectionPuppy": MessageLookupByLibrary.simpleMessage("Собачки"),
+    "launcherIconTide": MessageLookupByLibrary.simpleMessage("Прилив"),
     "layout": MessageLookupByLibrary.simpleMessage("Макет"),
     "light": MessageLookupByLibrary.simpleMessage("Светлая"),
     "lineIssueTip": m59,

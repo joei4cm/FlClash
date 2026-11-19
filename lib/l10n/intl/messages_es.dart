@@ -466,6 +466,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "appAccessControl": MessageLookupByLibrary.simpleMessage(
       "Control de acceso de apps",
     ),
+    "appDisplayName": MessageLookupByLibrary.simpleMessage("Nombre de la app"),
+    "appDisplayNameDefaultTip": MessageLookupByLibrary.simpleMessage(
+      "Predeterminado: FlClash (el nombre en la pantalla de inicio depende del lanzador)",
+    ),
     "appIconDesign": MessageLookupByLibrary.simpleMessage(
       "Diseño del icono de la app",
     ),
@@ -1557,9 +1561,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "installUpdate": MessageLookupByLibrary.simpleMessage(
       "Instalar actualización",
     ),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "Se denegó el permiso de lista de apps, por lo que no se pueden mostrar las apps instaladas. Concédelo manualmente en los ajustes del sistema.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "Este sistema oculta la lista de apps instaladas hasta que se concede el permiso. Autorízalo para configurar el proxy por app.",
     ),
@@ -1693,6 +1698,39 @@ class MessageLookup extends MessageLookupByLibrary {
     "launchInterruptedTip": MessageLookupByLibrary.simpleMessage(
       "La última vez, la app se cerró inesperadamente mientras se iniciaba. En este inicio se ha omitido la configuración automática; puedes iniciarla manualmente para reintentarlo.",
     ),
+    "launcherIcon": MessageLookupByLibrary.simpleMessage("Icono de la app"),
+    "launcherIconBunny": MessageLookupByLibrary.simpleMessage("Conejito"),
+    "launcherIconClassic": MessageLookupByLibrary.simpleMessage("Clásico"),
+    "launcherIconFrost": MessageLookupByLibrary.simpleMessage("Escarcha"),
+    "launcherIconGraphite": MessageLookupByLibrary.simpleMessage("Grafito"),
+    "launcherIconHamster": MessageLookupByLibrary.simpleMessage("Hámster"),
+    "launcherIconIndigo": MessageLookupByLibrary.simpleMessage("Índigo"),
+    "launcherIconKittyBlack": MessageLookupByLibrary.simpleMessage(
+      "Gatito negro",
+    ),
+    "launcherIconKittyCalico": MessageLookupByLibrary.simpleMessage(
+      "Gatito calicó",
+    ),
+    "launcherIconKittyCheese": MessageLookupByLibrary.simpleMessage(
+      "Gatito queso",
+    ),
+    "launcherIconKittyOrange": MessageLookupByLibrary.simpleMessage(
+      "Gatito naranja",
+    ),
+    "launcherIconMidnight": MessageLookupByLibrary.simpleMessage("Medianoche"),
+    "launcherIconOtter": MessageLookupByLibrary.simpleMessage("Nutria"),
+    "launcherIconPuppyBulldog": MessageLookupByLibrary.simpleMessage("Bulldog"),
+    "launcherIconPuppyCorgi": MessageLookupByLibrary.simpleMessage("Corgi"),
+    "launcherIconPuppyDachshund": MessageLookupByLibrary.simpleMessage(
+      "Teckel",
+    ),
+    "launcherIconSectionAnimal": MessageLookupByLibrary.simpleMessage(
+      "Animales",
+    ),
+    "launcherIconSectionBrand": MessageLookupByLibrary.simpleMessage("Marca"),
+    "launcherIconSectionKitty": MessageLookupByLibrary.simpleMessage("Gatos"),
+    "launcherIconSectionPuppy": MessageLookupByLibrary.simpleMessage("Perros"),
+    "launcherIconTide": MessageLookupByLibrary.simpleMessage("Marea"),
     "layout": MessageLookupByLibrary.simpleMessage("Diseño"),
     "light": MessageLookupByLibrary.simpleMessage("Claro"),
     "lineIssueTip": m59,

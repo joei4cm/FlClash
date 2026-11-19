@@ -106,6 +106,8 @@ _AppSettingProps _$AppSettingPropsFromJson(
         (k, e) => MapEntry(k, e as String),
       ) ??
       const {},
+  launcherIcon: json['launcherIcon'] as String? ?? 'classic',
+  appDisplayName: json['appDisplayName'] as String? ?? '',
 );
 
 Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
@@ -147,6 +149,8 @@ Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
       'autoSelectStickyGeo': instance.autoSelectStickyGeo,
       'autoSelectStickyGeoByGroup': instance.autoSelectStickyGeoByGroup,
       'strategyLanePolicies': instance.strategyLanePolicies,
+      'launcherIcon': instance.launcherIcon,
+      'appDisplayName': instance.appDisplayName,
     };
 
 const _$RequestFeedEnumMap = {
