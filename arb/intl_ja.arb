@@ -1535,7 +1535,7 @@
   "tailscaleAuthKeyGenerating": "Generating…",
   "tailscaleAuthKeyGenerated": "Auth key generated. You can still edit it before saving.",
   "tailscaleAuthKeyOverrideHint": "Leave blank to generate from the API token, or paste your own auth key to override.",
-  "tailscaleRoutesHintCidr": "このノード経由の宛先を1行に1つ。ヒント: 100.64.0.0/10 は Tailscale CGNAT IP、ts.net は MagicDNS。サブネットルーター経由の自宅 LAN（例: 10.69.x）は、その CIDR も追加してください。「プライベートアドレスをバイパス」だと VPN に入りません。",
+  "tailscaleRoutesHintCidr": "このノード経由の宛先を1行に1つ。ヒント: 100.64.0.0/10 は Tailscale CGNAT 全体（100.69.x を含む）をカバー、ts.net は MagicDNS。サブネットルーター経由の自宅 LAN は別途その CIDR（例: 192.168.1.0/24）を追加。「プライベートアドレスをバイパス」だと RFC1918 が VPN に入りません。",
   "tailscaleEnableDescShort": "Inject embedded Tailscale nodes into the active profile.",
   "tailscaleAdvancedTitle": "Advanced",
   "appDisplayName": "アプリ名",

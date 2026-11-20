@@ -566,7 +566,7 @@ final class VpnRouteAddressProvider
   }
 }
 
-String _$vpnRouteAddressHash() => r'bae2530b73b71ecff16aadfc395e60996d739d41';
+String _$vpnRouteAddressHash() => r'1722acb1847f34a9c0668b4a78400652af428f40';
 
 @ProviderFor(vpnOptions)
 final vpnOptionsProvider = VpnOptionsProvider._();

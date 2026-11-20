@@ -280,30 +280,52 @@ void main() {
       );
     });
 
+    test('routes MagicDNS nameserver-policy through the embedded node', () {
+      expect(const TailscaleProps().buildMagicDnsNameserverPolicy(), isEmpty);
+      expect(
+        const TailscaleProps(
+          enable: true,
+          bypassTraffic: true,
+          proxies: [TailscaleProxy(name: 'ts-node')],
+        ).buildMagicDnsNameserverPolicy(),
+        isEmpty,
+      );
+      expect(
+        const TailscaleProps(
+          enable: true,
+          proxies: [TailscaleProxy(name: 'ts-node')],
+        ).buildMagicDnsNameserverPolicy(),
+        {
+          '+.ts.net': 'tailscale://ts-node',
+          'ts.net': 'tailscale://ts-node',
+        },
+      );
+    });
+
     test('keeps listed subnet CIDRs out of private-route bypass', () {
       const props = TailscaleProps(
         enable: true,
         proxies: [
           TailscaleProxy(
             name: 'ts-node',
-            routes: ['100.64.0.0/10', '10.69.0.0/16', 'home.ts.net'],
+            routes: ['100.64.0.0/10', '192.168.1.0/24', 'home.ts.net'],
           ),
         ],
       );
       expect(
         props.buildPrivateRouteKeepCidrs(),
-        containsAll(['100.64.0.0/10', '10.69.0.0/16']),
+        containsAll(['100.64.0.0/10', '192.168.1.0/24']),
       );
       expect(props.buildPrivateRouteKeepCidrs(), isNot(contains('home.ts.net')));
       final excluded = subtractCidrs(
         privateRouteAddress,
         props.buildPrivateRouteKeepCidrs(),
       );
-      expect(excluded, isNot(contains('10.0.0.0/8')));
+      expect(excluded, isNot(contains('192.168.0.0/16')));
       expect(
-        excluded.any((cidr) => cidr.startsWith('10.')),
+        excluded.any((cidr) => cidr.startsWith('192.168.')),
         isTrue,
-        reason: 'other 10/8 slices remain excluded',
+        reason: 'other 192.168 slices remain excluded',
       );
     });
 

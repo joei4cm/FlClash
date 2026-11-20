@@ -12539,10 +12539,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale CGNAT IPs; ts.net covers MagicDNS. For a home LAN via subnet router (e.g. 10.69.x), also add that CIDR — Bypass private addresses would otherwise keep it out of the VPN.`
+  /// `Destinations via this node, one per line. Tip: 100.64.0.0/10 already covers all Tailscale CGNAT IPs (including 100.69.x); ts.net covers MagicDNS names. Home LAN via a subnet router still needs its own CIDR (e.g. 192.168.1.0/24) — Bypass private addresses would otherwise keep RFC1918 out of the VPN.`
   String get tailscaleRoutesHintCidr {
     return Intl.message(
-      'Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale CGNAT IPs; ts.net covers MagicDNS. For a home LAN via subnet router (e.g. 10.69.x), also add that CIDR — Bypass private addresses would otherwise keep it out of the VPN.',
+      'Destinations via this node, one per line. Tip: 100.64.0.0/10 already covers all Tailscale CGNAT IPs (including 100.69.x); ts.net covers MagicDNS names. Home LAN via a subnet router still needs its own CIDR (e.g. 192.168.1.0/24) — Bypass private addresses would otherwise keep RFC1918 out of the VPN.',
       name: 'tailscaleRoutesHintCidr',
       desc: '',
       args: [],

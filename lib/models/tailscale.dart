@@ -218,9 +218,10 @@ extension TailscalePropsExt on TailscaleProps {
   }
 
   /// Fake-IP of controlplane.tailscale.com breaks `tailscale up` TLS even for
-  /// embedded nodes. MagicDNS (`*.ts.net`) must also skip Fake-IP so DOMAIN
-  /// routes and the Tailscale stack see real answers; bypass mode uses the
-  /// same full filter set for the system Tailscale app.
+  /// embedded nodes. MagicDNS (`*.ts.net`) must skip Fake-IP too, otherwise
+  /// clients get 198.18.x instead of Tailscale CGNAT (e.g. 100.69.x); pair
+  /// with [buildMagicDnsNameserverPolicy]. Bypass mode uses the same filters
+  /// so the system Tailscale app sees real answers.
   List<String> buildFakeIpFilters() {
     if (bypassTraffic || enable) {
       return tailscaleFakeIpFilters;
@@ -228,7 +229,31 @@ extension TailscalePropsExt on TailscaleProps {
     return const [];
   }
 
-  /// IP destinations that must still enter TUN/VPN when private bypass is on.
+  /// Routes `*.ts.net` DNS through an embedded Tailscale outbound's MagicDNS.
+  /// Without this, Fake-IP-filtered `ts.net` queries hit public resolvers and
+  /// NXDOMAIN — so default `ts.net` routes never reach 100.x peers.
+  Map<String, String> buildMagicDnsNameserverPolicy() {
+    if (!enable || bypassTraffic) {
+      return const {};
+    }
+    TailscaleProxy? dnsProxy;
+    for (final proxy in proxies) {
+      if (proxy.isValid) {
+        dnsProxy = proxy;
+        break;
+      }
+    }
+    final name = dnsProxy?.name.trim() ?? '';
+    if (name.isEmpty) {
+      return const {};
+    }
+    final server = 'tailscale://$name';
+    return {'+.ts.net': server, 'ts.net': server};
+  }
+
+  /// IP destinations that must still enter TUN/VPN when private bypass is on
+  /// (e.g. RFC1918 subnet-router routes). Tailscale CGNAT `100.64.0.0/10` is
+  /// not in [privateRouteAddress]; listing it here is harmless.
   List<String> buildPrivateRouteKeepCidrs() {
     if (!enable) {
       return const [];

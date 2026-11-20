@@ -1535,7 +1535,7 @@
   "tailscaleAuthKeyGenerating": "正在生成…",
   "tailscaleAuthKeyGenerated": "已生成认证密钥，保存前仍可修改。",
   "tailscaleAuthKeyOverrideHint": "可点下方按钮用 API 令牌生成，也可手动粘贴自己的认证密钥覆盖。",
-  "tailscaleRoutesHintCidr": "经由该节点的目标，每行一个。提示：100.64.0.0/10 覆盖 Tailscale CGNAT IP；ts.net 覆盖 MagicDNS。若经子网路由访问家里网段（如 10.69.x），请一并填入该 CIDR，否则「绕过私有路由地址」会把它挡在 VPN 外。",
+  "tailscaleRoutesHintCidr": "经由该节点的目标，每行一个。提示：100.64.0.0/10 已覆盖全部 Tailscale CGNAT （含 100.69.x）；ts.net 覆盖 MagicDNS。若经子网路由访问家里局域网，仍需单独填写 该网段 CIDR（如 192.168.1.0/24），否则「绕过私有路由地址」会把 RFC1918 挡在 VPN 外。",
   "tailscaleEnableDescShort": "将内置 Tailscale 节点注入当前配置。",
   "tailscaleAdvancedTitle": "高级",
   "appDisplayName": "应用名称",

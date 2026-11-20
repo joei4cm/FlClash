@@ -339,6 +339,22 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
     }
     rawConfig['dns']['fake-ip-filter'] = filters;
   }
+  if (data.tailscaleNameserverPolicy.isNotEmpty) {
+    final dns = Map<String, dynamic>.from(
+      rawConfig['dns'] is Map
+          ? Map<String, dynamic>.from(rawConfig['dns'] as Map)
+          : <String, dynamic>{},
+    );
+    final policy = <String, dynamic>{
+      if (dns['nameserver-policy'] is Map)
+        ...Map<String, dynamic>.from(dns['nameserver-policy'] as Map),
+    };
+    data.tailscaleNameserverPolicy.forEach((domain, server) {
+      policy.putIfAbsent(domain, () => server);
+    });
+    dns['nameserver-policy'] = policy;
+    rawConfig['dns'] = dns;
+  }
   if (data.safeMode) {
     rawConfig['listeners'] = [];
     rawConfig['tunnels'] = [];

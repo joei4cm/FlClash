@@ -2242,7 +2242,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "经由该节点转发的域名或 IP，每行一个（例如你家用电脑的 Tailscale IP 或 MagicDNS 名称）。",
     ),
     "tailscaleRoutesHintCidr": MessageLookupByLibrary.simpleMessage(
-      "经由该节点的目标，每行一个。提示：100.64.0.0/10 覆盖 Tailscale CGNAT IP；ts.net 覆盖 MagicDNS。若经子网路由访问家里网段（如 10.69.x），请一并填入该 CIDR，否则「绕过私有路由地址」会把它挡在 VPN 外。",
+      "经由该节点的目标，每行一个。提示：100.64.0.0/10 已覆盖全部 Tailscale CGNAT （含 100.69.x）；ts.net 覆盖 MagicDNS。若经子网路由访问家里局域网，仍需单独填写 该网段 CIDR（如 192.168.1.0/24），否则「绕过私有路由地址」会把 RFC1918 挡在 VPN 外。",
     ),
     "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
       "请只保留 FlClash 作为 VPN。不要同时开启 Tailscale 应用的 VPN（Android 同一时间只允许一个）。在下方添加内置 Tailscale 节点，并把家里的设备填入“路由目标”。",

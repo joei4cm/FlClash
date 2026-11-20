@@ -2485,7 +2485,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "このノード経由で送るドメインまたは IP（1 行に 1 つ、例: 自宅 PC の Tailscale IP や MagicDNS 名）。",
     ),
     "tailscaleRoutesHintCidr": MessageLookupByLibrary.simpleMessage(
-      "このノード経由の宛先を1行に1つ。ヒント: 100.64.0.0/10 は Tailscale CGNAT IP、ts.net は MagicDNS。サブネットルーター経由の自宅 LAN（例: 10.69.x）は、その CIDR も追加してください。「プライベートアドレスをバイパス」だと VPN に入りません。",
+      "このノード経由の宛先を1行に1つ。ヒント: 100.64.0.0/10 は Tailscale CGNAT 全体（100.69.x を含む）をカバー、ts.net は MagicDNS。サブネットルーター経由の自宅 LAN は別途その CIDR（例: 192.168.1.0/24）を追加。「プライベートアドレスをバイパス」だと RFC1918 が VPN に入りません。",
     ),
     "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
       "VPN は FlClash だけにしてください。Tailscale アプリの VPN と同時には使えません（Android は VPN を 1 つだけ許可）。下で内蔵 Tailscale ノードを追加し、自宅デバイスをルーティング先に入れてください。",

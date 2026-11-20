@@ -219,6 +219,7 @@ abstract class MakeRealProfileState with _$MakeRealProfileState {
     @Default([]) List<TailscaleProxy> tailscaleProxies,
     @Default([]) List<String> tailscaleRules,
     @Default([]) List<String> tailscaleFakeIpFilters,
+    @Default({}) Map<String, String> tailscaleNameserverPolicy,
     @Default([]) List<Map<String, dynamic>> strategyLaneGroups,
     @Default([]) List<String> strategyLaneRules,
   }) = _MakeRealProfileState;

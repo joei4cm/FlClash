@@ -1535,7 +1535,7 @@
   "tailscaleAuthKeyGenerating": "Generating…",
   "tailscaleAuthKeyGenerated": "Auth key generated. You can still edit it before saving.",
   "tailscaleAuthKeyOverrideHint": "Leave blank to generate from the API token, or paste your own auth key to override.",
-  "tailscaleRoutesHintCidr": "이 노드를 통해 보낼 대상을 한 줄에 하나씩 입력하세요. 팁: 100.64.0.0/10은 Tailscale CGNAT IP, ts.net은 MagicDNS입니다. 서브넷 라우터로 홈 LAN(예: 10.69.x)에 가려면 해당 CIDR도 추가하세요. 사설 주소 우회가 켜져 있으면 VPN으로 들어가지 않습니다.",
+  "tailscaleRoutesHintCidr": "이 노드를 통해 보낼 대상을 한 줄에 하나씩. 팁: 100.64.0.0/10은 Tailscale CGNAT 전체(100.69.x 포함)를 덮고, ts.net은 MagicDNS입니다. 서브넷 라우터로 홈 LAN에 가려면 해당 CIDR(예: 192.168.1.0/24)도 추가하세요. 사설 주소 우회가 켜져 있으면 RFC1918은 VPN으로 들어가지 않습니다.",
   "tailscaleEnableDescShort": "Inject embedded Tailscale nodes into the active profile.",
   "tailscaleAdvancedTitle": "Advanced",
   "appDisplayName": "앱 이름",

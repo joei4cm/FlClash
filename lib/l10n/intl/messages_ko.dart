@@ -2523,7 +2523,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Domains or IPs sent through this node, one per line (e.g. your home PC\'s Tailscale IP or MagicDNS name).",
     ),
     "tailscaleRoutesHintCidr": MessageLookupByLibrary.simpleMessage(
-      "이 노드를 통해 보낼 대상을 한 줄에 하나씩 입력하세요. 팁: 100.64.0.0/10은 Tailscale CGNAT IP, ts.net은 MagicDNS입니다. 서브넷 라우터로 홈 LAN(예: 10.69.x)에 가려면 해당 CIDR도 추가하세요. 사설 주소 우회가 켜져 있으면 VPN으로 들어가지 않습니다.",
+      "이 노드를 통해 보낼 대상을 한 줄에 하나씩. 팁: 100.64.0.0/10은 Tailscale CGNAT 전체(100.69.x 포함)를 덮고, ts.net은 MagicDNS입니다. 서브넷 라우터로 홈 LAN에 가려면 해당 CIDR(예: 192.168.1.0/24)도 추가하세요. 사설 주소 우회가 켜져 있으면 RFC1918은 VPN으로 들어가지 않습니다.",
     ),
     "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
       "Keep FlClash as the only VPN. Do not run the Tailscale app VPN at the same time (Android allows only one). Use an embedded Tailscale node below, then add your home device to Route destinations.",
