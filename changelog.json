@@ -2,9 +2,9 @@
   "schemaVersion": 2,
   "versions": [
     {
-      "version": "0.9.23",
-      "tag": "v0.9.23",
-      "date": "2026-11-19",
+      "version": "0.9.24",
+      "tag": "v0.9.24",
+      "date": "2026-11-20",
       "prerelease": false,
       "groups": [
         {
@@ -106,6 +106,16 @@
         {
           "type": "fix",
           "entries": [
+            {
+              "id": "df34734",
+              "scope": "tailscale",
+              "text": "Mobile test button and private subnet access (#92)"
+            },
+            {
+              "id": "5981a0b",
+              "scope": "ci",
+              "text": "Retry Linux apt installs with IPv4 and backoff"
+            },
             {
               "id": "989e6f9",
               "scope": "theme",

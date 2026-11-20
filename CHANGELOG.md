@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.9.23 (2026-11-19)
+## v0.9.24 (2026-11-20)
 
 **Features**
 
@@ -26,6 +26,8 @@
 
 **Bug Fixes**
 
+- **tailscale** Mobile test button and private subnet access (#92) (df34734)
+- **ci** Retry Linux apt installs with IPv4 and backoff (5981a0b)
 - **theme** Ship icon previews and make app name edits stick (#89) (989e6f9)
 - **tailscale** Keep settings and node dialog content reachable (#88) (b8b050a)
 - **ci** Repair launcherIcons list and format l10n (#87) (28ed728)
