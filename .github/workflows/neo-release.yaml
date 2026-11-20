@@ -18,12 +18,12 @@ env:
   GO_VERSION: '1.27.1'
 
 jobs:
+  # Required legs. Kept free of macOS so a capacity cancel cannot mark the
+  # whole matrix cancelled and skip publish (same lesson as build.yaml).
   build-neo:
     name: neo (${{ matrix.os }}, ${{ matrix.arch }})
     if: github.repository == 'joei4cm/FlClash'
     runs-on: ${{ matrix.runner }}
-    # macOS runners are capacity-starved; keep linux/windows as the hard signal.
-    continue-on-error: ${{ matrix.os == 'macos' }}
     strategy:
       fail-fast: false
       matrix:
@@ -36,9 +36,6 @@ jobs:
             runner: ubuntu-24.04-arm
             # Stable has no Linux arm64 SDK for this pin; master fetches host Dart.
             flutter-channel: master
-          - os: macos
-            arch: arm64
-            runner: macos-14
           - os: windows
             arch: amd64
             runner: windows-2022
@@ -135,13 +132,98 @@ jobs:
           path: dist/*
           overwrite: true
 
+  # Best-effort. Capacity cancels must not poison needs.build-neo.
+  build-neo-macos:
+    name: neo (macos, arm64)
+    if: github.repository == 'joei4cm/FlClash'
+    runs-on: macos-14
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: core/go.sum
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Prefetch Go modules
+        shell: bash
+        working-directory: core
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+        run: |
+          for i in 1 2 3 4 5; do
+            if go mod download; then
+              exit 0
+            fi
+            echo "go mod download failed (attempt $i); retrying..." >&2
+            sleep $((i * 20))
+          done
+          exit 1
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Build Core + Neo
+        shell: bash
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+        run: |
+          set -euo pipefail
+          bash tool/build_neo.sh
+          platform=macos
+          arch=arm64
+          core="libclash/$platform/FlClashCore"
+          neo="libclash/$platform/flclash-neo"
+          test -f "$core"
+          test -f "$neo"
+          tag="${GITHUB_REF_NAME}"
+          version="$(printf '%s' "$tag" | sed -E 's/^v//; s/_[0-9a-fA-F]{6}$//')"
+          dist="dist"
+          mkdir -p "$dist"
+          stage="FlClashNeo-${version}-${platform}-${arch}"
+          mkdir -p "$dist/$stage"
+          cp "$core" "$neo" "$dist/$stage/"
+          if [[ -f "libclash/$platform/manifest.json" ]]; then
+            cp "libclash/$platform/manifest.json" "$dist/$stage/"
+          fi
+          {
+            echo "FlClash Neo ${version}"
+            echo "Experimental headless host. Not for production GUI installs."
+            echo
+            echo "Run:"
+            echo "  ./flclash-neo run --config /path/to/config.yaml"
+            echo
+            echo "Core must sit next to flclash-neo (this archive layout), or set"
+            echo "FLCLASH_CORE."
+          } >"$dist/$stage/README.txt"
+          tar -C "$dist" -czf "$dist/${stage}.tar.gz" "$stage"
+          rm -rf "$dist/$stage"
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: neo-macos-arm64
+          path: dist/*
+          overwrite: true
+
   publish:
     name: publish neo release
-    needs: build-neo
-    # Require the matrix job result success. continue-on-error macos still
-    # counts as success for needs.*; a hard failure (e.g. linux arm64) blocks
-    # publish so we never ship a partial neo release again.
-    if: github.repository == 'joei4cm/FlClash' && needs.build-neo.result == 'success'
+    needs: [build-neo, build-neo-macos]
+    # Only the required matrix must succeed. macOS is best-effort.
+    if: always() && github.repository == 'joei4cm/FlClash' && needs.build-neo.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -179,7 +261,6 @@ jobs:
             ls -la dist >&2 || true
             exit 1
           fi
-          # macOS is best-effort (capacity); warn only.
           if [[ ! -f "dist/FlClashNeo-${version}-macos-arm64.tar.gz" ]]; then
             echo "warning: macos-arm64 archive missing; publishing without it" >&2
           fi
