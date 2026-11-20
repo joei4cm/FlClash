@@ -295,10 +295,7 @@ void main() {
           enable: true,
           proxies: [TailscaleProxy(name: 'ts-node')],
         ).buildMagicDnsNameserverPolicy(),
-        {
-          '+.ts.net': 'tailscale://ts-node',
-          'ts.net': 'tailscale://ts-node',
-        },
+        {'+.ts.net': 'tailscale://ts-node', 'ts.net': 'tailscale://ts-node'},
       );
     });
 
@@ -316,7 +313,10 @@ void main() {
         props.buildPrivateRouteKeepCidrs(),
         containsAll(['100.64.0.0/10', '192.168.1.0/24']),
       );
-      expect(props.buildPrivateRouteKeepCidrs(), isNot(contains('home.ts.net')));
+      expect(
+        props.buildPrivateRouteKeepCidrs(),
+        isNot(contains('home.ts.net')),
+      );
       final excluded = subtractCidrs(
         privateRouteAddress,
         props.buildPrivateRouteKeepCidrs(),

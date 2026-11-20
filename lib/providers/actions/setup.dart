@@ -664,7 +664,8 @@ class SetupAction extends _$SetupAction {
         tailscaleProxies: tailscaleProps.activeProxies,
         tailscaleRules: tailscaleProps.buildInjectedRules(),
         tailscaleFakeIpFilters: tailscaleProps.buildFakeIpFilters(),
-        tailscaleNameserverPolicy: tailscaleProps.buildMagicDnsNameserverPolicy(),
+        tailscaleNameserverPolicy: tailscaleProps
+            .buildMagicDnsNameserverPolicy(),
         strategyLaneGroups: strategyInjection.groups,
         strategyLaneRules: strategyInjection.rules,
       ),

@@ -88,22 +88,25 @@ void main() {
     );
   });
 
-  test('Tailscale keep CIDRs carve subnet routes back into VPN includes', () async {
-    const keep = ['10.69.0.0/16', '100.64.0.0/10'];
-    final routes = await const Tun().vpnRouteAddress(
-      bypassPrivateRoute: true,
-      keepCidrs: keep,
-    );
-    expect(routes, contains('10.69.0.0/16'));
-    // 100.64/10 is not in privateRouteAddress; keep is a no-op for it and
-    // the public remainder still covers that CGNAT range.
-    final excluded = const Tun().excludedRoutes(
-      bypassPrivateRoute: true,
-      keepCidrs: keep,
-    );
-    expect(excluded, isNot(contains('10.69.0.0/16')));
-    expect(excluded, isNot(contains('100.64.0.0/10')));
-  });
+  test(
+    'Tailscale keep CIDRs carve subnet routes back into VPN includes',
+    () async {
+      const keep = ['10.69.0.0/16', '100.64.0.0/10'];
+      final routes = await const Tun().vpnRouteAddress(
+        bypassPrivateRoute: true,
+        keepCidrs: keep,
+      );
+      expect(routes, contains('10.69.0.0/16'));
+      // 100.64/10 is not in privateRouteAddress; keep is a no-op for it and
+      // the public remainder still covers that CGNAT range.
+      final excluded = const Tun().excludedRoutes(
+        bypassPrivateRoute: true,
+        keepCidrs: keep,
+      );
+      expect(excluded, isNot(contains('10.69.0.0/16')));
+      expect(excluded, isNot(contains('100.64.0.0/10')));
+    },
+  );
 
   test('the task subtracts as the function does', () async {
     const include = ['10.0.0.0/8', '2001:db8::/32'];
