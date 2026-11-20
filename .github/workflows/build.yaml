@@ -351,7 +351,8 @@ jobs:
 
   build:
     # Releases publish where the release links point: the public repository.
-    if: github.repository == 'joei4cm/FlClash' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    # Neo channel tags (v*_neo*) use .github/workflows/neo-release.yaml instead.
+    if: github.repository == 'joei4cm/FlClash' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '_neo')
     runs-on: ${{ matrix.os }}
     strategy:
       # One platform flake (esp. macOS arm64 runner capacity) must not cancel the rest.
@@ -489,7 +490,7 @@ jobs:
   # not match cancelled. Late DMGs attach via attach-macos.
   build-macos-amd64:
     name: build (macos, amd64, ${{ matrix.runner }})
-    if: github.repository == 'joei4cm/FlClash' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: github.repository == 'joei4cm/FlClash' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '_neo')
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -588,7 +589,7 @@ jobs:
       !cancelled() &&
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/tags/v')
+      startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '_neo')
     runs-on: ubuntu-latest
     outputs:
       needed: ${{ steps.publish.outputs.needed }}
@@ -619,7 +620,7 @@ jobs:
       needs.wait-macos-amd64-retry.outputs.needed == 'true' &&
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/tags/v')
+      startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '_neo')
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -637,7 +638,7 @@ jobs:
       needs.wait-macos-amd64-retry.outputs.needed == 'true' &&
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/tags/v')
+      startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '_neo')
     runs-on: ubuntu-latest
     outputs:
       needed: ${{ steps.publish.outputs.needed }}
@@ -668,7 +669,7 @@ jobs:
       needs.wait-macos-amd64-retry-2.outputs.needed == 'true' &&
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/tags/v')
+      startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '_neo')
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -684,7 +685,7 @@ jobs:
   # If a tag still ships without arm64, run workflow macos-arm64-attach.
   build-macos-arm64:
     name: build (macos, arm64, ${{ matrix.runner }})
-    if: github.repository == 'joei4cm/FlClash' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: github.repository == 'joei4cm/FlClash' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '_neo')
     # Capacity cancels must not fail the whole release; upload still publishes
     # the rest (Intel macOS DMG runs on Apple Silicon via Rosetta 2).
     continue-on-error: true
@@ -780,7 +781,7 @@ jobs:
       !cancelled() &&
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/tags/v')
+      startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '_neo')
     runs-on: ubuntu-latest
     outputs:
       needed: ${{ steps.publish.outputs.needed }}
@@ -811,7 +812,7 @@ jobs:
       needs.wait-macos-arm64-retry.outputs.needed == 'true' &&
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/tags/v')
+      startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '_neo')
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -829,7 +830,7 @@ jobs:
       needs.wait-macos-arm64-retry.outputs.needed == 'true' &&
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/tags/v')
+      startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '_neo')
     runs-on: ubuntu-latest
     outputs:
       needed: ${{ steps.publish.outputs.needed }}
@@ -860,7 +861,7 @@ jobs:
       needs.wait-macos-arm64-retry-2.outputs.needed == 'true' &&
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/tags/v')
+      startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '_neo')
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -880,7 +881,7 @@ jobs:
       always() &&
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/tags/v') &&
+      startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '_neo') &&
       needs.build.result == 'success' &&
       needs.dart.result == 'success' &&
       needs.plugins.result == 'success' &&
@@ -1017,7 +1018,7 @@ jobs:
       always() &&
       github.repository == 'joei4cm/FlClash' &&
       github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/tags/v') &&
+      startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '_neo') &&
       needs.upload.result == 'success'
     runs-on: ubuntu-latest
     steps:

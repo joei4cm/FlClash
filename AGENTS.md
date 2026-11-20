@@ -25,6 +25,7 @@ Read these only when the task touches their area:
 - [.agents/flutter-upgrade.md](.agents/flutter-upgrade.md): SDK-pinned workarounds to recheck before changing the
   Flutter version.
 - [.agents/skills.md](.agents/skills.md): index of repo-scoped skills in `.agents/skills/`.
+- [.agents/neo.md](.agents/neo.md): experimental headless CLI on `cursor/neo-*`; keep off `production` until ready.
 
 ## Highest Priority Rules
 

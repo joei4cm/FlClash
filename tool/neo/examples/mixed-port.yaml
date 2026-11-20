@@ -1,0 +1,16 @@
+# Minimal Neo smoke config — mixed-port only, no TUN.
+mixed-port: 17890
+allow-lan: false
+mode: rule
+log-level: info
+external-controller: 127.0.0.1:19090
+secret: neo-dev-secret
+dns:
+  enable: true
+  enhanced-mode: fake-ip
+  nameserver:
+    - 8.8.8.8
+proxies: []
+proxy-groups: []
+rules:
+  - MATCH,DIRECT
