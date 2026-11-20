@@ -2485,7 +2485,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "このノード経由で送るドメインまたは IP（1 行に 1 つ、例: 自宅 PC の Tailscale IP や MagicDNS 名）。",
     ),
     "tailscaleRoutesHintCidr": MessageLookupByLibrary.simpleMessage(
-      "Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale IPs; ts.net covers MagicDNS names.",
+      "このノード経由の宛先を1行に1つ。ヒント: 100.64.0.0/10 は Tailscale CGNAT 全体（100.69.x を含む）をカバー、ts.net は MagicDNS。サブネットルーター経由の自宅 LAN は別途その CIDR（例: 192.168.1.0/24）を追加。「プライベートアドレスをバイパス」だと RFC1918 が VPN に入りません。",
     ),
     "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
       "VPN は FlClash だけにしてください。Tailscale アプリの VPN と同時には使えません（Android は VPN を 1 つだけ許可）。下で内蔵 Tailscale ノードを追加し、自宅デバイスをルーティング先に入れてください。",
@@ -2535,7 +2535,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Tailscale 設定をテスト",
     ),
     "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
-      "ノード横のテストで、認証キーが tailnet に参加できたか確認します。遅延表示は設定が有効、タイムアウトは参加失敗です。キー・Enable Tailscale・FlClash VPN を確認してください。これは公衆ネット到達性のテストではありません。",
+      "ノード横の稲妻または遅延表示をタップし、認証キーが tailnet に参加できたか確認します。遅延表示は設定が有効、タイムアウトは参加失敗です。キー・Enable Tailscale・FlClash VPN を確認してください。これは公衆ネット到達性のテストではありません。",
     ),
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP リレー"),
     "tailscaleUsageDesc": MessageLookupByLibrary.simpleMessage(

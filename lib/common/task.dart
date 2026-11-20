@@ -219,9 +219,16 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
     'auto-detect-interface': true,
   };
   if (data.bypassPrivateRoute) {
+    final keep = TailscaleProps(
+      enable: data.tailscaleProxies.isNotEmpty,
+      proxies: data.tailscaleProxies,
+    ).buildPrivateRouteKeepCidrs();
+    final excluded = keep.isEmpty
+        ? privateRouteAddress
+        : subtractCidrs(privateRouteAddress, keep);
     tun['route-exclude-address'] = [
       if (tun['route-exclude-address'] case final List routes) ...routes,
-      ...privateRouteAddress,
+      ...excluded,
     ];
   }
   rawConfig['tun'] = tun;
@@ -331,6 +338,22 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
       }
     }
     rawConfig['dns']['fake-ip-filter'] = filters;
+  }
+  if (data.tailscaleNameserverPolicy.isNotEmpty) {
+    final dns = Map<String, dynamic>.from(
+      rawConfig['dns'] is Map
+          ? Map<String, dynamic>.from(rawConfig['dns'] as Map)
+          : <String, dynamic>{},
+    );
+    final policy = <String, dynamic>{
+      if (dns['nameserver-policy'] is Map)
+        ...Map<String, dynamic>.from(dns['nameserver-policy'] as Map),
+    };
+    data.tailscaleNameserverPolicy.forEach((domain, server) {
+      policy.putIfAbsent(domain, () => server);
+    });
+    dns['nameserver-policy'] = policy;
+    rawConfig['dns'] = dns;
   }
   if (data.safeMode) {
     rawConfig['listeners'] = [];

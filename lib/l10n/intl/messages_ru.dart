@@ -3002,7 +3002,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Домены или IP, направляемые через этот узел, по одному в строке (например, Tailscale IP или имя MagicDNS вашего домашнего ПК).",
     ),
     "tailscaleRoutesHintCidr": MessageLookupByLibrary.simpleMessage(
-      "Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale IPs; ts.net covers MagicDNS names.",
+      "Destinations via this node, one per line. Tip: 100.64.0.0/10 already covers all Tailscale CGNAT IPs (including 100.69.x); ts.net covers MagicDNS names. Home LAN via a subnet router still needs its own CIDR (e.g. 192.168.1.0/24) — Bypass private addresses would otherwise keep RFC1918 out of the VPN.",
     ),
     "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
       "Оставьте FlClash единственным VPN. Не запускайте VPN приложения Tailscale одновременно (Android допускает только один). Добавьте встроенный узел Tailscale ниже и укажите домашнее устройство в пунктах назначения маршрута.",
@@ -3054,7 +3054,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Test Tailscale config",
     ),
     "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
-      "Tap the test button on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.",
+      "Tap the bolt or delay on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.",
     ),
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("Ретрансляция UDP"),
     "tailscaleUsageDesc": MessageLookupByLibrary.simpleMessage(

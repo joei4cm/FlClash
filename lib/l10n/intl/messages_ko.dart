@@ -2523,7 +2523,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Domains or IPs sent through this node, one per line (e.g. your home PC\'s Tailscale IP or MagicDNS name).",
     ),
     "tailscaleRoutesHintCidr": MessageLookupByLibrary.simpleMessage(
-      "Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale IPs; ts.net covers MagicDNS names.",
+      "이 노드를 통해 보낼 대상을 한 줄에 하나씩. 팁: 100.64.0.0/10은 Tailscale CGNAT 전체(100.69.x 포함)를 덮고, ts.net은 MagicDNS입니다. 서브넷 라우터로 홈 LAN에 가려면 해당 CIDR(예: 192.168.1.0/24)도 추가하세요. 사설 주소 우회가 켜져 있으면 RFC1918은 VPN으로 들어가지 않습니다.",
     ),
     "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
       "Keep FlClash as the only VPN. Do not run the Tailscale app VPN at the same time (Android allows only one). Use an embedded Tailscale node below, then add your home device to Route destinations.",
@@ -2575,7 +2575,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Test Tailscale config",
     ),
     "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
-      "Tap the test button on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.",
+      "노드의 번개 아이콘이나 지연 숫자를 눌러 인증 키가 테일넷에 참여했는지 확인하세요. 지연이 보이면 설정이 유효하고, 시간 초과면 키·Enable Tailscale·FlClash VPN을 확인하세요. 공용 인터넷 연결 테스트는 아닙니다.",
     ),
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP relay"),
     "tailscaleUsageDesc": MessageLookupByLibrary.simpleMessage(

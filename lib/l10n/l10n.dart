@@ -11170,10 +11170,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Tap the test button on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.`
+  /// `Tap the bolt or delay on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.`
   String get tailscaleTestTip {
     return Intl.message(
-      'Tap the test button on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.',
+      'Tap the bolt or delay on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.',
       name: 'tailscaleTestTip',
       desc: '',
       args: [],
@@ -12540,10 +12540,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale IPs; ts.net covers MagicDNS names.`
+  /// `Destinations via this node, one per line. Tip: 100.64.0.0/10 already covers all Tailscale CGNAT IPs (including 100.69.x); ts.net covers MagicDNS names. Home LAN via a subnet router still needs its own CIDR (e.g. 192.168.1.0/24) — Bypass private addresses would otherwise keep RFC1918 out of the VPN.`
   String get tailscaleRoutesHintCidr {
     return Intl.message(
-      'Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale IPs; ts.net covers MagicDNS names.',
+      'Destinations via this node, one per line. Tip: 100.64.0.0/10 already covers all Tailscale CGNAT IPs (including 100.69.x); ts.net covers MagicDNS names. Home LAN via a subnet router still needs its own CIDR (e.g. 192.168.1.0/24) — Bypass private addresses would otherwise keep RFC1918 out of the VPN.',
       name: 'tailscaleRoutesHintCidr',
       desc: '',
       args: [],

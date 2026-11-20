@@ -492,25 +492,40 @@ class TailscaleView extends ConsumerWidget {
     );
   }
 
-  Widget _buildNodeDelay(BuildContext context, WidgetRef ref, String name) {
+  Widget _buildNodeDelay(
+    BuildContext context,
+    WidgetRef ref, {
+    required TailscaleProxy proxy,
+  }) {
     final appLocalizations = context.appLocalizations;
-    final delay = ref.watch(delayProvider(proxyName: name));
+    final delay = ref.watch(delayProvider(proxyName: proxy.name));
+    final Widget label;
     if (delay == null) {
-      return Text(
-        appLocalizations.tailscaleNotTested,
+      label = GlyphIcon(
+        AppGlyphs.bolt,
+        size: 18,
+        color: context.colorScheme.onSurfaceVariant,
+      );
+    } else if (delay == 0) {
+      label = ActivityIndicator(size: 14, color: context.colorScheme.primary);
+    } else {
+      label = Text(
+        delay > 0 ? '$delay ms' : appLocalizations.timeout,
         style: AppTextStyle.caption1
-            .of(context)
-            .copyWith(color: context.colorScheme.onSurfaceVariant),
+            .of(context, emphasized: true)
+            .copyWith(color: context.colorScheme.delayColor(delay)),
       );
     }
-    if (delay == 0) {
-      return ActivityIndicator(size: 14, color: context.colorScheme.primary);
-    }
-    return Text(
-      delay > 0 ? '$delay ms' : appLocalizations.timeout,
-      style: AppTextStyle.caption1
-          .of(context, emphasized: true)
-          .copyWith(color: context.colorScheme.delayColor(delay)),
+    return HoverTooltip(
+      message: appLocalizations.tailscaleTestNode,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => unawaited(_handleTest(context, ref, proxy)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          child: label,
+        ),
+      ),
     );
   }
 
@@ -560,7 +575,7 @@ class TailscaleView extends ConsumerWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
-        trailing: _buildNodeDelay(context, ref, proxy.name),
+        trailing: _buildNodeDelay(context, ref, proxy: proxy),
         onTap: () {
           unawaited(_handleAddOrEdit(context, ref, proxy));
         },
