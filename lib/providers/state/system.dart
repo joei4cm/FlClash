@@ -259,7 +259,15 @@ Future<List<String>> vpnRouteAddress(Ref ref) {
   final bypassPrivateRoute = ref.watch(
     networkSettingProvider.select((state) => state.bypassPrivateRoute),
   );
-  return routes.vpnRouteAddress(bypassPrivateRoute: bypassPrivateRoute);
+  final keepCidrs = ref.watch(
+    tailscaleSettingProvider.select(
+      (state) => state.buildPrivateRouteKeepCidrs(),
+    ),
+  );
+  return routes.vpnRouteAddress(
+    bypassPrivateRoute: bypassPrivateRoute,
+    keepCidrs: keepCidrs,
+  );
 }
 
 @Riverpod(keepAlive: true)

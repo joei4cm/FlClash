@@ -219,9 +219,16 @@ Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
     'auto-detect-interface': true,
   };
   if (data.bypassPrivateRoute) {
+    final keep = TailscaleProps(
+      enable: data.tailscaleProxies.isNotEmpty,
+      proxies: data.tailscaleProxies,
+    ).buildPrivateRouteKeepCidrs();
+    final excluded = keep.isEmpty
+        ? privateRouteAddress
+        : subtractCidrs(privateRouteAddress, keep);
     tun['route-exclude-address'] = [
       if (tun['route-exclude-address'] case final List routes) ...routes,
-      ...privateRouteAddress,
+      ...excluded,
     ];
   }
   rawConfig['tun'] = tun;

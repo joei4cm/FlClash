@@ -1476,9 +1476,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Certificate installed",
     ),
     "installUpdate": MessageLookupByLibrary.simpleMessage("Install update"),
-    "installedAppsPermissionDeniedMessage": MessageLookupByLibrary.simpleMessage(
-      "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
-    ),
+    "installedAppsPermissionDeniedMessage":
+        MessageLookupByLibrary.simpleMessage(
+          "The app list permission was denied, so installed apps cannot be listed. Please grant it manually in system settings.",
+        ),
     "installedAppsPermissionDesc": MessageLookupByLibrary.simpleMessage(
       "This system hides the installed app list until the permission is granted. Authorize it to configure the per-app proxy.",
     ),
@@ -2867,7 +2868,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Domains or IPs sent through this node, one per line (e.g. your home PC\'s Tailscale IP or MagicDNS name).",
     ),
     "tailscaleRoutesHintCidr": MessageLookupByLibrary.simpleMessage(
-      "Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale IPs; ts.net covers MagicDNS names.",
+      "Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale CGNAT IPs; ts.net covers MagicDNS. For a home LAN via subnet router (e.g. 10.69.x), also add that CIDR — Bypass private addresses would otherwise keep it out of the VPN.",
     ),
     "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
       "Keep FlClash as the only VPN. Do not run the Tailscale app VPN at the same time (Android allows only one). Use an embedded Tailscale node below, then add your home device to Route destinations.",
@@ -2919,7 +2920,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Test Tailscale config",
     ),
     "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
-      "Tap the test button on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.",
+      "Tap the bolt or delay on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.",
     ),
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP relay"),
     "tailscaleUsageDesc": MessageLookupByLibrary.simpleMessage(

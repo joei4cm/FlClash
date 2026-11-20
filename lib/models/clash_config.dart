@@ -1174,15 +1174,26 @@ String _congestionControllerFromJson(String value) =>
     value.isEmpty ? defaultCongestionController : value;
 
 extension TunExt on Tun {
-  List<String> excludedRoutes({required bool bypassPrivateRoute}) => [
-    ...routeExcludeAddress,
-    if (bypassPrivateRoute) ...privateRouteAddress,
-  ];
+  List<String> excludedRoutes({
+    required bool bypassPrivateRoute,
+    List<String> keepCidrs = const [],
+  }) {
+    final privateExcludes = !bypassPrivateRoute
+        ? const <String>[]
+        : keepCidrs.isEmpty
+        ? privateRouteAddress
+        : subtractCidrs(privateRouteAddress, keepCidrs);
+    return [...routeExcludeAddress, ...privateExcludes];
+  }
 
   Future<List<String>> vpnRouteAddress({
     required bool bypassPrivateRoute,
+    List<String> keepCidrs = const [],
   }) async {
-    final excluded = excludedRoutes(bypassPrivateRoute: bypassPrivateRoute);
+    final excluded = excludedRoutes(
+      bypassPrivateRoute: bypassPrivateRoute,
+      keepCidrs: keepCidrs,
+    );
     if (routeAddress.isEmpty && excluded.isEmpty) {
       return const [];
     }

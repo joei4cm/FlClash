@@ -2242,7 +2242,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "经由该节点转发的域名或 IP，每行一个（例如你家用电脑的 Tailscale IP 或 MagicDNS 名称）。",
     ),
     "tailscaleRoutesHintCidr": MessageLookupByLibrary.simpleMessage(
-      "经由该节点的目标，每行一个。提示：100.64.0.0/10 覆盖 Tailscale IP；ts.net 覆盖 MagicDNS。",
+      "经由该节点的目标，每行一个。提示：100.64.0.0/10 覆盖 Tailscale CGNAT IP；ts.net 覆盖 MagicDNS。若经子网路由访问家里网段（如 10.69.x），请一并填入该 CIDR，否则「绕过私有路由地址」会把它挡在 VPN 外。",
     ),
     "tailscaleScenarioAndroidBody": MessageLookupByLibrary.simpleMessage(
       "请只保留 FlClash 作为 VPN。不要同时开启 Tailscale 应用的 VPN（Android 同一时间只允许一个）。在下方添加内置 Tailscale 节点，并把家里的设备填入“路由目标”。",
@@ -2290,7 +2290,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "测试 Tailscale 配置",
     ),
     "tailscaleTestTip": MessageLookupByLibrary.simpleMessage(
-      "点击节点旁的测试按钮，检查认证密钥是否已成功加入尾网。显示延迟表示配置有效；显示超时请检查密钥、「启用 Tailscale」以及 FlClash VPN 是否已启动。此测试不检查公网连通。",
+      "点击节点旁的闪电图标或延迟数字，检查认证密钥是否已成功加入尾网。显示延迟表示配置有效；显示超时请检查密钥、「启用 Tailscale」以及 FlClash VPN 是否已启动。此测试不检查公网连通。",
     ),
     "tailscaleUdp": MessageLookupByLibrary.simpleMessage("UDP 转发"),
     "tailscaleUsageDesc": MessageLookupByLibrary.simpleMessage(

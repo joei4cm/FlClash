@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:fl_clash/common/cidr.dart';
 import 'package:fl_clash/common/clash_identifiers.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -171,6 +172,26 @@ String? buildTailscaleRouteRule(String dest, String target) {
   return 'DOMAIN-SUFFIX,$value,$routeTarget';
 }
 
+/// CIDR form of a Tailscale route destination, or null for domains / junk.
+/// Used to keep subnet routes inside TUN when "bypass private addresses" is on.
+String? tailscaleDestinationCidr(String dest) {
+  final value = dest.trim();
+  if (value.isEmpty || !isSafeClashField(value)) {
+    return null;
+  }
+  if (value.contains('/')) {
+    return isCidr(value) ? value : null;
+  }
+  if (RegExp(r'^\d{1,3}(\.\d{1,3}){3}$').hasMatch(value)) {
+    return '$value/32';
+  }
+  // Same bare-IPv6 heuristic as [buildTailscaleRouteRule].
+  if (value.contains(':')) {
+    return '$value/128';
+  }
+  return null;
+}
+
 extension TailscalePropsExt on TailscaleProps {
   List<TailscaleProxy> get activeProxies =>
       enable ? proxies : const <TailscaleProxy>[];
@@ -196,8 +217,33 @@ extension TailscalePropsExt on TailscaleProps {
     return rules;
   }
 
-  List<String> buildFakeIpFilters() =>
-      bypassTraffic ? tailscaleFakeIpFilters : const <String>[];
+  /// Fake-IP of controlplane.tailscale.com breaks `tailscale up` TLS even for
+  /// embedded nodes. MagicDNS (`*.ts.net`) must also skip Fake-IP so DOMAIN
+  /// routes and the Tailscale stack see real answers; bypass mode uses the
+  /// same full filter set for the system Tailscale app.
+  List<String> buildFakeIpFilters() {
+    if (bypassTraffic || enable) {
+      return tailscaleFakeIpFilters;
+    }
+    return const [];
+  }
+
+  /// IP destinations that must still enter TUN/VPN when private bypass is on.
+  List<String> buildPrivateRouteKeepCidrs() {
+    if (!enable) {
+      return const [];
+    }
+    final keep = <String>{};
+    for (final proxy in proxies.where((item) => item.isValid)) {
+      for (final dest in proxy.routes) {
+        final cidr = tailscaleDestinationCidr(dest);
+        if (cidr != null) {
+          keep.add(cidr);
+        }
+      }
+    }
+    return keep.toList();
+  }
 }
 
 @Freezed(toStringOverride: false)

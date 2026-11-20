@@ -7718,8 +7718,7 @@ class AppLocalizations {
   String customImportDroppedSubRules(num count, Object label) {
     return Intl.plural(
       count,
-      one:
-          '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
+      one: '1 SUB-RULE rule was dropped, since custom profiles do not support sub-rules',
       other:
           '$label SUB-RULE rules were dropped, since custom profiles do not support sub-rules',
       name: 'customImportDroppedSubRules',
@@ -11170,10 +11169,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Tap the test button on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.`
+  /// `Tap the bolt or delay on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.`
   String get tailscaleTestTip {
     return Intl.message(
-      'Tap the test button on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.',
+      'Tap the bolt or delay on a node to check that the auth key joined the tailnet. A delay means the config is valid; timeout means join failed — check the key, Enable Tailscale, and that FlClash VPN is running. This does not test public internet access.',
       name: 'tailscaleTestTip',
       desc: '',
       args: [],
@@ -12540,10 +12539,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale IPs; ts.net covers MagicDNS names.`
+  /// `Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale CGNAT IPs; ts.net covers MagicDNS. For a home LAN via subnet router (e.g. 10.69.x), also add that CIDR — Bypass private addresses would otherwise keep it out of the VPN.`
   String get tailscaleRoutesHintCidr {
     return Intl.message(
-      'Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale IPs; ts.net covers MagicDNS names.',
+      'Destinations via this node, one per line. Tip: 100.64.0.0/10 covers Tailscale CGNAT IPs; ts.net covers MagicDNS. For a home LAN via subnet router (e.g. 10.69.x), also add that CIDR — Bypass private addresses would otherwise keep it out of the VPN.',
       name: 'tailscaleRoutesHintCidr',
       desc: '',
       args: [],

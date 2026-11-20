@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:test/test.dart';
 
@@ -263,15 +264,46 @@ void main() {
       );
     });
 
-    test('emits fake-ip filters only when bypassTraffic is on', () {
+    test('emits MagicDNS and control-plane fake-ip filters when enabled', () {
       expect(const TailscaleProps().buildFakeIpFilters(), isEmpty);
+      expect(
+        const TailscaleProps(enable: true).buildFakeIpFilters(),
+        tailscaleFakeIpFilters,
+      );
+      expect(
+        const TailscaleProps(enable: true).buildFakeIpFilters(),
+        containsAll(['+.tailscale.com', '+.tailscale.io', '+.ts.net']),
+      );
       expect(
         const TailscaleProps(bypassTraffic: true).buildFakeIpFilters(),
         tailscaleFakeIpFilters,
       );
+    });
+
+    test('keeps listed subnet CIDRs out of private-route bypass', () {
+      const props = TailscaleProps(
+        enable: true,
+        proxies: [
+          TailscaleProxy(
+            name: 'ts-node',
+            routes: ['100.64.0.0/10', '10.69.0.0/16', 'home.ts.net'],
+          ),
+        ],
+      );
       expect(
-        const TailscaleProps(bypassTraffic: true).buildFakeIpFilters(),
-        containsAll(['+.tailscale.com', '+.tailscale.io', '+.ts.net']),
+        props.buildPrivateRouteKeepCidrs(),
+        containsAll(['100.64.0.0/10', '10.69.0.0/16']),
+      );
+      expect(props.buildPrivateRouteKeepCidrs(), isNot(contains('home.ts.net')));
+      final excluded = subtractCidrs(
+        privateRouteAddress,
+        props.buildPrivateRouteKeepCidrs(),
+      );
+      expect(excluded, isNot(contains('10.0.0.0/8')));
+      expect(
+        excluded.any((cidr) => cidr.startsWith('10.')),
+        isTrue,
+        reason: 'other 10/8 slices remain excluded',
       );
     });
 
