@@ -21,27 +21,47 @@ A standalone CLI that can:
 - Replacing the GUI on `production`
 - Sharing the GUI single-instance lock or Flutter DB
 
-## Run from source
+## Build (AOT binary)
 
 ```bash
-# Core must be on PATH or next to the neo binary, or pass --core
-export FLCLASH_CORE=/workspace/libclash/linux/FlClashCore
-
-dart run tool/neo.dart run --config /path/to/config.yaml
+bash tool/build_neo.sh
+# -> libclash/<linux|macos|windows>/flclash-neo
+#    (+ FlClashCore if it was missing)
 ```
 
-One-shot:
+The desktop setup hook also compiles `flclash-neo` next to Core on every
+`flutter build` / hook run (same pattern as `flclash-tui`).
+
+## Run
 
 ```bash
-dart run tool/neo.dart status   # against a running neo host (control file)
-dart run tool/neo.dart stop
+./libclash/linux/flclash-neo run --config /path/to/config.yaml
+./libclash/linux/flclash-neo status
+./libclash/linux/flclash-neo stop
 ```
+
+Override Core path with `FLCLASH_CORE` or `--core` when it is not beside the
+binary.
+
+## Release (neo channel)
+
+On a `cursor/neo-*` branch:
+
+```bash
+tool/release.sh stable --yes --push
+# tags vX.Y.Z_neo_<sha6>  (skips production CHANGELOG / geo refresh)
+```
+
+CI workflow `neo-release` builds platform archives
+`FlClashNeo-X.Y.Z_neo-<os>-<arch>.tar.gz` (zip on Windows) and publishes a
+**prerelease**. Full GUI matrix tags must not contain `_neo`.
 
 ## Layout
 
 | File | Role |
 |------|------|
 | `tool/neo.dart` | Entry |
+| `tool/build_neo.sh` | AOT compile (+ Core if needed) |
 | `tool/neo/host.dart` | Bind IPC, spawn Core, init/setup |
 | `tool/neo/ipc.dart` | Length-prefixed Unix IPC |
 | `tool/neo/rpc.dart` | `core.*` / `config.*` method calls |
@@ -52,5 +72,6 @@ dart run tool/neo.dart stop
 
 - **Linux / macOS:** Unix domain socket IPC (matches Core `dial_socket.go`).
 - **Windows:** Named-pipe host is phase 2; `run` currently refuses on Windows
-  until a pipe listener lands (Core uses `dial_pipe.go`).
+  until a pipe listener lands (Core uses `dial_pipe.go`). Archives still ship
+  the AOT binary for later.
 - **TUN / system proxy:** not in the first slice; use a mixed-port config.

@@ -4,6 +4,7 @@ import 'package:path/path.dart' as p;
 import 'build_cache.dart';
 import 'fingerprint.dart';
 import 'go_builder.dart';
+import 'neo_builder.dart';
 import 'options.dart';
 import 'rust_builder.dart';
 import 'target.dart';
@@ -68,12 +69,18 @@ Future<BuildReport> buildPlatform(BuildRequest request) async {
     cache: cache,
     notice: notice,
   ).build(target);
+  final neo = await NeoBuilder(
+    rootDir: rootDir,
+    config: config,
+    cache: cache,
+    notice: notice,
+  ).build(target);
   if (!target.hasHelper) {
     _log.info(
       'Done in ${stopwatch.elapsed}: ${core.primaryOutput}, '
-      '${tui.primaryOutput}',
+      '${tui.primaryOutput}, ${neo.primaryOutput}',
     );
-    return _report([core, tui]);
+    return _report([core, tui, neo]);
   }
 
   final coreSha256 = await calcSha256(core.primaryOutput);
@@ -94,9 +101,9 @@ Future<BuildReport> buildPlatform(BuildRequest request) async {
 
   _log.info(
     'Done in ${stopwatch.elapsed}: ${core.primaryOutput}, '
-    '${helper.primaryOutput}, ${tui.primaryOutput}',
+    '${helper.primaryOutput}, ${tui.primaryOutput}, ${neo.primaryOutput}',
   );
-  return _report([core, helper, tui], extraOutputs: [manifestPath]);
+  return _report([core, helper, tui, neo], extraOutputs: [manifestPath]);
 }
 
 BuildReport _report(

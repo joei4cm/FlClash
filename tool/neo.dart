@@ -3,9 +3,14 @@
 // Experimental headless FlClash host + CLI (Neo).
 // Lives on cursor/neo-* branches — do not ship on production until ready.
 //
-//   dart run tool/neo.dart run --config ./config.yaml
-//   dart run tool/neo.dart status
-//   dart run tool/neo.dart stop
+// Build:
+//   bash tool/build_neo.sh
+//   # -> libclash/<os>/flclash-neo
+//
+// Run:
+//   ./libclash/linux/flclash-neo run --config ./config.yaml
+//   ./libclash/linux/flclash-neo status
+//   ./libclash/linux/flclash-neo stop
 
 import 'dart:io';
 

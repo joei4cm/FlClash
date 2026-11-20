@@ -20,6 +20,10 @@ Usage: tool/release.sh <pre|stable> [options]
   stable             Refresh geo assets, write the changelog, commit, and
                      tag vX.Y.Z.
 
+On cursor/neo-* branches the channel suffix _neo is inserted before the
+commit hash (vX.Y.Z_neo_abcdef). Neo releases skip the production CHANGELOG
+rewrite and publish Neo CLI artifacts instead of the full GUI matrix.
+
 Options:
   --version X.Y.Z    Target app version. Defaults to the pubspec version,
                      bumping the patch when that version is already tagged.
@@ -32,6 +36,7 @@ Options:
 Examples:
   tool/release.sh pre --push          # v0.8.97-pre.1_abcdef, notes rendered by CI
   tool/release.sh stable --push       # v0.8.97_abcdef with a chore(release) commit
+  # on cursor/neo-*:                  # v0.9.24_neo_abcdef (Neo CLI release)
 EOF
 }
 
@@ -80,10 +85,6 @@ pubspec_version() {
   sed -n 's/^version: \([0-9]*\.[0-9]*\.[0-9]*\).*/\1/p' pubspec.yaml
 }
 
-version_is_tagged() {
-  git tag --list "v$1" "v$1_*" | grep -Eq "^v$1(_[0-9a-fA-F]{6})?$"
-}
-
 if ! git diff --quiet || ! git diff --cached --quiet; then
   die "working tree has uncommitted changes; commit or stash them first"
 fi
@@ -94,6 +95,19 @@ if [[ "$branch" != "main" ]]; then
   echo "note: releasing from '$branch', not main. CI triggers on the tag, so"
   echo "      this publishes '$branch' while main stays behind."
 fi
+
+channel=""
+if [[ "$branch" == *neo* ]]; then
+  channel="neo"
+fi
+
+version_is_tagged() {
+  if [[ "$channel" == "neo" ]]; then
+    git tag --list "v$1_neo" "v$1_neo_*" | grep -Eq "^v$1_neo(_[0-9a-fA-F]{6})?$"
+  else
+    git tag --list "v$1" "v$1_*" | grep -Eq "^v$1(_[0-9a-fA-F]{6})?$"
+  fi
+}
 
 current="$(pubspec_version)"
 [[ -n "$current" ]] || die "could not read the version from pubspec.yaml"
@@ -110,27 +124,41 @@ else
 fi
 
 version_is_tagged "$version" &&
-  die "v$version is already tagged; pass --version with the next one"
+  die "v$version${channel:+_$channel} is already tagged; pass --version with the next one"
 
 if [[ "$version" != "$current" ]]; then
   bumped=1
 fi
 
 if [[ "$mode" == "pre" ]]; then
-  last="$(git tag --list "v$version-pre.*" |
-    sed -n "s/^v$version-pre\.\([0-9]*\)\(_[0-9a-fA-F]\{6\}\)\?$/\1/p" |
-    sort -n | tail -1)"
+  if [[ "$channel" == "neo" ]]; then
+    last="$(git tag --list "v$version-pre.*_neo*" |
+      sed -n "s/^v$version-pre\.\([0-9]*\)_neo\(_[0-9a-fA-F]\{6\}\)\?$/\1/p" |
+      sort -n | tail -1)"
+  else
+    last="$(git tag --list "v$version-pre.*" |
+      sed -n "s/^v$version-pre\.\([0-9]*\)\(_[0-9a-fA-F]\{6\}\)\?$/\1/p" |
+      sort -n | tail -1)"
+  fi
   tag="v$version-pre.$(((${last:-0}) + 1))"
 else
   tag="v$version"
 fi
 
+if [[ "$channel" == "neo" ]]; then
+  tag="${tag}_neo"
+fi
+
 echo
 echo "mode      : $mode"
 echo "branch    : $branch"
+echo "channel   : ${channel:-production}"
 echo "version   : $current -> $version$([[ $bumped == 1 ]] && echo ' (pubspec will be rewritten)')"
 echo "tag       : $tag"
-if [[ "$mode" == "pre" ]]; then
+if [[ "$channel" == "neo" ]]; then
+  echo "changelog : skipped (neo channel; no production CHANGELOG rewrite)"
+  echo "publishes : FlClash Neo CLI artifacts (flclash-neo + Core)"
+elif [[ "$mode" == "pre" ]]; then
   echo "changelog : rendered by CI from build --unreleased; nothing committed"
   echo "publishes : build artifacts + Telegram only, no GitHub release"
 else
@@ -139,6 +167,8 @@ else
 fi
 if ((skip_geo)); then
   echo "geo       : skipped (--skip-geo)"
+elif [[ "$channel" == "neo" ]]; then
+  echo "geo       : skipped (neo CLI release does not refresh GUI geo assets)"
 else
   echo "geo       : refresh MMDB/ASN/GEOIP/GEOSITE from MetaCubeX latest"
 fi
@@ -159,13 +189,19 @@ fi
 tool/bump_version.sh minor
 
 echo "--- release notes for $tag ---"
-if dart run tool/changelog.dart build --unreleased >/dev/null 2>&1; then
-  dart run tool/changelog.dart render release 2>/dev/null |
-    sed -n '/changelog:begin/,/changelog:end/p' | sed '1d;$d'
+if [[ "$channel" == "neo" ]]; then
+  echo "FlClash Neo experimental headless CLI"
+  echo "- AOT binary flclash-neo beside FlClashCore"
+  echo "- Unix IPC host (Linux/macOS); Windows pipe host still pending"
 else
-  echo "(preview unavailable: 'build --unreleased' found nothing to collect)"
+  if dart run tool/changelog.dart build --unreleased >/dev/null 2>&1; then
+    dart run tool/changelog.dart render release 2>/dev/null |
+      sed -n '/changelog:begin/,/changelog:end/p' | sed '1d;$d'
+  else
+    echo "(preview unavailable: 'build --unreleased' found nothing to collect)"
+  fi
+  git checkout -- changelog.json 2>/dev/null || true
 fi
-git checkout -- changelog.json 2>/dev/null || true
 echo "--- end of notes ---"
 echo
 
@@ -192,13 +228,21 @@ if ((assume_yes == 0)); then
   done
 fi
 
-if ((skip_geo == 0)); then
+if [[ "$channel" != "neo" && "$skip_geo" == 0 ]]; then
   echo "Refreshing bundled geo databases..."
   bash "$script_dir/update_geo_assets.sh"
   echo
 fi
 
-if [[ "$mode" == "stable" ]]; then
+if [[ "$channel" == "neo" ]]; then
+  if ! git diff --quiet -- pubspec.yaml; then
+    git add pubspec.yaml
+    git commit -m "chore(neo): bump version to $(sed -n 's/^version: //p' pubspec.yaml)"
+    committed=1
+  else
+    committed=1
+  fi
+elif [[ "$mode" == "stable" ]]; then
   dart run tool/changelog.dart release --version "$version"
   echo
   git --no-pager diff --stat -- CHANGELOG.md changelog.json pubspec.yaml assets/data

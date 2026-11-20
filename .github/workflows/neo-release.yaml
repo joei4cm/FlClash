@@ -1,0 +1,192 @@
+# Experimental FlClash Neo CLI releases.
+# Tags: vX.Y.Z_neo or vX.Y.Z_neo_abcdef (from tool/release.sh on cursor/neo-*).
+# Does not run the full GUI matrix — ships flclash-neo + FlClashCore only.
+name: neo-release
+
+on:
+  push:
+    tags:
+      - 'v*_neo'
+      - 'v*_neo_*'
+
+concurrency:
+  group: neo-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: '3.47.6'
+  GO_VERSION: '1.27.1'
+
+jobs:
+  build-neo:
+    name: neo (${{ matrix.os }}, ${{ matrix.arch }})
+    if: github.repository == 'joei4cm/FlClash'
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: linux
+            arch: amd64
+            runner: ubuntu-22.04
+          - os: linux
+            arch: arm64
+            runner: ubuntu-24.04-arm
+          - os: macos
+            arch: arm64
+            runner: macos-14
+          - os: windows
+            arch: amd64
+            runner: windows-2022
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: core/go.sum
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Enable git long paths (Windows)
+        if: runner.os == 'Windows'
+        run: git config --global core.longpaths true
+
+      - name: Prefetch Go modules
+        shell: bash
+        working-directory: core
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+        run: |
+          for i in 1 2 3 4 5; do
+            if go mod download; then
+              exit 0
+            fi
+            echo "go mod download failed (attempt $i); retrying..." >&2
+            sleep $((i * 20))
+          done
+          exit 1
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Build Core + Neo
+        shell: bash
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+        run: |
+          set -euo pipefail
+          bash tool/build_neo.sh
+          platform='${{ matrix.os }}'
+          arch='${{ matrix.arch }}'
+          ext=''
+          [[ "$platform" == windows ]] && ext='.exe'
+          core="libclash/$platform/FlClashCore$ext"
+          neo="libclash/$platform/flclash-neo$ext"
+          test -f "$core"
+          test -f "$neo"
+          tag="${GITHUB_REF_NAME}"
+          version="$(printf '%s' "$tag" | sed -E 's/^v//; s/_[0-9a-fA-F]{6}$//')"
+          dist="dist"
+          mkdir -p "$dist"
+          stage="FlClashNeo-${version}-${platform}-${arch}"
+          mkdir -p "$dist/$stage"
+          cp "$core" "$neo" "$dist/$stage/"
+          if [[ -f "libclash/$platform/manifest.json" ]]; then
+            cp "libclash/$platform/manifest.json" "$dist/$stage/"
+          fi
+          {
+            echo "FlClash Neo ${version}"
+            echo "Experimental headless host. Not for production GUI installs."
+            echo
+            echo "Run:"
+            echo "  ./flclash-neo${ext} run --config /path/to/config.yaml"
+            echo
+            echo "Core must sit next to flclash-neo (this archive layout), or set"
+            echo "FLCLASH_CORE."
+          } >"$dist/$stage/README.txt"
+          if [[ "$platform" == windows ]]; then
+            (cd "$dist" && 7z a -tzip "${stage}.zip" "$stage")
+            rm -rf "$dist/$stage"
+          else
+            tar -C "$dist" -czf "$dist/${stage}.tar.gz" "$stage"
+            rm -rf "$dist/$stage"
+          fi
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: neo-${{ matrix.os }}-${{ matrix.arch }}
+          path: dist/*
+          overwrite: true
+
+  publish:
+    name: publish neo release
+    needs: build-neo
+    if: github.repository == 'joei4cm/FlClash' && !cancelled()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist/
+          pattern: neo-*
+          merge-multiple: true
+
+      - name: SHA256SUMS + release notes
+        shell: bash
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          version="$(printf '%s' "$TAG" | sed -E 's/^v//; s/_[0-9a-fA-F]{6}$//')"
+          cd dist
+          sha256sum ./* > SHA256SUMS
+          {
+            echo '# FlClash Neo '"$version"
+            echo
+            echo 'Experimental headless desktop CLI. **Do not** use as a'
+            echo 'drop-in replacement for the GUI release.'
+            echo
+            echo '## Assets'
+            echo
+            for f in FlClashNeo-*; do
+              echo "- \`$f\`"
+            done
+            echo
+            echo '## Run'
+            echo
+            echo '```bash'
+            echo '# Linux / macOS'
+            echo 'tar -xzf FlClashNeo-'"$version"'-linux-amd64.tar.gz'
+            echo 'cd FlClashNeo-'"$version"'-linux-amd64'
+            echo './flclash-neo run --config /path/to/config.yaml'
+            echo '```'
+          } > ../neo-release.md
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: FlClash Neo ${{ github.ref_name }}
+          body_path: ./neo-release.md
+          files: ./dist/*
+          draft: false
+          prerelease: true
+          fail_on_unmatched_files: true

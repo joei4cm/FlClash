@@ -8,6 +8,9 @@ import 'paths.dart';
 const helpText = '''
 FlClash Neo — experimental headless host (desktop)
 
+Build:
+  bash tool/build_neo.sh
+
 Usage:
   flclash-neo run [--config PATH] [--core PATH] [--home DIR]
   flclash-neo status [--home DIR]
@@ -19,6 +22,7 @@ Env:
   FLCLASH_NEO_HOME   Neo data directory (default: ~/.config/flclash-neo)
 
 Notes:
+  - Ship as AOT binary next to FlClashCore (release tags: vX.Y.Z_neo_*).
   - Linux/macOS only in this slice (Unix IPC).
   - Does not use the GUI lock or production data dir.
   - TUN/Helper not wired yet — use mixed-port (or socks) in the config.
