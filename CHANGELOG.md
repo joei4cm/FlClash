@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.25 (2026-11-24)
+
+**Features**
+
+- Rebase fork onto upstream v0.9.4 (Flutter 3.50) while keeping Tailscale, geo identity, strategy lanes, and TUI (a44771a)
+
 ## v0.9.24 (2026-11-20)
 
 **Features**
@@ -62,6 +68,20 @@
 **Features**
 
 - Tailscale, geo identity, strategy lanes, and sticky auto-select on upstream 0.9.2, with update checks on joei4cm/FlClash (3afd1da)
+
+## v0.9.3 (2026-11-04)
+
+**Features**
+
+- **connections** Merged requests and connections; quick edit lists (52b975f)
+- **ui** iOS 27 transitions, press and text selection; smoother pages (bb47f2c)
+- **update** Download and install updates in the app (b8f84b3)
+- **core** One delay test timeout; VPN crash and startup fixes (2a5a42c)
+
+**Bug Fixes**
+
+- **core** Auto-select leaves an unusable first node at once (7d5db7e)
+- **access** Keep selections a filter hides (63aaf6d)
 
 ## v0.9.2 (2026-10-24)
 
