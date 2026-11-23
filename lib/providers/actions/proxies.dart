@@ -412,10 +412,19 @@ class ProxiesAction extends _$ProxiesAction {
     if (targets.isEmpty) {
       return;
     }
+    var timeoutMs = ref.read(appSettingProvider).delayTestTimeout;
+    // Cold Tailscale join needs longer than the app’s ≤8s delay options.
+    if (batches.any(
+      (batch) => batch.proxies.any((proxy) => proxy.type == tailscaleProxyType),
+    )) {
+      timeoutMs = timeoutMs < defaultTailscaleJoinTimeout
+          ? defaultTailscaleJoinTimeout
+          : timeoutMs;
+    }
     final pending = ref.read(pendingDelayTestsProvider.notifier);
     final job = _DelayTestJob(
       targets.map((target) => target.key),
-      Duration(milliseconds: ref.read(appSettingProvider).delayTestTimeout),
+      Duration(milliseconds: timeoutMs),
     );
     _delayTestJobs.add(job);
     // TaskPool.run starts a task synchronously while it has an idle slot.

@@ -88,9 +88,9 @@ class TailscaleView extends ConsumerWidget {
       dialogs.showBanner(appLocalizations.tailscaleTestConfigOk);
       return;
     }
-    if (delay != null && delay < 0) {
-      dialogs.showBanner(appLocalizations.tailscaleTestConfigFailed);
-    }
+    // Null means the Core never wrote a result (missing proxy / cancelled).
+    // Treat it like a failed join so the user always gets feedback.
+    dialogs.showBanner(appLocalizations.tailscaleTestConfigFailed);
   }
 
   Future<void> _applyUsageMode(WidgetRef ref, TailscaleUsageMode mode) async {
