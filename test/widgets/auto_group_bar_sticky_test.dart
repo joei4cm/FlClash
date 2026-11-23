@@ -1,5 +1,5 @@
+import 'package:fl_clash/common/app_localizations.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
@@ -46,7 +46,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final l10n = AppLocalizations.current;
+    final l10n = currentAppLocalizations;
     expect(find.text(l10n.autoGroupPickRegion), findsOneWidget);
     expect(find.text(l10n.autoGroupRegionNodes('HK', 1)), findsOneWidget);
     expect(find.text(l10n.autoGroupRegionNodes('JP', 1)), findsOneWidget);

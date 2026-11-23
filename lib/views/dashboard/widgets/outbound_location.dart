@@ -8,7 +8,6 @@ import 'package:fl_clash/providers/routed_probe.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/ui/ui.dart';
 import 'package:fl_clash/views/dashboard/layout.dart';
-import 'package:fl_clash/views/dashboard/probe_start_hold.dart';
 import 'package:fl_clash/views/dashboard/style.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,8 +24,7 @@ class OutboundLocationCard extends ConsumerStatefulWidget {
       _OutboundLocationCardState();
 }
 
-class _OutboundLocationCardState extends ConsumerState<OutboundLocationCard>
-    with ProbeStartHold<OutboundLocationCard> {
+class _OutboundLocationCardState extends ConsumerState<OutboundLocationCard> {
   late final OutboundIpProbe _probe;
 
   @override
@@ -57,7 +55,7 @@ class _OutboundLocationCardState extends ConsumerState<OutboundLocationCard>
       outboundIpProbeProvider.select((state) => state.entryOf(routedOutbound)),
     );
     final info = entry.value;
-    final phase = shownPhase(entry);
+    final phase = entry.phase;
     final failed = phase == ProbePhase.failed && info == null;
     final probing = phase == ProbePhase.probing && info == null;
     final point = info == null ? null : resolveOutboundMapPoint(info);

@@ -1,4 +1,4 @@
-import 'package:fl_clash/l10n/l10n.dart';
+import 'package:fl_clash/common/app_localizations.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
@@ -52,15 +52,15 @@ void main() {
 
     expect(find.byType(TailscaleView), findsOneWidget);
     expect(
-      find.text(AppLocalizations.current.tailscaleStatusDisabled),
+      find.text(currentAppLocalizations.tailscaleStatusDisabled),
       findsOneWidget,
     );
     expect(
-      find.text(AppLocalizations.current.tailscaleUsageTitle),
+      find.text(currentAppLocalizations.tailscaleUsageTitle),
       findsOneWidget,
     );
     expect(
-      find.text(AppLocalizations.current.tailscaleAdvancedTitle),
+      find.text(currentAppLocalizations.tailscaleAdvancedTitle),
       findsOneWidget,
     );
   });
@@ -76,7 +76,7 @@ void main() {
     await _pumpView(tester, container, const TailscaleView());
 
     expect(
-      find.text(AppLocalizations.current.tailscaleStatusNoNodes),
+      find.text(currentAppLocalizations.tailscaleStatusNoNodes),
       findsOneWidget,
     );
   });
@@ -101,11 +101,11 @@ void main() {
 
     expect(find.text('home-exit'), findsWidgets);
     expect(
-      find.text(AppLocalizations.current.tailscaleStatusNeedStart),
+      find.text(currentAppLocalizations.tailscaleStatusNeedStart),
       findsOneWidget,
     );
     expect(
-      find.text(AppLocalizations.current.tailscaleRoutesCount(1)),
+      find.text(currentAppLocalizations.tailscaleRoutesCount(1)),
       findsOneWidget,
     );
   });
@@ -118,7 +118,7 @@ void main() {
 
     expect(find.byType(GeoIdentityView), findsOneWidget);
     expect(
-      find.text(AppLocalizations.current.geoIdentityOffStatus),
+      find.text(currentAppLocalizations.geoIdentityOffStatus),
       findsOneWidget,
     );
   });
@@ -134,7 +134,7 @@ void main() {
     await _pumpView(tester, container, const GeoIdentityView());
 
     expect(
-      find.text(AppLocalizations.current.geoIdentityNeedStart),
+      find.text(currentAppLocalizations.geoIdentityNeedStart),
       findsOneWidget,
     );
   });
@@ -147,7 +147,7 @@ void main() {
 
     expect(find.byType(StrategyLanesView), findsOneWidget);
     expect(
-      find.text(AppLocalizations.current.strategyLanesNeedProfile),
+      find.text(currentAppLocalizations.strategyLanesNeedProfile),
       findsOneWidget,
     );
   });
@@ -164,27 +164,24 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text(AppLocalizations.current.tailscaleUsageTitle),
+        find.text(currentAppLocalizations.tailscaleUsageTitle),
         findsOneWidget,
       );
       await tester.tap(
-        find.text(AppLocalizations.current.tailscaleAdvancedTitle),
+        find.text(currentAppLocalizations.tailscaleAdvancedTitle),
       );
       await tester.pumpAndSettle();
 
       expect(
-        find.text(AppLocalizations.current.tailscaleBypass),
+        find.text(currentAppLocalizations.tailscaleBypass),
         findsOneWidget,
       );
       await tester.scrollUntilVisible(
-        find.text(AppLocalizations.current.addTailscaleNode),
+        find.text(currentAppLocalizations.addTailscaleNode),
         200,
         scrollable: find.byType(Scrollable).first,
       );
-      expect(
-        find.text(AppLocalizations.current.addTailscaleNode),
-        findsWidgets,
-      );
+      expect(find.text(currentAppLocalizations.addTailscaleNode), findsWidgets);
     },
   );
 
@@ -198,28 +195,22 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(
-      find.text(AppLocalizations.current.addTailscaleNode),
-      findsOneWidget,
-    );
-    expect(
-      find.text(AppLocalizations.current.tailscaleAuthKey),
-      findsOneWidget,
-    );
-    expect(find.text(AppLocalizations.current.tailscaleRoutes), findsOneWidget);
+    expect(find.text(currentAppLocalizations.addTailscaleNode), findsOneWidget);
+    expect(find.text(currentAppLocalizations.tailscaleAuthKey), findsOneWidget);
+    expect(find.text(currentAppLocalizations.tailscaleRoutes), findsOneWidget);
     // New nodes keep advanced collapsed so the dialog fits short screens.
-    expect(find.text(AppLocalizations.current.showAdvanced), findsOneWidget);
-    expect(find.text(AppLocalizations.current.tailscaleHostname), findsNothing);
+    expect(find.text(currentAppLocalizations.showAdvanced), findsOneWidget);
+    expect(find.text(currentAppLocalizations.tailscaleHostname), findsNothing);
 
-    await tester.tap(find.text(AppLocalizations.current.showAdvanced));
+    await tester.tap(find.text(currentAppLocalizations.showAdvanced));
     await tester.pumpAndSettle();
-    expect(find.text(AppLocalizations.current.hideAdvanced), findsOneWidget);
+    expect(find.text(currentAppLocalizations.hideAdvanced), findsOneWidget);
     expect(
-      find.text(AppLocalizations.current.tailscaleHostname),
+      find.text(currentAppLocalizations.tailscaleHostname),
       findsOneWidget,
     );
     expect(
-      find.text(AppLocalizations.current.tailscaleControlUrl),
+      find.text(currentAppLocalizations.tailscaleControlUrl),
       findsOneWidget,
     );
   });
@@ -247,11 +238,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.text(AppLocalizations.current.editTailscaleNode),
+      find.text(currentAppLocalizations.editTailscaleNode),
       findsOneWidget,
     );
     expect(
-      find.text(AppLocalizations.current.tailscaleHostname),
+      find.text(currentAppLocalizations.tailscaleHostname),
       findsOneWidget,
     );
   });
