@@ -223,7 +223,6 @@ func (t *Tailscale) watchBackendState() {
 	}
 	defer watcher.Close()
 
-	backendInitialized := false
 	exitNodeNeedsStatus := tailscaleExitNodeNeedsStatus(t.option)
 	for {
 		n, err := watcher.Next()
@@ -235,18 +234,64 @@ func (t *Tailscale) watchBackendState() {
 			continue
 		}
 
-		if *n.State != ipn.NoState && !backendInitialized {
+		switch *n.State {
+		case ipn.NeedsLogin, ipn.NeedsMachineAuth:
+			// Auth never completed; unblock Dial/ProbeJoin with a clear error
+			// instead of waiting until the caller's timeout.
+			t.setBackendInitialized(fmt.Errorf("tailscale %s", *n.State))
+			return
+		case ipn.Running:
+			// Wait for Running (not merely != NoState). Earlier readiness let
+			// DialContext race an empty TailscaleIPs / unfinished netstack and
+			// made the node-test button time out on healthy joins.
+			if exitNodeNeedsStatus {
+				if err := t.applyExitNodePrefs(t.ctx); err != nil {
+					log.Warnln("[Tailscale](%s) set exit node failed: %v", t.Name(), err)
+				}
+			}
 			t.setBackendInitialized(nil)
-			backendInitialized = true
-			if !exitNodeNeedsStatus {
-				return
+			return
+		}
+	}
+}
+
+// ProbeJoin reports whether this outbound has finished joining the tailnet
+// (Running with at least one Tailscale IP). Delay tests use it instead of a
+// MagicDNS TCP dial: 100.100.100.100:53 often has no TCP listener, so a healthy
+// peer-only node looked timed out even after a successful join.
+func (t *Tailscale) ProbeJoin(ctx context.Context) error {
+	if err := t.ensureStarted(ctx); err != nil {
+		return err
+	}
+	if v4, v6 := t.server.TailscaleIPs(); v4.IsValid() || v6.IsValid() {
+		return nil
+	}
+	lc, err := t.server.LocalClient()
+	if err != nil {
+		return err
+	}
+	ticker := time.NewTicker(100 * time.Millisecond)
+	defer ticker.Stop()
+	for {
+		st, err := lc.StatusWithoutPeers(ctx)
+		if err != nil {
+			return err
+		}
+		switch st.BackendState {
+		case ipn.NeedsLogin.String(), ipn.NeedsMachineAuth.String():
+			return fmt.Errorf("tailscale %s", st.BackendState)
+		case ipn.Running.String():
+			if len(st.TailscaleIPs) > 0 {
+				return nil
+			}
+			if v4, v6 := t.server.TailscaleIPs(); v4.IsValid() || v6.IsValid() {
+				return nil
 			}
 		}
-		if exitNodeNeedsStatus && *n.State == ipn.Running {
-			if err := t.applyExitNodePrefs(t.ctx); err != nil {
-				log.Warnln("[Tailscale](%s) set exit node failed: %v", t.Name(), err)
-			}
-			return
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-ticker.C:
 		}
 	}
 }
