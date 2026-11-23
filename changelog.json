@@ -2,6 +2,67 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.25",
+      "tag": "v0.9.25",
+      "date": "2026-11-24",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "a44771a",
+              "text": "Rebase fork onto upstream v0.9.4 (Flutter 3.50) while keeping Tailscale, geo identity, strategy lanes, and TUI"
+            }
+          ]
+        }
+      ],
+      "omit": [
+        "076feeb",
+        "c53ad89",
+        "ec3c89e",
+        "3172d8b",
+        "bdb848d",
+        "b866879",
+        "e893d08",
+        "3e41a9e",
+        "8d271bd",
+        "f3c213b",
+        "52b975f",
+        "bb47f2c",
+        "b8f84b3",
+        "2a5a42c",
+        "07c0e77",
+        "75369ce",
+        "fbceba6",
+        "9a9fe5c",
+        "cee2ca0",
+        "df34734",
+        "5981a0b",
+        "989e6f9",
+        "b8b050a",
+        "28ed728",
+        "b2e3550",
+        "c6c2988",
+        "364ae42",
+        "d78c066",
+        "46cf7ff",
+        "567fb62",
+        "0541913",
+        "53c5664",
+        "dc144ab",
+        "d537806",
+        "f94c2fb",
+        "7efb285",
+        "43a657b",
+        "2d5e008",
+        "5e565b1",
+        "7d5db7e",
+        "63aaf6d",
+        "e67197b"
+      ]
+    },
+    {
       "version": "0.9.24",
       "tag": "v0.9.24",
       "date": "2026-11-20",
@@ -260,6 +321,54 @@
             {
               "id": "3afd1da",
               "text": "Tailscale, geo identity, strategy lanes, and sticky auto-select on upstream 0.9.2, with update checks on joei4cm/FlClash"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.9.3",
+      "tag": "v0.9.3",
+      "date": "2026-11-04",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "52b975f",
+              "scope": "connections",
+              "text": "Merged requests and connections; quick edit lists"
+            },
+            {
+              "id": "bb47f2c",
+              "scope": "ui",
+              "text": "iOS 27 transitions, press and text selection; smoother pages"
+            },
+            {
+              "id": "b8f84b3",
+              "scope": "update",
+              "text": "Download and install updates in the app"
+            },
+            {
+              "id": "2a5a42c",
+              "scope": "core",
+              "text": "One delay test timeout; VPN crash and startup fixes"
+            }
+          ]
+        },
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "7d5db7e",
+              "scope": "core",
+              "text": "Auto-select leaves an unusable first node at once"
+            },
+            {
+              "id": "63aaf6d",
+              "scope": "access",
+              "text": "Keep selections a filter hides"
             }
           ]
         }
