@@ -68,7 +68,12 @@ const delayTestTimeoutOptions = [500, 1000, 2000, 5000, 8000];
 
 const defaultDelayTestTimeout = 8000;
 
-const delayTestGuardDuration = Duration(seconds: 30);
+/// Cold Tailscale join often needs longer than [defaultDelayTestTimeout].
+/// Keep under half of [delayTestGuardDuration] so slot wait + probe still fit.
+const defaultTailscaleJoinTimeout = 25000;
+
+/// Outlasts twice the longest delay option, and a Tailscale cold join.
+const delayTestGuardDuration = Duration(seconds: 60);
 
 const delayTimedOutValue = -1;
 

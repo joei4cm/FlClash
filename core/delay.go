@@ -15,9 +15,12 @@ const (
 	delayTestConcurrency    = 50
 	defaultTestURL          = "https://www.gstatic.com/generate_204"
 	defaultDelayTestTimeout = 5 * time.Second
-	// Tailscale's MagicDNS / DNS listener. Dialing it through the outbound
-	// proves the auth key joined the tailnet; it does not require an exit node
-	// or reachability of the public internet test URL.
+	// Cold Tailscale join (auth + netstack + IP assignment) often exceeds the
+	// app’s ≤8s delay-test options. Raise those so the node-test button can
+	// finish; keep explicit sub-second timeouts for unit tests.
+	defaultTailscaleJoinTimeout = 25 * time.Second
+	// Fallback when ProbeJoin is unavailable: MagicDNS TCP. Prefer ProbeJoin —
+	// many builds have no TCP listener on 100.100.100.100:53.
 	tailscaleConfigProbeAddr = "100.100.100.100:53"
 )
 
@@ -93,6 +96,13 @@ func handleTestDelay(params *TestDelayParams) *Delay {
 	if !configured {
 		timeout = timeoutFromMillis(params.Timeout, defaultDelayTestTimeout)
 	}
+	if proxy.Type() == constant.Tailscale && !configured {
+		// App settings only offer ≤8s; raise those so a cold join can finish.
+		// Explicit short timeouts (unit tests) stay as-is.
+		if timeout >= time.Second && timeout < defaultTailscaleJoinTimeout {
+			timeout = defaultTailscaleJoinTimeout
+		}
+	}
 	if !delayTestSlots.acquireWithin(context.Background(), timeout) {
 		return nil
 	}
@@ -111,17 +121,47 @@ func handleTestDelay(params *TestDelayParams) *Delay {
 	return result
 }
 
-// probeTailscaleConfig checks that the embedded Tailscale outbound can start
-// and dial inside the tailnet. The usual URLTest target is a public generate_204
-// URL, which only works when an exit node is set, so a healthy peer-only node
-// always looked "timed out" even after a successful join.
+type tailscaleJoinProber interface {
+	ProbeJoin(ctx context.Context) error
+}
+
+func asTailscaleJoinProber(proxy constant.Proxy) (tailscaleJoinProber, bool) {
+	if prober, ok := proxy.(tailscaleJoinProber); ok {
+		return prober, true
+	}
+	if adapter, ok := proxy.(interface{ Adapter() constant.ProxyAdapter }); ok {
+		if prober, ok := adapter.Adapter().(tailscaleJoinProber); ok {
+			return prober, true
+		}
+	}
+	return nil, false
+}
+
+// probeTailscaleConfig checks that the embedded Tailscale outbound has joined
+// the tailnet. The usual URLTest target is a public generate_204 URL, which
+// only works when an exit node is set, so a healthy peer-only node always
+// looked "timed out" even after a successful join.
 func probeTailscaleConfig(ctx context.Context, proxy constant.Proxy, result *Delay) *Delay {
+	start := time.Now()
+	if prober, ok := asTailscaleJoinProber(proxy); ok {
+		if err := prober.ProbeJoin(ctx); err != nil {
+			result.Value = delayValue(0, ctx.Err() != nil)
+			return result
+		}
+		elapsed := time.Since(start) / time.Millisecond
+		if elapsed == 0 {
+			elapsed = 1
+		}
+		result.Value = int32(elapsed)
+		return result
+	}
+
+	// Stubs / older adapters without ProbeJoin: fall back to MagicDNS TCP.
 	metadata := &constant.Metadata{NetWork: constant.TCP}
 	if err := metadata.SetRemoteAddress(tailscaleConfigProbeAddr); err != nil {
 		result.Value = delayFailed
 		return result
 	}
-	start := time.Now()
 	conn, err := proxy.DialContext(ctx, metadata)
 	if err != nil {
 		result.Value = delayValue(0, ctx.Err() != nil)
