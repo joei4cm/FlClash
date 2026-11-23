@@ -1,5 +1,5 @@
+import 'package:fl_clash/common/app_localizations.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
@@ -59,7 +59,7 @@ void main() {
 
     expect(find.textContaining('node-a'), findsWidgets);
     expect(
-      find.text(AppLocalizations.current.restoreAutoSelect),
+      find.text(currentAppLocalizations.restoreAutoSelect),
       findsOneWidget,
     );
   });

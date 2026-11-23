@@ -35,7 +35,7 @@ CoreOptions coreOptions(Ref ref) {
     testUrl: testUrl,
     skipCertVerify: !checkCertificate,
     delayTestTimeout: delayTestTimeout,
-    mitmCapture: mitmFeature && mitmCapture,
+    mitmCapture: rsFeature && mitmCapture,
   );
 }
 
@@ -247,7 +247,8 @@ SharedState sharedState(Ref ref) {
 }
 
 @Riverpod(keepAlive: true)
-Future<List<String>> vpnRouteAddress(Ref ref) {
+Future<List<String>> vpnRouteAddress(Ref ref) async {
+  final modules = ref.watch(mitmModuleNetworkProvider.future);
   final routes = ref.watch(
     patchClashConfigProvider.select(
       (state) => Tun(
@@ -264,10 +265,21 @@ Future<List<String>> vpnRouteAddress(Ref ref) {
       (state) => state.buildPrivateRouteKeepCidrs(),
     ),
   );
-  return routes.vpnRouteAddress(
-    bypassPrivateRoute: bypassPrivateRoute,
-    keepCidrs: keepCidrs,
-  );
+  final network = await modules;
+  return routes
+      .copyWith(
+        routeAddress: routes.routeAddress.isEmpty
+            ? const []
+            : {...routes.routeAddress, ...network.routeAddress}.toList(),
+        routeExcludeAddress: {
+          ...routes.routeExcludeAddress,
+          ...?network.routeExcludeAddress?.values,
+        }.toList(),
+      )
+      .vpnRouteAddress(
+        bypassPrivateRoute: bypassPrivateRoute,
+        keepCidrs: keepCidrs,
+      );
 }
 
 @Riverpod(keepAlive: true)
@@ -288,6 +300,7 @@ Future<VpnOptions> vpnOptions(Ref ref) async {
   final vpnSetting = ref.watch(vpnSettingProvider);
   final safeMode = ref.watch(safeModeProvider);
   final routeAddress = ref.watch(vpnRouteAddressProvider.future);
+  final modules = ref.watch(mitmModuleNetworkProvider.future);
   final tun = clashConfig.tun;
   return VpnOptions(
     enable: vpnSetting.enable && !safeMode,
@@ -301,7 +314,9 @@ Future<VpnOptions> vpnOptions(Ref ref) async {
     dnsHijacking: vpnSetting.dnsHijacking,
     accessControlProps: vpnSetting.accessControlProps,
     allowBypass: vpnSetting.allowBypass,
-    bypassDomain: networkSetting.bypassDomain,
+    bypassDomain:
+        (await modules).bypassDomain?.applyTo(networkSetting.bypassDomain) ??
+        networkSetting.bypassDomain,
     routeAddress: await routeAddress,
     mtu: tun.mtu,
     congestionController: tun.congestionController,
@@ -322,4 +337,34 @@ bool suspend(Ref ref) {
   final currentSSID = ref.watch(currentSSIDProvider);
   final excludeSSIDs = ref.watch(excludeSSIDsProvider);
   return excludeSSIDs.contains(currentSSID);
+}
+
+/// Keeps a start on screen for [minimumStart] so a fast restart does not flash.
+@riverpod
+class HeldCoreStatus extends _$HeldCoreStatus {
+  static const minimumStart = Duration(milliseconds: 1500);
+
+  Timer? _hold;
+
+  @override
+  CoreStatus build() {
+    ref.onDispose(() => _hold?.cancel());
+    ref.listen(coreStatusProvider, (_, next) {
+      switch (next) {
+        case CoreStatus.connecting:
+          _hold ??= Timer(minimumStart, () {
+            _hold = null;
+            state = ref.read(coreStatusProvider);
+          });
+          state = next;
+        case CoreStatus.disconnected:
+          _hold?.cancel();
+          _hold = null;
+          state = next;
+        case CoreStatus.connected:
+          if (_hold == null) state = next;
+      }
+    });
+    return ref.read(coreStatusProvider);
+  }
 }

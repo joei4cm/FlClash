@@ -16,7 +16,7 @@ env:
   IS_STABLE: ${{ !contains(github.ref, '-') }}
   # See CI Caches in .agents/commands.md.
   BRANCH_CACHE: ${{ !startsWith(github.ref, 'refs/tags/') }}
-  FLUTTER_VERSION: '3.47.6'
+  FLUTTER_VERSION: '3.50.0'
   GO_VERSION: '1.27.1'
   NDK_VERSION: r28c
 
@@ -51,11 +51,16 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: ${{ env.BRANCH_CACHE }}
 
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev
+
       - name: Install dependencies
         run: flutter pub get
 
       - name: Check format
-        run: dart format --output=none --set-exit-if-changed lib test tool plugins setup.dart
+        run: dart format --output=none --set-exit-if-changed lib test tool plugins
 
       - name: Analyze
         run: flutter analyze --no-fatal-infos
@@ -319,6 +324,11 @@ jobs:
             plugins/rust_api/rust
           save-if: ${{ env.BRANCH_CACHE }}
 
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev
+
       - name: Check format
         run: |
           cargo fmt --manifest-path services/helper/Cargo.toml -- --check
@@ -474,7 +484,10 @@ jobs:
         env:
           ANDROID_NDK_HOME: ${{ steps.build-ndk.outputs.ndk-path }}
           GOPROXY: https://proxy.golang.org,direct
-        run: dart setup.dart ${{ matrix.platform }} ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
+          # The setup hook builds the Core for the host slice only, so an x86_64 slice in the arm64 app cannot run.
+          FLUTTER_MACOS_ARM64_ONLY: ${{ matrix.platform == 'macos' && matrix.arch == 'arm64' }}
+        # `dart run` first runs every build hook for this runner; the packager builds for the target itself.
+        run: dart tool/package.dart ${{ matrix.platform }} ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
 
       - name: Upload
         uses: actions/upload-artifact@v4
@@ -571,7 +584,7 @@ jobs:
       - name: Setup
         env:
           GOPROXY: https://proxy.golang.org,direct
-        run: dart setup.dart macos ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
+        run: dart tool/package.dart macos ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
 
       - name: Upload
         uses: actions/upload-artifact@v4
@@ -763,7 +776,9 @@ jobs:
       - name: Setup
         env:
           GOPROXY: https://proxy.golang.org,direct
-        run: dart setup.dart macos ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
+          # The setup hook builds the Core for the host slice only, so an x86_64 slice in the arm64 app cannot run.
+          FLUTTER_MACOS_ARM64_ONLY: 'true'
+        run: dart tool/package.dart macos ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
 
       - name: Upload
         uses: actions/upload-artifact@v4
@@ -948,7 +963,7 @@ jobs:
         run: |
           tag="${{ github.ref_name }}"
           version=$(printf '%s' "$tag" | sed -E 's/^v//; s/_[0-9a-fA-F]{6}$//')
-          sed -e "s|vVERSION|$tag|g" -e "s|VERSION|$version|g" ./.github/release_template.md >> release.md
+          sed -e "s|TAG|$tag|g" -e "s|VERSION|$version|g" ./.github/release_template.md >> release.md
           if ! compgen -G './dist/*macos-amd64*' > /dev/null; then
             {
               echo
