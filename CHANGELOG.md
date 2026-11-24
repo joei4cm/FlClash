@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.26 (2026-11-24)
+
+**Bug Fixes**
+
+- **tailscale** Make node test verify join, not MagicDNS TCP (18c18c7)
+
 ## v0.9.25 (2026-11-24)
 
 **Features**
