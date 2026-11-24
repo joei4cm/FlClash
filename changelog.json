@@ -2,6 +2,68 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.26",
+      "tag": "v0.9.26",
+      "date": "2026-11-24",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "18c18c7",
+              "scope": "tailscale",
+              "text": "Make node test verify join, not MagicDNS TCP"
+            }
+          ]
+        }
+      ],
+      "omit": [
+        "076feeb",
+        "c53ad89",
+        "ec3c89e",
+        "3172d8b",
+        "bdb848d",
+        "b866879",
+        "e893d08",
+        "3e41a9e",
+        "8d271bd",
+        "f3c213b",
+        "52b975f",
+        "bb47f2c",
+        "b8f84b3",
+        "2a5a42c",
+        "07c0e77",
+        "75369ce",
+        "fbceba6",
+        "9a9fe5c",
+        "cee2ca0",
+        "df34734",
+        "5981a0b",
+        "989e6f9",
+        "b8b050a",
+        "28ed728",
+        "b2e3550",
+        "c6c2988",
+        "364ae42",
+        "d78c066",
+        "46cf7ff",
+        "567fb62",
+        "0541913",
+        "53c5664",
+        "dc144ab",
+        "d537806",
+        "f94c2fb",
+        "7efb285",
+        "43a657b",
+        "2d5e008",
+        "5e565b1",
+        "7d5db7e",
+        "63aaf6d",
+        "e67197b"
+      ]
+    },
+    {
       "version": "0.9.25",
       "tag": "v0.9.25",
       "date": "2026-11-24",
